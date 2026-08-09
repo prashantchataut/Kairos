@@ -886,7 +886,7 @@ private fun FloatingFragment(
     modifier: Modifier = Modifier,
     rotation: Float = 0f,
     strong: Boolean = false,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable () -> Unit
 ) {
     val reducedMotion = rememberKairosReducedMotion()
     val transition = rememberInfiniteTransition(label = "fragment-float")
