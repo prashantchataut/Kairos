@@ -320,15 +320,35 @@ private fun OnboardingTopBar(
 }
 
 /**
+ * One-time entrance for each page's content: a soft rise + fade on first
+ * composition (the pager parallax handles swipe motion separately).
+ */
+@Composable
+private fun rememberPageEntrance(): Float {
+    var entered by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { entered = true }
+    return animateFloatAsState(
+        targetValue = if (entered) 1f else 0f,
+        animationSpec = tween(420, easing = KairosEasing.EaseOutExpo),
+        label = "page-entrance"
+    ).value
+}
+
+/**
  * Page 1 — poster. The mark above a headline, with two layered product
  * fragments floating beside it so the page reads as a product moment rather
  * than an empty splash.
  */
 @Composable
 private fun IntroPage(modifier: Modifier = Modifier) {
+    val entrance = rememberPageEntrance()
     Box(
         modifier = modifier
             .fillMaxSize()
+            .graphicsLayer {
+                alpha = entrance
+                translationY = (1f - entrance) * 14.dp.toPx()
+            }
             .padding(horizontal = 28.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -578,9 +598,14 @@ private fun LearningStoryPage(
  */
 @Composable
 private fun JourneyPage(modifier: Modifier = Modifier) {
+    val entrance = rememberPageEntrance()
     Column(
         modifier = modifier
             .fillMaxSize()
+            .graphicsLayer {
+                alpha = entrance
+                translationY = (1f - entrance) * 14.dp.toPx()
+            }
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 32.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -686,9 +711,14 @@ private fun RevealPage(
         4 -> "a stretching pace"
         else -> "a balanced pace"
     }
+    val entrance = rememberPageEntrance()
     Column(
         modifier = modifier
             .fillMaxSize()
+            .graphicsLayer {
+                alpha = entrance
+                translationY = (1f - entrance) * 14.dp.toPx()
+            }
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 28.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -770,9 +800,14 @@ private fun OnboardingStoryPage(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val entrance = rememberPageEntrance()
     Column(
         modifier = modifier
             .fillMaxSize()
+            .graphicsLayer {
+                alpha = entrance
+                translationY = (1f - entrance) * 14.dp.toPx()
+            }
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 28.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)

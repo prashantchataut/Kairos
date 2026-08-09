@@ -32,10 +32,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +57,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kairos.app.domain.identity.CosmeticRarity
 import com.kairos.app.domain.identity.KairosBanners
 import com.kairos.app.ui.animation.KairosReveal
 import com.kairos.app.ui.animation.rememberKairosReducedMotion
@@ -74,6 +78,7 @@ fun BannerSelectionScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
+    var previewBanner by remember { mutableStateOf<BannerOption?>(null) }
 
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) {
@@ -149,7 +154,10 @@ fun BannerSelectionScreen(
                         BannerOptionCard(
                             banner = banner,
                             isSelected = state.selectedBannerId == banner.id,
-                            onClick = { viewModel.selectBanner(banner.id) }
+                            onClick = {
+                                viewModel.selectBanner(banner.id)
+                                previewBanner = banner
+                            }
                         )
                     }
                 }
@@ -174,6 +182,18 @@ fun BannerSelectionScreen(
             )
         }
 
+        previewBanner?.let { banner ->
+            BannerLightbox(
+                banner = banner,
+                onClose = { previewBanner = null },
+                onUse = {
+                    viewModel.selectBanner(banner.id)
+                    viewModel.saveBanner()
+                    previewBanner = null
+                }
+            )
+        }
+
         SnackbarHost(
             hostState = snackbar,
             modifier = Modifier
@@ -182,6 +202,153 @@ fun BannerSelectionScreen(
                 .padding(top = 72.dp)
         )
     }
+}
+
+/**
+ * Full-screen animated lightbox for a banner — the wow moment.
+ * Renders the banner with animation, its rarity, description, and the
+ * unlock requirement when locked, plus Use / Close actions.
+ */
+@Composable
+private fun BannerLightbox(
+    banner: BannerOption,
+    onClose: () -> Unit,
+    onUse: () -> Unit
+) {
+    val canonical = remember(banner.id) { KairosBanners.findById(banner.id) }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.66f))
+            .clickable(onClick = onClose)
+            .semantics { contentDescription = "Banner preview for ${banner.name}" },
+        contentAlignment = Alignment.Center
+    ) {
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(tween(220)) + scaleIn(initialScale = 0.94f, animationSpec = tween(260))
+        ) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .clickable(enabled = false) { },
+                shape = RoundedCornerShape(28.dp),
+                color = MaterialTheme.colorScheme.surface,
+                shadowElevation = 18.dp
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(190.dp)
+                            .clip(RoundedCornerShape(22.dp))
+                    ) {
+                        if (canonical != null) {
+                            BannerRenderer(
+                                banner = canonical,
+                                modifier = Modifier.fillMaxSize(),
+                                showAnimation = true,
+                                cornerRadius = 22.dp
+                            )
+                        } else {
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.linearGradient(listOf(banner.primaryColor, banner.secondaryColor))
+                                    )
+                            )
+                        }
+                        if (banner.isAnimated && !banner.isLocked) {
+                            Text(
+                                text = "● Motion",
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(12.dp)
+                                    .background(Color.Black.copy(alpha = 0.42f), RoundedCornerShape(10.dp))
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            Text(
+                                text = banner.name,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = banner.rarity.displayName,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = banner.rarityColor()
+                            )
+                        }
+                        if (banner.isLocked) {
+                            KairosGlassSurface(
+                                modifier = Modifier.size(40.dp),
+                                shape = RoundedCornerShape(13.dp),
+                                strong = true
+                            ) {
+                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        KairosIcons.Lock,
+                                        contentDescription = "Locked",
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Text(
+                        text = if (banner.isLocked) {
+                            banner.unlockRequirement ?: "Earn this banner through your practice."
+                        } else {
+                            banner.description
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    KairosPrimaryButton(
+                        text = if (banner.isLocked) "Locked" else "Use this banner",
+                        onClick = onUse,
+                        enabled = !banner.isLocked,
+                        icon = if (banner.isLocked) KairosIcons.Lock else KairosIcons.Check,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    TextButton(
+                        onClick = onClose,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                    ) {
+                        Text("Close", style = MaterialTheme.typography.labelLarge)
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun BannerOption.rarityColor(): Color = when (rarity) {
+    CosmeticRarity.RARE -> Color(0xFF8FA6FF)
+    CosmeticRarity.EPIC -> Color(0xFFC792EA)
+    CosmeticRarity.LEGENDARY -> Color(0xFFF5C14E)
+    else -> Color(0xFF7BD9A5)
 }
 
 @Composable

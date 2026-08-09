@@ -980,7 +980,7 @@ private fun CustomizeSection(
                     modifier = Modifier
                         .size(64.dp, 44.dp)
                         .clip(RoundedCornerShape(12.dp)),
-                    showAnimation = false,
+                    showAnimation = true,
                     cornerRadius = 12.dp
                 )
             },
@@ -1023,7 +1023,51 @@ private fun CustomizeSection(
             title = "Avatar & details",
             subtitle = resolvedName(state)
         )
+        val context = LocalContext.current
+        CustomizeRow(
+            onClick = {
+                val summary = buildShareSummary(state)
+                val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(android.content.Intent.EXTRA_TEXT, summary)
+                }
+                runCatching { context.startActivity(android.content.Intent.createChooser(send, "Share your Kairos journey")) }
+            },
+            leading = {
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.85f),
+                                    MaterialTheme.colorScheme.tertiary.copy(alpha = 0.85f)
+                                )
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = KairosIcons.Share,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            },
+            title = "Share your journey",
+            subtitle = "Your level, rhythm, and words in one line"
+        )
     }
+}
+
+private fun buildShareSummary(state: ProfileUiState): String = buildString {
+    append("My Kairos journey — Level ${state.level}")
+    if (state.currentStreak > 1) append(", ${state.currentStreak}-day rhythm")
+    if (state.wordsLearned > 0) append(", ${state.wordsLearned} words retained")
+    if (state.journalEntries > 0) append(", ${state.journalEntries} reflections")
+    append(". One word, one thought, every day.")
 }
 
 @Composable
