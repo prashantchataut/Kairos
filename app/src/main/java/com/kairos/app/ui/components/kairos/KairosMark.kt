@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -29,23 +30,14 @@ import com.kairos.app.ui.animation.KairosDurations
 import com.kairos.app.ui.animation.KairosEasing
 import com.kairos.app.ui.animation.rememberKairosReducedMotion
 
-private val KairosFaceInk = Color(0xFF101828)
-
-private fun lighten(color: Color, amount: Float): Color = Color(
-    red = color.red + (1f - color.red) * amount,
-    green = color.green + (1f - color.green) * amount,
-    blue = color.blue + (1f - color.blue) * amount,
-    alpha = color.alpha
-)
-
 /**
- * The Kairos companion mark — a soft organic "moment" form.
+ * The Kairos mark — "the moment between".
  *
- * A rounded, jelly-like body with two calm eyes and a subtle smile reads as a
- * friendly emotional companion rather than a clinical symbol; the small spark
- * floating at the top-right carries the "moment in time" idea. The body is a
- * translucent gradient so the mark feels volumetric, alive, and premium at
- * every size from 24px navigation to the splash screen.
+ * A rounded tile holding a single flowing K whose two strokes converge into a
+ * filled dot: two forms meeting, a moment captured. The dot carries a short
+ * motion trail, so the mark reads as both a letter and a symbol of
+ * transformation. One silhouette, monochrome-safe, legible at 24px, and
+ * volumetric enough for App Store scale.
  */
 @Composable
 fun KairosMark(
@@ -74,7 +66,7 @@ fun KairosMark(
         ),
         label = "kairos-mark-breathe-scale"
     )
-    val idleScale = if (reducedMotion) 1f else 1f + breathe * 0.025f
+    val idleScale = if (reducedMotion) 1f else 1f + breathe * 0.02f
 
     Canvas(
         modifier = modifier.graphicsLayer {
@@ -84,85 +76,103 @@ fun KairosMark(
         }
     ) {
         val min = size.minDimension
-        val cx = size.width / 2f
-        val cy = size.height / 2f
+        val tileInset = min * 0.02f
+        val tileSize = min - tileInset * 2f
+        val r = tileSize * 0.30f
 
-        // Soft aura behind the body.
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(accent.copy(alpha = 0.30f * reveal), Color.Transparent),
-                center = Offset(cx, cy),
-                radius = min * 0.62f
-            ),
-            radius = min * 0.62f,
-            center = Offset(cx, cy)
-        )
-
-        // Body — rounded, translucent, volumetric.
-        val bodyInset = min * 0.10f
+        // Tile — rounded square, volumetric vertical gradient.
         drawRoundRect(
             brush = Brush.verticalGradient(
                 colors = listOf(
-                    lighten(tint, 0.10f).copy(alpha = 0.96f * reveal),
-                    tint.copy(alpha = 0.88f * reveal)
+                    lighten(accent, 0.14f),
+                    accent,
+                    darken(accent, 0.22f)
                 ),
-                startY = bodyInset,
-                endY = size.height - bodyInset
+                startY = tileInset,
+                endY = size.height - tileInset
             ),
-            topLeft = Offset(bodyInset, bodyInset),
-            size = Size(min - bodyInset * 2f, min - bodyInset * 2f),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(min * 0.30f)
+            topLeft = Offset(tileInset, tileInset),
+            size = Size(tileSize, tileSize),
+            cornerRadius = CornerRadius(r, r)
         )
 
-        // Eyes — calm, rounded.
-        val eyeY = min * 0.44f
-        val eyeW = min * 0.115f
-        val eyeH = min * 0.155f
-        listOf(0.36f, 0.64f).forEach { fx ->
-            val eyeCx = size.width * fx
-            drawOval(
-                color = KairosFaceInk.copy(alpha = 0.88f * reveal),
-                topLeft = Offset(eyeCx - eyeW / 2f, eyeY - eyeH / 2f),
-                size = Size(eyeW, eyeH)
-            )
-            drawCircle(
-                color = Color.White.copy(alpha = 0.9f * reveal),
-                radius = eyeW * 0.20f,
-                center = Offset(eyeCx - eyeW * 0.22f, eyeY - eyeH * 0.22f)
-            )
-        }
-
-        // Subtle calm smile.
-        drawArc(
-            color = KairosFaceInk.copy(alpha = 0.70f * reveal),
-            startAngle = 205f,
-            sweepAngle = 130f,
-            useCenter = false,
-            topLeft = Offset(cx - min * 0.11f, min * 0.47f),
-            size = Size(min * 0.22f, min * 0.17f),
-            style = Stroke(width = min * 0.032f, cap = StrokeCap.Round)
+        // A soft inner highlight along the top edge.
+        drawRoundRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(Color.White.copy(alpha = 0.28f * reveal), Color.Transparent),
+                startY = tileInset,
+                endY = tileInset + tileSize * 0.42f
+            ),
+            topLeft = Offset(tileInset, tileInset),
+            size = Size(tileSize, tileSize),
+            cornerRadius = CornerRadius(r, r)
         )
 
-        // The moment spark — a small four-point star.
-        val sparkX = size.width * 0.86f
-        val sparkY = size.height * 0.17f
-        val sparkLen = min * 0.10f
+        // The flowing K — strokes in relative tile coordinates.
+        val u = tileSize / 100f
+        val ox = tileInset
+        val oy = tileInset
+        val strokeW = u * 8.5f
+        val ink = Color.White
+
+        // Vertical stem.
         drawLine(
-            color = accent.copy(alpha = 0.95f * reveal),
-            start = Offset(sparkX - sparkLen, sparkY),
-            end = Offset(sparkX + sparkLen, sparkY),
-            strokeWidth = min * 0.030f,
+            color = ink.copy(alpha = 0.96f * reveal),
+            start = Offset(ox + u * 30f, oy + u * 26f),
+            end = Offset(ox + u * 30f, oy + u * 74f),
+            strokeWidth = strokeW,
             cap = StrokeCap.Round
         )
+
+        // Upper arm — sweeps from the stem toward the upper right.
         drawLine(
-            color = accent.copy(alpha = 0.95f * reveal),
-            start = Offset(sparkX, sparkY - sparkLen),
-            end = Offset(sparkX, sparkY + sparkLen),
-            strokeWidth = min * 0.030f,
+            color = ink.copy(alpha = 0.96f * reveal),
+            start = Offset(ox + u * 30f, oy + u * 36f),
+            end = Offset(ox + u * 66f, oy + u * 25f),
+            strokeWidth = strokeW,
+            cap = StrokeCap.Round
+        )
+
+        // Lower arm — converges toward the moment dot.
+        drawLine(
+            color = ink.copy(alpha = 0.96f * reveal),
+            start = Offset(ox + u * 30f, oy + u * 48f),
+            end = Offset(ox + u * 58f, oy + u * 71f),
+            strokeWidth = strokeW,
+            cap = StrokeCap.Round
+        )
+
+        // The moment — a filled dot where the movement gathers.
+        drawCircle(
+            color = Color.White.copy(alpha = 0.98f * reveal),
+            radius = u * 7.5f,
+            center = Offset(ox + u * 74f, oy + u * 78f)
+        )
+
+        // Motion trail from the dot — momentum, a moment captured in motion.
+        drawLine(
+            color = Color.White.copy(alpha = 0.55f * reveal),
+            start = Offset(ox + u * 78f, oy + u * 82f),
+            end = Offset(ox + u * 88f, oy + u * 90f),
+            strokeWidth = strokeW * 0.55f,
             cap = StrokeCap.Round
         )
     }
 }
+
+private fun lighten(color: Color, amount: Float): Color = Color(
+    red = color.red + (1f - color.red) * amount,
+    green = color.green + (1f - color.green) * amount,
+    blue = color.blue + (1f - color.blue) * amount,
+    alpha = color.alpha
+)
+
+private fun darken(color: Color, amount: Float): Color = Color(
+    red = color.red * (1f - amount),
+    green = color.green * (1f - amount),
+    blue = color.blue * (1f - amount),
+    alpha = color.alpha
+)
 
 @Composable
 fun KairosWordmark(

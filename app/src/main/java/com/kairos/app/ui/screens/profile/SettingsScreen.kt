@@ -239,13 +239,14 @@ fun SettingsScreen(
                     title = "Intelligence",
                     isDark = isDark
                 ) {
-                    // Premium Intelligence Row
+                    // Smart suggestions — product-level coming-soon row (no dead toggle).
                     SettingsRowWithToggle(
                         icon = Icons.Default.AutoAwesome,
-                        title = "Premium Intelligence",
-                        subtitle = "Enable local, private analysis of your journaling patterns for deeper insights.",
-                        checked = uiState.premiumIntelligenceEnabled,
-                        onCheckedChange = { viewModel.setPremiumIntelligenceEnabled(it) },
+                        title = "Smart suggestions",
+                        subtitle = "Coming soon: gentle, private insights from your reflections.",
+                        checked = false,
+                        enabled = false,
+                        onCheckedChange = {},
                         isDark = isDark
                     )
                 }
@@ -2095,14 +2096,14 @@ private fun AiConfigAlert(
     val containerColor = if (isDark) Color(0xFF3F2B1A) else Color(0xFFFFF8F0)
     val contentColor = if (isDark) Color(0xFFFFD8A3) else Color(0xFFC05600)
     val title = when (status) {
-        AiConfigStatus.MISSING_API_KEY -> "AI Features Offline"
-        AiConfigStatus.ERROR -> "AI Initialization Error"
-        else -> "AI Status Unknown"
+        AiConfigStatus.MISSING_API_KEY -> "Smart suggestions are coming soon"
+        AiConfigStatus.ERROR -> "Smart suggestions are taking a break"
+        else -> "Smart suggestions are coming soon"
     }
     val message = when (status) {
-        AiConfigStatus.MISSING_API_KEY -> "AI features require configuration. Please contact the developer."
-        AiConfigStatus.ERROR -> "Problem connecting to AI service. Please check your network connection."
-        else -> "AI features are temporarily unavailable."
+        AiConfigStatus.MISSING_API_KEY -> "Core practice, reflections, and your library all work fully offline. Personalized AI insights will arrive in a future update."
+        AiConfigStatus.ERROR -> "They will be back shortly. Your saved words and reflections are safe on this device."
+        else -> "Check back soon — your core practice is unaffected."
     }
 
     Surface(

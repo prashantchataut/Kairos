@@ -181,7 +181,7 @@ fun FocusedLearnScreen(
                         start = KairosSpacing.screen,
                         end = KairosSpacing.screen,
                         top = 16.dp,
-                        bottom = 28.dp
+                        bottom = 40.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
@@ -465,8 +465,8 @@ private fun DifficultyMark(difficulty: Int, saved: Boolean) {
 
 private fun learningSummary(state: VocabularyListUiState): String = when {
     state.totalCount == 0 -> "A focused vocabulary practice space"
-    state.savedCount == 0 -> "${state.totalCount} words ready to explore"
-    else -> "${state.savedCount} saved · ${state.totalCount - state.savedCount} in the wild"
+    state.savedCount == 0 -> "${state.totalCount} words in your library"
+    else -> "${state.savedCount} saved of ${state.totalCount}"
 }
 
 private fun emptyTitle(state: VocabularyListUiState): String = when {

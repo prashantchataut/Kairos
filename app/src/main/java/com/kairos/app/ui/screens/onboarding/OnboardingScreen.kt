@@ -33,24 +33,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.EditNote
-import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.MenuBook
+import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.School
+import androidx.compose.material.icons.outlined.TrendingUp
+import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -75,6 +83,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -99,29 +108,29 @@ import com.kairos.app.ui.theme.ThemeMode
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
-private const val OnboardingPageCount = 4
+private const val OnboardingPageCount = 5
 
-private data class WisdomCategory(val key: String, val label: String)
+private data class WisdomCategory(val key: String, val label: String, val icon: ImageVector)
 
 private val wisdomCategories = listOf(
-    WisdomCategory("wisdom", "Wisdom"),
-    WisdomCategory("life", "Life"),
-    WisdomCategory("motivation", "Momentum"),
-    WisdomCategory("creativity", "Creativity"),
-    WisdomCategory("communication", "Communication"),
-    WisdomCategory("growth", "Growth")
+    WisdomCategory("wisdom", "Wisdom", Icons.Outlined.AutoStories),
+    WisdomCategory("life", "Life", Icons.Outlined.Public),
+    WisdomCategory("motivation", "Momentum", Icons.Outlined.LocalFireDepartment),
+    WisdomCategory("creativity", "Creativity", Icons.Outlined.Lightbulb),
+    WisdomCategory("communication", "Communication", Icons.Outlined.EditNote),
+    WisdomCategory("growth", "Growth", Icons.Outlined.TrendingUp)
 )
 
 /** Word interests align with the categories used across the expanded vocabulary catalog. */
 private val wordInterestCategories = listOf(
-    WisdomCategory("self-improvement", "Self-improvement"),
-    WisdomCategory("communication", "Communication"),
-    WisdomCategory("emotion", "Emotion"),
-    WisdomCategory("mindfulness", "Mindfulness"),
-    WisdomCategory("learning", "Learning"),
-    WisdomCategory("reflection", "Reflection"),
-    WisdomCategory("business", "Business"),
-    WisdomCategory("academic", "Academic")
+    WisdomCategory("self-improvement", "Self-improvement", Icons.Outlined.TrendingUp),
+    WisdomCategory("communication", "Communication", Icons.Outlined.EditNote),
+    WisdomCategory("emotion", "Emotion", Icons.Outlined.Favorite),
+    WisdomCategory("mindfulness", "Mindfulness", Icons.Outlined.Psychology),
+    WisdomCategory("learning", "Learning", Icons.Outlined.School),
+    WisdomCategory("reflection", "Reflection", Icons.Outlined.Lightbulb),
+    WisdomCategory("business", "Business", Icons.Outlined.Work),
+    WisdomCategory("academic", "Academic", Icons.Outlined.MenuBook)
 )
 
 /** Onboarding night tokens — charcoal ink-navy with the Moment Blue brand. */
@@ -216,7 +225,7 @@ private fun OnboardingContent(
 
                 when (page) {
                     0 -> IntroPage(pageModifier)
-                    1 -> QuoteInterestsPage(
+                    1 -> ReflectionStoryPage(
                         modifier = pageModifier,
                         selectedCategories = selectedCategories,
                         onCategoryToggle = { key ->
@@ -228,7 +237,7 @@ private fun OnboardingContent(
                             selectedCategoryKeys = updated.sorted().joinToString(",")
                         }
                     )
-                    2 -> WordInterestsPage(
+                    2 -> LearningStoryPage(
                         modifier = pageModifier,
                         selectedWordCategories = selectedWordCategories,
                         onWordCategoryToggle = { key ->
@@ -244,8 +253,13 @@ private fun OnboardingContent(
                         sessionSize = sessionSize,
                         onSessionSizeChange = { sessionSize = it }
                     )
-                    else -> ReadyPage(
+                    3 -> JourneyPage(pageModifier)
+                    else -> RevealPage(
                         modifier = pageModifier,
+                        difficulty = difficulty,
+                        sessionSize = sessionSize,
+                        selectedCategories = selectedCategories,
+                        selectedWordCategories = selectedWordCategories,
                         completionState = completionState,
                         onRetry = {
                             onSubmit(difficulty, selectedCategories, selectedWordCategories, sessionSize)
@@ -306,91 +320,139 @@ private fun OnboardingTopBar(
 }
 
 /**
- * Page 0 — the poster. One moment, the logo breathing, one sentence.
+ * Page 1 — poster. The mark above a headline, with two layered product
+ * fragments floating beside it so the page reads as a product moment rather
+ * than an empty splash.
  */
 @Composable
 private fun IntroPage(modifier: Modifier = Modifier) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 28.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        contentAlignment = Alignment.Center
     ) {
-        KairosMark(
-            modifier = Modifier.size(140.dp),
-            tint = Color.White,
-            accent = KairosPeriwinkle
-        )
-        Spacer(modifier = Modifier.height(30.dp))
-        Text(
-            text = "Make space for\nwhat matters.",
-            style = MaterialTheme.typography.displayLarge,
-            color = OnboardingPaper,
-            textAlign = TextAlign.Center,
-            lineHeight = MaterialTheme.typography.displayLarge.lineHeight * 1.04f
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "A daily word, a thought worth keeping, and a quiet place to reflect.",
-            style = MaterialTheme.typography.bodyLarge,
-            color = OnboardingMuted,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.widthIn(max = 320.dp)
-        )
-        Spacer(modifier = Modifier.height(28.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Lock,
-                contentDescription = null,
-                tint = OnboardingMuted,
-                modifier = Modifier.size(16.dp)
+            KairosMark(
+                modifier = Modifier.size(120.dp),
+                tint = Color.White,
+                accent = OnboardingBlue
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Make space for\nwhat matters.",
+                style = MaterialTheme.typography.displayLarge,
+                color = OnboardingPaper,
+                textAlign = TextAlign.Center,
+                lineHeight = MaterialTheme.typography.displayLarge.lineHeight * 1.04f
             )
             Text(
-                text = "Works fully offline. No account needed.",
-                style = MaterialTheme.typography.bodySmall,
-                color = OnboardingMuted
+                text = "A daily word, a thought worth keeping, and a quiet place to reflect.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = OnboardingMuted,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.widthIn(max = 320.dp)
+            )
+        }
+
+        // Floating layered fragments — the product peeking around the poster.
+        FloatingFragment(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(x = 6.dp, y = 40.dp),
+            rotation = -6f
+        ) {
+            Text(
+                text = "lucid",
+                style = MaterialTheme.typography.titleLarge,
+                color = OnboardingPaper,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "clear · easy to understand",
+                style = MaterialTheme.typography.labelSmall,
+                color = OnboardingMuted,
+                maxLines = 1
+            )
+        }
+        FloatingFragment(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = 10.dp, y = -30.dp),
+            rotation = 5f
+        ) {
+            Text(
+                text = "“Attention is the beginning of devotion.”",
+                style = MaterialTheme.typography.labelMedium,
+                color = OnboardingPaper,
+                maxLines = 2
             )
         }
     }
 }
 
 /**
- * Pages 1-2 — full-screen questions with big tactile chips.
+ * Page 2 — understand yourself. A layered reflection visual, then the ideas
+ * the user wants more of as tactile cards.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun QuoteInterestsPage(
+private fun ReflectionStoryPage(
     modifier: Modifier = Modifier,
     selectedCategories: Set<String>,
     onCategoryToggle: (String) -> Unit
 ) {
-    OnboardingQuestionPage(
+    OnboardingStoryPage(
         modifier = modifier,
         title = "Understand\nyourself.",
-        body = "Choose the ideas you want more of in your daily moment."
+        body = "A short reflection each day turns passing moments into patterns."
     ) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+        // Layered journal fragments.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(96.dp)
+                .padding(horizontal = 12.dp),
+            contentAlignment = Alignment.Center
         ) {
-            wisdomCategories.forEach { category ->
-                InterestChip(
-                    text = category.label,
-                    selected = category.key in selectedCategories,
-                    onClick = { onCategoryToggle(category.key) }
-                )
+            FloatingFragment(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = 4.dp),
+                rotation = -5f
+            ) {
+                Text("“I slowed down today.”", style = MaterialTheme.typography.labelMedium, color = OnboardingMuted, maxLines = 1)
+            }
+            FloatingFragment(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                rotation = 4f,
+                strong = true
+            ) {
+                Text("“What felt different?”", style = MaterialTheme.typography.labelMedium, color = OnboardingPaper, maxLines = 1)
             }
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "Ideas you want more of",
+            style = MaterialTheme.typography.labelLarge,
+            color = OnboardingMuted
+        )
+        InterestGrid(
+            options = wisdomCategories,
+            selected = selectedCategories,
+            onToggle = onCategoryToggle
+        )
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+/**
+ * Page 3 — learn what changes you. A flashcard fragment, then learning areas
+ * and pace/session controls (labels never wrap).
+ */
 @Composable
-private fun WordInterestsPage(
+private fun LearningStoryPage(
     modifier: Modifier = Modifier,
     selectedWordCategories: Set<String>,
     onWordCategoryToggle: (String) -> Unit,
@@ -399,140 +461,267 @@ private fun WordInterestsPage(
     sessionSize: Int,
     onSessionSizeChange: (Int) -> Unit
 ) {
-    OnboardingQuestionPage(
+    OnboardingStoryPage(
         modifier = modifier,
         title = "Learn what\nchanges you.",
-        body = "Words from these areas surface first. Pace and session size tune the daily loop."
+        body = "Words from your chosen areas surface first, at a pace that fits."
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+        // Flashcard fragment.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(104.dp)
+                .padding(horizontal = 20.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth()
+                    .shadow(14.dp, RoundedCornerShape(22.dp), ambientColor = Color(0x66102A8A), spotColor = Color(0x55102A8A))
+                    .clip(RoundedCornerShape(22.dp))
+                    .background(OnboardingBlue)
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
             ) {
-                wordInterestCategories.forEach { category ->
-                    InterestChip(
-                        text = category.label,
-                        selected = category.key in selectedWordCategories,
-                        onClick = { onWordCategoryToggle(category.key) }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "serendipity",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "a happy accident, found by chance",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White.copy(alpha = 0.8f),
+                            maxLines = 1
+                        )
+                    }
+                    Text(
+                        text = "3 / 5",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White.copy(alpha = 0.9f)
                     )
                 }
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            // Stacked card behind.
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth()
+                    .offset(y = 8.dp)
+                    .height(80.dp)
+                    .clip(RoundedCornerShape(22.dp))
+                    .background(Color(0xFF1B2F6E))
+                    .graphicsLayer { rotationZ = -1.5f }
+            )
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "Learning areas",
+            style = MaterialTheme.typography.labelLarge,
+            color = OnboardingMuted
+        )
+        InterestGrid(
+            options = wordInterestCategories,
+            selected = selectedWordCategories,
+            onToggle = onWordCategoryToggle
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Pace", style = MaterialTheme.typography.labelLarge, color = OnboardingMuted)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf(2 to "Gentle", 3 to "Balanced", 4 to "Stretch").forEach { (value, label) ->
-                            SelectorPill(
-                                label = label,
-                                selected = difficulty == value,
-                                onClick = { onDifficultyChange(value) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                Text("Pace", style = MaterialTheme.typography.labelLarge, color = OnboardingMuted)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(2 to "Gentle", 3 to "Balanced", 4 to "Stretch").forEach { (value, label) ->
+                        SelectorPill(
+                            label = label,
+                            selected = difficulty == value,
+                            onClick = { onDifficultyChange(value) },
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 }
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Session size", style = MaterialTheme.typography.labelLarge, color = OnboardingMuted)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf(3, 5, 10).forEach { value ->
-                            SelectorPill(
-                                label = "$value",
-                                selected = sessionSize == value,
-                                onClick = { onSessionSizeChange(value) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Session size", style = MaterialTheme.typography.labelLarge, color = OnboardingMuted)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(3, 5, 10).forEach { value ->
+                        SelectorPill(
+                            label = "$value",
+                            selected = sessionSize == value,
+                            onClick = { onSessionSizeChange(value) },
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun OnboardingQuestionPage(
-    title: String,
-    body: String,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 28.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(22.dp)
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.displayMedium,
-                color = OnboardingPaper,
-                lineHeight = MaterialTheme.typography.displayMedium.lineHeight * 1.05f
-            )
-            Text(
-                text = body,
-                style = MaterialTheme.typography.bodyLarge,
-                color = OnboardingMuted,
-                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.12f,
-                modifier = Modifier.widthIn(max = 360.dp)
-            )
-        }
-        content()
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
 /**
- * Page 3 — "Building your Kairos": destinations plus a live build state.
+ * Page 4 — turn insight into action. A journey path, not a bordered row list.
  */
 @Composable
-private fun ReadyPage(
-    modifier: Modifier = Modifier,
-    completionState: OnboardingCompletionState,
-    onRetry: () -> Unit
-) {
+private fun JourneyPage(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 28.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 32.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        BuildingMoment(isSaving = completionState is OnboardingCompletionState.Saving)
-
-        Spacer(modifier = Modifier.height(26.dp))
-
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Turn insight into\naction.",
+            style = MaterialTheme.typography.displayMedium,
+            color = OnboardingPaper,
+            lineHeight = MaterialTheme.typography.displayMedium.lineHeight * 1.05f
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = "One quiet loop keeps everything connected.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = OnboardingMuted
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Vertical path with nodes.
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            JourneyNode(
+                icon = Icons.Outlined.AutoStories,
+                title = "Today",
+                subtitle = "One word and one thought, every day",
+                accent = OnboardingBlue
+            )
+            JourneyNode(
+                icon = Icons.Outlined.School,
+                title = "Learn",
+                subtitle = "Review at the right moment",
+                accent = Color(0xFF5B7FFF)
+            )
+            JourneyNode(
+                icon = Icons.Outlined.EditNote,
+                title = "Reflect",
+                subtitle = "Turn ideas into your own words",
+                accent = Color(0xFF8FA6FF)
+            )
+            JourneyNode(
+                icon = Icons.Outlined.Favorite,
+                title = "Library",
+                subtitle = "Keep what is worth returning to",
+                accent = Color(0xFF7BD9A5)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+}
+
+@Composable
+private fun JourneyNode(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    accent: Color
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(52.dp)
+                .shadow(8.dp, RoundedCornerShape(18.dp), ambientColor = Color(0x40000000), spotColor = Color(0x40000000))
+                .clip(RoundedCornerShape(18.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(accent.copy(alpha = 0.90f), accent.copy(alpha = 0.65f))
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(title, style = MaterialTheme.typography.titleMedium, color = OnboardingPaper, fontWeight = FontWeight.Bold)
+            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = OnboardingMuted)
+        }
+    }
+}
+
+/**
+ * Page 5 — personalized reveal. "Your Kairos is ready" with the user's actual
+ * choices previewed, then a single CTA.
+ */
+@Composable
+private fun RevealPage(
+    modifier: Modifier = Modifier,
+    difficulty: Int,
+    sessionSize: Int,
+    selectedCategories: Set<String>,
+    selectedWordCategories: Set<String>,
+    completionState: OnboardingCompletionState,
+    onRetry: () -> Unit
+) {
+    val paceLabel = when (difficulty) {
+        2 -> "a gentle pace"
+        4 -> "a stretching pace"
+        else -> "a balanced pace"
+    }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 28.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        BuildingMoment(isSaving = completionState is OnboardingCompletionState.Saving)
+        Text(
+            text = "Your Kairos is ready.",
             style = MaterialTheme.typography.displayMedium,
             color = OnboardingPaper,
             textAlign = TextAlign.Center,
             lineHeight = MaterialTheme.typography.displayMedium.lineHeight * 1.05f
         )
-        Spacer(modifier = Modifier.height(14.dp))
+        OnboardingGlass(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                RevealRow(Icons.Outlined.AutoStories, "Daily word at $paceLabel")
+                RevealRow(Icons.Outlined.School, "$sessionSize-word practice sessions")
+                RevealRow(
+                    Icons.Outlined.Favorite,
+                    "${selectedCategories.size} idea themes · ${selectedWordCategories.size} learning areas"
+                )
+            }
+        }
         Text(
-            text = "Today, Learn, Reflect, and Library — the whole core, built around you.",
-            style = MaterialTheme.typography.bodyLarge,
+            text = "Today, Learn, Reflect, and Library are the whole core. Everything else stays secondary until it earns a place.",
+            style = MaterialTheme.typography.bodySmall,
             color = OnboardingMuted,
             textAlign = TextAlign.Center,
             modifier = Modifier.widthIn(max = 340.dp)
         )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        OnboardingGlass(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                modifier = Modifier.padding(18.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                DestinationRow(Icons.Outlined.AutoStories, "Today", "One word and one thought")
-                DestinationRow(Icons.Outlined.School, "Learn", "Review at the right time")
-                DestinationRow(Icons.Outlined.EditNote, "Reflect", "Turn ideas into your own words")
-            }
-        }
 
         AnimatedVisibility(
             visible = completionState is OnboardingCompletionState.Error,
@@ -560,61 +749,173 @@ private fun ReadyPage(
     }
 }
 
+@Composable
+private fun RevealRow(icon: ImageVector, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Icon(icon, contentDescription = null, tint = KairosPeriwinkle, modifier = Modifier.size(18.dp))
+        Text(text, style = MaterialTheme.typography.bodyMedium, color = OnboardingPaper)
+    }
+}
+
 /**
- * Animated "building your Kairos" moment: the mark breathes inside a ring
- * that sweeps progress while saving.
+ * Shared story-page scaffold: headline, body, then page content.
  */
 @Composable
-private fun BuildingMoment(isSaving: Boolean) {
-    val reducedMotion = rememberKairosReducedMotion()
-    val transition = rememberInfiniteTransition(label = "building-ring")
-    val sweep by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1600, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "building-ring-sweep"
-    )
-    val progress = if (reducedMotion) 0.6f else sweep
-
-    Box(modifier = Modifier.size(150.dp), contentAlignment = Alignment.Center) {
-        Box(
-            modifier = Modifier
-                .size(150.dp)
-                .drawBehind {
-                    drawArc(
-                        color = OnboardingPanelHairline,
-                        startAngle = 0f,
-                        sweepAngle = 360f,
-                        useCenter = false,
-                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = 5.dp.toPx())
-                    )
-                }
-        )
-        Box(
-            modifier = Modifier
-                .size(150.dp)
-                .drawBehind {
-                    drawArc(
-                        color = if (isSaving) KairosPeriwinkle else OnboardingBlue,
-                        startAngle = -90f,
-                        sweepAngle = progress * 360f,
-                        useCenter = false,
-                        style = androidx.compose.ui.graphics.drawscope.Stroke(
-                            width = 5.dp.toPx(),
-                            cap = androidx.compose.ui.graphics.StrokeCap.Round
-                        )
-                    )
-                }
-        )
-        KairosMark(
-            modifier = Modifier.size(84.dp),
-            tint = Color.White,
-            accent = if (isSaving) KairosPeriwinkle else OnboardingBlue
-        )
+private fun OnboardingStoryPage(
+    title: String,
+    body: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 28.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.displayMedium,
+                color = OnboardingPaper,
+                lineHeight = MaterialTheme.typography.displayMedium.lineHeight * 1.05f
+            )
+            Text(
+                text = body,
+                style = MaterialTheme.typography.bodyLarge,
+                color = OnboardingMuted,
+                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.12f,
+                modifier = Modifier.widthIn(max = 360.dp)
+            )
+        }
+        content()
+        Spacer(modifier = Modifier.height(8.dp))
     }
+}
+
+/**
+ * Tactile interest cards — a grid of icon + label objects, not a chip pile.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun InterestGrid(
+    options: List<WisdomCategory>,
+    selected: Set<String>,
+    onToggle: (String) -> Unit
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        options.forEach { category ->
+            InterestCard(
+                label = category.label,
+                icon = category.icon,
+                selected = category.key in selected,
+                onClick = { onToggle(category.key) },
+                modifier = Modifier.widthIn(max = 168.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun InterestCard(
+    label: String,
+    icon: ImageVector,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val container by animateColorAsState(
+        targetValue = if (selected) OnboardingBlue else Color.White.copy(alpha = 0.06f),
+        animationSpec = tween(KairosDurations.State),
+        label = "interest-container"
+    )
+    val content by animateColorAsState(
+        targetValue = if (selected) Color.White else OnboardingMuted,
+        animationSpec = tween(KairosDurations.State),
+        label = "interest-content"
+    )
+    val borderColor by animateColorAsState(
+        targetValue = if (selected) KairosPeriwinkle.copy(alpha = 0.9f) else OnboardingPanelHairline,
+        animationSpec = tween(KairosDurations.State),
+        label = "interest-border"
+    )
+    val scale by animateFloatAsState(
+        targetValue = if (selected) 1.03f else 1f,
+        animationSpec = tween(KairosDurations.State, easing = KairosEasing.EaseOutQuart),
+        label = "interest-scale"
+    )
+    Surface(
+        onClick = onClick,
+        modifier = modifier.graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        },
+        shape = RoundedCornerShape(20.dp),
+        color = container,
+        contentColor = content,
+        border = BorderStroke(1.dp, borderColor)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 13.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(19.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1
+            )
+        }
+    }
+}
+
+/**
+ * A floating glass fragment with gentle drift (reduced-motion aware).
+ */
+@Composable
+private fun FloatingFragment(
+    modifier: Modifier = Modifier,
+    rotation: Float = 0f,
+    strong: Boolean = false,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val reducedMotion = rememberKairosReducedMotion()
+    val transition = rememberInfiniteTransition(label = "fragment-float")
+    val drift by transition.animateFloat(
+        initialValue = -4f,
+        targetValue = 4f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2600),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "fragment-drift"
+    )
+    val dy = if (reducedMotion) 0f else drift
+
+    Box(
+        modifier = modifier
+            .graphicsLayer {
+                rotationZ = rotation
+                translationY = dy
+            }
+            .shadow(10.dp, RoundedCornerShape(18.dp), ambientColor = Color(0x55000000), spotColor = Color(0x55000000))
+            .clip(RoundedCornerShape(18.dp))
+            .background(
+                if (strong) Color(0xFF20283A) else OnboardingPanel.copy(alpha = 0.92f)
+            )
+            .border(1.dp, OnboardingPanelHairline, RoundedCornerShape(18.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        content = { content() }
+    )
 }
 
 @Composable
@@ -772,8 +1073,8 @@ private fun SelectorPill(
     )
     Surface(
         onClick = onClick,
-        modifier = modifier.height(46.dp),
-        shape = RoundedCornerShape(16.dp),
+        modifier = modifier.height(44.dp),
+        shape = RoundedCornerShape(14.dp),
         color = container,
         contentColor = if (selected) Color.White else OnboardingMuted,
         border = BorderStroke(1.dp, if (selected) OnboardingBlue else OnboardingPanelHairline)
@@ -782,79 +1083,66 @@ private fun SelectorPill(
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                maxLines = 1
             )
         }
     }
 }
 
+/**
+ * Animated "building your Kairos" ring.
+ */
 @Composable
-private fun InterestChip(text: String, selected: Boolean, onClick: () -> Unit) {
-    val container by animateColorAsState(
-        targetValue = if (selected) OnboardingBlue else Color.White.copy(alpha = 0.06f),
-        animationSpec = tween(KairosDurations.State),
-        label = "chip-container"
+private fun BuildingMoment(isSaving: Boolean) {
+    val reducedMotion = rememberKairosReducedMotion()
+    val transition = rememberInfiniteTransition(label = "building-ring")
+    val sweep by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1600, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "building-ring-sweep"
     )
-    val content by animateColorAsState(
-        targetValue = if (selected) Color.White else OnboardingMuted,
-        animationSpec = tween(KairosDurations.State),
-        label = "chip-content"
-    )
-    val borderColor by animateColorAsState(
-        targetValue = if (selected) KairosPeriwinkle.copy(alpha = 0.9f) else OnboardingPanelHairline,
-        animationSpec = tween(KairosDurations.State),
-        label = "chip-border"
-    )
-    val scale by animateFloatAsState(
-        targetValue = if (selected) 1.04f else 1f,
-        animationSpec = tween(KairosDurations.State, easing = KairosEasing.EaseOutQuart),
-        label = "chip-scale"
-    )
-    Surface(
-        onClick = onClick,
-        modifier = Modifier.graphicsLayer {
-            scaleX = scale
-            scaleY = scale
-        },
-        shape = RoundedCornerShape(18.dp),
-        color = container,
-        contentColor = content,
-        border = BorderStroke(1.dp, borderColor)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            AnimatedVisibility(
-                visible = selected,
-                enter = scaleIn(initialScale = 0.4f) + fadeIn(tween(140))
-            ) {
-                Icon(Icons.Outlined.Check, contentDescription = null, modifier = Modifier.size(16.dp))
-            }
-            Text(text, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Medium)
-        }
-    }
-}
+    val progress = if (reducedMotion) 0.6f else sweep
 
-@Composable
-private fun DestinationRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    subtitle: String
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(13.dp)
-    ) {
-        Surface(shape = RoundedCornerShape(14.dp), color = Color.White.copy(alpha = 0.08f)) {
-            Icon(icon, contentDescription = null, tint = OnboardingPaper, modifier = Modifier.padding(10.dp).size(20.dp))
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.titleSmall, color = OnboardingPaper, fontWeight = FontWeight.SemiBold)
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = OnboardingMuted)
-        }
+    Box(modifier = Modifier.size(140.dp), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .size(140.dp)
+                .drawBehind {
+                    drawArc(
+                        color = OnboardingPanelHairline,
+                        startAngle = 0f,
+                        sweepAngle = 360f,
+                        useCenter = false,
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = 5.dp.toPx())
+                    )
+                }
+        )
+        Box(
+            modifier = Modifier
+                .size(140.dp)
+                .drawBehind {
+                    drawArc(
+                        color = if (isSaving) KairosPeriwinkle else OnboardingBlue,
+                        startAngle = -90f,
+                        sweepAngle = progress * 360f,
+                        useCenter = false,
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(
+                            width = 5.dp.toPx(),
+                            cap = androidx.compose.ui.graphics.StrokeCap.Round
+                        )
+                    )
+                }
+        )
+        KairosMark(
+            modifier = Modifier.size(80.dp),
+            tint = Color.White,
+            accent = if (isSaving) KairosPeriwinkle else OnboardingBlue
+        )
     }
 }
 

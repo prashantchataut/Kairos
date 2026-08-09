@@ -112,7 +112,10 @@ sealed class Screen(val route: String) {
         fun createRoute(idiomId: Long) = "idiom/$idiomId"
     }
 
-    data object VocabularySession : Screen("vocabulary/session")
+    data object VocabularySession : Screen("vocabulary/session?mode={mode}") {
+        fun createRoute(mode: com.kairos.app.ui.screens.vocabulary.SessionMode): String =
+            "vocabulary/session?mode=${'$'}{mode.name}"
+    }
 
     data object InterestsSetup : Screen("interests_setup")
 }
@@ -369,8 +372,8 @@ fun KairosNavHost(
                 onNavigateToDetail = { wordId ->
                     navController.navigate(Screen.VocabularyDetail.createRoute(wordId))
                 },
-                onNavigateToSession = {
-                    navController.navigate(Screen.VocabularySession.route)
+                onNavigateToSession = { mode ->
+                    navController.navigate(Screen.VocabularySession.createRoute(mode))
                 }
             )
         }
@@ -416,8 +419,16 @@ fun KairosNavHost(
             )
         }
 
-        composable(Screen.VocabularySession.route) {
+        composable(
+            route = Screen.VocabularySession.route,
+            arguments = listOf(navArgument("mode") { type = NavType.StringType; defaultValue = "MIXED" })
+        ) {
+            val modeName = it.arguments?.getString("mode") ?: "MIXED"
+            val initialMode = runCatching {
+                com.kairos.app.ui.screens.vocabulary.SessionMode.valueOf(modeName)
+            }.getOrDefault(com.kairos.app.ui.screens.vocabulary.SessionMode.MIXED)
             VocabularySessionScreen(
+                initialMode = initialMode,
                 onNavigateBack = { navController.popBackStack() }
             )
         }

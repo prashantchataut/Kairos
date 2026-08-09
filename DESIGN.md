@@ -10,9 +10,15 @@ polish, distinctly mobile.
 ## Dials
 Variance 6 · Motion 5 · Density 3.
 
+## Design tokens
+All screen styling resolves through `KairosTokens` (semantic colors against the
+active Material scheme + centralized spacing, radii, icon sizes, motion).
+Dark and light share one architecture — no per-screen hard-coded colors.
+
 ## Anchors
-- A recognizable **companion mark** (soft rounded form with calm eyes + a
-  "moment" spark) that works at 24px, as app icon, and as the AI companion.
+- The **Kairos mark** — "the moment between": a rounded tile holding a flowing K
+  whose strokes converge into a filled dot with a motion trail. One silhouette,
+  monochrome-safe, legible at 24px, volumetric at app-icon scale.
 - Large rounded "object" cards with stacked depth — not generic dashboard grids.
 - Floating frosted-glass navigation with an expanding active tab.
 - Bold typography as a design element (huge greetings, short strong headlines).
@@ -63,17 +69,25 @@ pearl with a blue tint; dark mode is charcoal ink-navy with luminous highlights.
   journal as stacked object cards.
 - **Practice (flashcard)**: dominant blue card with white serif word; grading
   via friendly emoji circles (Again/Hard/Good/Easy).
-- **Profile**: banner identity hero, avatar with blue glow ring, frosted
-  identity panel, grouped object cards.
+- **Profile**: fully theme-driven (no dark banner in light mode, no white
+  sections in dark mode): compact rounded banner card, avatar with primary
+  ring, name/handle/bio, inline stats, tag chips, "Choose your banner" row.
 - **Settings/Edit profile**: blue-world palettes, grouped rounded surfaces.
 
 ## Onboarding
-A cinematic 4-page launch sequence on ink-navy with atmospheric blue glows:
-1. **Poster** — the breathing mark, "Make space for what matters."
-2. **Understand yourself** — big tactile chips for quote themes.
-3. **Learn what changes you** — word-interest chips + pace/session size.
-4. **Turn insight into action** — "building your Kairos" ring animation,
-   destinations, then a single blue CTA.
+A cinematic 5-page launch sequence on ink-navy with atmospheric blue glows,
+each page its own composition (floating layered product fragments, a journey
+path, a personalized reveal):
+1. **Make space for what matters** — poster with the mark and two drifting
+   product fragments (word + quote mini-cards).
+2. **Understand yourself** — layered reflection fragments, then idea themes as
+   tactile icon cards.
+3. **Learn what changes you** — a flashcard fragment with stacked depth, then
+   learning-area cards and pace/session controls (labels never wrap).
+4. **Turn insight into action** — a vertical journey path (Today → Learn →
+   Reflect → Library), no bordered row list.
+5. **Your Kairos is ready** — building ring, then a personalized plan preview
+   built from the user's actual choices.
 
 ## Motion
 - 110ms press, 240ms state, 320ms page transitions.

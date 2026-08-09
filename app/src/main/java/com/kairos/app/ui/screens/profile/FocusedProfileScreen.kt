@@ -8,6 +8,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -185,96 +186,98 @@ private fun ProfileHero(
     onEdit: () -> Unit,
     onCustomize: () -> Unit
 ) {
-    Box(
+    val scheme = MaterialTheme.colorScheme
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 640.dp)
-            .background(ProfileInk)
+            .background(scheme.background)
+            .statusBarsPadding()
+            .padding(horizontal = KairosSpacing.screen, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = 820.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            KairosIconButton(
+                icon = Icons.AutoMirrored.Outlined.ArrowBack,
+                contentDescription = "Back",
+                onClick = onBack
+            )
+            KairosMark(
+                modifier = Modifier.size(38.dp),
+                tint = scheme.onSurface,
+                accent = scheme.primary,
+                revealed = visible
+            )
+            KairosIconButton(
+                icon = Icons.Outlined.Settings,
+                contentDescription = "Settings",
+                onClick = onSettings
+            )
+        }
+
+        Spacer(Modifier.height(18.dp))
+
         val activeBanner = remember(state.bannerId) {
             KairosBanners.findById(state.bannerId) ?: KairosBanners.getDefaultBanner()
         }
-        BannerRenderer(
-            banner = activeBanner,
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    translationY = scrollOffset * 0.14f
-                    scaleX = 1.035f
-                    scaleY = 1.035f
-                },
-            showAnimation = true,
-            cornerRadius = 0.dp
-        )
         Box(
-            Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.Black.copy(alpha = 0.18f),
-                            ProfileInk.copy(alpha = 0.42f),
-                            ProfileInk.copy(alpha = 0.88f)
-                        )
-                    )
-                )
-        )
-
-        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = KairosSpacing.screen, vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .widthIn(max = 680.dp)
+                .height(156.dp)
+                .clip(RoundedCornerShape(KairosRadius.feature))
+                .border(1.dp, scheme.outlineVariant, RoundedCornerShape(KairosRadius.feature))
         ) {
-            Row(
+            BannerRenderer(
+                banner = activeBanner,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .widthIn(max = 820.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                DarkGlassIconButton(
-                    icon = Icons.AutoMirrored.Outlined.ArrowBack,
-                    description = "Back",
-                    onClick = onBack
-                )
-                KairosMark(
-                    modifier = Modifier.size(38.dp),
-                    tint = ProfilePaper,
-                    accent = MaterialTheme.colorScheme.primary,
-                    revealed = visible
-                )
-                DarkGlassIconButton(
-                    icon = Icons.Outlined.Settings,
-                    description = "Settings",
-                    onClick = onSettings
-                )
-            }
-
-            Spacer(Modifier.height(34.dp))
-
-            ProfileAvatar(
-                photoUrl = state.authPhotoUrl,
-                name = resolvedName(state),
-                modifier = Modifier.size(88.dp)
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        translationY = scrollOffset * 0.12f
+                        scaleX = 1.03f
+                        scaleY = 1.03f
+                    },
+                showAnimation = true,
+                cornerRadius = KairosRadius.feature
             )
-
-            Spacer(Modifier.height(18.dp))
-
-            KairosReveal(
-                visible = visible,
-                delayMillis = 70,
+            KairosGlassSurface(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .widthIn(max = 680.dp)
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp)
+                    .size(40.dp),
+                shape = CircleShape,
+                onClick = onCustomize
             ) {
-                ProfileIdentityPanel(
-                    state = state,
-                    onEdit = onEdit,
-                    onCustomize = onCustomize
-                )
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Choose your banner",
+                        modifier = Modifier.size(18.dp),
+                        tint = scheme.onSurfaceVariant
+                    )
+                }
             }
+        }
+
+        Spacer(Modifier.height(14.dp))
+
+        KairosReveal(
+            visible = visible,
+            delayMillis = 60,
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = 680.dp)
+        ) {
+            ProfileIdentityPanel(
+                state = state,
+                onEdit = onEdit,
+                onCustomize = onCustomize
+            )
         }
     }
 }
@@ -292,125 +295,122 @@ private fun ProfileIdentityPanel(
         .filter { it.isNotBlank() }
         .distinct()
         .take(4)
+    val scheme = MaterialTheme.colorScheme
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(18.dp, RoundedCornerShape(26.dp), ambientColor = Color(0x66000000), spotColor = Color(0x59000000))
-            .clip(RoundedCornerShape(26.dp))
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF232C3F), Color(0xFF141A25))
-                )
-            )
-            .border(1.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(26.dp))
-            .padding(horizontal = 24.dp, vertical = 26.dp)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(7.dp)
-                ) {
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.displaySmall,
-                        fontWeight = FontWeight.Medium,
-                        color = ProfilePaper,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.semantics { heading() }
-                    )
-                    Text(
-                        text = profileHandle(state),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = ProfilePaper.copy(alpha = 0.66f)
-                    )
-                }
-                DarkGlassIconButton(
-                    icon = Icons.Outlined.Edit,
-                    description = "Edit profile",
-                    onClick = onEdit,
-                    compact = true
-                )
-            }
+        ProfileAvatar(
+            photoUrl = state.authPhotoUrl,
+            name = name,
+            modifier = Modifier.size(84.dp)
+        )
 
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             Text(
-                text = state.bio.ifBlank {
-                    "Learning a little more clearly, one useful word and reflection at a time."
-                },
-                style = MaterialTheme.typography.bodyLarge,
-                color = ProfilePaper.copy(alpha = 0.88f),
-                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.12f
+                text = name,
+                style = MaterialTheme.typography.headlineLarge,
+                color = scheme.onSurface,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.semantics { heading() }
             )
+            Text(
+                text = profileHandle(state),
+                style = MaterialTheme.typography.bodyMedium,
+                color = scheme.onSurfaceVariant
+            )
+        }
 
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = null,
+                modifier = Modifier.size(15.dp),
+                tint = scheme.primary
+            )
+            Text(
+                text = "Edit profile",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = scheme.primary,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable(onClick = onEdit)
+                    .padding(horizontal = 6.dp, vertical = 4.dp)
+            )
+        }
+
+        Text(
+            text = state.bio.ifBlank {
+                "Learning a little more clearly, one useful word and reflection at a time."
+            },
+            style = MaterialTheme.typography.bodyLarge,
+            color = scheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.12f,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ProfileStat(
+                value = state.wordsLearned.toString(),
+                label = "Words"
+            )
+            ProfileStat(
+                value = state.journalEntries.toString(),
+                label = "Reflections"
+            )
+            ProfileStat(
+                value = state.currentStreak.toString(),
+                label = "Day rhythm"
+            )
+        }
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            ProfileTag(state.title)
+            ProfileTag("Level ${state.level}")
+            themes.forEach { ProfileTag(it) }
+        }
+
+        Surface(
+            onClick = onCustomize,
+            shape = RoundedCornerShape(KairosRadius.controlLarge),
+            color = scheme.surfaceContainer,
+            border = androidx.compose.foundation.BorderStroke(1.dp, scheme.outlineVariant)
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 13.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                ProfileStat(
-                    value = state.wordsLearned.toString(),
-                    label = "Words",
-                    modifier = Modifier.weight(1f)
+                Text(
+                    text = "Choose your banner",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = scheme.onSurface
                 )
-                ProfileStat(
-                    value = state.journalEntries.toString(),
-                    label = "Reflections",
-                    modifier = Modifier.weight(1f)
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                    contentDescription = null,
+                    tint = scheme.onSurfaceVariant,
+                    modifier = Modifier.size(16.dp)
                 )
-                ProfileStat(
-                    value = state.currentStreak.toString(),
-                    label = "Day rhythm",
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ProfileTag(state.title)
-                ProfileTag("Level ${state.level}")
-                themes.forEach { ProfileTag(it) }
-            }
-
-            Surface(
-                onClick = onCustomize,
-                shape = RoundedCornerShape(18.dp),
-                color = Color.White.copy(alpha = 0.10f),
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    Color.White.copy(alpha = 0.14f)
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 15.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = null,
-                        tint = ProfilePaper,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text(
-                        text = "Customize earned identity",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = ProfilePaper,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = null,
-                        tint = ProfilePaper.copy(alpha = 0.7f),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
             }
         }
     }
@@ -570,9 +570,9 @@ private fun ProfileAvatar(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(ProfilePaper.copy(alpha = 0.12f))
-            .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.9f), CircleShape)
-            .shadow(12.dp, CircleShape, ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            .shadow(10.dp, CircleShape, ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
         contentAlignment = Alignment.Center
     ) {
         if (!photoUrl.isNullOrBlank()) {
@@ -590,33 +590,8 @@ private fun ProfileAvatar(
                 text = initialsFor(name),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = ProfilePaper
+                color = MaterialTheme.colorScheme.onSurface
             )
-        }
-    }
-}
-
-@Composable
-private fun DarkGlassIconButton(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    description: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    compact: Boolean = false
-) {
-    val size = if (compact) 44.dp else 48.dp
-    Surface(
-        onClick = onClick,
-        modifier = modifier
-            .size(size)
-            .semantics { contentDescription = description },
-        shape = CircleShape,
-        color = Color.Black.copy(alpha = 0.36f),
-        contentColor = ProfilePaper,
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.14f))
-    ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(if (compact) 19.dp else 21.dp))
         }
     }
 }
@@ -627,17 +602,21 @@ private fun ProfileStat(
     label: String,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
         Text(
             text = value,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
-            color = ProfilePaper
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = ProfilePaper.copy(alpha = 0.56f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1
         )
     }
@@ -647,14 +626,14 @@ private fun ProfileStat(
 private fun ProfileTag(label: String) {
     Surface(
         shape = RoundedCornerShape(KairosRadius.control),
-        color = Color.White.copy(alpha = 0.09f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.10f))
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Text(
             text = label,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
             style = MaterialTheme.typography.labelMedium,
-            color = ProfilePaper.copy(alpha = 0.78f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1
         )
     }
@@ -709,23 +688,27 @@ private fun SectionHeading(title: String) {
 
 @Composable
 private fun ProfileLoading(onBack: () -> Unit) {
-    Box(Modifier.fillMaxSize().background(ProfileInk)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .statusBarsPadding()
                 .padding(16.dp)
         ) {
-            DarkGlassIconButton(
+            KairosIconButton(
                 icon = Icons.AutoMirrored.Outlined.ArrowBack,
-                description = "Back",
+                contentDescription = "Back",
                 onClick = onBack
             )
         }
-        CircularProgressIndicator(
-            modifier = Modifier.align(Alignment.Center).size(30.dp),
-            color = KairosPeriwinkle,
-            strokeWidth = 2.dp
+        KairosMark(
+            modifier = Modifier.align(Alignment.Center).size(64.dp),
+            tint = MaterialTheme.colorScheme.onSurface,
+            accent = MaterialTheme.colorScheme.primary
         )
     }
 }
@@ -770,11 +753,6 @@ private fun initialsFor(name: String): String = name
     .joinToString("") { it.first().uppercase() }
     .ifBlank { "K" }
 
-/** Night paper tokens for the profile hero, matching the Paper & Ink dark scheme. */
-private val ProfileInk = Color(0xFF0B0E15)
-private val ProfilePaper = Color(0xFFE9EDF6)
-private val ProfilePanel = Color(0xFF1E2636)
-private val ProfilePanelHairline = Color(0xFF2A3345)
 
 @Preview(name = "Focused profile", showBackground = true, widthDp = 390, heightDp = 844)
 @Composable

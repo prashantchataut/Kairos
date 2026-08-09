@@ -109,6 +109,7 @@ object KairosRadius {
     val controlLarge: Dp = 18.dp
     val readingSurface: Dp = 24.dp
     val card: Dp = 26.dp
+    val feature: Dp = 28.dp
     val floating: Dp = 30.dp
     val navigation: Dp = 32.dp
 }

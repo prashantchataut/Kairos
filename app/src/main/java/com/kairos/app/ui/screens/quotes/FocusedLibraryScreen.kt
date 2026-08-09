@@ -264,7 +264,7 @@ private fun LibraryListOrEmpty(
                     start = KairosSpacing.screen,
                     end = KairosSpacing.screen,
                     top = 18.dp,
-                    bottom = 28.dp
+                    bottom = 40.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 content = content

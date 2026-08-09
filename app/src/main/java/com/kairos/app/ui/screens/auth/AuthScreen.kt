@@ -147,7 +147,7 @@ fun AuthScreen(
                 }
 
                 Text(
-                    text = "Local mode keeps the core experience on this device. Account-backed sync is not presented as available until the backend is real.",
+                    text = "Everything you need works on this device. Sign in with Google whenever you want your account on another phone.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Icon
@@ -155,21 +154,34 @@ fun FocusedReflectScreen(
                 )
             }
             state.entries.isEmpty() -> {
-                KairosEmptyState(
-                    icon = KairosIcons.Outlined.Edit,
-                    title = reflectEmptyTitle(state),
-                    body = reflectEmptyBody(state),
-                    actionLabel = if (state.query.isNotBlank() || state.showBookmarkedOnly) "Reset filters" else "Write first reflection",
-                    onAction = {
-                        if (state.query.isNotBlank() || state.showBookmarkedOnly) {
+                if (state.query.isNotBlank() || state.showBookmarkedOnly) {
+                    KairosEmptyState(
+                        icon = KairosIcons.Outlined.Edit,
+                        title = reflectEmptyTitle(state),
+                        body = reflectEmptyBody(state),
+                        actionLabel = "Reset filters",
+                        onAction = {
                             viewModel.setQuery("")
                             if (state.showBookmarkedOnly) viewModel.toggleBookmarkFilter()
-                        } else {
-                            onNavigateToNewEntry()
-                        }
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 24.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Text(
+                            text = "Your reflections will collect here, one honest note at a time.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.widthIn(max = 300.dp)
+                        )
+                    }
+                }
             }
             else -> {
                 LazyColumn(
@@ -181,7 +193,7 @@ fun FocusedReflectScreen(
                         start = KairosSpacing.screen,
                         end = KairosSpacing.screen,
                         top = 18.dp,
-                        bottom = 28.dp
+                        bottom = 40.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
@@ -249,28 +261,6 @@ private fun StartReflectionSurface(onStart: () -> Unit) {
                     icon = KairosIcons.Outlined.Edit,
                     modifier = Modifier.weight(1f)
                 )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Mood.entries.take(8).forEach { mood ->
-                    Box(
-                        modifier = Modifier
-                            .size(34.dp)
-                            .clip(CircleShape)
-                            .background(mood.color.copy(alpha = 0.20f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = mood.icon,
-                            contentDescription = null,
-                            tint = mood.color,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
             }
         }
     }

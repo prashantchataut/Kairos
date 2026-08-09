@@ -138,7 +138,7 @@ fun FocusedTodayScreen(
                         start = KairosSpacing.screen,
                         end = KairosSpacing.screen,
                         top = 4.dp,
-                        bottom = 28.dp
+                        bottom = 40.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(26.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -322,6 +322,12 @@ private fun WordMoment(
                             }
                         }
                     }
+                    Text(
+                        text = "DAILY WORD",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.65f),
+                        fontWeight = FontWeight.SemiBold
+                    )
                     Text(
                         text = state.wordOfTheDay,
                         style = MaterialTheme.typography.displayMedium.copy(fontFamily = SerifFamily),

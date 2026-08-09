@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Kairos companion mark — splash variant.
-    A soft rounded body with calm eyes, a subtle smile, and the moment spark.
+    Kairos mark — "the moment between".
+    Rounded tile, flowing K converging into the moment dot with a motion trail.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -9,40 +9,45 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Body -->
+    <!-- Tile -->
     <path
-        android:pathData="M54,14 a40,40 0 1 1 -0.01,0 z"
-        android:fillColor="#FFFFFF" />
+        android:pathData="M12,12 h84 a30,30 0 0 1 30,30 v24 a30,30 0 0 1 -30,30 h-84 a30,30 0 0 1 -30,-30 v-24 a30,30 0 0 1 30,-30 z"
+        android:fillColor="#2E5BFF" />
 
-    <!-- Eyes -->
+    <!-- Stem -->
     <path
-        android:pathData="M43,47 a5.5,7 0 1 0 11,0 a5.5,7 0 1 0 -11,0 z"
-        android:fillColor="#101828" />
-    <path
-        android:pathData="M65,47 a5.5,7 0 1 0 11,0 a5.5,7 0 1 0 -11,0 z"
-        android:fillColor="#101828" />
-
-    <!-- Eye highlights -->
-    <path
-        android:pathData="M45.5,44.5 m-2,0 a2,2 0 1 0 4,0 a2,2 0 1 0 -4,0 z"
-        android:fillColor="#FFFFFF" />
-    <path
-        android:pathData="M67.5,44.5 m-2,0 a2,2 0 1 0 4,0 a2,2 0 1 0 -4,0 z"
-        android:fillColor="#FFFFFF" />
-
-    <!-- Smile -->
-    <path
-        android:pathData="M46,62 Q54,69 62,62"
-        android:strokeColor="#101828"
-        android:strokeWidth="3"
+        android:pathData="M34,34 L34,74"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
 
-    <!-- Moment spark -->
+    <!-- Upper arm -->
     <path
-        android:pathData="M84,20 L92,28 M92,20 L84,28"
-        android:strokeColor="#8FA6FF"
-        android:strokeWidth="3.5"
+        android:pathData="M34,42 L66,32"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Lower arm -->
+    <path
+        android:pathData="M34,52 L60,71"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Moment dot -->
+    <path
+        android:pathData="M74,78 m-7,0 a7,7 0 1 0 14,0 a7,7 0 1 0 -14,0 z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Motion trail -->
+    <path
+        android:pathData="M78,82 L88,90"
+        android:strokeColor="#B8C7FF"
+        android:strokeWidth="5"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
 </vector>
