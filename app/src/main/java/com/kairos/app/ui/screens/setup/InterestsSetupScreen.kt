@@ -254,7 +254,7 @@ private fun SelectorPill(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.height(46.dp),
+        modifier = modifier.height(48.dp),
         shape = RoundedCornerShape(KairosRadius.control),
         color = if (selected) {
             MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)

@@ -404,7 +404,7 @@ object KairosTokens {
 
         val textPrimary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onSurface
         val textSecondary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onSurfaceVariant
-        val textTertiary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.72f)
+        val textTertiary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onSurfaceVariant
         val textInverse: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onPrimary
 
         val borderSubtle: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.outlineVariant

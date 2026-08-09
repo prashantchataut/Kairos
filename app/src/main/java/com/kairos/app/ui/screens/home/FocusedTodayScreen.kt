@@ -307,7 +307,7 @@ private fun WordMoment(
                             accent = Color.White.copy(alpha = 0.9f)
                         )
                         KairosGlassSurface(
-                            modifier = Modifier.size(44.dp),
+                            modifier = Modifier.size(48.dp),
                             shape = CircleShape,
                             strong = state.wordSaved,
                             onClick = onToggleSave
@@ -325,7 +325,7 @@ private fun WordMoment(
                     Text(
                         text = "DAILY WORD",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color.White.copy(alpha = 0.65f),
+                        color = Color.White.copy(alpha = 0.72f),
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
@@ -381,7 +381,7 @@ private fun WordMoment(
                         ) {
                             Surface(
                                 onClick = onTooEasy,
-                                modifier = Modifier.weight(1f).height(46.dp),
+                                modifier = Modifier.weight(1f).height(48.dp),
                                 shape = RoundedCornerShape(KairosRadius.controlLarge),
                                 color = Color.White.copy(alpha = 0.14f),
                                 contentColor = Color.White
@@ -392,7 +392,7 @@ private fun WordMoment(
                             }
                             Surface(
                                 onClick = onTooHard,
-                                modifier = Modifier.weight(1f).height(46.dp),
+                                modifier = Modifier.weight(1f).height(48.dp),
                                 shape = RoundedCornerShape(KairosRadius.controlLarge),
                                 color = Color.White.copy(alpha = 0.14f),
                                 contentColor = Color.White
@@ -490,7 +490,7 @@ private fun ThoughtMoment(
                                 .background(scheme.outlineVariant)
                         )
                         KairosGlassSurface(
-                            modifier = Modifier.size(44.dp),
+                            modifier = Modifier.size(48.dp),
                             shape = CircleShape,
                             strong = state.quoteSaved,
                             onClick = onToggleSave

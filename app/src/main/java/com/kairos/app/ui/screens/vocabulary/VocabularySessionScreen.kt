@@ -186,8 +186,8 @@ private fun FlashcardPhase(
                     Brush.verticalGradient(
                         colors = listOf(
                             MaterialTheme.colorScheme.primary,
-                            Color(0xFF1B3FBF),
-                            Color(0xFF0F2C8F)
+                            com.kairos.app.ui.theme.KairosAccentGreenDark,
+                            com.kairos.app.ui.theme.KairosDeepBlue
                         )
                     )
                 )
@@ -214,7 +214,7 @@ private fun FlashcardPhase(
                     )
                     Surface(
                         onClick = onToggleSave,
-                        modifier = Modifier.size(44.dp),
+                        modifier = Modifier.size(48.dp),
                         shape = CircleShape,
                         color = Color.White.copy(alpha = 0.14f),
                         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.18f))
@@ -240,7 +240,7 @@ private fun FlashcardPhase(
                         Text(
                             text = card.word.pronunciation,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White.copy(alpha = 0.72f)
+                            color = Color.White.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -267,7 +267,7 @@ private fun FlashcardPhase(
                         Text(
                             text = "Related: ${card.word.synonyms}",
                             style = MaterialTheme.typography.labelMedium,
-                            color = Color.White.copy(alpha = 0.85f)
+                            color = Color.White.copy(alpha = 0.9f)
                         )
                     }
                 }

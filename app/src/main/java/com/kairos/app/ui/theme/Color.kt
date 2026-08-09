@@ -53,7 +53,7 @@ val KairosSurfaceContainerLight = Color(0xFFE7ECF7)    // Blue-tinted container
 
 val KairosTextPrimaryLight = Color(0xFF101828)         // Ink navy
 val KairosTextSecondaryLight = Color(0xFF5A6478)       // Soft slate
-val KairosTextTertiaryLight = Color(0xFF8B93A7)        // Faint slate
+val KairosTextTertiaryLight = Color(0xFF65708A)        // Faint slate (4.6:1 on pearl)
 val KairosTextOnPrimaryLight = Color(0xFFFFFFFF)       // White on blue
 val KairosTextOnAccentLight = Color(0xFFFFFFFF)
 
@@ -71,7 +71,7 @@ val KairosSurfaceContainerDark = Color(0xFF1E2636)      // Container
 
 val KairosTextPrimaryDark = Color(0xFFE9EDF6)            // Night ink
 val KairosTextSecondaryDark = Color(0xFF9AA5BE)           // Night soft
-val KairosTextTertiaryDark = Color(0xFF6C7690)           // Night faint
+val KairosTextTertiaryDark = Color(0xFF7C87A3)           // Night faint (5.4:1 on ink)
 val KairosTextOnPrimaryDark = Color(0xFF0A1E54)
 
 val KairosOutlineDark = Color(0xFF2A3345)                // Night hairline
@@ -110,6 +110,7 @@ val KairosInfoContainerDark = Color(0xFF0F3A70)
 val KairosAccentGreen = KairosForestGreen
 val KairosAccentGreenLight = Color(0xFF5B7FFF)
 val KairosAccentGreenDark = Color(0xFF1B3FBF)
+val KairosDeepBlue = Color(0xFF0F2C8F)                   // Deep navy — base of the hero-card gradient
 
 val KairosAccent = KairosPrimary
 val KairosGreen = KairosPrimary
