@@ -98,6 +98,7 @@ import com.kairos.app.ui.components.kairos.KairosReadingSurface
 import com.kairos.app.ui.icons.KairosIcons
 import com.kairos.app.ui.theme.KairosClay
 import com.kairos.app.ui.theme.KairosRadius
+import com.kairos.app.ui.theme.KairosTheme
 import com.kairos.app.ui.theme.KairosSpacing
 import com.kairos.app.ui.theme.ThemeMode
 import kotlinx.coroutines.delay
@@ -221,6 +222,7 @@ fun FocusedProfileScreen(
 // HERO — aura, avatar with level badge, banner, identity
 // =============================================================================
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ProfileHero(
     state: ProfileUiState,
