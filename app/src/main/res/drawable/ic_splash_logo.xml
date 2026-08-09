@@ -1,27 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Kairos companion mark — splash variant.
+    A soft rounded body with calm eyes, a subtle smile, and the moment spark.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="288dp"
-    android:height="288dp"
-    android:viewportWidth="288"
-    android:viewportHeight="288">
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Body -->
     <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#F6F4EF"
-        android:strokeWidth="28"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M83,194C57,170 50,133 60,101C72,67 104,46 140,46C180,46 212,72 222,109C232,143 219,175 193,197" />
+        android:pathData="M54,14 a40,40 0 1 1 -0.01,0 z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Eyes -->
     <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#F6F4EF"
-        android:strokeWidth="28"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M143,177L143,232L197,232" />
+        android:pathData="M43,47 a5.5,7 0 1 0 11,0 a5.5,7 0 1 0 -11,0 z"
+        android:fillColor="#101828" />
     <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#AEB8FF"
-        android:strokeWidth="16"
+        android:pathData="M65,47 a5.5,7 0 1 0 11,0 a5.5,7 0 1 0 -11,0 z"
+        android:fillColor="#101828" />
+
+    <!-- Eye highlights -->
+    <path
+        android:pathData="M45.5,44.5 m-2,0 a2,2 0 1 0 4,0 a2,2 0 1 0 -4,0 z"
+        android:fillColor="#FFFFFF" />
+    <path
+        android:pathData="M67.5,44.5 m-2,0 a2,2 0 1 0 4,0 a2,2 0 1 0 -4,0 z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Smile -->
+    <path
+        android:pathData="M46,62 Q54,69 62,62"
+        android:strokeColor="#101828"
+        android:strokeWidth="3"
         android:strokeLineCap="round"
-        android:pathData="M143,82L143,150M113,98L173,137M113,137L173,98" />
+        android:fillColor="#00000000" />
+
+    <!-- Moment spark -->
+    <path
+        android:pathData="M84,20 L92,28 M92,20 L84,28"
+        android:strokeColor="#8FA6FF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
 </vector>

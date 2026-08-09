@@ -51,53 +51,53 @@ val PoppinsFamily: FontFamily = KairosSansFamily
  */
 val KairosTypography = Typography(
     // ==========================================================================
-    // DISPLAY STYLES - Lora serif, tight tracking (Paper & Ink display voice)
+    // DISPLAY STYLES - Bold modern sans (the Moment Blue display voice)
     // ==========================================================================
     displayLarge = TextStyle(
-        fontFamily = LoraFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 56.sp,
-        lineHeight = 60.sp,
-        letterSpacing = (-0.8).sp
-    ),
-    displayMedium = TextStyle(
-        fontFamily = LoraFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 42.sp,
-        lineHeight = 48.sp,
+        fontFamily = KairosSansFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 40.sp,
+        lineHeight = 46.sp,
         letterSpacing = (-0.6).sp
     ),
-    displaySmall = TextStyle(
-        fontFamily = LoraFamily,
-        fontWeight = FontWeight.SemiBold,
+    displayMedium = TextStyle(
+        fontFamily = KairosSansFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 34.sp,
         lineHeight = 40.sp,
         letterSpacing = (-0.4).sp
     ),
+    displaySmall = TextStyle(
+        fontFamily = KairosSansFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        lineHeight = 34.sp,
+        letterSpacing = (-0.2).sp
+    ),
 
     // ==========================================================================
-    // HEADLINE STYLES - Lora serif section headers
+    // HEADLINE STYLES - Bold sans section headers
     // ==========================================================================
     headlineLarge = TextStyle(
-        fontFamily = LoraFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 30.sp,
-        lineHeight = 36.sp,
-        letterSpacing = (-0.3).sp
-    ),
-    headlineMedium = TextStyle(
-        fontFamily = LoraFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontFamily = KairosSansFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 26.sp,
         lineHeight = 32.sp,
         letterSpacing = (-0.2).sp
     ),
-    headlineSmall = TextStyle(
-        fontFamily = LoraFamily,
-        fontWeight = FontWeight.SemiBold,
+    headlineMedium = TextStyle(
+        fontFamily = KairosSansFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp,
-        letterSpacing = (-0.2).sp
+        letterSpacing = (-0.1).sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = KairosSansFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 19.sp,
+        lineHeight = 25.sp,
+        letterSpacing = 0.sp
     ),
 
     // ==========================================================================

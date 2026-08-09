@@ -38,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -55,10 +57,11 @@ import com.kairos.app.ui.animation.rememberKairosPressScale
 import com.kairos.app.ui.theme.KairosElevation
 import com.kairos.app.ui.theme.KairosRadius
 import com.kairos.app.ui.theme.KairosSpacing
+import com.kairos.app.ui.theme.KairosTheme
 
 /**
  * Edge-to-edge ambient background for the focused product surface.
- * Flat paper ground — no washes, no gradients.
+ * Flat ground; screens add their own atmospheric glows.
  */
 @Composable
 fun KairosAppBackground(
@@ -74,8 +77,9 @@ fun KairosAppBackground(
 }
 
 /**
- * A flat paper panel: solid surface fill with a 1px hairline.
- * The name is kept for compatibility; the material is no longer glass.
+ * Frosted glass panel: translucent tonal fill, hairline border with a bright
+ * top edge, soft tinted shadow, and a gentle top sheen. The name is kept for
+ * compatibility; the material is the Moment Blue frosted glass.
  */
 @Composable
 fun KairosGlassSurface(
@@ -87,6 +91,7 @@ fun KairosGlassSurface(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     content: @Composable BoxScope.() -> Unit
 ) {
+    val glass = KairosTheme.glass
     val scheme = MaterialTheme.colorScheme
     val interactionSource = remember { MutableInteractionSource() }
     val pressScale = rememberKairosPressScale(
@@ -107,16 +112,43 @@ fun KairosGlassSurface(
     Box(
         modifier = modifier
             .kairosScale(pressScale)
+            .shadow(
+                elevation = elevation,
+                shape = shape,
+                ambientColor = glass.shadow,
+                spotColor = glass.shadow
+            )
             .clip(shape)
-            .background(if (strong) scheme.surfaceContainer else scheme.surface)
+            .background(
+                if (strong) glass.fillStrong else glass.fill,
+                shape
+            )
             .border(
-                BorderStroke(1.dp, scheme.outlineVariant),
+                BorderStroke(
+                    width = 1.dp,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(glass.highlight, glass.border)
+                    )
+                ),
                 shape = shape
             )
             .then(clickableModifier)
-            .padding(contentPadding),
-        content = content
-    )
+            .padding(contentPadding)
+    ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clip(shape)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(scheme.surface.copy(alpha = 0.06f), Color.Transparent),
+                        startY = 0f,
+                        endY = 200f
+                    )
+                )
+        )
+        content()
+    }
 }
 
 @Composable
@@ -130,7 +162,7 @@ fun KairosIconButton(
     val scheme = MaterialTheme.colorScheme
     KairosGlassSurface(
         modifier = modifier.size(48.dp),
-        shape = RoundedCornerShape(KairosRadius.control),
+        shape = RoundedCornerShape(KairosRadius.controlLarge),
         strong = selected,
         onClick = onClick
     ) {
@@ -145,6 +177,9 @@ fun KairosIconButton(
     }
 }
 
+/**
+ * Object-like reading card: large radius, soft depth, no hard borders.
+ */
 @Composable
 fun KairosReadingSurface(
     modifier: Modifier = Modifier,
@@ -156,9 +191,14 @@ fun KairosReadingSurface(
     val shape = RoundedCornerShape(KairosRadius.readingSurface)
     Box(
         modifier = modifier
+            .shadow(
+                elevation = 3.dp,
+                shape = shape,
+                ambientColor = Color(0x1F1B2A4A),
+                spotColor = Color(0x261B2A4A)
+            )
             .clip(shape)
-            .background(scheme.surface)
-            .border(1.dp, scheme.outlineVariant, shape)
+            .background(scheme.surface, shape)
             .padding(contentPadding),
         content = content
     )
@@ -174,9 +214,9 @@ fun KairosPrimaryButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.height(52.dp),
+        modifier = modifier.height(54.dp),
         enabled = enabled,
-        shape = RoundedCornerShape(KairosRadius.control),
+        shape = RoundedCornerShape(KairosRadius.controlLarge),
         contentPadding = PaddingValues(horizontal = 18.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -207,11 +247,11 @@ fun KairosSecondaryButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.height(52.dp),
+        modifier = modifier.height(54.dp),
         enabled = enabled,
-        shape = RoundedCornerShape(KairosRadius.control),
+        shape = RoundedCornerShape(KairosRadius.controlLarge),
         contentPadding = PaddingValues(horizontal = 18.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.7f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
     ) {
         if (icon != null) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -233,44 +273,47 @@ fun KairosSegmentedControl(
     modifier: Modifier = Modifier
 ) {
     val scheme = MaterialTheme.colorScheme
-    KairosGlassSurface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(KairosRadius.controlLarge),
-        strong = true,
-        contentPadding = PaddingValues(4.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            items.forEachIndexed { index, item ->
-                val selected = selectedIndex == index
-                Surface(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .semantics {
-                            role = Role.Tab
-                            this.selected = selected
-                            stateDescription = if (selected) "Selected" else "Not selected"
-                        },
-                    shape = RoundedCornerShape(KairosRadius.control),
-                    color = if (selected) scheme.primaryContainer else Color.Transparent,
-                    contentColor = if (selected) scheme.onPrimaryContainer else scheme.onSurfaceVariant,
-                    onClick = { onSelected(index) }
-                ) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = item,
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
-                            maxLines = 1
-                        )
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(KairosRadius.controlLarge))
+            .background(scheme.surfaceContainer, RoundedCornerShape(KairosRadius.controlLarge)),
+        content = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items.forEachIndexed { index, item ->
+                    val selected = selectedIndex == index
+                    Surface(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(46.dp)
+                            .semantics {
+                                role = Role.Tab
+                                this.selected = selected
+                                stateDescription = if (selected) "Selected" else "Not selected"
+                            },
+                        shape = RoundedCornerShape(KairosRadius.control),
+                        color = if (selected) scheme.primary else Color.Transparent,
+                        contentColor = if (selected) scheme.onPrimary else scheme.onSurfaceVariant,
+                        onClick = { onSelected(index) }
+                    ) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(
+                                text = item,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
             }
         }
-    }
+    )
 }
 
 @Composable
@@ -289,13 +332,14 @@ fun KairosEmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(KairosSpacing.md)
     ) {
-        KairosGlassSurface(
-            modifier = Modifier.size(72.dp),
-            shape = RoundedCornerShape(KairosRadius.controlLarge)
+        Box(
+            modifier = Modifier
+                .size(76.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center
         ) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Icon(icon, contentDescription = null, modifier = Modifier.size(30.dp), tint = MaterialTheme.colorScheme.primary)
-            }
+            Icon(icon, contentDescription = null, modifier = Modifier.size(32.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
         Text(
@@ -339,21 +383,21 @@ fun KairosSkeletonList(
                     Modifier
                         .fillMaxWidth(widthFraction)
                         .height(20.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = alpha))
                 )
                 Box(
                     Modifier
                         .fillMaxWidth()
                         .height(14.dp)
-                        .clip(RoundedCornerShape(7.dp))
+                        .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = alpha * 0.75f))
                 )
                 Box(
                     Modifier
                         .fillMaxWidth(0.66f)
                         .height(14.dp)
-                        .clip(RoundedCornerShape(7.dp))
+                        .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = alpha * 0.7f))
                 )
             }

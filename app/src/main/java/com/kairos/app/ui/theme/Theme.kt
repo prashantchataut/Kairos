@@ -33,14 +33,14 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = KairosOnIndigoContainerLight,
 
     secondary = KairosClay,
-    onSecondary = Color(0xFFFFF8F0),
+    onSecondary = Color(0xFFFFFFFF),
     secondaryContainer = KairosClayContainerLight,
     onSecondaryContainer = KairosOnClayContainerLight,
 
-    tertiary = KairosVerdigris,
-    onTertiary = Color(0xFFFFF8F0),
-    tertiaryContainer = KairosVerdigrisContainerLight,
-    onTertiaryContainer = KairosOnVerdigrisContainerLight,
+    tertiary = Color(0xFF0090B2),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFD2F2FF),
+    onTertiaryContainer = Color(0xFF004E63),
 
     background = KairosBackgroundLight,
     onBackground = KairosTextPrimaryLight,
@@ -49,13 +49,13 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = KairosSurfaceVariantLight,
     onSurfaceVariant = KairosTextSecondaryLight,
 
-    surfaceDim = Color(0xFFE8E3D6),
+    surfaceDim = Color(0xFFE3E8F3),
     surfaceBright = KairosSurfaceLight,
     surfaceContainerLowest = Color(0xFFFFFFFF),
-    surfaceContainerLow = Color(0xFFF6F2E9),
-    surfaceContainer = Color(0xFFF0EBDF),
-    surfaceContainerHigh = Color(0xFFEAE4D6),
-    surfaceContainerHighest = Color(0xFFE4DECD),
+    surfaceContainerLow = Color(0xFFF2F5FB),
+    surfaceContainer = Color(0xFFEDF1F9),
+    surfaceContainerHigh = Color(0xFFE7ECF7),
+    surfaceContainerHighest = Color(0xFFE0E6F2),
 
     error = KairosError,
     onError = KairosOnError,
@@ -65,9 +65,9 @@ private val LightColorScheme = lightColorScheme(
     outline = KairosOutlineLight,
     outlineVariant = KairosDividerLight,
 
-    inverseSurface = Color(0xFF2E281D),
-    inverseOnSurface = Color(0xFFEDE7DA),
-    inversePrimary = Color(0xFFE5855F),
+    inverseSurface = Color(0xFF1E2636),
+    inverseOnSurface = Color(0xFFE9EDF6),
+    inversePrimary = Color(0xFF8FA6FF),
 
     scrim = Scrim,
     surfaceTint = KairosPrimary
@@ -84,10 +84,10 @@ private val DarkColorScheme = darkColorScheme(
     secondaryContainer = KairosClayContainerDark,
     onSecondaryContainer = KairosOnClayContainerDark,
 
-    tertiary = KairosSeaGlass,
-    onTertiary = Color(0xFF13291D),
-    tertiaryContainer = KairosVerdigrisContainerDark,
-    onTertiaryContainer = KairosOnVerdigrisContainerDark,
+    tertiary = Color(0xFF5FD0E8),
+    onTertiary = Color(0xFF003642),
+    tertiaryContainer = Color(0xFF00536B),
+    onTertiaryContainer = Color(0xFFB8EDFB),
 
     background = KairosBackgroundDark,
     onBackground = KairosTextPrimaryDark,
@@ -96,25 +96,25 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = KairosSurfaceVariantDark,
     onSurfaceVariant = KairosTextSecondaryDark,
 
-    surfaceDim = Color(0xFF171410),
-    surfaceBright = Color(0xFF2A251C),
-    surfaceContainerLowest = Color(0xFF12100A),
-    surfaceContainerLow = Color(0xFF1F1B14),
-    surfaceContainer = Color(0xFF262118),
-    surfaceContainerHigh = Color(0xFF2B251C),
-    surfaceContainerHighest = Color(0xFF312B21),
+    surfaceDim = Color(0xFF0B0E15),
+    surfaceBright = Color(0xFF242C3D),
+    surfaceContainerLowest = Color(0xFF080B11),
+    surfaceContainerLow = Color(0xFF141A25),
+    surfaceContainer = Color(0xFF1A2130),
+    surfaceContainerHigh = Color(0xFF1F2837),
+    surfaceContainerHighest = Color(0xFF242E3F),
 
-    error = Color(0xFFEAA39B),
+    error = Color(0xFFFF8A80),
     onError = Color(0xFF5C140E),
     errorContainer = KairosErrorContainerDark,
-    onErrorContainer = Color(0xFFF4DBD5),
+    onErrorContainer = Color(0xFFFFDAD6),
 
     outline = KairosOutlineDark,
     outlineVariant = KairosDividerDark,
 
-    inverseSurface = Color(0xFFEDE7DA),
-    inverseOnSurface = Color(0xFF221E17),
-    inversePrimary = Color(0xFFB3401F),
+    inverseSurface = Color(0xFFE9EDF6),
+    inverseOnSurface = Color(0xFF101828),
+    inversePrimary = Color(0xFF2E5BFF),
 
     scrim = Scrim,
     surfaceTint = KairosPrimaryDark

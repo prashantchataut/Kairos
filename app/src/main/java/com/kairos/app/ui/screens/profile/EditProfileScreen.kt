@@ -74,33 +74,33 @@ import kotlinx.coroutines.delay
  * - Accessibility: 48dp minimum touch targets
  */
 
-// Design System Colors for Edit Profile — Paper & Ink neutrals
+// Design System Colors for Edit Profile — Moment Blue
 private object EditProfileColors {
-    // Dark Mode — night paper
-    val BackgroundDark = Color(0xFF171410)
-    val CardBackgroundDark = Color(0xFF1D1913)
-    val CardBackgroundElevatedDark = Color(0xFF2E281D)
-    val AccentGreen = Color(0xFFE5855F)      // Vermilion (night)
-    val TextPrimaryDark = Color(0xFFEDE7DA)
-    val TextSecondaryDark = Color(0xFFA79E8C)
-    val TextTertiaryDark = Color(0xFF7C7465)
-    val BorderDark = Color(0xFF3A342A)
-    val InputBackgroundDark = Color(0xFF1D1913)
+    // Dark Mode — charcoal ink-navy
+    val BackgroundDark = Color(0xFF0B0E15)
+    val CardBackgroundDark = Color(0xFF11161F)
+    val CardBackgroundElevatedDark = Color(0xFF1E2636)
+    val AccentGreen = Color(0xFF8FA6FF)      // Periwinkle (night)
+    val TextPrimaryDark = Color(0xFFE9EDF6)
+    val TextSecondaryDark = Color(0xFF9AA5BE)
+    val TextTertiaryDark = Color(0xFF6C7690)
+    val BorderDark = Color(0xFF2A3345)
+    val InputBackgroundDark = Color(0xFF11161F)
 
-    // Light Mode — paper
-    val BackgroundLight = Color(0xFFF4F0E8)
-    val CardBackgroundLight = Color(0xFFFBF8F1)
-    val CardBackgroundElevatedLight = Color(0xFFE4DECD)
-    val AccentGreenLight = Color(0xFFB3401F) // Vermilion
-    val TextPrimaryLight = Color(0xFF221E17)
-    val TextSecondaryLight = Color(0xFF6E6759)
-    val TextTertiaryLight = Color(0xFF98907F)
-    val BorderLight = Color(0xFFD8D2C4)
-    val InputBackgroundLight = Color(0xFFFBF8F1)
+    // Light Mode — pearl
+    val BackgroundLight = Color(0xFFF5F7FC)
+    val CardBackgroundLight = Color(0xFFFBFCFE)
+    val CardBackgroundElevatedLight = Color(0xFFE7ECF7)
+    val AccentGreenLight = Color(0xFF2E5BFF) // Royal blue
+    val TextPrimaryLight = Color(0xFF101828)
+    val TextSecondaryLight = Color(0xFF5A6478)
+    val TextTertiaryLight = Color(0xFF8B93A7)
+    val BorderLight = Color(0xFFD8DFEC)
+    val InputBackgroundLight = Color(0xFFFBFCFE)
 
     // Locked state
     val LockedOverlay = Color(0x80000000)
-    val LockedIcon = Color(0xFF7C7465)
+    val LockedIcon = Color(0xFF6C7690)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -53,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -241,7 +242,7 @@ private fun ProfileHero(
                 KairosMark(
                     modifier = Modifier.size(38.dp),
                     tint = ProfilePaper,
-                    accent = KairosPeriwinkle,
+                    accent = MaterialTheme.colorScheme.primary,
                     revealed = visible
                 )
                 DarkGlassIconButton(
@@ -295,9 +296,14 @@ private fun ProfileIdentityPanel(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(ProfilePanel)
-            .border(1.dp, ProfilePanelHairline, RoundedCornerShape(16.dp))
+            .shadow(18.dp, RoundedCornerShape(26.dp), ambientColor = Color(0x66000000), spotColor = Color(0x59000000))
+            .clip(RoundedCornerShape(26.dp))
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFF232C3F), Color(0xFF141A25))
+                )
+            )
+            .border(1.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(26.dp))
             .padding(horizontal = 24.dp, vertical = 26.dp)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -511,11 +517,10 @@ private fun AchievementEntry(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier,
-        shape = RoundedCornerShape(KairosRadius.controlLarge),
+        modifier = modifier.shadow(6.dp, RoundedCornerShape(24.dp), ambientColor = Color(0x2E1B2A4A), spotColor = Color(0x261B2A4A)),
+        shape = RoundedCornerShape(24.dp),
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 0.dp,
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        tonalElevation = 0.dp
     ) {
         Row(
             modifier = Modifier.padding(18.dp),
@@ -566,7 +571,8 @@ private fun ProfileAvatar(
         modifier = modifier
             .clip(CircleShape)
             .background(ProfilePaper.copy(alpha = 0.12f))
-            .border(1.dp, ProfilePaper.copy(alpha = 0.38f), CircleShape),
+            .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.9f), CircleShape)
+            .shadow(12.dp, CircleShape, ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
         contentAlignment = Alignment.Center
     ) {
         if (!photoUrl.isNullOrBlank()) {
@@ -663,10 +669,11 @@ private fun RhythmTile(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier.heightIn(min = 144.dp),
-        shape = RoundedCornerShape(KairosRadius.controlLarge),
-        color = MaterialTheme.colorScheme.surface,
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        modifier = modifier
+            .heightIn(min = 144.dp)
+            .shadow(6.dp, RoundedCornerShape(24.dp), ambientColor = Color(0x2E1B2A4A), spotColor = Color(0x261B2A4A)),
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surface
     ) {
         Column(
             modifier = Modifier.padding(15.dp),
@@ -764,10 +771,10 @@ private fun initialsFor(name: String): String = name
     .ifBlank { "K" }
 
 /** Night paper tokens for the profile hero, matching the Paper & Ink dark scheme. */
-private val ProfileInk = Color(0xFF171410)
-private val ProfilePaper = Color(0xFFEDE7DA)
-private val ProfilePanel = Color(0xFF2E281D)
-private val ProfilePanelHairline = Color(0xFF3A342A)
+private val ProfileInk = Color(0xFF0B0E15)
+private val ProfilePaper = Color(0xFFE9EDF6)
+private val ProfilePanel = Color(0xFF1E2636)
+private val ProfilePanelHairline = Color(0xFF2A3345)
 
 @Preview(name = "Focused profile", showBackground = true, widthDp = 390, heightDp = 844)
 @Composable

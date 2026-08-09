@@ -1,88 +1,88 @@
-# Kairos Design System — Paper & Ink
+# Kairos Design System — "Moment Blue"
 
 ## Direction
-A warm editorial commonplace book. Daily vocabulary and reflection are a quiet
-ritual, so the interface reads like paper: flat, warm, hairline-structured, with
-one confident serif voice. Nothing floats, nothing glows, nothing is glass.
-
-## Scene sentence
-A person opens Kairos for two quiet minutes beside a window in the morning or
-under a warm lamp at night; the interface should feel like a well-made notebook —
-calm, legible, and composed — never ornamental.
+A calm, intelligent, emotionally warm self-growth app. Vivid royal blue is the
+brand anchor; surfaces are large, rounded, object-like, and softly layered
+(translucent frosted glass, stacked cards, gentle depth). Typography is bold
+and confident; every screen has ONE strong visual moment. Premium consumer
+polish, distinctly mobile.
 
 ## Dials
-- Variance 5 · Motion 3 · Density 3
-- One accent (vermilion), one gray family (warm paper), serif display, hairline structure.
+Variance 6 · Motion 5 · Density 3.
 
 ## Anchors
-- Editorial commonplace books: confident serif display, generous measure, quiet rules.
-- Material 3: navigation, components, and interaction stay on-spec; brand expresses
-  through color roles, the type scale, and shape.
-- Native Android ergonomics: 48dp targets, system Back, edge-to-edge insets.
+- A recognizable **companion mark** (soft rounded form with calm eyes + a
+  "moment" spark) that works at 24px, as app icon, and as the AI companion.
+- Large rounded "object" cards with stacked depth — not generic dashboard grids.
+- Floating frosted-glass navigation with an expanding active tab.
+- Bold typography as a design element (huge greetings, short strong headlines).
+- Intentional dark mode: charcoal ink-navy, luminous blue highlights, atmospheric glows.
 
 ## Color strategy
-Warm paper neutrals carry the interface. Vermilion marks primary action and
-selection — the only accent. Deep forest is reserved for success states, oxblood
-for errors. No purple, no indigo, no gradients, no pastels, no neon greens.
+Royal/electric blue `#2E5BFF` is the single brand anchor. Periwinkle, soft
+cyan, mint (progress), and warm coral (emotion) support it. Light mode is
+pearl with a blue tint; dark mode is charcoal ink-navy with luminous highlights.
 
-### Light — paper
-- Ground: `#F4F0E8` · Surface: `#FBF8F1` · Container: `#E4DECD`
-- Ink: `#221E17` · Soft ink: `#6E6759` · Faint ink: `#98907F`
-- Hairline: `#D8D2C4`
-- Accent (vermilion): `#B3401F` · Wash: `#F6E3DA` · On accent: `#FFF8F0`
-- Success: deep forest `#33543F` · Error: oxblood `#B3261E`
+### Light
+- Background `#F5F7FC` · Surface `#FBFCFE` · Container `#E7ECF7`
+- Ink `#101828` · Soft `#5A6478` · Faint `#8B93A7` · Hairline `#D8DFEC`
+- Primary royal blue `#2E5BFF` · On `#FFFFFF` · Wash `#DDE5FF` · On wash `#0A2A75`
+- Secondary coral `#E86A5E` · Tertiary cyan `#0090B2` · Success mint `#2E9E6B` · Error `#D64545`
 
-### Dark — night paper
-- Ground: `#171410` · Surface: `#1D1913` · Container: `#2E281D`
-- Ink: `#EDE7DA` · Soft: `#A79E8C` · Faint: `#7C7465`
-- Accent: `#E5855F` · Wash: `#4A2415` · Hairline: `#3A342A`
-- Success: pale forest `#8FA98F`
+### Dark — charcoal ink-navy
+- Background `#0B0E15` · Surface `#11161F` · Container `#1E2636`
+- Ink `#E9EDF6` · Soft `#9AA5BE` · Faint `#6C7690` · Hairline `#2A3345`
+- Primary periwinkle `#8FA6FF` · On `#0A1E54` · Wash `#1B2F6E`
+- Success mint `#7BD9A5` · Error `#FF8A80`
 
 ## Typography
-- Display and headline roles: bundled Lora (semi-bold), tight tracking (−0.2 to
-  −0.8sp), reduced line height. Lora is the voice of the word, the quote, and the
-  reflection.
-- Body, titles, and labels: native Android sans, sentence case everywhere.
-- No uppercase eyebrows or kickers above headings. The heading carries its own weight.
-- Body minimum 14sp; reading text 17–20sp with generous line height.
+- Display/headline/title: bold native sans, tight tracking, generous sizes.
+- Lora (bundled serif) reserved for the reflective voice: quotes, prompts,
+  journal titles — italic accents inside a bold-sans world.
+- Sentence case everywhere. No all-caps eyebrows.
 
 ## Shape & surfaces
-- Radii capped at 12–16dp: controls 12, containers 16. No pills except tiny chips.
-- Flat paper panels: solid surface/container fill + 1px hairline (`outlineVariant`).
-  No shadows, no blur, no gradient borders, no specular overlays.
-- The `KairosGlassSurface` name is retained for compatibility; the material is paper.
+- Generous radii: controls 14, buttons 18, reading cards 24, feature cards 26,
+  floating 30, nav capsule 32.
+- Frosted glass: translucent tonal fill, bright top edge, hairline border,
+  soft tinted shadow, gentle top sheen. No real blur (platform hacks); 
+  translucency carries the effect on every API level.
+- Object cards: large radius, soft depth, no hard borders on reading surfaces.
+- Stacked-card depth: one layer offset behind the hero card, slight rotation.
 
 ## Navigation
-- **Liquid-glass floating capsule** (bottom bar / rail): translucent warm fill with a
-  bright top edge, 1px hairline border, soft tinted shadow, and a gentle top
-  sheen. Real backdrop blur needs platform-specific hacks, so translucency
-  carries the effect and degrades gracefully on every API level.
-- Selected destination: soft accent-wash pill with the filled icon and
-  semi-bold vermilion-on-wash text.
+- Floating frosted-glass capsule above content, breathing room underneath.
+- Inactive destinations are circular icons; the **active tab expands** into a
+  bright blue capsule with icon + label (animated width).
+
+## Screens
+- **Today**: huge personalized greeting, then ONE dominant blue word card
+  (white serif word, stacked depth, white CTA), then the layered thought card,
+  then a quiet progress line.
+- **Reflect**: one intimate prompt card (serif question, mood orbs), then the
+  journal as stacked object cards.
+- **Practice (flashcard)**: dominant blue card with white serif word; grading
+  via friendly emoji circles (Again/Hard/Good/Easy).
+- **Profile**: banner identity hero, avatar with blue glow ring, frosted
+  identity panel, grouped object cards.
+- **Settings/Edit profile**: blue-world palettes, grouped rounded surfaces.
 
 ## Onboarding
-- Night-paper ground with a slow-breathing warm glow (respects reduced motion).
-- Floating glass panels: translucent tonal fill, hairline border, soft shadow.
-- Segmented progress bar that tracks the pager drag; chips animate color, scale,
-  and a check that scales in; the CTA button compresses on press.
-- Pages parallax (fade, scale, translate) while swiping.
-
-## Layout
-- Edge-to-edge flat ground (`colorScheme.background`).
-- Content measure capped on tablets.
-- Four top-level destinations: Today, Learn, Reflect, Library.
-- Today is a two-page book spread — word folio and thought folio — each opening
-  with a hairline rule (no labels, no section numbers).
+A cinematic 4-page launch sequence on ink-navy with atmospheric blue glows:
+1. **Poster** — the breathing mark, "Make space for what matters."
+2. **Understand yourself** — big tactile chips for quote themes.
+3. **Learn what changes you** — word-interest chips + pace/session size.
+4. **Turn insight into action** — "building your Kairos" ring animation,
+   destinations, then a single blue CTA.
 
 ## Motion
-- 100–150ms press feedback.
-- 200–280ms state changes.
-- 320ms maximum for navigation or panel transitions.
-- Reduced-motion mode removes spatial movement while preserving fades and state feedback.
+- 110ms press, 240ms state, 320ms page transitions.
+- Logo breathes (3200ms, reduced-motion aware).
+- Segmented progress tracks the pager; chips animate color + scale; active nav
+  tab expands; cards stack with subtle rotation.
 
 ## Accessibility
 - 48dp minimum interactive targets.
-- Contrast at least WCAG AA.
-- Semantics describe state and action, not decoration.
-- Large font layouts reflow without clipping.
-- Selected navigation state is conveyed by text, icon, and semantics, not color alone.
+- WCAG AA contrast in both themes.
+- Reduced-motion honored (glows hold static, breathing stops, sweeps freeze).
+- Semantics describe state and action; selected nav conveyed by icon+label+state.
