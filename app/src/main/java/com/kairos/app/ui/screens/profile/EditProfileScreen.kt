@@ -332,24 +332,35 @@ private fun AvatarSection(
                     .fillMaxSize()
                     .clip(CircleShape)
                     .background(
-                        if (isDarkMode) EditProfileColors.CardBackgroundDark
-                        else EditProfileColors.CardBackgroundLight
-                    )
-                    .border(
-                        width = 3.dp,
-                        color = if (isDarkMode) EditProfileColors.AccentGreen
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                if (isDarkMode) EditProfileColors.AccentGreen
                                 else EditProfileColors.AccentGreenLight,
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
+                                if (isDarkMode) EditProfileColors.AccentGreen.copy(alpha = 0.75f)
+                                else EditProfileColors.AccentGreenLight.copy(alpha = 0.75f)
+                            )
+                        )
+                    )
+                    .padding(3.dp)
             ) {
-                Icon(
-                    imageVector = getAvatarIcon(currentAvatarId),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = if (isDarkMode) EditProfileColors.AccentGreen
-                           else EditProfileColors.AccentGreenLight
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .background(
+                            if (isDarkMode) EditProfileColors.CardBackgroundDark
+                            else EditProfileColors.CardBackgroundLight
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = getAvatarIcon(currentAvatarId),
+                        contentDescription = null,
+                        modifier = Modifier.size(46.dp),
+                        tint = if (isDarkMode) EditProfileColors.AccentGreen
+                               else EditProfileColors.AccentGreenLight
+                    )
+                }
             }
 
             // Edit badge
