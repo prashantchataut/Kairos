@@ -24,6 +24,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.LinearProgressIndicator
@@ -32,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,9 +73,20 @@ fun FocusedLearnScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var searchVisible by rememberSaveable { mutableStateOf(false) }
+    val refreshMessage by viewModel.refreshMessage.collectAsStateWithLifecycle()
+    val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
+    val snackbar = remember { SnackbarHostState() }
+
+    LaunchedEffect(refreshMessage) {
+        refreshMessage?.let { message ->
+            snackbar.showSnackbar(message)
+            viewModel.clearRefreshMessage()
+        }
+    }
     val filters = VocabularyFilter.entries
     val selectedFilter = filters.indexOfFirst { it.key == state.currentFilter }.coerceAtLeast(0)
 
+    Box(modifier = Modifier.fillMaxSize()) {
     Column(modifier = Modifier.fillMaxSize()) {
         KairosScreenHeader(
             title = "Learn",
@@ -92,6 +106,12 @@ fun FocusedLearnScreen(
                     contentDescription = if (state.showFavoritesOnly) "Show all words" else "Show favorite words",
                     selected = state.showFavoritesOnly,
                     onClick = viewModel::toggleFavoritesOnly
+                )
+                KairosIconButton(
+                    icon = KairosIcons.Outlined.Refresh,
+                    contentDescription = "Find fresh words",
+                    selected = refreshing,
+                    onClick = viewModel::refreshOnlineContent
                 )
             }
         )
@@ -200,6 +220,13 @@ fun FocusedLearnScreen(
                 }
             }
         }
+    }
+    SnackbarHost(
+        hostState = snackbar,
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 96.dp)
+    )
     }
 }
 

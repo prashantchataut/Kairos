@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val onlineContentRefresher: com.kairos.app.data.content.OnlineContentRefresher
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainActivityUiState())
@@ -49,6 +50,15 @@ class MainViewModel @Inject constructor(
                     startDestination = startDestination
                 )
             }
+        }
+
+        // --- ONLINE CONTENT (optional, non-blocking) ---
+        // When a provider key is configured and the device is online, top up the
+        // curated catalog with fresh preference-matched words and quotes. Never
+        // blocks launch and never fails the app.
+        viewModelScope.launch {
+            runCatching { onlineContentRefresher.refreshIfDue() }
+                .onFailure { android.util.Log.w("MainViewModel", "Online refresh skipped", it) }
         }
 
         // --- NON-CRITICAL PATH ---
