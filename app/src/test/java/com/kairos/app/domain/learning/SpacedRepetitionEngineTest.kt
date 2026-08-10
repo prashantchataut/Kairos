@@ -29,7 +29,8 @@ class SpacedRepetitionEngineTest {
 
         assertEquals(0, result.newRepetitions)
         assertEquals(0, result.newCorrectStreak)
-        assertEquals(2, result.newBoxLevel) // box 3 -> box 2
+        assertEquals(1, result.newBoxLevel) // incorrect answers reset to box 1
+        assertEquals(1, result.newInterval)
         assertFalse(result.isMastered)
         assertTrue(result.nextReviewDate > System.currentTimeMillis())
     }
@@ -41,17 +42,20 @@ class SpacedRepetitionEngineTest {
         assertEquals(1, result.newRepetitions)
         assertEquals(1, result.newCorrectStreak)
         assertEquals(2, result.newBoxLevel) // box 1 -> box 2
-        assertEquals(2, result.newInterval)
+        assertEquals(1, result.newInterval) // first successful recall: 1 day
         assertFalse(result.isMastered)
     }
 
     @Test
-    fun `easy advances faster than good`() {
+    fun `easy raises ease factor more than good`() {
         val good = engine.calculateNextReview(quality = 4, currentLearning = freshEntity())
         val easy = engine.calculateNextReview(quality = 5, currentLearning = freshEntity())
 
-        assertTrue("easy interval should exceed good interval", easy.newInterval > good.newInterval)
         assertEquals(2, easy.newBoxLevel)
+        assertTrue("easy should raise ease factor more", easy.newEaseFactor > good.newEaseFactor)
+        // First successful recall is always 1 day for both.
+        assertEquals(1, good.newInterval)
+        assertEquals(1, easy.newInterval)
     }
 
     @Test

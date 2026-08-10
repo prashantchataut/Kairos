@@ -34,11 +34,13 @@ class OnboardingRepositoryIdempotencyTest {
     )
 
     private fun mockedDatabase(): KairosDatabase {
-        val db = mockk<KairosDatabase>()
+        val db = mockk<KairosDatabase>(relaxed = true)
+        // Room's withTransaction() executes the block on the transaction
+        // executor; run it inline so the seeded content actually inserts.
+        every { db.transactionExecutor } returns java.util.concurrent.Executor { it.run() }
         every { db.beginTransaction() } just runs
         every { db.setTransactionSuccessful() } just runs
         every { db.endTransaction() } just runs
-        every { db.inTransaction() } returns true
         return db
     }
 
@@ -56,12 +58,12 @@ class OnboardingRepositoryIdempotencyTest {
 
     @Test
     fun `completeSetup skips catalog inserts when tables are already seeded`() = runTest {
-        val vocabDao = mockk<VocabularyDao>()
-        val quoteDao = mockk<QuoteDao>()
-        val proverbDao = mockk<ProverbDao>()
-        val idiomDao = mockk<IdiomDao>()
-        val phraseDao = mockk<PhraseDao>()
-        val userDao = mockk<UserDao>()
+        val vocabDao = mockk<VocabularyDao>(relaxed = true)
+        val quoteDao = mockk<QuoteDao>(relaxed = true)
+        val proverbDao = mockk<ProverbDao>(relaxed = true)
+        val idiomDao = mockk<IdiomDao>(relaxed = true)
+        val phraseDao = mockk<PhraseDao>(relaxed = true)
+        val userDao = mockk<UserDao>(relaxed = true)
 
         coEvery { vocabDao.countAll() } returns 47
         coEvery { quoteDao.countAll() } returns 77
@@ -98,12 +100,12 @@ class OnboardingRepositoryIdempotencyTest {
 
     @Test
     fun `completeSetup seeds catalog when tables are empty`() = runTest {
-        val vocabDao = mockk<VocabularyDao>()
-        val quoteDao = mockk<QuoteDao>()
-        val proverbDao = mockk<ProverbDao>()
-        val idiomDao = mockk<IdiomDao>()
-        val phraseDao = mockk<PhraseDao>()
-        val userDao = mockk<UserDao>()
+        val vocabDao = mockk<VocabularyDao>(relaxed = true)
+        val quoteDao = mockk<QuoteDao>(relaxed = true)
+        val proverbDao = mockk<ProverbDao>(relaxed = true)
+        val idiomDao = mockk<IdiomDao>(relaxed = true)
+        val phraseDao = mockk<PhraseDao>(relaxed = true)
+        val userDao = mockk<UserDao>(relaxed = true)
 
         coEvery { vocabDao.countAll() } returns 0
         coEvery { quoteDao.countAll() } returns 0
