@@ -72,8 +72,9 @@ class OnboardingRepositoryIdempotencyTest {
         coEvery { userDao.insertUserStats(any()) } just runs
         coEvery { userDao.insertAchievements(any()) } just runs
 
+        val prefs = mockedPreferences()
         val repo = OnboardingRepositoryImpl(
-            preferencesManager = mockedPreferences(),
+            preferencesManager = prefs,
             vocabularyDao = vocabDao,
             quoteDao = quoteDao,
             proverbDao = proverbDao,
@@ -118,8 +119,9 @@ class OnboardingRepositoryIdempotencyTest {
         coEvery { userDao.insertUserStats(any()) } just runs
         coEvery { userDao.insertAchievements(any()) } just runs
 
+        val prefs = mockedPreferences()
         val repo = OnboardingRepositoryImpl(
-            preferencesManager = mockedPreferences(),
+            preferencesManager = prefs,
             vocabularyDao = vocabDao,
             quoteDao = quoteDao,
             proverbDao = proverbDao,
