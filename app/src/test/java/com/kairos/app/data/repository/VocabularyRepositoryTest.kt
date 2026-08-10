@@ -63,7 +63,7 @@ class VocabularyRepositoryTest {
                 learnedAt = System.currentTimeMillis()
             )
         )
-        coEvery { vocabularyDao.getAllVocabulary() } returns flowOf(mockWords)
+        coEvery { vocabularyDao.getAllCuratedVocabulary() } returns flowOf(mockWords)
 
         // When
         val result = repository.getAllWords().first()
