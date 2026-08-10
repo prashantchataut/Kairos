@@ -212,9 +212,8 @@ class NewJournalEntryViewModel @Inject constructor(
                 validationHint = validation.getMessage()
             )
         }
-    }
-
         scheduleDraftSave(content)
+    }
 
     private var draftJob: kotlinx.coroutines.Job? = null
 

@@ -433,7 +433,6 @@ private fun ModuleCard(module: ModuleSummary) {
 }
 
 @Composable
-private fun KairosSearchField(@Composable
 private fun KairosSearchField(
     query: String,
     onQueryChange: (String) -> Unit,
