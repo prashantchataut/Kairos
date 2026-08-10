@@ -285,10 +285,18 @@ private fun QuoteLibraryRow(
         contentDescription = "Quote by ${quote.author}. ${quote.content}"
     ) {
         Text(
-            text = "“${quote.content}”",
+            text = "“",
+            style = MaterialTheme.typography.displayMedium.copy(fontFamily = SerifFamily),
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
+            modifier = Modifier.height(18.dp)
+        )
+        Text(
+            text = quote.content,
             style = MaterialTheme.typography.headlineSmall.copy(fontFamily = SerifFamily),
             fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.Normal
+            fontWeight = FontWeight.Normal,
+            lineHeight = MaterialTheme.typography.headlineSmall.lineHeight * 1.18f
         )
         Text(
             text = quote.author.ifBlank { "Unknown author" },
@@ -405,12 +413,12 @@ private fun LibrarySurface(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(3.dp, RoundedCornerShape(KairosRadius.readingSurface), ambientColor = Color(0x1F1B2A4A), spotColor = Color(0x1A1B2A4A))
             .semantics { this.contentDescription = contentDescription },
-        shape = RoundedCornerShape(KairosRadius.controlLarge),
+        shape = RoundedCornerShape(KairosRadius.readingSurface),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp,
-        shadowElevation = 0.dp,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier.padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = 8.dp),

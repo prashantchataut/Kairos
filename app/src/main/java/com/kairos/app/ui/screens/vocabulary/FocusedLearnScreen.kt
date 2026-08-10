@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Icon
@@ -306,20 +308,26 @@ private fun SessionLauncher(
  */
 @Composable
 private fun LearningOverview(state: VocabularyListUiState) {
-    val targetProgress = if (state.totalCount == 0) 0f else state.savedCount.toFloat() / state.totalCount.toFloat()
-    val reducedMotion = rememberKairosReducedMotion()
-    val progress by animateFloatAsState(
-        targetValue = targetProgress.coerceIn(0f, 1f),
-        animationSpec = tween(
-            durationMillis = if (reducedMotion) KairosDurations.Micro else 640,
-            easing = KairosEasing.EaseOutExpo
-        ),
-        label = "vocabulary-progress"
-    )
+    // Group the curated catalog into themed modules so Learn reads as a
+    // journey through topics, not a flat database list.
+    val modules = remember(state.words) {
+        state.words
+            .filter { it.category.isNotBlank() && it.category != "general" }
+            .groupBy { it.category }
+            .map { (category, words) ->
+                ModuleSummary(
+                    category = category,
+                    total = words.size,
+                    saved = words.count { it.isFavorite }
+                )
+            }
+            .sortedByDescending { it.total }
+            .take(6)
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -327,7 +335,7 @@ private fun LearningOverview(state: VocabularyListUiState) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Your vocabulary",
+                text = "Continue learning",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -337,19 +345,95 @@ private fun LearningOverview(state: VocabularyListUiState) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        LinearProgressIndicator(
-            progress = { progress },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp)),
-            color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.outlineVariant
-        )
+        if (modules.isEmpty()) {
+            Text(
+                text = "Words you save will collect into themes here.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        } else {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(end = 8.dp)
+            ) {
+                items(modules, key = { it.category }) { module ->
+                    ModuleCard(module)
+                }
+            }
+        }
+    }
+}
+
+private data class ModuleSummary(
+    val category: String,
+    val total: Int,
+    val saved: Int
+)
+
+@Composable
+private fun ModuleCard(module: ModuleSummary) {
+    val scheme = MaterialTheme.colorScheme
+    val accent = when (module.category) {
+        "literary" -> MaterialTheme.colorScheme.tertiary
+        "academic" -> MaterialTheme.colorScheme.primary
+        "business" -> Color(0xFFE8960C)
+        "communication" -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.primary
+    }
+    val progress = if (module.total == 0) 0f else module.saved.toFloat() / module.total
+
+    Surface(
+        modifier = Modifier
+            .width(168.dp)
+            .shadow(6.dp, RoundedCornerShape(24.dp), ambientColor = Color(0x2E1B2A4A), spotColor = Color(0x261B2A4A)),
+        shape = RoundedCornerShape(24.dp),
+        color = scheme.surface
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(accent.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = module.category.take(2).uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = accent
+                )
+            }
+            Text(
+                text = module.category.replaceFirstChar { it.uppercase() },
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = "${module.saved} saved · ${module.total} words",
+                style = MaterialTheme.typography.bodySmall,
+                color = scheme.onSurfaceVariant
+            )
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp)),
+                color = accent,
+                trackColor = scheme.outlineVariant
+            )
+        }
     }
 }
 
 @Composable
+private fun KairosSearchField(@Composable
 private fun KairosSearchField(
     query: String,
     onQueryChange: (String) -> Unit,

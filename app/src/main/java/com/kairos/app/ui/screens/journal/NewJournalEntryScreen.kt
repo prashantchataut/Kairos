@@ -115,6 +115,11 @@ fun NewJournalEntryScreen(
         else scope.launch { snackbar.showSnackbar("Microphone permission is needed for a voice note.") }
     }
 
+    LaunchedEffect(Unit) {
+        if (prefilledContent.isNullOrBlank()) {
+            viewModel.restoreDraft()
+        }
+    }
     LaunchedEffect(prefilledContent) {
         if (!prefilledContent.isNullOrBlank() && state.content.isBlank()) {
             viewModel.updateContent(prefilledContent)
