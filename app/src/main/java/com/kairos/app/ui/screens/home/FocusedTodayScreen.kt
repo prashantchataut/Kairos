@@ -345,18 +345,47 @@ private fun WordMoment(
                         state.wordPartOfSpeech.takeIf(String::isNotBlank),
                         state.wordPronunciation.takeIf(String::isNotBlank)?.let { "/$it/" }
                     ).joinToString("  ·  ")
-                    if (metadata.isNotBlank()) {
-                        Text(
-                            text = metadata,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White.copy(alpha = 0.72f)
-                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        if (metadata.isNotBlank()) {
+                            Text(
+                                text = metadata,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White.copy(alpha = 0.72f)
+                            )
+                        }
+                        if (state.wordOfTheDay.isNotBlank()) {
+                            val tts = com.kairos.app.di.KairosEntryPoints.textToSpeech()
+                            KairosGlassSurface(
+                                modifier = Modifier.size(36.dp),
+                                shape = CircleShape,
+                                onClick = { tts.speak(state.wordOfTheDay) }
+                            ) {
+                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = KairosIcons.PlayArrow,
+                                        contentDescription = "Hear pronunciation",
+                                        modifier = Modifier.size(17.dp),
+                                        tint = Color.White.copy(alpha = 0.9f)
+                                    )
+                                }
+                            }
+                        }
                     }
                     Text(
                         text = state.wordDefinition,
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White.copy(alpha = 0.95f)
                     )
+                    if (state.wordRecommendationReason.isNotBlank()) {
+                        Text(
+                            text = "Chosen because ${state.wordRecommendationReason}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White.copy(alpha = 0.62f)
+                        )
+                    }
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
