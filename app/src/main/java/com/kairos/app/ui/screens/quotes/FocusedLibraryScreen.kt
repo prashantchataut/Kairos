@@ -3,6 +3,7 @@ package com.kairos.app.ui.screens.quotes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -35,6 +37,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -75,7 +79,6 @@ fun FocusedLibraryScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         KairosScreenHeader(
             title = "Library",
-            eyebrow = "Words & ideas",
             subtitle = librarySummary(state),
             actions = {
                 KairosIconButton(
@@ -264,7 +267,7 @@ private fun LibraryListOrEmpty(
                     start = KairosSpacing.screen,
                     end = KairosSpacing.screen,
                     top = 18.dp,
-                    bottom = 28.dp
+                    bottom = 40.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 content = content
@@ -285,10 +288,18 @@ private fun QuoteLibraryRow(
         contentDescription = "Quote by ${quote.author}. ${quote.content}"
     ) {
         Text(
-            text = "“${quote.content}”",
+            text = "“",
+            style = MaterialTheme.typography.displayMedium.copy(fontFamily = SerifFamily),
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
+            modifier = Modifier.height(18.dp)
+        )
+        Text(
+            text = quote.content,
             style = MaterialTheme.typography.headlineSmall.copy(fontFamily = SerifFamily),
             fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.Normal
+            fontWeight = FontWeight.Normal,
+            lineHeight = MaterialTheme.typography.headlineSmall.lineHeight * 1.18f
         )
         Text(
             text = quote.author.ifBlank { "Unknown author" },
@@ -405,9 +416,10 @@ private fun LibrarySurface(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(3.dp, RoundedCornerShape(KairosRadius.readingSurface), ambientColor = Color(0x1F1B2A4A), spotColor = Color(0x1A1B2A4A))
             .semantics { this.contentDescription = contentDescription },
-        shape = RoundedCornerShape(26.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+        shape = RoundedCornerShape(KairosRadius.readingSurface),
+        color = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp,
         shadowElevation = 0.dp
     ) {

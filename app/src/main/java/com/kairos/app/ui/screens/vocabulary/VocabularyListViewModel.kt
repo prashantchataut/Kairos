@@ -11,6 +11,7 @@ import com.kairos.app.domain.repository.VocabularyRepository
 import com.kairos.app.ui.browse.filterVocabulary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -50,7 +51,8 @@ private data class VocabularyBrowseCriteria(
 class VocabularyListViewModel @Inject constructor(
     private val vocabularyRepository: VocabularyRepository,
     private val dailyPlanRepository: DailyPlanRepository,
-    private val userIdProvider: UserIdProvider
+    private val userIdProvider: UserIdProvider,
+    private val onlineContentRefresher: com.kairos.app.data.content.OnlineContentRefresher
 ) : ViewModel() {
 
     private val criteria = MutableStateFlow(VocabularyBrowseCriteria())
@@ -144,6 +146,38 @@ class VocabularyListViewModel @Inject constructor(
 
     fun clearError() {
         transientError.value = null
+    }
+
+    private val _refreshMessage = MutableStateFlow<String?>(null)
+    val refreshMessage: StateFlow<String?> = _refreshMessage.asStateFlow()
+
+    private val _refreshing = MutableStateFlow(false)
+    val refreshing: StateFlow<Boolean> = _refreshing.asStateFlow()
+
+    /** Pull fresh curated content from the online provider (best-effort). */
+    fun refreshOnlineContent() {
+        if (_refreshing.value) return
+        viewModelScope.launch {
+            _refreshing.value = true
+            val message = runCatching { onlineContentRefresher.refreshIfDue(force = true) }
+                .fold(
+                    onSuccess = { result ->
+                        when {
+                            result.skipped -> "Online refresh is not configured; showing the curated library"
+                            result.nothingNew -> "You are up to date — no new words to add"
+                            else -> "Added ${result.wordsAdded} words and ${result.quotesAdded} quotes"
+                        }
+                    },
+                    onFailure = { "Could not refresh right now; the curated library is ready" }
+                )
+            reloadSignal.update { it + 1 }
+            _refreshing.value = false
+            _refreshMessage.value = message
+        }
+    }
+
+    fun clearRefreshMessage() {
+        _refreshMessage.value = null
     }
 
     fun retry() {

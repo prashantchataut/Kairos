@@ -42,7 +42,9 @@ class VocabularyRepositoryImpl @Inject constructor(
     }
 
     override fun getAllWords(): Flow<List<VocabularyEntity>> {
-        return vocabularyDao.getAllVocabulary()
+        // Promoted surface: curated roots only (auto-derived family rows are
+        // hidden so the catalog reads as hand-picked, not dictionary spam).
+        return vocabularyDao.getAllCuratedVocabulary()
     }
 
     override suspend fun getWordById(id: Long): Result<VocabularyEntity> {

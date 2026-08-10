@@ -87,7 +87,6 @@ fun InterestsSetupScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         KairosScreenHeader(
             title = "Interests & setup",
-            eyebrow = "Preferences",
             subtitle = "Words and quotes Kairos should favor",
             actions = {
                 KairosIconButton(
@@ -255,7 +254,7 @@ private fun SelectorPill(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.height(46.dp),
+        modifier = modifier.height(48.dp),
         shape = RoundedCornerShape(KairosRadius.control),
         color = if (selected) {
             MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
@@ -309,11 +308,11 @@ private fun InterestChip(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(50),
+        shape = RoundedCornerShape(KairosRadius.control),
         color = if (selected) {
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
+            MaterialTheme.colorScheme.primaryContainer
         } else {
-            MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+            MaterialTheme.colorScheme.surface
         },
         border = BorderStroke(
             1.dp,
@@ -325,7 +324,7 @@ private fun InterestChip(
             text = label,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-            color = if (selected) MaterialTheme.colorScheme.primary
+            color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer
             else MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
         )

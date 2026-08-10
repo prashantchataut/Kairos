@@ -3,37 +3,38 @@ package com.kairos.app.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * Kairos color system.
+ * Kairos color system — "Moment Blue".
  *
- * Mineral indigo provides recognition, clay adds editorial warmth, and verdigris
- * communicates completion. Existing Kairos-named aliases remain for binary and
- * source compatibility while screens migrate to semantic Kairos tokens.
+ * A vivid royal-blue brand anchor with periwinkle, soft cyan, and mint
+ * supporting tones. Light mode is pearl with a blue tint; dark mode is
+ * charcoal ink-navy with luminous blue highlights. All legacy alias names are
+ * preserved for binary/source compatibility.
  */
 
 // =============================================================================
 // BRAND COLORS - Core Identity
 // =============================================================================
 
-val KairosMineralIndigo = Color(0xFF495CC7)
-val KairosClay = Color(0xFFC86F4E)
-val KairosVerdigris = Color(0xFF2E7D70)
-val KairosPeriwinkle = Color(0xFFAEB8FF)
-val KairosSoftClay = Color(0xFFE39A7D)
-val KairosSeaGlass = Color(0xFF76C3B3)
+val KairosMineralIndigo = Color(0xFF2E5BFF)   // Royal/electric blue — the brand anchor
+val KairosClay = Color(0xFFE86A5E)            // Warm coral — emotional accent
+val KairosVerdigris = Color(0xFF2E9E6B)       // Mint — success/progress
+val KairosPeriwinkle = Color(0xFF8FA6FF)      // Periwinkle — dark-mode primary
+val KairosSoftClay = Color(0xFFE8947F)        // Soft coral for dark secondary
+val KairosSeaGlass = Color(0xFF7BD9A5)        // Pale mint — dark success
 
-val KairosIndigoContainerLight = Color(0xFFE3E6FF)
-val KairosOnIndigoContainerLight = Color(0xFF17215F)
-val KairosClayContainerLight = Color(0xFFFFDBCF)
-val KairosOnClayContainerLight = Color(0xFF4A1D10)
-val KairosVerdigrisContainerLight = Color(0xFFBDEBDD)
-val KairosOnVerdigrisContainerLight = Color(0xFF08372F)
+val KairosIndigoContainerLight = Color(0xFFDDE5FF)   // Blue wash
+val KairosOnIndigoContainerLight = Color(0xFF0A2A75) // Deep navy on wash
+val KairosClayContainerLight = Color(0xFFFFE0DC)     // Coral wash
+val KairosOnClayContainerLight = Color(0xFF6E241C)
+val KairosVerdigrisContainerLight = Color(0xFFD5F5E2) // Mint wash
+val KairosOnVerdigrisContainerLight = Color(0xFF0F3B28)
 
-val KairosIndigoContainerDark = Color(0xFF303C88)
-val KairosOnIndigoContainerDark = Color(0xFFE3E6FF)
-val KairosClayContainerDark = Color(0xFF633826)
-val KairosOnClayContainerDark = Color(0xFFFFDBCF)
-val KairosVerdigrisContainerDark = Color(0xFF174E45)
-val KairosOnVerdigrisContainerDark = Color(0xFFBDEBDD)
+val KairosIndigoContainerDark = Color(0xFF1B2F6E)     // Night blue wash
+val KairosOnIndigoContainerDark = Color(0xFFDDE5FF)
+val KairosClayContainerDark = Color(0xFF6E2E26)
+val KairosOnClayContainerDark = Color(0xFFFFE0DC)
+val KairosVerdigrisContainerDark = Color(0xFF0F3B28)
+val KairosOnVerdigrisContainerDark = Color(0xFF7BD9A5)
 
 val KairosForestGreen = KairosMineralIndigo
 val KairosWarmAmber = KairosClay
@@ -42,73 +43,74 @@ val KairosPrimary = KairosForestGreen
 val KairosSecondary = KairosWarmAmber
 
 // =============================================================================
-// LIGHT THEME COLORS — Editorial warm neutrals
+// LIGHT THEME COLORS — Pearl with a blue tint
 // =============================================================================
 
-val KairosBackgroundLight = Color(0xFFF7F6F2)          // Warm off-white (green tint)
-val KairosSurfaceLight = Color(0xFFFCFBF8)             // Warm white
-val KairosSurfaceVariantLight = Color(0xFFF0EFEA)      // Warm light gray
-val KairosSurfaceContainerLight = Color(0xFFE8E8E4)     // Warm container gray
+val KairosBackgroundLight = Color(0xFFF5F7FC)          // Pearl blue-tinted ground
+val KairosSurfaceLight = Color(0xFFFBFCFE)             // Pearl surface
+val KairosSurfaceVariantLight = Color(0xFFEDF1F9)      // Pale blue-gray
+val KairosSurfaceContainerLight = Color(0xFFE7ECF7)    // Blue-tinted container
 
-val KairosTextPrimaryLight = Color(0xFF202126)         // Warm near-black (olive undertone)
-val KairosTextSecondaryLight = Color(0xFF666970)         // Warm medium gray (green-gray)
-val KairosTextTertiaryLight = Color(0xFF92959D)         // Warm light gray
-val KairosTextOnPrimaryLight = Color(0xFFFFFFFF)        // White on green
-val KairosTextOnAccentLight = Color(0xFFFFFFFF)         // White on accent
+val KairosTextPrimaryLight = Color(0xFF101828)         // Ink navy
+val KairosTextSecondaryLight = Color(0xFF5A6478)       // Soft slate
+val KairosTextTertiaryLight = Color(0xFF65708A)        // Faint slate (4.6:1 on pearl)
+val KairosTextOnPrimaryLight = Color(0xFFFFFFFF)       // White on blue
+val KairosTextOnAccentLight = Color(0xFFFFFFFF)
 
-val KairosOutlineLight = Color(0xFFD7D8DE)              // Warm outline
-val KairosDividerLight = Color(0xFFE7E7E3)              // Warm divider
-
-// =============================================================================
-// DARK THEME COLORS — Quiet ink-toned darks
-// =============================================================================
-
-val KairosBackgroundDark = Color(0xFF111318)             // Warm deep dark
-val KairosSurfaceDark = Color(0xFF191C22)               // Warm dark surface
-val KairosSurfaceVariantDark = Color(0xFF242831)        // Warm dark variant
-val KairosSurfaceContainerDark = Color(0xFF2B303A)      // Warm container dark
-
-val KairosTextPrimaryDark = Color(0xFFF1F0EB)            // Warm white
-val KairosTextSecondaryDark = Color(0xFFB2B4BC)           // Warm medium gray
-val KairosTextTertiaryDark = Color(0xFF858993)           // Warm dark gray
-val KairosTextOnPrimaryDark = Color(0xFF17215F)
-
-val KairosOutlineDark = Color(0xFF3C414C)                // Warm outline dark
-val KairosDividerDark = Color(0xFF2A2E36)                // Warm divider dark
+val KairosOutlineLight = Color(0xFFD8DFEC)             // Hairline
+val KairosDividerLight = Color(0xFFE3E8F2)             // Softer hairline
 
 // =============================================================================
-// SEMANTIC COLORS — Warm-tinted for cohesion with brand
+// DARK THEME COLORS — Charcoal ink-navy
 // =============================================================================
 
-val KairosError = Color(0xFFD32F2F)                    // Clear red (unchanged — needs clarity)
-val KairosSuccess = KairosVerdigris                  // Richer forest green (slightly warmer)
-val KairosWarning = Color(0xFFFFA000)                  // Warm amber (unchanged)
-val KairosInfo = Color(0xFF1565C0)                     // Deeper blue (more serious, less cold)
+val KairosBackgroundDark = Color(0xFF0B0E15)             // Ink navy ground
+val KairosSurfaceDark = Color(0xFF11161F)               // Elevated card
+val KairosSurfaceVariantDark = Color(0xFF1A2130)        // Soft surface
+val KairosSurfaceContainerDark = Color(0xFF1E2636)      // Container
+
+val KairosTextPrimaryDark = Color(0xFFE9EDF6)            // Night ink
+val KairosTextSecondaryDark = Color(0xFF9AA5BE)           // Night soft
+val KairosTextTertiaryDark = Color(0xFF7C87A3)           // Night faint (5.4:1 on ink)
+val KairosTextOnPrimaryDark = Color(0xFF0A1E54)
+
+val KairosOutlineDark = Color(0xFF2A3345)                // Night hairline
+val KairosDividerDark = Color(0xFF232C3D)                // Night soft hairline
+
+// =============================================================================
+// SEMANTIC COLORS
+// =============================================================================
+
+val KairosError = Color(0xFFD64545)                    // Clear red
+val KairosSuccess = KairosVerdigris                    // Mint
+val KairosWarning = Color(0xFFE8960C)                  // Amber
+val KairosInfo = Color(0xFF2E7CF6)                     // Info blue
 
 val KairosOnError = Color(0xFFFFFFFF)
 val KairosOnSuccess = Color(0xFFFFFFFF)
 val KairosOnWarning = Color(0xFF000000)
 val KairosOnInfo = Color(0xFFFFFFFF)
 
-// Containers (Light) — warm-tinted
-val KairosErrorContainer = Color(0xFFFDECEA)              // Warm red tint
-val KairosSuccessContainer = Color(0xFFDCEFEA)            // Green tint (unchanged)
-val KairosWarningContainer = Color(0xFFFFF8E1)            // Amber tint
-val KairosInfoContainer = Color(0xFFE3F2FD)               // Blue tint
+// Containers (Light)
+val KairosErrorContainer = Color(0xFFFFE0DE)
+val KairosSuccessContainer = Color(0xFFD5F5E2)
+val KairosWarningContainer = Color(0xFFFFF1D6)
+val KairosInfoContainer = Color(0xFFDCEBFF)
 
-// Containers (Dark) — warm-tinted darks
-val KairosErrorContainerDark = Color(0xFF4A2525)
-val KairosSuccessContainerDark = Color(0xFF193630)
-val KairosWarningContainerDark = Color(0xFF3E2723)
-val KairosInfoContainerDark = Color(0xFF0D3B6E)
+// Containers (Dark)
+val KairosErrorContainerDark = Color(0xFF5C2522)
+val KairosSuccessContainerDark = Color(0xFF0F3B28)
+val KairosWarningContainerDark = Color(0xFF4A3208)
+val KairosInfoContainerDark = Color(0xFF0F3A70)
 
 // =============================================================================
 // LEGACY / COMPATIBILITY COLORS (Mapped to New System)
 // =============================================================================
 
 val KairosAccentGreen = KairosForestGreen
-val KairosAccentGreenLight = Color(0xFF7888E8)
-val KairosAccentGreenDark = Color(0xFF33439E)
+val KairosAccentGreenLight = Color(0xFF5B7FFF)
+val KairosAccentGreenDark = Color(0xFF1B3FBF)
+val KairosDeepBlue = Color(0xFF0F2C8F)                   // Deep navy — base of the hero-card gradient
 
 val KairosAccent = KairosPrimary
 val KairosGreen = KairosPrimary
@@ -119,36 +121,36 @@ val KairosSurface = KairosSurfaceLight
 val KairosBackground = KairosBackgroundLight
 val KairosOnPrimary = KairosTextOnPrimaryLight
 val KairosOnSecondary = Color(0xFF000000)
-val KairosPrimaryContainer = KairosSuccessContainer
+val KairosPrimaryContainer = KairosIndigoContainerLight
 val KairosTertiary = KairosTextSecondaryLight
 val KairosOnTertiary = Color(0xFFFFFFFF)
 val KairosTertiaryContainer = KairosSurfaceVariantLight
 val KairosTextSecondary = KairosTextSecondaryLight
 
 val KairosPrimaryDark = KairosPeriwinkle
-val KairosOnPrimaryDark = Color(0xFF17215F)
-val KairosPrimaryContainerDark = KairosSuccessContainerDark
+val KairosOnPrimaryDark = Color(0xFF0A1E54)
+val KairosPrimaryContainerDark = KairosIndigoContainerDark
 val KairosSecondaryDark = KairosSoftClay
 val KairosOnSecondaryDark = Color(0xFF000000)
-val KairosSecondaryContainerDark = Color(0xFF3E2723)
+val KairosSecondaryContainerDark = KairosClayContainerDark
 val KairosTertiaryDark = KairosTextSecondaryDark
 val KairosOnTertiaryDark = Color(0xFF000000)
 val KairosTertiaryContainerDark = KairosSurfaceVariantDark
 
 
 
-// Moods
-val MoodHappy = Color(0xFFFFC107)
-val MoodCalm = Color(0xFF4FC3F7)
-val MoodAnxious = Color(0xFFFF8A65)
-val MoodSad = Color(0xFF90A4AE)
-val MoodMotivated = Color(0xFFFFD54F)
-val MoodGrateful = Color(0xFFAED581)
-val MoodConfused = Color(0xFF9575CD)
-val MoodExcited = Color(0xFFFF7043)
-val MoodEnergetic = Color(0xFFFFB74D)
-val MoodInspired = Color(0xFF7986CB)
-val MoodNostalgic = Color(0xFFA1887F)
+// Moods — distinct but harmonized with the blue world
+val MoodHappy = Color(0xFFF2B33D)
+val MoodCalm = Color(0xFF4FB3D9)
+val MoodAnxious = Color(0xFFE88B5A)
+val MoodSad = Color(0xFF7D8FB3)
+val MoodMotivated = Color(0xFFF2A02E)
+val MoodGrateful = Color(0xFF8FC48A)
+val MoodConfused = Color(0xFFA99BC8)
+val MoodExcited = Color(0xFFE86A5E)
+val MoodEnergetic = Color(0xFFE8932E)
+val MoodInspired = Color(0xFF7C8FE0)
+val MoodNostalgic = Color(0xFFC79BB0)
 
 // Haven — Warm Reddish-Cream Palette (slightly warmer for coziness)
 val HavenBackgroundLight = Color(0xFFFFF8F4)              // Warmer cream
@@ -263,10 +265,10 @@ val RarityMythic = Color(0xFFFF1744)
 val AchievementUnlocked = KairosSuccess
 
 // Premium
-val KairosPremiumViolet = Color(0xFF673AB7)
-val KairosPremiumVioletContainer = Color(0xFFD1C4E9)
-val KairosPremiumVioletDark = Color(0xFF512DA8)
-val KairosPremiumVioletLight = Color(0xFF9575CD)
+val KairosPremiumViolet = Color(0xFF6C5CE7)
+val KairosPremiumVioletContainer = Color(0xFFE2DFFF)
+val KairosPremiumVioletDark = Color(0xFF4F46B3)
+val KairosPremiumVioletLight = Color(0xFF9D8FFF)
 
 // Time Capsule
 val TimeCapsuleBackgroundLight = KairosBackgroundLight

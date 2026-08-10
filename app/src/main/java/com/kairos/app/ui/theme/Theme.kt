@@ -33,14 +33,14 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = KairosOnIndigoContainerLight,
 
     secondary = KairosClay,
-    onSecondary = Color.White,
+    onSecondary = Color(0xFFFFFFFF),
     secondaryContainer = KairosClayContainerLight,
     onSecondaryContainer = KairosOnClayContainerLight,
 
-    tertiary = KairosVerdigris,
-    onTertiary = Color.White,
-    tertiaryContainer = KairosVerdigrisContainerLight,
-    onTertiaryContainer = KairosOnVerdigrisContainerLight,
+    tertiary = Color(0xFF0090B2),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFD2F2FF),
+    onTertiaryContainer = Color(0xFF004E63),
 
     background = KairosBackgroundLight,
     onBackground = KairosTextPrimaryLight,
@@ -49,15 +49,28 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = KairosSurfaceVariantLight,
     onSurfaceVariant = KairosTextSecondaryLight,
 
+    surfaceDim = Color(0xFFE3E8F3),
+    surfaceBright = KairosSurfaceLight,
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFF2F5FB),
+    surfaceContainer = Color(0xFFEDF1F9),
+    surfaceContainerHigh = Color(0xFFE7ECF7),
+    surfaceContainerHighest = Color(0xFFE0E6F2),
+
     error = KairosError,
     onError = KairosOnError,
     errorContainer = KairosErrorContainer,
-    onErrorContainer = KairosError,
+    onErrorContainer = Color(0xFF7A1E18),
 
     outline = KairosOutlineLight,
     outlineVariant = KairosDividerLight,
 
-    scrim = Scrim
+    inverseSurface = Color(0xFF1E2636),
+    inverseOnSurface = Color(0xFFE9EDF6),
+    inversePrimary = Color(0xFF8FA6FF),
+
+    scrim = Scrim,
+    surfaceTint = KairosPrimary
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -67,14 +80,14 @@ private val DarkColorScheme = darkColorScheme(
     onPrimaryContainer = KairosOnIndigoContainerDark,
 
     secondary = KairosSoftClay,
-    onSecondary = Color(0xFF3C160A),
+    onSecondary = Color(0xFF3A1606),
     secondaryContainer = KairosClayContainerDark,
     onSecondaryContainer = KairosOnClayContainerDark,
 
-    tertiary = KairosSeaGlass,
-    onTertiary = Color(0xFF072E28),
-    tertiaryContainer = KairosVerdigrisContainerDark,
-    onTertiaryContainer = KairosOnVerdigrisContainerDark,
+    tertiary = Color(0xFF5FD0E8),
+    onTertiary = Color(0xFF003642),
+    tertiaryContainer = Color(0xFF00536B),
+    onTertiaryContainer = Color(0xFFB8EDFB),
 
     background = KairosBackgroundDark,
     onBackground = KairosTextPrimaryDark,
@@ -83,15 +96,28 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = KairosSurfaceVariantDark,
     onSurfaceVariant = KairosTextSecondaryDark,
 
-    error = KairosError,
-    onError = KairosOnError,
+    surfaceDim = Color(0xFF0B0E15),
+    surfaceBright = Color(0xFF242C3D),
+    surfaceContainerLowest = Color(0xFF080B11),
+    surfaceContainerLow = Color(0xFF141A25),
+    surfaceContainer = Color(0xFF1A2130),
+    surfaceContainerHigh = Color(0xFF1F2837),
+    surfaceContainerHighest = Color(0xFF242E3F),
+
+    error = Color(0xFFFF8A80),
+    onError = Color(0xFF5C140E),
     errorContainer = KairosErrorContainerDark,
-    onErrorContainer = KairosError,
+    onErrorContainer = Color(0xFFFFDAD6),
 
     outline = KairosOutlineDark,
     outlineVariant = KairosDividerDark,
 
-    scrim = Scrim
+    inverseSurface = Color(0xFFE9EDF6),
+    inverseOnSurface = Color(0xFF101828),
+    inversePrimary = Color(0xFF2E5BFF),
+
+    scrim = Scrim,
+    surfaceTint = KairosPrimaryDark
 )
 
 enum class ThemeMode {
@@ -136,12 +162,14 @@ fun KairosTheme(
 
     val havenColors = if (darkTheme) DarkHavenColors else LightHavenColors
     val kairosGlassColors = if (darkTheme) DarkKairosGlassColors else LightKairosGlassColors
+    val liquidGlassColors = if (darkTheme) DarkKairosLiquidGlassColors else LightKairosLiquidGlassColors
 
     CompositionLocalProvider(
         LocalKairosGlassColors provides kairosGlassColors,
+        LocalKairosLiquidGlassColors provides liquidGlassColors,
         LocalHavenColors provides havenColors,
-        LocalStreakColors provides LightStreakColors,
-        LocalMoodColors provides LightMoodColors
+        LocalStreakColors provides if (darkTheme) DarkStreakColors else LightStreakColors,
+        LocalMoodColors provides if (darkTheme) DarkMoodColors else LightMoodColors
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

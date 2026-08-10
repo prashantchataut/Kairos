@@ -3,6 +3,7 @@ package com.kairos.app.ui.screens.journal
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,19 +33,25 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kairos.app.data.local.entity.JournalEntryEntity
+import com.kairos.app.domain.model.Mood
 import com.kairos.app.ui.components.kairos.KairosEmptyState
 import com.kairos.app.ui.components.kairos.KairosIconButton
 import com.kairos.app.ui.components.kairos.KairosPrimaryButton
-import com.kairos.app.ui.components.kairos.KairosReadingSurface
 import com.kairos.app.ui.components.kairos.KairosScreenHeader
 import com.kairos.app.ui.components.kairos.KairosSkeletonList
 import com.kairos.app.ui.icons.KairosIcons
@@ -52,10 +59,17 @@ import com.kairos.app.ui.theme.KairosClay
 import com.kairos.app.ui.theme.KairosRadius
 import com.kairos.app.ui.theme.KairosSpacing
 import com.kairos.app.ui.theme.SerifFamily
+import com.kairos.app.ui.theme.color
+import com.kairos.app.ui.theme.icon
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Reflection, Moment Blue style: one large intimate prompt card, then the
+ * journal as stacked object-like cards. The screen should feel meditative —
+ * one strong visual moment, minimal chrome.
+ */
 @Composable
 fun FocusedReflectScreen(
     onNavigateToNewEntry: () -> Unit,
@@ -69,7 +83,6 @@ fun FocusedReflectScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         KairosScreenHeader(
             title = "Reflect",
-            eyebrow = "Journal",
             subtitle = journalSummary(state),
             actions = {
                 KairosIconButton(
@@ -101,7 +114,7 @@ fun FocusedReflectScreen(
                 .widthIn(max = 840.dp)
                 .align(Alignment.CenterHorizontally)
                 .padding(horizontal = KairosSpacing.screen),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             AnimatedVisibility(
                 visible = searchVisible,
@@ -118,12 +131,15 @@ fun FocusedReflectScreen(
 
         when {
             state.isLoading -> {
-                KairosReadingSurface(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .widthIn(max = 840.dp)
                         .align(Alignment.CenterHorizontally)
                         .padding(KairosSpacing.screen)
+                        .clip(RoundedCornerShape(KairosRadius.readingSurface))
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(24.dp)
                 ) {
                     KairosSkeletonList(rows = 4)
                 }
@@ -139,21 +155,34 @@ fun FocusedReflectScreen(
                 )
             }
             state.entries.isEmpty() -> {
-                KairosEmptyState(
-                    icon = KairosIcons.Outlined.Edit,
-                    title = reflectEmptyTitle(state),
-                    body = reflectEmptyBody(state),
-                    actionLabel = if (state.query.isNotBlank() || state.showBookmarkedOnly) "Reset filters" else "Write first reflection",
-                    onAction = {
-                        if (state.query.isNotBlank() || state.showBookmarkedOnly) {
+                if (state.query.isNotBlank() || state.showBookmarkedOnly) {
+                    KairosEmptyState(
+                        icon = KairosIcons.Outlined.Edit,
+                        title = reflectEmptyTitle(state),
+                        body = reflectEmptyBody(state),
+                        actionLabel = "Reset filters",
+                        onAction = {
                             viewModel.setQuery("")
                             if (state.showBookmarkedOnly) viewModel.toggleBookmarkFilter()
-                        } else {
-                            onNavigateToNewEntry()
-                        }
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 24.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Text(
+                            text = "Your reflections will collect here, one honest note at a time.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.widthIn(max = 300.dp)
+                        )
+                    }
+                }
             }
             else -> {
                 LazyColumn(
@@ -165,9 +194,9 @@ fun FocusedReflectScreen(
                         start = KairosSpacing.screen,
                         end = KairosSpacing.screen,
                         top = 18.dp,
-                        bottom = 28.dp
+                        bottom = 40.dp
                     ),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(state.entries, key = { it.id }) { entry ->
                         ReflectionRow(
@@ -182,38 +211,58 @@ fun FocusedReflectScreen(
     }
 }
 
+/**
+ * The one strong moment: a large prompt card with a gentle blue wash, a serif
+ * question, and a single primary action. A row of mood orbs below adds the
+ * emotional register without turning the screen into a dashboard.
+ */
 @Composable
 private fun StartReflectionSurface(onStart: () -> Unit) {
-    KairosReadingSurface(
-        modifier = Modifier.fillMaxWidth(),
-        accent = KairosClay,
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                Text(
-                    text = "Make one honest note",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+    val scheme = MaterialTheme.colorScheme
+    val shape = RoundedCornerShape(KairosRadius.card)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(12.dp, shape, ambientColor = Color(0x331B2A4A), spotColor = Color(0x2E1B2A4A))
+            .clip(shape)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        scheme.primaryContainer,
+                        scheme.surface
+                    ),
+                    startY = 0f,
+                    endY = 560f
                 )
-                Text(
-                    text = "A sentence is enough. You can shape it later.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            .padding(horizontal = 24.dp, vertical = 26.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+            Text(
+                text = "Make one honest note",
+                style = MaterialTheme.typography.headlineMedium,
+                color = scheme.onSurface
+            )
+            Text(
+                text = "What happened today that you want to remember?",
+                style = MaterialTheme.typography.titleLarge.copy(fontFamily = SerifFamily),
+                fontWeight = FontWeight.Normal,
+                fontStyle = FontStyle.Italic,
+                lineHeight = MaterialTheme.typography.titleLarge.lineHeight * 1.2f,
+                color = scheme.onSurfaceVariant
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                KairosPrimaryButton(
+                    text = "Write",
+                    onClick = onStart,
+                    icon = KairosIcons.Outlined.Edit,
+                    modifier = Modifier.weight(1f)
                 )
             }
-            KairosPrimaryButton(
-                text = "Write",
-                onClick = onStart,
-                icon = KairosIcons.Outlined.Edit
-            )
         }
     }
 }
@@ -267,21 +316,23 @@ private fun ReflectionRow(
             entry.content.trim().split(Regex("\\s+")).count { it.isNotBlank() }
         )
     }
+    val shape = RoundedCornerShape(KairosRadius.readingSurface)
 
     Surface(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(3.dp, shape, ambientColor = Color(0x1F1B2A4A), spotColor = Color(0x261B2A4A))
             .semantics {
                 contentDescription = "$dateLabel. $title. ${displayWordCount} words${if (entry.isBookmarked) ". Bookmarked" else ""}"
             },
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.78f),
+        shape = shape,
+        color = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp,
         shadowElevation = 0.dp
     ) {
         Row(
-            modifier = Modifier.padding(start = 18.dp, top = 16.dp, bottom = 16.dp, end = 8.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 18.dp, bottom = 18.dp, end = 8.dp),
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
@@ -339,19 +390,28 @@ private fun ReflectionRow(
 
 @Composable
 private fun MoodMark(mood: String) {
-    val initial = mood.trim().take(1).uppercase().ifBlank { "·" }
+    val moodEnum = Mood.entries.firstOrNull { it.name.equals(mood, ignoreCase = true) }
     Surface(
-        modifier = Modifier.size(40.dp),
+        modifier = Modifier.size(42.dp),
         shape = RoundedCornerShape(14.dp),
-        color = KairosClay.copy(alpha = 0.13f)
+        color = (moodEnum?.color ?: KairosClay).copy(alpha = 0.16f)
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = initial,
-                style = MaterialTheme.typography.labelLarge,
-                color = KairosClay,
-                fontWeight = FontWeight.Bold
-            )
+            if (moodEnum != null) {
+                Icon(
+                    imageVector = moodEnum.icon,
+                    contentDescription = null,
+                    tint = moodEnum.color,
+                    modifier = Modifier.size(20.dp)
+                )
+            } else {
+                Text(
+                    text = mood.take(1).uppercase().ifBlank { "·" },
+                    style = MaterialTheme.typography.labelLarge,
+                    color = KairosClay,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
@@ -384,7 +444,7 @@ private fun reflectEmptyBody(state: JournalUiState): String = when {
 @androidx.compose.ui.tooling.preview.Preview(
     name = "Reflection row",
     showBackground = true,
-    backgroundColor = 0xFFF6F4EF,
+    backgroundColor = 0xFFF5F7FC,
     widthDp = 390
 )
 @Composable

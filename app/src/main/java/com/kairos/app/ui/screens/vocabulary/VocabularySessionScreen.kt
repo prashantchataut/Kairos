@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -26,10 +28,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
@@ -47,7 +53,6 @@ import com.kairos.app.ui.components.kairos.KairosSecondaryButton
 import com.kairos.app.ui.components.kairos.KairosSkeletonList
 import com.kairos.app.ui.icons.KairosIcons
 import com.kairos.app.ui.theme.KairosClay
-import com.kairos.app.ui.theme.KairosPeriwinkle
 import com.kairos.app.ui.theme.KairosRadius
 import com.kairos.app.ui.theme.KairosSeaGlass
 import com.kairos.app.ui.theme.KairosSpacing
@@ -57,20 +62,23 @@ import com.kairos.app.ui.theme.SerifFamily
  * The hybrid vocabulary learning session — the Kairos equivalent of a dedicated
  * vocabulary trainer. Users recall a word, reveal its meaning, self-grade with
  * the spaced-repetition scale (Again/Hard/Good/Easy), then re-encode weak cards
- * in a definition-matching quiz. Glass is used for the floating card and compact
+ * in a definition-matching quiz. Cards sit on flat paper reading surfaces; compact
  * controls; definitions sit on matte reading surfaces for legibility.
  */
 @Composable
 fun VocabularySessionScreen(
+    initialMode: SessionMode = SessionMode.MIXED,
     onNavigateBack: () -> Unit,
     viewModel: VocabularySessionViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        viewModel.startSession(initialMode)
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         KairosScreenHeader(
             title = "Practice",
-            eyebrow = "Vocabulary",
             subtitle = when (state.phase) {
                 SessionPhase.FLASHCARD -> "Recall, then reveal"
                 SessionPhase.QUIZ -> "Match the meanings"
@@ -168,12 +176,22 @@ private fun FlashcardPhase(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        KairosGlassSurface(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = 560.dp),
-            shape = RoundedCornerShape(KairosRadius.readingSurface),
-            contentPadding = PaddingValues(28.dp)
+                .widthIn(max = 560.dp)
+                .shadow(16.dp, RoundedCornerShape(KairosRadius.card), ambientColor = Color(0x66102A8A), spotColor = Color(0x55102A8A))
+                .clip(RoundedCornerShape(KairosRadius.card))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary,
+                            com.kairos.app.ui.theme.KairosAccentGreenDark,
+                            com.kairos.app.ui.theme.KairosDeepBlue
+                        )
+                    )
+                )
+                .padding(28.dp)
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -187,20 +205,29 @@ private fun FlashcardPhase(
                 ) {
                     Text(
                         text = card.word.word,
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontFamily = SerifFamily,
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.displayMedium.copy(fontFamily = SerifFamily),
+                        color = Color.White,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .weight(1f)
                             .semantics { heading() }
                     )
-                    KairosIconButton(
-                        icon = if (card.word.isFavorite) KairosIcons.Favorite else KairosIcons.FavoriteBorder,
-                        contentDescription = if (card.word.isFavorite) "Remove from saved words" else "Save this word",
+                    Surface(
                         onClick = onToggleSave,
-                        selected = card.word.isFavorite
-                    )
+                        modifier = Modifier.size(48.dp),
+                        shape = CircleShape,
+                        color = Color.White.copy(alpha = 0.14f),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.18f))
+                    ) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = if (card.word.isFavorite) KairosIcons.Favorite else KairosIcons.FavoriteBorder,
+                                contentDescription = if (card.word.isFavorite) "Remove from saved words" else "Save this word",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -213,7 +240,7 @@ private fun FlashcardPhase(
                         Text(
                             text = card.word.pronunciation,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = Color.White.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -224,7 +251,7 @@ private fun FlashcardPhase(
                         text = card.word.definition,
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = Color.White.copy(alpha = 0.95f)
                     )
                     if (card.word.exampleSentence.isNotBlank()) {
                         Text(
@@ -233,14 +260,14 @@ private fun FlashcardPhase(
                             fontFamily = SerifFamily,
                             fontStyle = FontStyle.Italic,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = Color.White.copy(alpha = 0.78f)
                         )
                     }
                     if (card.word.synonyms.isNotBlank()) {
                         Text(
                             text = "Related: ${card.word.synonyms}",
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
+                            color = Color.White.copy(alpha = 0.9f)
                         )
                     }
                 }
@@ -461,6 +488,13 @@ private fun SessionProgress(state: VocabularySessionUiState) {
     }
 }
 
+private val GradeEmoji = mapOf(
+    SessionGrade.AGAIN to "😖",
+    SessionGrade.HARD to "😅",
+    SessionGrade.GOOD to "🙂",
+    SessionGrade.EASY to "😎"
+)
+
 @Composable
 private fun GradeRow(
     onGrade: (SessionGrade) -> Unit,
@@ -468,28 +502,33 @@ private fun GradeRow(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.Top
     ) {
         GradeButton(
             label = SessionGrade.AGAIN.label,
+            emoji = GradeEmoji.getValue(SessionGrade.AGAIN),
             color = KairosClay,
             onClick = { onGrade(SessionGrade.AGAIN) },
             modifier = Modifier.weight(1f)
         )
         GradeButton(
             label = SessionGrade.HARD.label,
-            color = MaterialTheme.colorScheme.primary,
+            emoji = GradeEmoji.getValue(SessionGrade.HARD),
+            color = Color(0xFFE8960C),
             onClick = { onGrade(SessionGrade.HARD) },
             modifier = Modifier.weight(1f)
         )
         GradeButton(
             label = SessionGrade.GOOD.label,
-            color = KairosPeriwinkle,
+            emoji = GradeEmoji.getValue(SessionGrade.GOOD),
+            color = MaterialTheme.colorScheme.tertiary,
             onClick = { onGrade(SessionGrade.GOOD) },
             modifier = Modifier.weight(1f)
         )
         GradeButton(
             label = SessionGrade.EASY.label,
+            emoji = GradeEmoji.getValue(SessionGrade.EASY),
             color = KairosSeaGlass,
             onClick = { onGrade(SessionGrade.EASY) },
             modifier = Modifier.weight(1f)
@@ -500,25 +539,36 @@ private fun GradeRow(
 @Composable
 private fun GradeButton(
     label: String,
+    emoji: String,
     color: androidx.compose.ui.graphics.Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        onClick = onClick,
-        modifier = modifier.height(52.dp),
-        shape = RoundedCornerShape(KairosRadius.control),
-        color = color.copy(alpha = 0.14f),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.45f))
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = color
-            )
+        Surface(
+            onClick = onClick,
+            modifier = Modifier.size(58.dp),
+            shape = CircleShape,
+            color = color.copy(alpha = 0.14f),
+            border = BorderStroke(2.dp, color.copy(alpha = 0.55f))
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = emoji,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
         }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = color
+        )
     }
 }
 
@@ -599,8 +649,9 @@ private fun QuizOptionRow(
 @Composable
 private fun PartOfSpeechChip(text: String) {
     Surface(
-        shape = RoundedCornerShape(50),
-        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+        shape = RoundedCornerShape(KairosRadius.control),
+        color = Color.White.copy(alpha = 0.14f),
+        contentColor = Color.White
     ) {
         Text(
             text = text,
@@ -619,8 +670,8 @@ private fun SummaryMetric(
 ) {
     Surface(
         modifier = modifier.height(72.dp),
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
+        shape = RoundedCornerShape(KairosRadius.controlLarge),
+        color = MaterialTheme.colorScheme.primaryContainer
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),

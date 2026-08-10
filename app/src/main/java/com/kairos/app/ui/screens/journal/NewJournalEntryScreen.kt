@@ -115,6 +115,11 @@ fun NewJournalEntryScreen(
         else scope.launch { snackbar.showSnackbar("Microphone permission is needed for a voice note.") }
     }
 
+    LaunchedEffect(Unit) {
+        if (prefilledContent.isNullOrBlank()) {
+            viewModel.restoreDraft()
+        }
+    }
     LaunchedEffect(prefilledContent) {
         if (!prefilledContent.isNullOrBlank() && state.content.isBlank()) {
             viewModel.updateContent(prefilledContent)
@@ -351,7 +356,7 @@ fun NewJournalEntryScreen(
                 state.availableTemplates.forEach { template ->
                     Surface(
                         onClick = { viewModel.selectTemplate(template) },
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(16.dp),
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
                         modifier = Modifier.fillMaxWidth()
                     ) {

@@ -661,6 +661,25 @@ class GeminiService @Inject constructor() {
     }
 
     /**
+     * Generates curated vocabulary/quote content for the online refresh path.
+     * The prompt asks for strict JSON; the caller validates before inserting.
+     */
+    suspend fun generateCuratedContent(prompt: String): GeminiResult<String> = withContext(Dispatchers.IO) {
+        val model = generativeModel ?: return@withContext GeminiResult.ApiKeyNotSet
+        try {
+            val response = withRetry("generateCuratedContent") { model.generateContent(prompt) }
+            val text = response.text
+            if (text.isNullOrBlank()) {
+                GeminiResult.Error(IllegalStateException("Empty response from AI"), "No fresh content available right now.")
+            } else {
+                GeminiResult.Success(text.trim())
+            }
+        } catch (e: Exception) {
+            GeminiResult.Error(e, getErrorMessage(e))
+        }
+    }
+
+    /**
      * Generates a weekly summary reflection.
      */
     suspend fun generateWeeklySummary(

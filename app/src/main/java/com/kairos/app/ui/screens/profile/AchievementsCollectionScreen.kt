@@ -40,7 +40,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -243,7 +242,7 @@ private fun MilestoneOverview(state: AchievementsCollectionUiState) {
                         style = Stroke(stroke)
                     )
                     drawArc(
-                        brush = Brush.sweepGradient(listOf(scheme.primary, Color(0xFF3E9B85), scheme.primary)),
+                        color = scheme.primary,
                         startAngle = -90f,
                         sweepAngle = animatedProgress * 360f,
                         useCenter = false,
@@ -513,16 +512,16 @@ private fun AchievementDetailSheet(
 }
 
 private fun achievementShape(achievement: AchievementProgress): RoundedCornerShape = when (achievement.category.lowercase()) {
-    "reflection" -> RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 28.dp, bottomEnd = 8.dp)
-    "temporal" -> RoundedCornerShape(topStart = 8.dp, topEnd = 28.dp, bottomStart = 28.dp, bottomEnd = 28.dp)
-    "mastery" -> RoundedCornerShape(topStart = 30.dp, topEnd = 10.dp, bottomStart = 22.dp, bottomEnd = 30.dp)
-    else -> RoundedCornerShape(24.dp)
+    "reflection" -> RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 6.dp)
+    "temporal" -> RoundedCornerShape(topStart = 6.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 16.dp)
+    "mastery" -> RoundedCornerShape(topStart = 16.dp, topEnd = 8.dp, bottomStart = 12.dp, bottomEnd = 16.dp)
+    else -> RoundedCornerShape(16.dp)
 }
 
 private fun glyphShape(rarity: String): RoundedCornerShape = when (rarity.lowercase()) {
-    "mythic" -> RoundedCornerShape(topStart = 22.dp, topEnd = 6.dp, bottomStart = 22.dp, bottomEnd = 6.dp)
-    "legendary" -> RoundedCornerShape(topStart = 6.dp, topEnd = 22.dp, bottomStart = 22.dp, bottomEnd = 6.dp)
-    "epic" -> RoundedCornerShape(18.dp)
+    "mythic" -> RoundedCornerShape(topStart = 16.dp, topEnd = 6.dp, bottomStart = 16.dp, bottomEnd = 6.dp)
+    "legendary" -> RoundedCornerShape(topStart = 6.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 6.dp)
+    "epic" -> RoundedCornerShape(16.dp)
     else -> RoundedCornerShape(16.dp)
 }
 

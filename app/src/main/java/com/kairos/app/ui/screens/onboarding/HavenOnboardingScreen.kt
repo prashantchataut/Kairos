@@ -1,6 +1,7 @@
 package com.kairos.app.ui.screens.onboarding
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,14 +34,8 @@ fun HavenOnboardingScreen(
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(
-                            KairosAccentGreen.copy(alpha = 0.2f),
-                            KairosAccentGreen.copy(alpha = 0.05f)
-                        )
-                    )
-                ),
+                .background(KairosAccentGreen.copy(alpha = 0.10f))
+                .border(1.dp, KairosAccentGreen.copy(alpha = 0.28f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -110,7 +104,7 @@ fun HavenOnboardingScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            shape = RoundedCornerShape(28.dp),
+            shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = KairosAccentGreen,
                 contentColor = Color.White

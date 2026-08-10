@@ -105,10 +105,6 @@ class VocabularySessionViewModel @Inject constructor(
         private const val MIN_SESSION_SIZE = 5
     }
 
-    init {
-        startSession(SessionMode.MIXED)
-    }
-
     fun startSession(mode: SessionMode) {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {

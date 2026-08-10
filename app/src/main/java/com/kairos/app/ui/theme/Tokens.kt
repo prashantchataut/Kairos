@@ -1,6 +1,10 @@
 package com.kairos.app.ui.theme
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -383,5 +387,41 @@ object KairosTokens {
         val goldPrimary = Color(0xFFD4AF37)
         val goldSecondary = Color(0xFFF4D03F)
         val goldLight = Color(0xFFFFE5B4)
+    }
+
+    // =========================================================================
+    // THEME-DRIVEN SEMANTIC COLORS (resolve against the active color scheme —
+    // dark and light share this architecture)
+    // =========================================================================
+    object Scheme {
+        val backgroundPrimary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.background
+        val backgroundSecondary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.surfaceContainerLow
+        val surfacePrimary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.surface
+        val surfaceElevated: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.surfaceContainerHigh
+        val surfaceSelected: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.primaryContainer
+        val surfaceGlass: Color @Composable @ReadOnlyComposable get() = KairosTheme.glass.fill
+        val surfaceGlassStrong: Color @Composable @ReadOnlyComposable get() = KairosTheme.glass.fillStrong
+
+        val textPrimary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onSurface
+        val textSecondary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onSurfaceVariant
+        val textTertiary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onSurfaceVariant
+        val textInverse: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onPrimary
+
+        val borderSubtle: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.outlineVariant
+        val borderStrong: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.outline
+
+        val accentPrimary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.primary
+        val accentPrimaryPressed: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.primary.copy(alpha = 0.82f)
+        val accentSecondary: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.tertiary
+        val accentSuccess: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.tertiary
+        val accentWarning: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.error
+        val accentDestructive: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.error
+
+        val onAccent: Color @Composable @ReadOnlyComposable get() = MaterialTheme.colorScheme.onPrimary
+
+        val iconXs: Dp = 16.dp
+        val iconSm: Dp = 20.dp
+        val iconMd: Dp = 24.dp
+        val iconLg: Dp = 32.dp
     }
 }

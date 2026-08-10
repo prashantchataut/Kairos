@@ -1057,7 +1057,7 @@ private fun PremiumWeeklyPatternSection(
     textTertiary: Color,
     accentColor: Color
 ) {
-    val violetColor = Color(0xFF6B5CE7) // Premium violet for AI
+    val violetColor = Color(0xFFB3401F) // Accent vermilion
 
     Surface(
         modifier = Modifier

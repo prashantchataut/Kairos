@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -74,33 +75,33 @@ import kotlinx.coroutines.delay
  * - Accessibility: 48dp minimum touch targets
  */
 
-// Design System Colors for Edit Profile
+// Design System Colors for Edit Profile — Moment Blue
 private object EditProfileColors {
-    // Dark Mode
-    val BackgroundDark = Color(0xFF0D2826)
-    val CardBackgroundDark = Color(0xFF1A3331)
-    val CardBackgroundElevatedDark = Color(0xFF223D3A)
-    val AccentGreen = Color(0xFF36F97F)
-    val TextPrimaryDark = Color(0xFFFFFFFF)
-    val TextSecondaryDark = Color(0xFFB8C5C3)
-    val TextTertiaryDark = Color(0xFF6B7F7C)
-    val BorderDark = Color(0xFF2A4744)
-    val InputBackgroundDark = Color(0xFF1A3331)
+    // Dark Mode — charcoal ink-navy
+    val BackgroundDark = Color(0xFF0B0E15)
+    val CardBackgroundDark = Color(0xFF11161F)
+    val CardBackgroundElevatedDark = Color(0xFF1E2636)
+    val AccentGreen = Color(0xFF8FA6FF)      // Periwinkle (night)
+    val TextPrimaryDark = Color(0xFFE9EDF6)
+    val TextSecondaryDark = Color(0xFF9AA5BE)
+    val TextTertiaryDark = Color(0xFF6C7690)
+    val BorderDark = Color(0xFF2A3345)
+    val InputBackgroundDark = Color(0xFF11161F)
 
-    // Light Mode
-    val BackgroundLight = Color(0xFFF5F8F7)
-    val CardBackgroundLight = Color(0xFFFFFFFF)
-    val CardBackgroundElevatedLight = Color(0xFFF0F5F4)
-    val AccentGreenLight = Color(0xFF2ECC71)
-    val TextPrimaryLight = Color(0xFF1A2B23)
-    val TextSecondaryLight = Color(0xFF5A6B63)
-    val TextTertiaryLight = Color(0xFF8A9B93)
-    val BorderLight = Color(0xFFE0E8E4)
-    val InputBackgroundLight = Color(0xFFF5F8F7)
+    // Light Mode — pearl
+    val BackgroundLight = Color(0xFFF5F7FC)
+    val CardBackgroundLight = Color(0xFFFBFCFE)
+    val CardBackgroundElevatedLight = Color(0xFFE7ECF7)
+    val AccentGreenLight = Color(0xFF2E5BFF) // Royal blue
+    val TextPrimaryLight = Color(0xFF101828)
+    val TextSecondaryLight = Color(0xFF5A6478)
+    val TextTertiaryLight = Color(0xFF8B93A7)
+    val BorderLight = Color(0xFFD8DFEC)
+    val InputBackgroundLight = Color(0xFFFBFCFE)
 
     // Locked state
     val LockedOverlay = Color(0x80000000)
-    val LockedIcon = Color(0xFF6B7F7C)
+    val LockedIcon = Color(0xFF6C7690)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -332,24 +333,35 @@ private fun AvatarSection(
                     .fillMaxSize()
                     .clip(CircleShape)
                     .background(
-                        if (isDarkMode) EditProfileColors.CardBackgroundDark
-                        else EditProfileColors.CardBackgroundLight
-                    )
-                    .border(
-                        width = 3.dp,
-                        color = if (isDarkMode) EditProfileColors.AccentGreen
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                if (isDarkMode) EditProfileColors.AccentGreen
                                 else EditProfileColors.AccentGreenLight,
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
+                                if (isDarkMode) EditProfileColors.AccentGreen.copy(alpha = 0.75f)
+                                else EditProfileColors.AccentGreenLight.copy(alpha = 0.75f)
+                            )
+                        )
+                    )
+                    .padding(3.dp)
             ) {
-                Icon(
-                    imageVector = getAvatarIcon(currentAvatarId),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = if (isDarkMode) EditProfileColors.AccentGreen
-                           else EditProfileColors.AccentGreenLight
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .background(
+                            if (isDarkMode) EditProfileColors.CardBackgroundDark
+                            else EditProfileColors.CardBackgroundLight
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = getAvatarIcon(currentAvatarId),
+                        contentDescription = null,
+                        modifier = Modifier.size(46.dp),
+                        tint = if (isDarkMode) EditProfileColors.AccentGreen
+                               else EditProfileColors.AccentGreenLight
+                    )
+                }
             }
 
             // Edit badge
@@ -377,7 +389,7 @@ private fun AvatarSection(
 
         // Section Label
         Text(
-            text = "CHOOSE AVATAR",
+            text = "Choose avatar",
             fontFamily = PoppinsFamily,
             fontWeight = FontWeight.Medium,
             fontSize = 12.sp,
@@ -490,7 +502,7 @@ private fun DisplayNameSection(
             .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
         Text(
-            text = "DISPLAY NAME",
+            text = "Display name",
             fontFamily = PoppinsFamily,
             fontWeight = FontWeight.Medium,
             fontSize = 12.sp,
@@ -690,7 +702,7 @@ private fun TitleSection(
             .padding(vertical = 16.dp)
     ) {
         Text(
-            text = "EQUIPPED TITLE",
+            text = "Equipped title",
             fontFamily = PoppinsFamily,
             fontWeight = FontWeight.Medium,
             fontSize = 12.sp,
@@ -753,7 +765,7 @@ private fun TitleOptionChip(
 
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(backgroundColor)
             .clickable(enabled = !title.isLocked) { onClick() }
             .padding(horizontal = 16.dp, vertical = 10.dp),
@@ -863,7 +875,7 @@ private fun SaveProfileButton(
         modifier = modifier
             .fillMaxWidth()
             .height(55.dp)
-            .clip(RoundedCornerShape(28.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(
                 if (enabled) {
                     if (isDarkMode) EditProfileColors.AccentGreen

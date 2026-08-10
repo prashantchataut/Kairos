@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val onlineContentRefresher: com.kairos.app.data.content.OnlineContentRefresher
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainActivityUiState())
@@ -51,26 +52,37 @@ class MainViewModel @Inject constructor(
             }
         }
 
+        // --- ONLINE CONTENT (optional, non-blocking) ---
+        // When a provider key is configured and the device is online, top up the
+        // curated catalog with fresh preference-matched words and quotes. Never
+        // blocks launch and never fails the app.
+        viewModelScope.launch {
+            runCatching { onlineContentRefresher.refreshIfDue() }
+                .onFailure { android.util.Log.w("MainViewModel", "Online refresh skipped", it) }
+        }
+
         // --- NON-CRITICAL PATH ---
         // Asynchronously load user preferences and apply them.
         viewModelScope.launch {
             combine(
                 preferencesManager.themeMode.catch { emit("system") },
-                preferencesManager.hapticFeedbackEnabled.catch { emit(true) }
-            ) { themeModeString, hapticEnabled ->
+                preferencesManager.hapticFeedbackEnabled.catch { emit(true) },
+                preferencesManager.dynamicColors.catch { emit(false) }
+            ) { themeModeString, hapticEnabled, dynamicColors ->
                 val themeMode = when (themeModeString.lowercase()) {
                     "light" -> ThemeMode.LIGHT
                     "dark" -> ThemeMode.DARK
                     else -> ThemeMode.SYSTEM
                 }
-                // Return a pair of the loaded preferences
-                themeMode to hapticEnabled
-            }.collectLatest { (themeMode, hapticEnabled) ->
+                // Return a triple of the loaded preferences
+                Triple(themeMode, hapticEnabled, dynamicColors)
+            }.collectLatest { (themeMode, hapticEnabled, dynamicColors) ->
                 // Use atomic update to apply non-critical preferences
                 _uiState.update {
                     it.copy(
                         themeMode = themeMode,
-                        hapticFeedbackEnabled = hapticEnabled
+                        hapticFeedbackEnabled = hapticEnabled,
+                        dynamicColor = dynamicColors
                     )
                 }
             }

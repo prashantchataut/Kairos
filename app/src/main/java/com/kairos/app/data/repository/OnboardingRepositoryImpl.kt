@@ -81,11 +81,25 @@ class OnboardingRepositoryImpl @Inject constructor(
                         )
                     }
                 )
-                vocabularyDao.insertWords(InitialContentData.vocabularyWords)
-                quoteDao.insertQuotes(InitialContentData.quotes)
-                proverbDao.insertProverbs(InitialContentData.proverbs)
-                idiomDao.insertIdioms(InitialContentData.idioms)
-                phraseDao.insertPhrases(InitialContentData.phrases)
+                // Idempotent catalog seeding: the Room lifecycle callback already
+                // seeds the full catalog on fresh installs. Inserting again with
+                // auto-generated ids would duplicate rows (quotes, proverbs, idioms,
+                // phrases, and vocabulary all overlap with the callback seed).
+                if (vocabularyDao.countAll() == 0) {
+                    vocabularyDao.insertWords(InitialContentData.vocabularyWords)
+                }
+                if (quoteDao.countAll() == 0) {
+                    quoteDao.insertQuotes(InitialContentData.quotes)
+                }
+                if (proverbDao.countAll() == 0) {
+                    proverbDao.insertProverbs(InitialContentData.proverbs)
+                }
+                if (idiomDao.countAll() == 0) {
+                    idiomDao.insertIdioms(InitialContentData.idioms)
+                }
+                if (phraseDao.countAll() == 0) {
+                    phraseDao.insertPhrases(InitialContentData.phrases)
+                }
             }
 
             // Preference writes follow the successful Room transaction. On retry,

@@ -15,27 +15,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.contentDescription
@@ -51,7 +61,6 @@ import com.kairos.app.ui.animation.KairosEasing
 import com.kairos.app.ui.animation.KairosReveal
 import com.kairos.app.ui.animation.rememberKairosReducedMotion
 import com.kairos.app.ui.components.kairos.KairosEmptyState
-import com.kairos.app.ui.components.kairos.KairosGlassSurface
 import com.kairos.app.ui.components.kairos.KairosIconButton
 import com.kairos.app.ui.components.kairos.KairosPrimaryButton
 import com.kairos.app.ui.components.kairos.KairosReadingSurface
@@ -60,10 +69,7 @@ import com.kairos.app.ui.components.kairos.KairosSecondaryButton
 import com.kairos.app.ui.components.kairos.KairosSegmentedControl
 import com.kairos.app.ui.components.kairos.KairosSkeletonList
 import com.kairos.app.ui.icons.KairosIcons
-import com.kairos.app.ui.theme.KairosClay
-import com.kairos.app.ui.theme.KairosPeriwinkle
 import com.kairos.app.ui.theme.KairosRadius
-import com.kairos.app.ui.theme.KairosSeaGlass
 import com.kairos.app.ui.theme.KairosSpacing
 
 @Composable
@@ -74,13 +80,23 @@ fun FocusedLearnScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var searchVisible by rememberSaveable { mutableStateOf(false) }
+    val refreshMessage by viewModel.refreshMessage.collectAsStateWithLifecycle()
+    val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
+    val snackbar = remember { SnackbarHostState() }
+
+    LaunchedEffect(refreshMessage) {
+        refreshMessage?.let { message ->
+            snackbar.showSnackbar(message)
+            viewModel.clearRefreshMessage()
+        }
+    }
     val filters = VocabularyFilter.entries
     val selectedFilter = filters.indexOfFirst { it.key == state.currentFilter }.coerceAtLeast(0)
 
+    Box(modifier = Modifier.fillMaxSize()) {
     Column(modifier = Modifier.fillMaxSize()) {
         KairosScreenHeader(
             title = "Learn",
-            eyebrow = "Vocabulary",
             subtitle = learningSummary(state),
             actions = {
                 KairosIconButton(
@@ -97,6 +113,12 @@ fun FocusedLearnScreen(
                     contentDescription = if (state.showFavoritesOnly) "Show all words" else "Show favorite words",
                     selected = state.showFavoritesOnly,
                     onClick = viewModel::toggleFavoritesOnly
+                )
+                KairosIconButton(
+                    icon = KairosIcons.Outlined.Refresh,
+                    contentDescription = "Find fresh words",
+                    selected = refreshing,
+                    onClick = viewModel::refreshOnlineContent
                 )
             }
         )
@@ -186,7 +208,7 @@ fun FocusedLearnScreen(
                         start = KairosSpacing.screen,
                         end = KairosSpacing.screen,
                         top = 16.dp,
-                        bottom = 28.dp
+                        bottom = 40.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
@@ -206,10 +228,17 @@ fun FocusedLearnScreen(
             }
         }
     }
+    SnackbarHost(
+        hostState = snackbar,
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 96.dp)
+    )
+    }
 }
 
 /**
- * Liquid-glass launcher for the hybrid practice session. Shows the spaced-repetition
+ * Flat paper launcher for the hybrid practice session. Shows the spaced-repetition
  * review queue when words are due, plus a fresh-words option so the stream never runs dry.
  */
 @Composable
@@ -219,9 +248,8 @@ private fun SessionLauncher(
     onStartReview: () -> Unit,
     onStartNewWords: () -> Unit
 ) {
-    KairosGlassSurface(
+    KairosReadingSurface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
         contentPadding = PaddingValues(18.dp)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -243,14 +271,15 @@ private fun SessionLauncher(
                     )
                 }
                 Surface(
-                    shape = RoundedCornerShape(50),
-                    color = KairosSeaGlass.copy(alpha = 0.14f)
+                    shape = RoundedCornerShape(KairosRadius.control),
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f))
                 ) {
                     Text(
                         text = if (dueReviewCount > 0) "$dueReviewCount due" else "All reviewed",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = KairosSeaGlass,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                     )
                 }
@@ -277,122 +306,131 @@ private fun SessionLauncher(
     }
 }
 
+/**
+ * Quiet progress line: "X of Y saved" over a thin 4dp rule.
+ * No hero percentages, no stat tiles.
+ */
 @Composable
 private fun LearningOverview(state: VocabularyListUiState) {
-    val targetProgress = if (state.totalCount == 0) 0f else state.savedCount.toFloat() / state.totalCount.toFloat()
-    val reducedMotion = rememberKairosReducedMotion()
-    val progress by animateFloatAsState(
-        targetValue = targetProgress.coerceIn(0f, 1f),
-        animationSpec = tween(
-            durationMillis = if (reducedMotion) KairosDurations.Micro else 640,
-            easing = KairosEasing.EaseOutExpo
-        ),
-        label = "vocabulary-progress"
-    )
-    val percentage = (progress * 100).toInt().coerceIn(0, 100)
-
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(28.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.72f)
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                    Text(
-                        text = "Your vocabulary",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = "Progress without pressure",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Text(
-                    text = "$percentage%",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary
+    // Group the curated catalog into themed modules so Learn reads as a
+    // journey through topics, not a flat database list.
+    val modules = remember(state.words) {
+        state.words
+            .filter { it.category.isNotBlank() && it.category != "general" }
+            .groupBy { it.category }
+            .map { (category, words) ->
+                ModuleSummary(
+                    category = category,
+                    total = words.size,
+                    saved = words.count { it.isFavorite }
                 )
             }
+            .sortedByDescending { it.total }
+            .take(6)
+    }
 
-            LinearProgressIndicator(
-                progress = { progress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(7.dp)
-                    .clip(RoundedCornerShape(50)),
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Continue learning",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
             )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(9.dp)
+            Text(
+                text = "${state.savedCount} of ${state.totalCount} saved",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        if (modules.isEmpty()) {
+            Text(
+                text = "Words you save will collect into themes here.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        } else {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(end = 8.dp)
             ) {
-                LearningMetric(
-                    value = state.savedCount.toString(),
-                    label = "Saved",
-                    accent = KairosSeaGlass,
-                    modifier = Modifier.weight(1f)
-                )
-                LearningMetric(
-                    value = (state.totalCount - state.savedCount).coerceAtLeast(0).toString(),
-                    label = "Unsaved",
-                    accent = KairosPeriwinkle,
-                    modifier = Modifier.weight(1f)
-                )
-                LearningMetric(
-                    value = state.totalCount.toString(),
-                    label = "Library",
-                    accent = KairosClay,
-                    modifier = Modifier.weight(1f)
-                )
+                items(modules, key = { it.category }) { module ->
+                    ModuleCard(module)
+                }
             }
         }
     }
 }
 
+private data class ModuleSummary(
+    val category: String,
+    val total: Int,
+    val saved: Int
+)
+
 @Composable
-private fun LearningMetric(
-    value: String,
-    label: String,
-    accent: Color,
-    modifier: Modifier = Modifier
-) {
+private fun ModuleCard(module: ModuleSummary) {
+    val scheme = MaterialTheme.colorScheme
+    val accent = when (module.category) {
+        "literary" -> MaterialTheme.colorScheme.tertiary
+        "academic" -> MaterialTheme.colorScheme.primary
+        "business" -> Color(0xFFE8960C)
+        "communication" -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.primary
+    }
+    val progress = if (module.total == 0) 0f else module.saved.toFloat() / module.total
+
     Surface(
-        modifier = modifier.height(76.dp),
-        shape = RoundedCornerShape(20.dp),
-        color = accent.copy(alpha = 0.12f)
+        modifier = Modifier
+            .width(168.dp)
+            .shadow(6.dp, RoundedCornerShape(24.dp), ambientColor = Color(0x2E1B2A4A), spotColor = Color(0x261B2A4A)),
+        shape = RoundedCornerShape(24.dp),
+        color = scheme.surface
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(accent.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = module.category.take(2).uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = accent
+                )
+            }
             Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge,
+                text = module.category.replaceFirstChar { it.uppercase() },
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = accent
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
+                text = "${module.saved} saved · ${module.total} words",
+                style = MaterialTheme.typography.bodySmall,
+                color = scheme.onSurfaceVariant
+            )
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp)),
+                color = accent,
+                trackColor = scheme.outlineVariant
             )
         }
     }
@@ -450,10 +488,11 @@ private fun VocabularyRow(
                     if (word.isFavorite) append(". Saved")
                 }
             },
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.78f),
+        shape = RoundedCornerShape(KairosRadius.controlLarge),
+        color = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp,
-        shadowElevation = 0.dp
+        shadowElevation = 0.dp,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Row(
             modifier = Modifier.padding(start = 18.dp, top = 16.dp, bottom = 16.dp, end = 8.dp),
@@ -541,8 +580,8 @@ private fun DifficultyMark(difficulty: Int, saved: Boolean) {
 
 private fun learningSummary(state: VocabularyListUiState): String = when {
     state.totalCount == 0 -> "A focused vocabulary practice space"
-    state.savedCount == 0 -> "${state.totalCount} words ready to explore"
-    else -> "${state.savedCount} saved · ${state.totalCount - state.savedCount} in the wild"
+    state.savedCount == 0 -> "${state.totalCount} words in your library"
+    else -> "${state.savedCount} saved of ${state.totalCount}"
 }
 
 private fun emptyTitle(state: VocabularyListUiState): String = when {

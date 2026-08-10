@@ -1,20 +1,26 @@
 package com.kairos.app.ui.components.kairos
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,8 +30,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -33,13 +42,22 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.kairos.app.ui.animation.KairosDurations
-import com.kairos.app.ui.animation.KairosEasing
-import com.kairos.app.ui.animation.rememberKairosReducedMotion
 import com.kairos.app.ui.navigation.BottomNavItem
 import com.kairos.app.ui.theme.KairosMotion
-import com.kairos.app.ui.theme.KairosRadius
+import com.kairos.app.ui.theme.KairosTheme
 
+private val NavCapsuleShape = RoundedCornerShape(36.dp)
+private val RailShape = RoundedCornerShape(28.dp)
+private val InactiveSize = 48.dp
+private val ActiveWidth = 92.dp
+private val ActiveWidthVertical = 76.dp
+
+/**
+ * Floating frosted-glass navigation capsule with the "expanding active tab"
+ * language: inactive destinations are circular icons; the active one expands
+ * into a bright blue capsule carrying icon + label. The capsule floats above
+ * content with breathing room underneath.
+ */
 @Composable
 fun KairosBottomNavigation(
     items: List<BottomNavItem>,
@@ -47,23 +65,25 @@ fun KairosBottomNavigation(
     onSelect: (BottomNavItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val glass = KairosTheme.liquidGlass
     Box(
         modifier = modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(start = 12.dp, end = 12.dp, bottom = 8.dp),
+            .padding(horizontal = 20.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
-        KairosGlassSurface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(KairosRadius.navigation),
-            strong = true,
-            elevation = 10.dp,
-            contentPadding = PaddingValues(5.dp)
+        FrostedCapsule(
+            shape = NavCapsuleShape,
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = 560.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEach { item ->
@@ -80,6 +100,9 @@ fun KairosBottomNavigation(
     }
 }
 
+/**
+ * Frosted-glass navigation rail for expanded widths (tablets).
+ */
 @Composable
 fun KairosNavigationRail(
     items: List<BottomNavItem>,
@@ -89,22 +112,23 @@ fun KairosNavigationRail(
 ) {
     Box(
         modifier = modifier
-            .width(104.dp)
+            .width(112.dp)
             .fillMaxHeight()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(horizontal = 12.dp, vertical = 16.dp),
+            .padding(horizontal = 10.dp, vertical = 16.dp),
         contentAlignment = Alignment.Center
     ) {
-        KairosGlassSurface(
-            modifier = Modifier.fillMaxHeight(),
-            shape = RoundedCornerShape(KairosRadius.navigation),
-            strong = true,
-            elevation = 10.dp,
-            contentPadding = PaddingValues(horizontal = 6.dp, vertical = 12.dp)
+        FrostedCapsule(
+            shape = RailShape,
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(92.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 14.dp, horizontal = 6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -117,11 +141,64 @@ fun KairosNavigationRail(
                         vertical = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp)
+                            .padding(vertical = 5.dp)
                     )
                 }
             }
         }
+    }
+}
+
+/**
+ * The frosted glass shell: translucent fill, hairline border with a bright top
+ * edge, soft tinted shadow, and a gentle top sheen.
+ */
+@Composable
+private fun FrostedCapsule(
+    shape: RoundedCornerShape,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    val glass = KairosTheme.liquidGlass
+    Box(
+        modifier = modifier
+            .shadow(
+                elevation = 18.dp,
+                shape = shape,
+                ambientColor = glass.shadow,
+                spotColor = glass.shadow
+            )
+            .clip(shape)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(glass.fill, glass.fillDeep),
+                    startY = 0f,
+                    endY = 1400f
+                )
+            )
+            .border(
+                BorderStroke(
+                    width = 1.dp,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(glass.highlight, glass.border)
+                    )
+                ),
+                shape = shape
+            )
+    ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clip(shape)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(glass.sheen, Color.Transparent),
+                        startY = 0f,
+                        endY = 240f
+                    )
+                )
+        )
+        content()
     }
 }
 
@@ -133,22 +210,26 @@ private fun KairosNavigationItem(
     modifier: Modifier = Modifier,
     vertical: Boolean = false
 ) {
-    val container by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.surface else Color.Transparent,
-        animationSpec = tween(KairosMotion.quick),
-        label = "navigation-container"
+    val scheme = MaterialTheme.colorScheme
+    val pillColor by animateColorAsState(
+        targetValue = if (selected) scheme.primary else Color.Transparent,
+        animationSpec = tween(KairosMotion.state),
+        label = "navigation-pill"
     )
     val contentColor by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+        targetValue = if (selected) scheme.onPrimary else scheme.onSurfaceVariant,
         animationSpec = tween(KairosMotion.quick),
         label = "navigation-content"
     )
-
-    val reducedMotion = rememberKairosReducedMotion()
-    val iconScale by animateFloatAsState(
-        targetValue = if (selected && !reducedMotion) 1.08f else 1f,
-        animationSpec = tween(KairosDurations.State, easing = KairosEasing.EaseOutQuart),
-        label = "navigation-icon-scale"
+    val pillWidth by animateDpAsState(
+        targetValue = if (selected) (if (vertical) ActiveWidthVertical else ActiveWidth) else InactiveSize,
+        animationSpec = tween(KairosMotion.state),
+        label = "navigation-pill-width"
+    )
+    val labelAlpha by animateFloatAsState(
+        targetValue = if (selected) 1f else 0f,
+        animationSpec = tween(KairosMotion.quick),
+        label = "navigation-label-alpha"
     )
 
     Surface(
@@ -158,49 +239,63 @@ private fun KairosNavigationItem(
                 this.selected = selected
                 role = Role.Tab
             },
-        shape = RoundedCornerShape(if (vertical) 20.dp else 18.dp),
-        color = container,
+        shape = RoundedCornerShape(28.dp),
+        color = pillColor,
         contentColor = contentColor
     ) {
         if (vertical) {
             Column(
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 4.dp),
+                modifier = Modifier
+                    .width(pillWidth)
+                    .height(56.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                Icon(
-                    imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(21.dp)
-                        .graphicsLayer { scaleX = iconScale; scaleY = iconScale }
-                )
-                Text(
-                    text = stringResource(item.labelResId),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
-                    maxLines = 1
-                )
-            }
+                verticalArrangement = Arrangement.Center,
+                content = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                            contentDescription = null,
+                            modifier = Modifier.size(21.dp)
+                        )
+                        if (selected) {
+                            Text(
+                                text = stringResource(item.labelResId),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                modifier = Modifier.alpha(labelAlpha)
+                            )
+                        }
+                    }
+                }
+            )
         } else {
-            Column(
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 2.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(3.dp)
+            Row(
+                modifier = Modifier
+                    .height(52.dp)
+                    .width(pillWidth),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
                 Icon(
                     imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
                     contentDescription = stringResource(item.contentDescriptionResId),
-                    modifier = Modifier
-                        .size(21.dp)
-                        .graphicsLayer { scaleX = iconScale; scaleY = iconScale }
+                    modifier = Modifier.size(22.dp)
                 )
-                Text(
-                    text = stringResource(item.labelResId),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
-                    maxLines = 1
-                )
+                if (selected) {
+                    Text(
+                        text = stringResource(item.labelResId),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .padding(start = 6.dp)
+                            .alpha(labelAlpha)
+                    )
+                }
             }
         }
     }

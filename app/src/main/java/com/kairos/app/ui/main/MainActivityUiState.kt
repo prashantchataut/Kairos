@@ -6,5 +6,6 @@ data class MainActivityUiState(
     val isLoading: Boolean = true,
     val startDestination: String? = null,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
-    val hapticFeedbackEnabled: Boolean = true
+    val hapticFeedbackEnabled: Boolean = true,
+    val dynamicColor: Boolean = false
 )

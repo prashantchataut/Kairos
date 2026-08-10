@@ -5,24 +5,22 @@
     <style name="Theme.Kairos" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
         <item name="colorOnPrimary">@color/Kairos_on_primary</item>
         <item name="colorPrimary">@color/Kairos_primary</item>
         <item name="colorOnSurface">@color/Kairos_on_surface</item>
         <item name="colorOnBackground">@color/Kairos_on_background</item>
         <item name="colorPrimaryVariant">@color/Kairos_primary_variant</item>
-        <item name="colorOnPrimaryContainer">@color/Kairos_on_primary</item>
+        <item name="colorOnPrimaryContainer">@color/Kairos_on_primary_container</item>
         <item name="colorSecondary">@color/Kairos_secondary</item>
         <item name="colorOnSecondary">@color/Kairos_on_secondary</item>
         <item name="colorSecondaryContainer">@color/Kairos_secondary_container</item>
-        <item name="colorOnSecondaryContainer">@color/Kairos_on_secondary</item>
+        <item name="colorOnSecondaryContainer">@color/Kairos_on_secondary_container</item>
         <item name="colorSurface">@color/Kairos_surface</item>
         <item name="colorOnSurfaceVariant">@color/Kairos_on_surface_variant</item>
         <item name="colorError">@color/Kairos_error</item>
         <item name="colorOnError">@color/Kairos_on_error</item>
         <item name="colorErrorContainer">@color/Kairos_error_container</item>
-        <item name="colorOnErrorContainer">@color/Kairos_error</item>
+        <item name="colorOnErrorContainer">@color/Kairos_on_error_container</item>
         <item name="colorOutline">@color/Kairos_outline</item>
     </style>
 

@@ -2,38 +2,39 @@ package com.kairos.app.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.kairos.app.R
 
 /**
- * Kairos Design System - Typography (Redesigned)
+ * Kairos Design System - Typography (Paper & Ink)
  *
- * A dependency-free dual-family typography system using:
- * - Android system sans-serif for interface elements
- * - Android system serif for quotes, letters, and reflective content
+ * A dual-family typography system using:
+ * - Bundled Lora (regular/italic/medium/semibold/bold/bold-italic) for
+ *   display, headline, and reflective content — the serif voice of the book.
+ * - Native Android sans-serif for interface elements
  *
  * Design Principles:
- * - Sans-serif for UI, serif for literary/reflective content
- * - Serif/sans-serif contrast creates visual hierarchy without relying on color
- * - Generous line heights for comfortable reading
- * - Optimized letter spacing for mobile readability
+ * - Serif for display/headline and literary content, sans for UI chrome
+ * - Tight tracking on display sizes, generous line heights for reading
  * - WCAG AA contrast compliance for all text sizes
- *
- * Typography Hierarchy:
- * - Serif: Wisdom quotes, letter greetings, journal prompts, guide messages
- * - Sans-serif: Titles, body, labels, controls, and stats
  */
 
 /**
- * Platform serif accent family for quotes, letters, and reflective content.
- *
- * Kairos deliberately uses system families until licensed font resources are
- * bundled and verified. Referencing optional `R.font` entries does not provide
- * a runtime fallback—it prevents compilation when the resources are absent.
+ * Bundled Lora family — the display and reflective voice of Kairos.
+ * R.font resources ship with the app (see res/font/lora_*.ttf).
  */
-val LoraFamily: FontFamily = FontFamily.Serif
+val LoraFamily: FontFamily = FontFamily(
+    Font(R.font.lora_regular, FontWeight.Normal),
+    Font(R.font.lora_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.lora_medium, FontWeight.Medium),
+    Font(R.font.lora_semibold, FontWeight.SemiBold),
+    Font(R.font.lora_bold, FontWeight.Bold),
+    Font(R.font.lora_bold_italic, FontWeight.Bold, FontStyle.Italic)
+)
 
 /** Serif accent family used throughout reflective surfaces. */
 val SerifFamily: FontFamily = LoraFamily
@@ -50,52 +51,52 @@ val PoppinsFamily: FontFamily = KairosSansFamily
  */
 val KairosTypography = Typography(
     // ==========================================================================
-    // DISPLAY STYLES - For large, impactful text (splash screens, hero sections)
+    // DISPLAY STYLES - Bold modern sans (the Moment Blue display voice)
     // ==========================================================================
     displayLarge = TextStyle(
         fontFamily = KairosSansFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 56.sp,
-        lineHeight = 64.sp,
-        letterSpacing = (-1.5).sp
+        fontSize = 40.sp,
+        lineHeight = 46.sp,
+        letterSpacing = (-0.6).sp
     ),
     displayMedium = TextStyle(
         fontFamily = KairosSansFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 42.sp,
-        lineHeight = 50.sp,
-        letterSpacing = (-1.0).sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 34.sp,
+        lineHeight = 40.sp,
+        letterSpacing = (-0.4).sp
     ),
     displaySmall = TextStyle(
         fontFamily = KairosSansFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 34.sp,
-        lineHeight = 42.sp,
-        letterSpacing = 0.sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        lineHeight = 34.sp,
+        letterSpacing = (-0.2).sp
     ),
 
     // ==========================================================================
-    // HEADLINE STYLES - For section headers and prominent text
+    // HEADLINE STYLES - Bold sans section headers
     // ==========================================================================
     headlineLarge = TextStyle(
         fontFamily = KairosSansFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 30.sp,
-        lineHeight = 38.sp,
-        letterSpacing = 0.sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 26.sp,
+        lineHeight = 32.sp,
+        letterSpacing = (-0.2).sp
     ),
     headlineMedium = TextStyle(
         fontFamily = KairosSansFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 26.sp,
-        lineHeight = 34.sp,
-        letterSpacing = 0.sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        letterSpacing = (-0.1).sp
     ),
     headlineSmall = TextStyle(
         fontFamily = KairosSansFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 22.sp,
-        lineHeight = 30.sp,
+        fontWeight = FontWeight.Bold,
+        fontSize = 19.sp,
+        lineHeight = 25.sp,
         letterSpacing = 0.sp
     ),
 

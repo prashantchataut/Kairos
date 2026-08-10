@@ -58,7 +58,7 @@ class DailyPlanRepositoryImpl @Inject constructor(
         }
         existing = dailyContentDao.getSelectionsForDate(userId, dateKey)
 
-        val vocabulary = vocabularyDao.getAllVocabularySync()
+        val vocabulary = vocabularyDao.getAllCuratedVocabularySync()
         val quotes = quoteDao.getAllQuotesSync()
         val learning = vocabularyLearningDao.getAllLearningEntriesForUserSync(userId)
             .associateBy { it.wordId }

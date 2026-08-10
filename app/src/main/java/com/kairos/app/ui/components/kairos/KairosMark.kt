@@ -1,6 +1,10 @@
 package com.kairos.app.ui.components.kairos
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -12,8 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -25,11 +31,13 @@ import com.kairos.app.ui.animation.KairosEasing
 import com.kairos.app.ui.animation.rememberKairosReducedMotion
 
 /**
- * Kairos aperture mark.
+ * The Kairos mark — "the moment between".
  *
- * The open arc suggests an attentive mind without copying a literal head
- * silhouette. The asymmetric six-ray aperture represents a thought arriving at
- * the right moment. It remains recognizable in monochrome and at launcher size.
+ * A rounded tile holding a single flowing K whose two strokes converge into a
+ * filled dot: two forms meeting, a moment captured. The dot carries a short
+ * motion trail, so the mark reads as both a letter and a symbol of
+ * transformation. One silhouette, monochrome-safe, legible at 24px, and
+ * volumetric enough for App Store scale.
  */
 @Composable
 fun KairosMark(
@@ -48,60 +56,123 @@ fun KairosMark(
         label = "kairos-mark-reveal"
     )
 
+    val transition = rememberInfiniteTransition(label = "kairos-mark-breathe")
+    val breathe by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3200),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "kairos-mark-breathe-scale"
+    )
+    val idleScale = if (reducedMotion) 1f else 1f + breathe * 0.02f
+
     Canvas(
         modifier = modifier.graphicsLayer {
             alpha = reveal
-            scaleX = 0.86f + (0.14f * reveal)
-            scaleY = 0.86f + (0.14f * reveal)
+            scaleX = (0.86f + 0.14f * reveal) * idleScale
+            scaleY = (0.86f + 0.14f * reveal) * idleScale
         }
     ) {
         val min = size.minDimension
-        val stroke = min * 0.14f
-        val inset = stroke * 0.65f
+        val tileInset = min * 0.02f
+        val tileSize = min - tileInset * 2f
+        val r = tileSize * 0.30f
 
-        drawArc(
-            color = tint,
-            startAngle = 132f,
-            sweepAngle = 286f * reveal,
-            useCenter = false,
-            topLeft = Offset(inset, inset),
-            size = Size(min - inset * 2f, min - inset * 2f),
-            style = Stroke(width = stroke, cap = StrokeCap.Round)
+        // Tile — rounded square, volumetric vertical gradient.
+        drawRoundRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    lighten(accent, 0.14f),
+                    accent,
+                    darken(accent, 0.22f)
+                ),
+                startY = tileInset,
+                endY = size.height - tileInset
+            ),
+            topLeft = Offset(tileInset, tileInset),
+            size = Size(tileSize, tileSize),
+            cornerRadius = CornerRadius(r, r)
         )
 
+        // A soft inner highlight along the top edge.
+        drawRoundRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(Color.White.copy(alpha = 0.28f * reveal), Color.Transparent),
+                startY = tileInset,
+                endY = tileInset + tileSize * 0.42f
+            ),
+            topLeft = Offset(tileInset, tileInset),
+            size = Size(tileSize, tileSize),
+            cornerRadius = CornerRadius(r, r)
+        )
+
+        // The flowing K — strokes in relative tile coordinates.
+        val u = tileSize / 100f
+        val ox = tileInset
+        val oy = tileInset
+        val strokeW = u * 8.5f
+        val ink = Color.White
+
+        // Vertical stem.
         drawLine(
-            color = tint,
-            start = Offset(min * 0.51f, min * 0.66f),
-            end = Offset(min * 0.51f, min * (0.90f * reveal + 0.66f * (1f - reveal))),
-            strokeWidth = stroke,
+            color = ink.copy(alpha = 0.96f * reveal),
+            start = Offset(ox + u * 30f, oy + u * 26f),
+            end = Offset(ox + u * 30f, oy + u * 74f),
+            strokeWidth = strokeW,
             cap = StrokeCap.Round
         )
+
+        // Upper arm — sweeps from the stem toward the upper right.
         drawLine(
-            color = tint,
-            start = Offset(min * 0.51f, min * 0.88f),
-            end = Offset(min * 0.76f, min * 0.88f),
-            strokeWidth = stroke,
+            color = ink.copy(alpha = 0.96f * reveal),
+            start = Offset(ox + u * 30f, oy + u * 36f),
+            end = Offset(ox + u * 66f, oy + u * 25f),
+            strokeWidth = strokeW,
             cap = StrokeCap.Round
         )
 
-        val center = Offset(min * 0.53f, min * 0.45f)
-        val longRay = min * 0.18f * reveal
-        val shortRay = min * 0.13f * reveal
-        val rayStroke = min * 0.065f
-        listOf(0f, 60f, 120f).forEachIndexed { index, degrees ->
-            val radians = Math.toRadians(degrees.toDouble())
-            val dx = kotlin.math.cos(radians).toFloat() * if (index == 0) longRay else shortRay
-            val dy = kotlin.math.sin(radians).toFloat() * if (index == 0) longRay else shortRay
-            drawLine(
-                color = accent,
-                start = Offset(center.x - dx, center.y - dy),
-                end = Offset(center.x + dx, center.y + dy),
-                strokeWidth = rayStroke,
-                cap = StrokeCap.Round
-            )
-        }
+        // Lower arm — converges toward the moment dot.
+        drawLine(
+            color = ink.copy(alpha = 0.96f * reveal),
+            start = Offset(ox + u * 30f, oy + u * 48f),
+            end = Offset(ox + u * 58f, oy + u * 71f),
+            strokeWidth = strokeW,
+            cap = StrokeCap.Round
+        )
+
+        // The moment — a filled dot where the movement gathers.
+        drawCircle(
+            color = Color.White.copy(alpha = 0.98f * reveal),
+            radius = u * 7.5f,
+            center = Offset(ox + u * 74f, oy + u * 78f)
+        )
+
+        // Motion trail from the dot — momentum, a moment captured in motion.
+        drawLine(
+            color = Color.White.copy(alpha = 0.55f * reveal),
+            start = Offset(ox + u * 78f, oy + u * 82f),
+            end = Offset(ox + u * 88f, oy + u * 90f),
+            strokeWidth = strokeW * 0.55f,
+            cap = StrokeCap.Round
+        )
     }
 }
+
+private fun lighten(color: Color, amount: Float): Color = Color(
+    red = color.red + (1f - color.red) * amount,
+    green = color.green + (1f - color.green) * amount,
+    blue = color.blue + (1f - color.blue) * amount,
+    alpha = color.alpha
+)
+
+private fun darken(color: Color, amount: Float): Color = Color(
+    red = color.red * (1f - amount),
+    green = color.green * (1f - amount),
+    blue = color.blue * (1f - amount),
+    alpha = color.alpha
+)
 
 @Composable
 fun KairosWordmark(
@@ -122,7 +193,7 @@ fun KairosWordmark(
         Text(
             text = "Kairos",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Bold,
             color = tint
         )
     }

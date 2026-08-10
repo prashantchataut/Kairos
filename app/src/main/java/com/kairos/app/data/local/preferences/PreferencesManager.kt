@@ -150,6 +150,8 @@ class PreferencesManager @Inject constructor(
         val COMPACT_CARD_VIEW = booleanPreferencesKey("compact_card_view")
         val HAPTIC_FEEDBACK_ENABLED = booleanPreferencesKey("haptic_feedback")
         val FIRST_LAUNCH_TIME = longPreferencesKey("first_launch_time")
+        val ONLINE_CONTENT_LAST_REFRESH = longPreferencesKey("online_content_last_refresh")
+        val JOURNAL_DRAFT = stringPreferencesKey("journal_draft")
         val USER_ID = stringPreferencesKey("user_id")
 
         // Gamification
@@ -496,6 +498,22 @@ class PreferencesManager @Inject constructor(
         .map { preferences ->
             preferences[PreferencesKeys.FIRST_LAUNCH_TIME] ?: 0L
         }
+
+    /** Auto-saved journal draft (content only; cleared on successful save). */
+    val journalDraft: Flow<String> = dataStore.data
+        .map { it[PreferencesKeys.JOURNAL_DRAFT] ?: "" }
+
+    suspend fun setJournalDraft(content: String) {
+        dataStore.edit { it[PreferencesKeys.JOURNAL_DRAFT] = content.take(20_000) }
+    }
+
+    /** Last time curated online content was refreshed (0 = never). */
+    val lastOnlineRefreshDate: Flow<Long> = dataStore.data
+        .map { it[PreferencesKeys.ONLINE_CONTENT_LAST_REFRESH] ?: 0L }
+
+    suspend fun setLastOnlineRefreshDate(timestamp: Long) {
+        dataStore.edit { it[PreferencesKeys.ONLINE_CONTENT_LAST_REFRESH] = timestamp }
+    }
 
     suspend fun setFirstLaunchTime(timestamp: Long) {
         dataStore.edit { preferences ->

@@ -66,7 +66,6 @@ import com.kairos.app.ui.theme.isDarkTheme
 import com.kairos.app.ui.theme.MoodCalm
 import com.kairos.app.ui.theme.MoodGrateful
 import com.kairos.app.ui.components.KairosCard
-import androidx.compose.ui.graphics.Brush
 import kotlinx.coroutines.delay
 import com.kairos.app.data.ai.AiConfigStatus
 
@@ -74,41 +73,41 @@ import com.kairos.app.data.ai.AiConfigStatus
 // COLOR DEFINITIONS - Exact colors from design specs
 // =============================================================================
 
-// Light Mode Colors
-private val LightBackground = Color(0xFFF9FAFB)
-private val LightCardBackground = Color(0xFFFFFFFF)
-private val LightSectionHeader = Color(0xFF6C757D)
-private val LightIconBackground = Color(0xFFE0E7E6)
-private val LightIconColor = Color(0xFF212529)
-private val LightPrimaryText = Color(0xFF212529)
-private val LightSecondaryText = Color(0xFFADB5BD)
-private val LightToggleActive = Color(0xFF36F97F)
-private val LightToggleInactive = Color(0xFFDEE2E6)
-private val LightDropdownBackground = Color(0xFFE0E7E6)
-private val LightOnlineGreen = Color(0xFF36F97F)
-private val LightFollowButtonBg = Color(0xFFE0E7E6)
+// Light Mode Colors — Moment Blue
+private val LightBackground = Color(0xFFF5F7FC)          // Pearl blue-tinted ground
+private val LightCardBackground = Color(0xFFFBFCFE)     // Pearl surface
+private val LightSectionHeader = Color(0xFF5A6478)      // Soft slate
+private val LightIconBackground = Color(0xFFE7ECF7)     // Blue-tinted container
+private val LightIconColor = Color(0xFF101828)          // Ink navy
+private val LightPrimaryText = Color(0xFF101828)
+private val LightSecondaryText = Color(0xFF8B93A7)      // Faint slate
+private val LightToggleActive = Color(0xFF2E5BFF)       // Royal blue
+private val LightToggleInactive = Color(0xFFD8DFEC)     // Hairline
+private val LightDropdownBackground = Color(0xFFE7ECF7)
+private val LightOnlineGreen = Color(0xFF2E9E6B)        // Mint
+private val LightFollowButtonBg = Color(0xFFE7ECF7)
 private val LightFeedbackCardBg = Color(0xFFFFF8F0)
 private val LightFeedbackIconBg = Color(0xFFFFD8A3)
 private val LightFeedbackIconColor = Color(0xFFFA8800)
-private val LightKairosIdText = Color(0xFFDEE2E6)
+private val LightKairosIdText = Color(0xFFD8DFEC)
 
-// Dark Mode Colors
-private val DarkBackground = Color(0xFF0D2826)
-private val DarkCardBackground = Color(0xFF1A3331)
-private val DarkSectionHeader = Color(0xFFFFFFFF)
-private val DarkIconBackground = Color(0xFF2A4240)
-private val DarkIconColor = Color(0xFFFFFFFF)
-private val DarkPrimaryText = Color(0xFFFFFFFF)
-private val DarkSecondaryText = Color(0xFFD3D8D7)
-private val DarkToggleActive = Color(0xFF36F97F)
-private val DarkToggleInactive = Color(0xFF404B4A)
-private val DarkDropdownBackground = Color(0xFF2A4240)
-private val DarkOnlineGreen = Color(0xFF36F97F)
-private val DarkFollowButtonBg = Color(0xFF2A4240)
-private val DarkFeedbackCardBg = Color(0xFF3F2B1A)
+// Dark Mode Colors — Charcoal ink-navy
+private val DarkBackground = Color(0xFF0B0E15)             // Ink navy ground
+private val DarkCardBackground = Color(0xFF11161F)        // Elevated card
+private val DarkSectionHeader = Color(0xFFE9EDF6)         // Night ink
+private val DarkIconBackground = Color(0xFF1E2636)        // Container
+private val DarkIconColor = Color(0xFFE9EDF6)
+private val DarkPrimaryText = Color(0xFFE9EDF6)
+private val DarkSecondaryText = Color(0xFF9AA5BE)         // Night soft
+private val DarkToggleActive = Color(0xFF8FA6FF)          // Periwinkle
+private val DarkToggleInactive = Color(0xFF2A3345)        // Night hairline
+private val DarkDropdownBackground = Color(0xFF1E2636)
+private val DarkOnlineGreen = Color(0xFF7BD9A5)           // Pale mint
+private val DarkFollowButtonBg = Color(0xFF1E2636)
+private val DarkFeedbackCardBg = Color(0xFF1E2636)
 private val DarkFeedbackIconBg = Color(0xFF5A3B27)
 private val DarkFeedbackIconColor = Color(0xFFFFD8A3)
-private val DarkKairosIdText = Color(0xFF404B4A)
+private val DarkKairosIdText = Color(0xFF2A3345)
 
 @Composable
 fun SettingsScreen(
@@ -192,7 +191,7 @@ fun SettingsScreen(
                 )
             ) {
                 SettingsSection(
-                    title = "APPEARANCE",
+                    title = "Appearance",
                     isDark = isDark
                 ) {
                     // Interests & setup row — tune what Kairos recommends
@@ -237,16 +236,17 @@ fun SettingsScreen(
                 )
             ) {
                 SettingsSection(
-                    title = "INTELLIGENCE",
+                    title = "Intelligence",
                     isDark = isDark
                 ) {
-                    // Premium Intelligence Row
+                    // Smart suggestions — product-level coming-soon row (no dead toggle).
                     SettingsRowWithToggle(
                         icon = Icons.Default.AutoAwesome,
-                        title = "Premium Intelligence",
-                        subtitle = "Enable local, private analysis of your journaling patterns for deeper insights.",
-                        checked = uiState.premiumIntelligenceEnabled,
-                        onCheckedChange = { viewModel.setPremiumIntelligenceEnabled(it) },
+                        title = "Smart suggestions",
+                        subtitle = "Coming soon: gentle, private insights from your reflections.",
+                        checked = false,
+                        enabled = false,
+                        onCheckedChange = {},
                         isDark = isDark
                     )
                 }
@@ -261,7 +261,7 @@ fun SettingsScreen(
                 )
             ) {
                 SettingsSection(
-                    title = "NOTIFICATIONS",
+                    title = "Notifications",
                     isDark = isDark
                 ) {
                     // Push Notifications
@@ -332,7 +332,7 @@ fun SettingsScreen(
                 )
             ) {
                 SettingsSection(
-                    title = "PREFERENCES",
+                    title = "Preferences",
                     isDark = isDark
                 ) {
                     // Haptics
@@ -344,16 +344,7 @@ fun SettingsScreen(
                         isDark = isDark
                     )
 
-                    SettingsDivider(isDark)
 
-                    // Compact View
-                    SettingsRowWithToggle(
-                        icon = KairosIcons.GridView,
-                        title = "Compact View",
-                        checked = uiState.compactView,
-                        onCheckedChange = { viewModel.setCompactView(it) },
-                        isDark = isDark
-                    )
                 }
             }
 
@@ -416,45 +407,17 @@ fun SettingsScreen(
                 )
             ) {
                 SettingsSection(
-                    title = "KAIROS LABS",
+                    title = "Kairos Labs",
                     isDark = isDark,
                     showLeafIcon = true
                 ) {
                     // Enable AI (Master Toggle)
                     SettingsRowWithToggle(
                         icon = KairosIcons.Psychology,
-                        title = "Enable experimental AI",
-                        subtitle = "Uses a configured provider; production releases require a server gateway",
+                        title = "Experimental AI",
+                        subtitle = "Optional experiments. Everything core works fully offline without them.",
                         checked = uiState.buddhaAiEnabled,
                         onCheckedChange = { viewModel.setBuddhaAiEnabled(it) },
-                        isDark = isDark,
-                        useAccentIcon = true
-                    )
-
-                    SettingsDivider(isDark)
-
-                    // Daily Wisdom
-                    SettingsRowWithToggle(
-                        icon = KairosIcons.WbSunny,
-                        title = "Generated context",
-                        subtitle = "Optional context for saved words and ideas",
-                        checked = uiState.buddhaDailyWisdomEnabled,
-                        onCheckedChange = { viewModel.setBuddhaDailyWisdomEnabled(it) },
-                        enabled = uiState.buddhaAiEnabled,
-                        isDark = isDark,
-                        useAccentIcon = true
-                    )
-
-                    SettingsDivider(isDark)
-
-                    // Quote Insights
-                    SettingsRowWithToggle(
-                        icon = KairosIcons.FormatQuote,
-                        title = "Quote Insights",
-                        subtitle = "Meaning and daily action for quotes",
-                        checked = uiState.buddhaQuoteExplanationEnabled,
-                        onCheckedChange = { viewModel.setBuddhaQuoteExplanationEnabled(it) },
-                        enabled = uiState.buddhaAiEnabled,
                         isDark = isDark,
                         useAccentIcon = true
                     )
@@ -1911,13 +1874,9 @@ private fun PrivacySummaryCard() {
             .padding(16.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(
-                Brush.horizontalGradient(
-                    colors = listOf(
-                        MoodCalm.copy(alpha = 0.08f),
-                        MoodGrateful.copy(alpha = 0.08f)
-                    )
-                )
+                if (isDarkTheme()) Color(0xFF2E281D) else Color(0xFFFBF8F1)
             )
+            .border(1.dp, if (isDarkTheme()) Color(0xFF3A342A) else Color(0xFFD8D2C4), RoundedCornerShape(12.dp))
             .padding(16.dp)
     ) {
         Column {
@@ -2100,14 +2059,14 @@ private fun AiConfigAlert(
     val containerColor = if (isDark) Color(0xFF3F2B1A) else Color(0xFFFFF8F0)
     val contentColor = if (isDark) Color(0xFFFFD8A3) else Color(0xFFC05600)
     val title = when (status) {
-        AiConfigStatus.MISSING_API_KEY -> "AI Features Offline"
-        AiConfigStatus.ERROR -> "AI Initialization Error"
-        else -> "AI Status Unknown"
+        AiConfigStatus.MISSING_API_KEY -> "Smart suggestions are coming soon"
+        AiConfigStatus.ERROR -> "Smart suggestions are taking a break"
+        else -> "Smart suggestions are coming soon"
     }
     val message = when (status) {
-        AiConfigStatus.MISSING_API_KEY -> "AI features require configuration. Please contact the developer."
-        AiConfigStatus.ERROR -> "Problem connecting to AI service. Please check your network connection."
-        else -> "AI features are temporarily unavailable."
+        AiConfigStatus.MISSING_API_KEY -> "Core practice, reflections, and your library all work fully offline. Personalized AI insights will arrive in a future update."
+        AiConfigStatus.ERROR -> "They will be back shortly. Your saved words and reflections are safe on this device."
+        else -> "Check back soon — your core practice is unaffected."
     }
 
     Surface(

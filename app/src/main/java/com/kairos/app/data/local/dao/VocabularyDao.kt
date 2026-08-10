@@ -10,6 +10,18 @@ interface VocabularyDao {
     @Query("SELECT * FROM vocabulary ORDER BY word ASC")
     fun getAllVocabulary(): Flow<List<VocabularyEntity>>
 
+    /** Promoted-surface catalog: curated roots only, no auto-derived family rows. */
+    @Query(
+        "SELECT * FROM vocabulary WHERE origin IS NULL OR origin NOT LIKE 'kairos:family:%' ORDER BY word ASC"
+    )
+    fun getAllCuratedVocabulary(): Flow<List<VocabularyEntity>>
+
+    /** Promoted-surface catalog: curated roots only, no auto-derived family rows. */
+    @Query(
+        "SELECT * FROM vocabulary WHERE origin IS NULL OR origin NOT LIKE 'kairos:family:%' ORDER BY word ASC"
+    )
+    suspend fun getAllCuratedVocabularySync(): List<VocabularyEntity>
+
     @Query("SELECT * FROM vocabulary WHERE id = :id")
     suspend fun getWordById(id: Long): VocabularyEntity?
 
@@ -61,6 +73,9 @@ interface VocabularyDao {
 
     @Query("SELECT COUNT(*) FROM vocabulary")
     fun getTotalCount(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM vocabulary")
+    suspend fun countAll(): Int
 
     @Query("SELECT AVG(masteryLevel) FROM vocabulary WHERE isLearned = 1")
     fun getAverageMastery(): Flow<Float?>

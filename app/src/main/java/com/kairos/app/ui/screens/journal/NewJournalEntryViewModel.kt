@@ -23,6 +23,7 @@ import com.kairos.app.domain.validation.ContentValidation
 import com.kairos.app.domain.validation.ContentValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -211,7 +212,38 @@ class NewJournalEntryViewModel @Inject constructor(
                 validationHint = validation.getMessage()
             )
         }
+        scheduleDraftSave(content)
     }
+
+    private var draftJob: kotlinx.coroutines.Job? = null
+
+    /** Debounced draft autosave: quiet, never blocks, cleared on save. */
+    private fun scheduleDraftSave(content: String) {
+        draftJob?.cancel()
+        draftJob = viewModelScope.launch {
+            delay(900)
+            if (content.isNotBlank()) {
+                runCatching { preferencesManager.setJournalDraft(content) }
+            }
+        }
+    }
+
+    /** Restore a previously auto-saved draft into a fresh editor. */
+    fun restoreDraft() {
+        viewModelScope.launch {
+            val draft = runCatching { preferencesManager.journalDraft.first() }.getOrDefault("")
+            if (draft.isNotBlank() && _uiState.value.content.isBlank()) {
+                _uiState.update { it.copy(content = draft, hasUnsavedChanges = true) }
+            }
+        }
+    }
+
+    /** Clear the persisted draft after a successful save. */
+    private fun clearDraft() {
+        draftJob?.cancel()
+        viewModelScope.launch { runCatching { preferencesManager.setJournalDraft("") } }
+    }
+
 
     fun updateMood(mood: Mood) {
         _uiState.update { it.copy(selectedMood = mood, hasUnsavedChanges = true) }
@@ -321,6 +353,7 @@ class NewJournalEntryViewModel @Inject constructor(
                     android.util.Log.w(TAG, "Journal saved but progression could not be updated", it)
                 }.getOrNull()
 
+                clearDraft()
                 _uiState.update {
                     it.copy(
                         isSaving = false,

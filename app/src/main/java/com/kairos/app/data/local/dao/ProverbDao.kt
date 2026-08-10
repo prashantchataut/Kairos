@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProverbDao {
 
+    @Query("SELECT COUNT(*) FROM proverbs")
+    suspend fun countAll(): Int
+
     @Query("SELECT * FROM proverbs ORDER BY id ASC")
     fun getAllProverbs(): Flow<List<ProverbEntity>>
 

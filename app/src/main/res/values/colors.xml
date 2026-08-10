@@ -2,77 +2,83 @@
 <resources>
     <!--
         Kairos Design System - XML Color Resources
-        These colors match the Kotlin Color.kt definitions for use in XML layouts and themes.
+        Paper & Ink: vermilion accent on warm paper neutrals. These values mirror
+        Color.kt and are used only for the splash screen and window chrome —
+        Compose reads the Kotlin tokens.
     -->
 
-    <!-- Primary - Deep Forest Green (represents growth and wisdom) -->
-    <color name="Kairos_primary">#2D5A3D</color>
-    <color name="Kairos_primary_variant">#1E3D2B</color>
-    <color name="Kairos_on_primary">#FFFFFF</color>
-    <color name="Kairos_primary_container">#D4E8DC</color>
+    <!-- Primary - Vermilion (the single accent) -->
+    <color name="Kairos_primary">#B3401F</color>
+    <color name="Kairos_primary_variant">#8C3012</color>
+    <color name="Kairos_on_primary">#FFF8F0</color>
+    <color name="Kairos_primary_container">#F6E3DA</color>
+    <color name="Kairos_on_primary_container">#5C1F0A</color>
 
-    <!-- Secondary - Warm Sand (evokes warmth and approachability) -->
-    <color name="Kairos_secondary">#D4C4A8</color>
-    <color name="Kairos_secondary_variant">#C4B494</color>
-    <color name="Kairos_on_secondary">#2D2A24</color>
-    <color name="Kairos_secondary_container">#D4C4A8</color>
-    <color name="Kairos_on_secondary_container">#2D2A24</color>
+    <!-- Secondary - Muted sienna -->
+    <color name="Kairos_secondary">#A0522D</color>
+    <color name="Kairos_secondary_variant">#8A4422</color>
+    <color name="Kairos_on_secondary">#FFF8F0</color>
+    <color name="Kairos_secondary_container">#F0E1D2</color>
+    <color name="Kairos_on_secondary_container">#5A2E1A</color>
 
-    <!-- Tertiary - Soft Teal (adds freshness and vitality) -->
-    <color name="Kairos_tertiary">#5B9A8B</color>
-    <color name="Kairos_on_tertiary">#FFFFFF</color>
-    <color name="Kairos_tertiary_container">#CCE5E0</color>
+    <!-- Tertiary - Deep forest -->
+    <color name="Kairos_tertiary">#33543F</color>
+    <color name="Kairos_on_tertiary">#FFF8F0</color>
+    <color name="Kairos_tertiary_container">#DDE6DB</color>
+    <color name="Kairos_on_tertiary_container">#1C3526</color>
 
-    <!-- Background -->
-    <color name="Kairos_background">#FBFAF8</color>
-    <color name="Kairos_on_background">#1A1C1E</color>
+    <!-- Background - Paper -->
+    <color name="Kairos_background">#F4F0E8</color>
+    <color name="Kairos_on_background">#221E17</color>
 
     <!-- Surface -->
-    <color name="Kairos_surface">#FFFFFF</color>
-    <color name="Kairos_surface_variant">#F3F0E8</color>
-    <color name="Kairos_on_surface">#1A1C1E</color>
-    <color name="Kairos_on_surface_variant">#5C5C5C</color>
+    <color name="Kairos_surface">#FBF8F1</color>
+    <color name="Kairos_surface_variant">#EFEADD</color>
+    <color name="Kairos_on_surface">#221E17</color>
+    <color name="Kairos_on_surface_variant">#6E6759</color>
 
-    <!-- Error -->
-    <color name="Kairos_error">#BF3B3B</color>
+    <!-- Error - Oxblood -->
+    <color name="Kairos_error">#B3261E</color>
     <color name="Kairos_on_error">#FFFFFF</color>
-    <color name="Kairos_error_container">#FFE5E5</color>
+    <color name="Kairos_error_container">#F4DBD5</color>
+    <color name="Kairos_on_error_container">#7A1E18</color>
 
-    <!-- Success -->
-    <color name="Kairos_success">#2E7D4A</color>
+    <!-- Success - Deep forest -->
+    <color name="Kairos_success">#33543F</color>
 
     <!-- Warning -->
     <color name="Kairos_warning">#E6A23C</color>
 
     <!-- Outline -->
-    <color name="Kairos_outline">#DDD8D0</color>
-    <color name="Kairos_outline_variant">#CBC6BE</color>
+    <color name="Kairos_outline">#D8D2C4</color>
+    <color name="Kairos_outline_variant">#E1DAC9</color>
 
-    <!-- Dark Theme -->
-    <color name="Kairos_primary_dark">#8FD4A6</color>
-    <color name="Kairos_primary_variant_dark">#6BBF8A</color>
-    <color name="Kairos_on_primary_dark">#003921</color>
-    <color name="Kairos_primary_container_dark">#1A4028</color>
+    <!-- Dark Theme - Night paper -->
+    <color name="Kairos_primary_dark">#E5855F</color>
+    <color name="Kairos_primary_variant_dark">#C96A45</color>
+    <color name="Kairos_on_primary_dark">#2E1505</color>
+    <color name="Kairos_primary_container_dark">#4A2415</color>
+    <color name="Kairos_on_primary_container_dark">#F6E3DA</color>
 
-    <color name="Kairos_secondary_dark">#D4C4A8</color>
-    <color name="Kairos_on_secondary_dark">#3C3627</color>
+    <color name="Kairos_secondary_dark">#D98E6E</color>
+    <color name="Kairos_on_secondary_dark">#3A1606</color>
 
-    <color name="Kairos_tertiary_dark">#7FBFB3</color>
-    <color name="Kairos_on_tertiary_dark">#003731</color>
+    <color name="Kairos_tertiary_dark">#8FA98F</color>
+    <color name="Kairos_on_tertiary_dark">#13291D</color>
 
-    <color name="Kairos_background_dark">#0F1210</color>
-    <color name="Kairos_on_background_dark">#E4E3DF</color>
+    <color name="Kairos_background_dark">#171410</color>
+    <color name="Kairos_on_background_dark">#EDE7DA</color>
 
-    <color name="Kairos_surface_dark">#181C19</color>
-    <color name="Kairos_surface_variant_dark">#252A26</color>
-    <color name="Kairos_on_surface_dark">#E4E3DF</color>
-    <color name="Kairos_on_surface_variant_dark">#9CA39D</color>
+    <color name="Kairos_surface_dark">#1D1913</color>
+    <color name="Kairos_surface_variant_dark">#262118</color>
+    <color name="Kairos_on_surface_dark">#EDE7DA</color>
+    <color name="Kairos_on_surface_variant_dark">#A79E8C</color>
 
-    <color name="Kairos_error_dark">#FFB3B3</color>
-    <color name="Kairos_on_error_dark">#5C1A1A</color>
+    <color name="Kairos_error_dark">#EAA39B</color>
+    <color name="Kairos_on_error_dark">#5C140E</color>
 
-    <color name="Kairos_outline_dark">#3C4139</color>
+    <color name="Kairos_outline_dark">#3A342A</color>
 
-    <!-- Splash Screen - matches primary color -->
-    <color name="splash_background">#111216</color>
+    <!-- Splash Screen - night paper -->
+    <color name="splash_background">#2E5BFF</color>
 </resources>
