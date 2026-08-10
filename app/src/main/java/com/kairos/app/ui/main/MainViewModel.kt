@@ -56,21 +56,23 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 preferencesManager.themeMode.catch { emit("system") },
-                preferencesManager.hapticFeedbackEnabled.catch { emit(true) }
-            ) { themeModeString, hapticEnabled ->
+                preferencesManager.hapticFeedbackEnabled.catch { emit(true) },
+                preferencesManager.dynamicColors.catch { emit(false) }
+            ) { themeModeString, hapticEnabled, dynamicColors ->
                 val themeMode = when (themeModeString.lowercase()) {
                     "light" -> ThemeMode.LIGHT
                     "dark" -> ThemeMode.DARK
                     else -> ThemeMode.SYSTEM
                 }
-                // Return a pair of the loaded preferences
-                themeMode to hapticEnabled
-            }.collectLatest { (themeMode, hapticEnabled) ->
+                // Return a triple of the loaded preferences
+                Triple(themeMode, hapticEnabled, dynamicColors)
+            }.collectLatest { (themeMode, hapticEnabled, dynamicColors) ->
                 // Use atomic update to apply non-critical preferences
                 _uiState.update {
                     it.copy(
                         themeMode = themeMode,
-                        hapticFeedbackEnabled = hapticEnabled
+                        hapticFeedbackEnabled = hapticEnabled,
+                        dynamicColor = dynamicColors
                     )
                 }
             }

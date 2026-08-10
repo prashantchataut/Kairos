@@ -344,16 +344,7 @@ fun SettingsScreen(
                         isDark = isDark
                     )
 
-                    SettingsDivider(isDark)
 
-                    // Compact View
-                    SettingsRowWithToggle(
-                        icon = KairosIcons.GridView,
-                        title = "Compact View",
-                        checked = uiState.compactView,
-                        onCheckedChange = { viewModel.setCompactView(it) },
-                        isDark = isDark
-                    )
                 }
             }
 
@@ -416,45 +407,17 @@ fun SettingsScreen(
                 )
             ) {
                 SettingsSection(
-                    title = "KAIROS LABS",
+                    title = "Kairos Labs",
                     isDark = isDark,
                     showLeafIcon = true
                 ) {
                     // Enable AI (Master Toggle)
                     SettingsRowWithToggle(
                         icon = KairosIcons.Psychology,
-                        title = "Enable experimental AI",
-                        subtitle = "Uses a configured provider; production releases require a server gateway",
+                        title = "Experimental AI",
+                        subtitle = "Optional experiments. Everything core works fully offline without them.",
                         checked = uiState.buddhaAiEnabled,
                         onCheckedChange = { viewModel.setBuddhaAiEnabled(it) },
-                        isDark = isDark,
-                        useAccentIcon = true
-                    )
-
-                    SettingsDivider(isDark)
-
-                    // Daily Wisdom
-                    SettingsRowWithToggle(
-                        icon = KairosIcons.WbSunny,
-                        title = "Generated context",
-                        subtitle = "Optional context for saved words and ideas",
-                        checked = uiState.buddhaDailyWisdomEnabled,
-                        onCheckedChange = { viewModel.setBuddhaDailyWisdomEnabled(it) },
-                        enabled = uiState.buddhaAiEnabled,
-                        isDark = isDark,
-                        useAccentIcon = true
-                    )
-
-                    SettingsDivider(isDark)
-
-                    // Quote Insights
-                    SettingsRowWithToggle(
-                        icon = KairosIcons.FormatQuote,
-                        title = "Quote Insights",
-                        subtitle = "Meaning and daily action for quotes",
-                        checked = uiState.buddhaQuoteExplanationEnabled,
-                        onCheckedChange = { viewModel.setBuddhaQuoteExplanationEnabled(it) },
-                        enabled = uiState.buddhaAiEnabled,
                         isDark = isDark,
                         useAccentIcon = true
                     )

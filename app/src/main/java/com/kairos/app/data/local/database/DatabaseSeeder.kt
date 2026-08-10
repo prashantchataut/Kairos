@@ -1357,13 +1357,13 @@ object DatabaseSeeder {
             category = "academic"
         ),
         VocabularyEntity(
-            word = "Ephemeral",
-            definition = "Lasting for only a short time; transitory",
-            pronunciation = "ih-FEM-er-uhl",
-            partOfSpeech = "adjective",
-            exampleSentence = "Fame can be ephemeral, here today and gone tomorrow.",
-            synonyms = "fleeting, transient, short-lived, momentary",
-            antonyms = "permanent, enduring, lasting, eternal",
+            word = "Ephemerality",
+            definition = "The quality of lasting for only a short time; impermanence",
+            pronunciation = "ih-FEM-er-AL-ih-tee",
+            partOfSpeech = "noun",
+            exampleSentence = "The ephemerality of the season made every warm evening feel precious.",
+            synonyms = "impermanence, transience, fleetingness, brevity",
+            antonyms = "permanence, endurance, eternity",
             origin = "From Greek 'ephemeros' meaning 'lasting only a day'",
             difficulty = 3,
             category = "literary"

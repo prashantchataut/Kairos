@@ -86,6 +86,7 @@ fun FocusedTodayScreen(
     onNavigateToJournal: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToNotificationSettings: () -> Unit,
+    onNavigateToNewEntry: (String) -> Unit = { _ -> },
     viewModel: TodayViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -166,7 +167,13 @@ fun FocusedTodayScreen(
                                 state = state,
                                 onReflect = {
                                     viewModel.onDailyQuoteFeedback(ContentInteractionType.COMPLETED)
-                                    onNavigateToJournal()
+                                    val quote = state.dailyQuote
+                                    val author = state.dailyQuoteAuthor
+                                    val prefill = buildString {
+                                        append("“").append(quote).append("”")
+                                        if (author.isNotBlank()) append(" — ").append(author)
+                                    }
+                                    onNavigateToNewEntry(prefill)
                                 },
                                 onLibrary = {
                                     viewModel.onDailyQuoteFeedback(ContentInteractionType.OPENED)

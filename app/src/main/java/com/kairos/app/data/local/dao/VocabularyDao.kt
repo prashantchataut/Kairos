@@ -62,6 +62,9 @@ interface VocabularyDao {
     @Query("SELECT COUNT(*) FROM vocabulary")
     fun getTotalCount(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM vocabulary")
+    suspend fun countAll(): Int
+
     @Query("SELECT AVG(masteryLevel) FROM vocabulary WHERE isLearned = 1")
     fun getAverageMastery(): Flow<Float?>
 

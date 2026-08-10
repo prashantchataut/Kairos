@@ -168,8 +168,8 @@ fun KairosTheme(
         LocalKairosGlassColors provides kairosGlassColors,
         LocalKairosLiquidGlassColors provides liquidGlassColors,
         LocalHavenColors provides havenColors,
-        LocalStreakColors provides LightStreakColors,
-        LocalMoodColors provides LightMoodColors
+        LocalStreakColors provides if (darkTheme) DarkStreakColors else LightStreakColors,
+        LocalMoodColors provides if (darkTheme) DarkMoodColors else LightMoodColors
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

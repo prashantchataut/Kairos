@@ -227,6 +227,9 @@ fun KairosNavHost(
                 onNavigateToJournal = {
                     navController.navigate(Screen.JournalList.route)
                 },
+                onNavigateToNewEntry = { prefill ->
+                    navController.navigate(Screen.NewJournalEntry.createRoute(prefill))
+                },
                 onNavigateToProfile = {
                     navController.navigate(Screen.Profile.route)
                 },

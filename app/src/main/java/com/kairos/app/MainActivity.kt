@@ -89,7 +89,8 @@ class MainActivity : ComponentActivity() {
 
             if (!uiState.isLoading) {
                 KairosTheme(
-                    themeMode = uiState.themeMode
+                    themeMode = uiState.themeMode,
+                    dynamicColor = uiState.dynamicColor
                 ) {
                     CompositionLocalProvider(
                         LocalHapticEnabled provides uiState.hapticFeedbackEnabled

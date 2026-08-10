@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface IdiomDao {
 
+    @Query("SELECT COUNT(*) FROM idioms")
+    suspend fun countAll(): Int
+
     @Query("SELECT * FROM idioms ORDER BY phrase ASC")
     fun getAllIdioms(): Flow<List<IdiomEntity>>
 

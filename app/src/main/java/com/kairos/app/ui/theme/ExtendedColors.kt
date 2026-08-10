@@ -162,5 +162,32 @@ val DarkHavenColors = HavenColorPalette(
     accentGold = HavenAccentGold
 )
 
-// Streak colors are intensity-based and don't change in dark mode
-// Mood colors are semantic and don't change in dark mode
+// Dark variants: slightly brighter, tuned for ink-navy surfaces so they keep
+// adequate contrast and legibility in dark mode.
+val DarkStreakColors = StreakColorPalette(
+    fire = StreakFire,
+    warm = StreakWarm,
+    hot = StreakHot,
+    week = StreakWeek,
+    month = StreakMonth,
+    quarter = StreakQuarter,
+    glow = Color(0xFFFFE0A3),
+    ember = Color(0xFFFFB74D),
+    inferno = Color(0xFFE64A19),
+    blazing = Color(0xFFFF6E40),
+    cold = Color(0xFF90CAF9)
+)
+
+val DarkMoodColors = MoodColorPalette(
+    happy = Color(0xFFF2C14D),
+    calm = Color(0xFF6FC3E8),
+    anxious = Color(0xFFF0A06E),
+    sad = Color(0xFF93A5C9),
+    motivated = Color(0xFFF5B04B),
+    grateful = Color(0xFFA3D39C),
+    confused = Color(0xFFBCAED6),
+    excited = Color(0xFFF08A7A),
+    energetic = Color(0xFFF0A24A),
+    inspired = Color(0xFF96A6EF),
+    nostalgic = Color(0xFFD3A9BF)
+)
