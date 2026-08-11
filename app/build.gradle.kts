@@ -80,6 +80,18 @@ android {
             storePassword = System.getenv("KEYSTORE_PASSWORD")
             keyAlias = System.getenv("KEY_ALIAS")
             keyPassword = System.getenv("KEY_PASSWORD")
+
+            // Fail-secure: Prevent release builds with missing keystore
+            val isReleaseTask = project.gradle.startParameter.taskNames.any {
+                it.contains("release", ignoreCase = true) && (it.contains("assemble") || it.contains("bundle"))
+            }
+            if (isReleaseTask && storeFile == null) {
+                throw GradleException(
+                    "Release keystore not found. " +
+                            "Ensure 'prody-release.jks' is present in 'app/' or 'keystore/' directories, " +
+                            "and KEYSTORE_PASSWORD, KEY_ALIAS, and KEY_PASSWORD env vars are set."
+                )
+            }
         }
     }
 
