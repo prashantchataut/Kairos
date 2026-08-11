@@ -7,3 +7,8 @@
 **Vulnerability:** Leaking API keys in Logcat via OkHttp interceptors and debug logs, and missing UI protection for therapeutic chats.
 **Learning:** Prody's `OpenRouterService` used `HttpLoggingInterceptor.Level.BODY` in debug mode without redacting the `Authorization` header, exposing API keys to anybody with ADB access. Additionally, Haven't therapeutic screens lacked `FLAG_SECURE`, risking user privacy.
 **Prevention:** Always use `redactHeader("Authorization")` in network interceptors. Remove logs that print partial secrets. Enforce `FLAG_SECURE` on all therapeutic and reflection screens by default.
+
+## 2025-06-10 - Secure Biometric Gating for Sensitive Content
+**Vulnerability:** Privacy locks for Journal and Future Messages were settings-only with no actual biometric enforcement, leaving sensitive personal data exposed if the device was left unlocked.
+**Learning:** Implementing `BiometricPrompt` in a Compose-based Clean Architecture requires careful handling of `FragmentActivity` context (using `ContextWrapper` unwrapping) and state preservation via `rememberSaveable` to avoid re-authenticating on every rotation. Additionally, a fallback check for device security availability is mandatory to prevent locking out users on devices without PINs/biometrics.
+**Prevention:** Use a dedicated `BiometricAuthenticator` utility for lifecycle-safe auth and gate sensitive Composables using a reusable `RequireBiometricAuth` wrapper. Combine this with `PreventScreenshots` for defense-in-depth.
