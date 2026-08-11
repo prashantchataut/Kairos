@@ -21,3 +21,8 @@ This journal contains CRITICAL performance learnings specific to the Prody codeb
 **Context:** `ProgressIndicators.kt` and `OnboardingScreen.kt`.
 **Learning:** Using a `Row` of multiple `Box` composables for page indicators creates unnecessary layout nodes and triggers expensive layout passes during page swipes as dot widths animate. A single `Canvas` drawing all dots based on an animated float index is significantly more performant and smoother.
 **Action:** Prefer `Canvas`-based drawing for multi-state UI indicators like page dots or segmented progress bars to maintain 60fps during complex interactions.
+
+## 2024-05-25 - Explicit animateFloat Imports
+**Context:** `MainActivity.kt` and `MagicalEffects.kt` during performance refactoring.
+**Learning:** When refactoring Compose animations from property delegation (`by`) to direct state access (`.value`) to optimize `graphicsLayer` performance, the `animateFloat` extension function on `InfiniteTransition` often loses its implicit scope and must be explicitly imported via `androidx.compose.animation.core.animateFloat`. Failure to do so leads to "Unresolved reference" errors despite the code appearing correct.
+**Action:** Always verify and manually add `import androidx.compose.animation.core.animateFloat` when refactoring `infiniteRepeatable` animations to use direct state reads.
