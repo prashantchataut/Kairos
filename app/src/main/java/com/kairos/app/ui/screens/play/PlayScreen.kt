@@ -30,6 +30,31 @@ fun PlayScreen(onBack: () -> Unit) {
     val correct = chosen != null && WordGarden.isCorrect(index, chosen!!)
     val uriHandler = LocalUriHandler.current
     var downloadMessage by rememberSaveable { mutableStateOf<String?>(null) }
+    var downloadId by rememberSaveable { mutableLongStateOf(preferences.getLong("download_id", -1L)) }
+    var downloading by remember { mutableStateOf(false) }
+    LaunchedEffect(downloadId) {
+        if (downloadId < 0) return@LaunchedEffect
+        val manager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+        while (true) {
+            val status = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                runCatching {
+                    manager.query(android.app.DownloadManager.Query().setFilterById(downloadId)).use { cursor ->
+                        if (!cursor.moveToFirst()) null else cursor.getInt(cursor.getColumnIndexOrThrow(android.app.DownloadManager.COLUMN_STATUS))
+                    }
+                }.getOrNull()
+            }
+            downloading = status == android.app.DownloadManager.STATUS_PENDING || status == android.app.DownloadManager.STATUS_RUNNING || status == android.app.DownloadManager.STATUS_PAUSED
+            downloadMessage = when (status) {
+                android.app.DownloadManager.STATUS_SUCCESSFUL -> "Your game is downloaded. Open Downloads to find the APK."
+                android.app.DownloadManager.STATUS_FAILED -> "The download failed. Check your connection and storage, then try again."
+                android.app.DownloadManager.STATUS_PAUSED -> "Download paused. Android will resume it when a connection is available."
+                android.app.DownloadManager.STATUS_RUNNING, android.app.DownloadManager.STATUS_PENDING -> "Downloading your adventure…"
+                else -> "The download is no longer available. You can start it again."
+            }
+            if (!downloading) break
+            kotlinx.coroutines.delay(1500)
+        }
+    }
     val reduced = rememberKairosReducedMotion()
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         TextButton(onClick = onBack) { Text("Back to today") }
@@ -75,13 +100,27 @@ fun PlayScreen(onBack: () -> Unit) {
                             request.setDestinationInExternalFilesDir(context, android.os.Environment.DIRECTORY_DOWNLOADS, release.filename)
                         }
                         val manager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
-                        manager.enqueue(request)
+                        downloadId = manager.enqueue(request)
+                        preferences.edit().putLong("download_id", downloadId).apply()
+                        downloading = true
                         "Download started. Find the APK and its status in your device's Downloads app."
                     }.getOrElse { "The download could not start. Visit the creator to download it directly." }
-                }, modifier = Modifier.fillMaxWidth()) { Text("Download Android game") }
+                }, enabled = !downloading, modifier = Modifier.fillMaxWidth()) { Text(if (downloading) "Downloading…" else "Download Android game") }
             }
         }
         downloadMessage?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+        if (downloadId >= 0) {
+            TextButton(onClick = { runCatching { context.startActivity(android.content.Intent(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS)) } }) { Text("Open downloads") }
+        }
+        if (downloading) {
+            TextButton(onClick = {
+                (context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager).remove(downloadId)
+                preferences.edit().remove("download_id").apply()
+                downloadId = -1
+                downloading = false
+                downloadMessage = "Download cancelled."
+            }) { Text("Cancel download") }
+        }
         Text("Downloads stay on your device. Android asks separately before installing an APK. Pokémon fan games need their creator's instructions; Kairos includes no ROMs or emulator.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

@@ -4,6 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.graphicsLayer
+import com.kairos.app.ui.animation.rememberKairosReducedMotion
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,6 +22,8 @@ import com.kairos.app.ui.components.kairos.KairosGlassSurface
 /** A tiny hand-painted landscape. Deterministic pigment flecks avoid per-frame allocation. */
 @Composable
 fun PocketGarden(modifier: Modifier = Modifier, blooms: Int = 3) {
+    val reduced = rememberKairosReducedMotion()
+    val growth by animateFloatAsState(blooms.coerceIn(0, 9).toFloat(), tween(if (reduced) 0 else 320), label = "garden-growth")
     val sky = MaterialTheme.colorScheme.primaryContainer
     val pond = MaterialTheme.colorScheme.primary
     val leaf = MaterialTheme.colorScheme.tertiary
@@ -26,10 +33,10 @@ fun PocketGarden(modifier: Modifier = Modifier, blooms: Int = 3) {
         val h = size.height
         drawOval(sky.copy(alpha = .65f), Offset(w * .05f, h * .1f), Size(w * .9f, h * .78f))
         // Pigment pools have uneven translucent edges, like acrylic on wet paper.
-        repeat(38) { i ->
+        repeat(84) { i ->
             val x = ((i * 67 + 13) % 101) / 101f
             val y = ((i * 31 + 7) % 97) / 97f
-            drawCircle(sky.copy(alpha = .10f), w * (.06f + (i % 4) * .01f), Offset(w * x, h * (.2f + y * .55f)))
+            drawCircle(sky.copy(alpha = .055f), w * (.025f + (i % 7) * .009f), Offset(w * x, h * (.2f + y * .55f)))
         }
         drawOval(leaf.copy(alpha = .22f), Offset(w * .08f, h * .60f), Size(w * .84f, h * .26f))
         drawOval(pond.copy(alpha = .24f), Offset(w * .36f, h * .7f), Size(w * .48f, h * .14f))
@@ -42,12 +49,13 @@ fun PocketGarden(modifier: Modifier = Modifier, blooms: Int = 3) {
         }
         listOf(.46f, .56f).forEach { x -> drawCircle(pond, w * .009f, Offset(w * x, h * .52f)) }
         drawArc(pond, 0f, 180f, false, Offset(w * .49f, h * .55f), Size(w * .04f, h * .025f), style = androidx.compose.ui.graphics.drawscope.Stroke(w * .006f))
-        repeat(blooms.coerceIn(0, 9)) { i ->
+        repeat(kotlin.math.ceil(growth.toDouble()).toInt()) { i ->
+            val bloomAlpha = (growth - i).coerceIn(0f, 1f)
             val x = w * (.16f + (i % 3) * .32f)
             val y = h * (.63f + (i / 3) * .07f)
             drawLine(leaf, Offset(x, y), Offset(x, y + h * .14f), w * .009f)
             repeat(5) { n ->
-                rotate(n * 72f, Offset(x, y)) { drawOval(petal.copy(alpha = .8f), Offset(x - w * .022f, y - h * .065f), Size(w * .044f, h * .07f)) }
+                rotate(n * 72f, Offset(x, y)) { drawOval(petal.copy(alpha = .8f * bloomAlpha), Offset(x - w * .022f, y - h * .065f), Size(w * .044f, h * .07f)) }
             }
             drawCircle(Color.White, w * .012f, Offset(x, y))
         }

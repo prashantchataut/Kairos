@@ -593,7 +593,7 @@ private fun FutureDatePicker(
                 onClick = {
                     state.selectedDateMillis?.let(onConfirm)
                 },
-                enabled = (state.selectedDateMillis ?: 0L) > System.currentTimeMillis()
+                enabled = state.selectedDateMillis?.let { com.kairos.app.domain.capsule.CapsuleClock.deliveryOnSelectedDay(it, java.time.ZoneId.systemDefault()) > System.currentTimeMillis() } == true
             ) { Text("Use date") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
