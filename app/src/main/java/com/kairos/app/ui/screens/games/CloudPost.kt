@@ -90,7 +90,7 @@ class CloudPostViewModel @Inject constructor(@ApplicationContext private val con
     }
     companion object {
         // Pinned to the published game-package commit; updates require a new trusted digest.
-        const val URL = "https://raw.githubusercontent.com/prashantchataut/Kairos/feat/painted-kairos-rebuild/games/cloud-post.json"
+        const val URL = "https://raw.githubusercontent.com/prashantchataut/Kairos/7b8f1072ae38adf85c3a6668c73394e44ceb47b0/games/cloud-post.json"
         const val SHA256 = "f55d8aa006f605f0583a8767fa6fd22ba798292ef9f1da5d0f1b31a514bf0a6a"
     }
 }

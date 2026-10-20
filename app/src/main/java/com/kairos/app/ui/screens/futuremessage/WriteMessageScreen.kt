@@ -182,7 +182,9 @@ fun WriteMessageScreen(
                             else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
                         },
                         onPlayVoice = viewModel::toggleVoicePlayback,
-                        onRemoveVoice = viewModel::removeVoiceRecording
+                        onRemoveVoice = viewModel::removeVoiceRecording,
+                        onRemovePhoto = viewModel::removePhoto,
+                        onRemoveVideo = viewModel::removeVideo
                     )
                 }
 
@@ -206,7 +208,7 @@ fun WriteMessageScreen(
             contentPadding = PaddingValues(8.dp)
         ) {
             KairosPrimaryButton(
-                text = if (state.isSaving) "Sealing…" else "Seal until ${shortDate(state.deliveryDate)}",
+                text = if (state.isImporting) "Keeping your memories…" else if (state.isSaving) "Sealing…" else "Seal until ${shortDate(state.deliveryDate)}",
                 onClick = viewModel::saveMessage,
                 enabled = state.canSave && !state.isSaving,
                 icon = if (state.isSaving) null else KairosIcons.Lock,
@@ -483,7 +485,9 @@ private fun LetterAttachments(
     onPickVideos: () -> Unit,
     onRecord: () -> Unit,
     onPlayVoice: () -> Unit,
-    onRemoveVoice: () -> Unit
+    onRemoveVoice: () -> Unit,
+    onRemovePhoto: (String) -> Unit,
+    onRemoveVideo: (String) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(11.dp)) {
         Text("Add a trace of this moment", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -507,6 +511,19 @@ private fun LetterAttachments(
                 selected = state.isRecording,
                 onClick = onRecord
             )
+        }
+
+        if (state.isImporting) Text("Keeping your memories…", style = MaterialTheme.typography.bodySmall)
+        (state.attachedPhotos.map { it to false } + state.attachedVideos.map { it to true }).forEachIndexed { index, (uri, video) ->
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                if (!video) coil.compose.AsyncImage(
+                    model = uri, contentDescription = "Attached photo ${index + 1}",
+                    modifier = Modifier.size(64.dp).clip(RoundedCornerShape(12.dp)),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                )
+                Text(if (video) "Video ${index + 1}" else "Photo ${index + 1}", Modifier.weight(1f).padding(horizontal = 12.dp))
+                KairosIconButton(KairosIcons.Delete, "Remove attachment ${index + 1}", { if (video) onRemoveVideo(uri) else onRemovePhoto(uri) })
+            }
         }
 
         AnimatedVisibility(visible = state.voiceRecordingUri != null) {

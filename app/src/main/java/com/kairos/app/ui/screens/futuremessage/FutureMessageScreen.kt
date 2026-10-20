@@ -77,6 +77,14 @@ fun FutureMessageListScreen(
     viewModel: FutureMessageViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val nextDelivery = state.pendingMessages.minOfOrNull { it.deliveryDate }
+    androidx.compose.runtime.LaunchedEffect(nextDelivery) {
+        nextDelivery?.let {
+            kotlinx.coroutines.delay((it - System.currentTimeMillis()).coerceAtLeast(0L) + 100L)
+            viewModel.checkForDeliveredMessages()
+        }
+    }
+
     var selectedTab by remember { mutableIntStateOf(if (state.unreadCount > 0) 0 else 1) }
 
     KairosAppBackground {

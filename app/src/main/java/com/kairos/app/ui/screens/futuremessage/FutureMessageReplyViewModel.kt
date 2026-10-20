@@ -81,7 +81,7 @@ class FutureMessageReplyViewModel @Inject constructor(
 
             try {
                 val message = futureMessageRepository.getMessage(messageId).getOrNull()
-                if (message != null) {
+                if (message != null && message.deliveryDate <= System.currentTimeMillis()) {
                     val daysSince = calculateDaysSince(message.createdAt)
                     val (isAnniversary, anniversaryType) = checkAnniversary(message.createdAt)
 

@@ -331,6 +331,7 @@ class WriteMessageViewModel @Inject constructor(
      * Remove a photo from the message.
      */
     fun removePhoto(uri: String) {
+        deleteImportedMemory(uri)
         _uiState.update {
             it.copy(
                 attachedPhotos = it.attachedPhotos - uri,
@@ -355,6 +356,7 @@ class WriteMessageViewModel @Inject constructor(
      * Remove a video from the message.
      */
     fun removeVideo(uri: String) {
+        deleteImportedMemory(uri)
         _uiState.update {
             it.copy(
                 attachedVideos = it.attachedVideos - uri,
@@ -445,7 +447,19 @@ class WriteMessageViewModel @Inject constructor(
     /**
      * Clean up audio resources when ViewModel is cleared.
      */
+    private fun deleteImportedMemory(value: String) {
+        runCatching {
+            val uri = android.net.Uri.parse(value)
+            val file = java.io.File(requireNotNull(uri.path))
+            val directory = java.io.File(appContext.filesDir, "capsule_memories").canonicalFile
+            if (uri.scheme == "file" && file.canonicalFile.parentFile == directory) file.delete()
+        }
+    }
+
     override fun onCleared() {
+        if (!_uiState.value.isSaved) {
+            (_uiState.value.attachedPhotos + _uiState.value.attachedVideos).forEach(::deleteImportedMemory)
+        }
         super.onCleared()
         audioRecorderManager.release()
     }

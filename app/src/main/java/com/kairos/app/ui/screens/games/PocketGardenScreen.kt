@@ -102,11 +102,7 @@ fun PocketGardenScreen(onBack: () -> Unit, cloudPost: CloudPostViewModel = andro
             }
         }
         cloud.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-        Text("Beyond the garden", style = MaterialTheme.typography.headlineSmall)
-        Text("Pokémon fan games", style = MaterialTheme.typography.titleLarge)
-        Text("Visit the creators for releases, instructions and Android compatibility. Some fan games require a separate emulator. Kairos does not include game ROMs.")
-        OutlinedButton(onClick = { uriHandler.openUri("https://www.pokecommunity.com/forums/fan-games.29/") }, modifier = Modifier.fillMaxWidth()) { Text("Browse creator releases") }
-        Text("Installed games stay in their own Android apps. Choose downloads from the original creator and check their requirements before installing.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        GameDownloads()
         Spacer(Modifier.navigationBarsPadding())
     }
 }

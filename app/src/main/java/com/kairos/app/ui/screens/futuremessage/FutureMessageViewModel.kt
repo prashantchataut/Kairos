@@ -61,7 +61,7 @@ class FutureMessageViewModel @Inject constructor(
         }
     }
 
-    private fun checkForDeliveredMessages() {
+    fun checkForDeliveredMessages() {
         viewModelScope.launch {
             try {
                 val readyMessages = futureMessageRepository

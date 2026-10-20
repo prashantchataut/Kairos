@@ -81,10 +81,13 @@ class TodayViewModel @Inject constructor(
 
     fun retry() = load()
 
+    fun refreshIfDateChanged() {
+        if (LocalDate.now() != currentDate) load()
+    }
+
     /**
      * Save (or un-save) today's word. Saving is the explicit "I like this" signal
-     * and also completes the daily moment, so the loop stays honest: engage with
-     * the word, and the recommendation engine learns from it.
+     * without claiming recall. Actual practice determines learned progress.
      */
     fun toggleWordSaved() {
         if (currentWordId <= 0) return
@@ -105,30 +108,7 @@ class TodayViewModel @Inject constructor(
                 difficulty = currentWordDifficulty
             )
             _uiState.update { it.copy(wordSaved = saving) }
-            if (saving) {
-                when (val result = todayProgressRepository.completeWord(
-                    userId = currentUserId,
-                    wordId = currentWordId,
-                    completedAtMillis = System.currentTimeMillis()
-                )) {
-                    is Result.Success -> {
-                        dailyPlanRepository.recordInteraction(
-                            userId = currentUserId,
-                            localDate = currentDate,
-                            type = DailyContentType.VOCABULARY,
-                            contentId = currentWordId,
-                            interaction = ContentInteractionType.COMPLETED,
-                            category = currentWordCategory,
-                            difficulty = currentWordDifficulty
-                        )
-                        _uiState.update { it.copy(wordCompletedToday = true) }
-                    }
-                    is Result.Error -> {
-                        _uiState.update { it.copy(error = result.userMessage) }
-                    }
-                    Result.Loading -> Unit
-                }
-            }
+
         }
     }
 

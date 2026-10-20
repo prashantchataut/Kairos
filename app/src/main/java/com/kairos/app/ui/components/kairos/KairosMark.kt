@@ -21,6 +21,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -47,19 +48,20 @@ fun KairosMark(
     revealed: Boolean = true
 ) {
     // The open moment becomes a living seed: a stem and two welcoming leaves.
-    Canvas(modifier) {
+    val ink = if (accent.luminance() > .7f) MaterialTheme.colorScheme.primary else Color.White
+    Canvas(modifier.graphicsLayer { alpha = if (revealed) 1f else 0f }) {
         val u = size.minDimension / 100f
         drawRoundRect(accent, cornerRadius = CornerRadius(28*u), size = Size(100*u, 100*u))
         drawCircle(Color.White.copy(alpha = .12f), 38*u, Offset(28*u, 24*u))
-        drawLine(Color.White, Offset(50*u, 77*u), Offset(50*u, 43*u), 6*u, androidx.compose.ui.graphics.StrokeCap.Round)
+        drawLine(ink, Offset(50*u, 77*u), Offset(50*u, 43*u), 6*u, androidx.compose.ui.graphics.StrokeCap.Round)
         val left = androidx.compose.ui.graphics.Path().apply {
             moveTo(50*u, 56*u); cubicTo(20*u, 60*u, 18*u, 23*u, 50*u, 43*u); close()
         }
         val right = androidx.compose.ui.graphics.Path().apply {
             moveTo(50*u, 43*u); cubicTo(48*u, 13*u, 86*u, 20*u, 50*u, 43*u); close()
         }
-        drawPath(left, Color.White.copy(alpha = .85f)); drawPath(right, Color.White)
-        drawArc(Color.White, 10f, 160f, false, Offset(26*u, 60*u), Size(48*u, 26*u), style = Stroke(4*u, cap = androidx.compose.ui.graphics.StrokeCap.Round))
+        drawPath(left, ink.copy(alpha = .85f)); drawPath(right, ink)
+        drawArc(ink, 10f, 160f, false, Offset(26*u, 60*u), Size(48*u, 26*u), style = Stroke(4*u, cap = androidx.compose.ui.graphics.StrokeCap.Round))
     }
 }
 

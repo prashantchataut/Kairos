@@ -92,6 +92,10 @@ fun FocusedTodayScreen(
     viewModel: TodayViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    androidx.lifecycle.compose.LifecycleResumeEffect(Unit) {
+        viewModel.refreshIfDateChanged()
+        onPauseOrDispose { }
+    }
     LaunchedEffect(state.isLoading, state.error, state.wordOfTheDay, state.dailyQuote) {
         if (!state.isLoading && state.error == null) viewModel.onDailyContentVisible()
     }
@@ -101,6 +105,7 @@ fun FocusedTodayScreen(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         item { TodayGreeting(state.userName) {
+            KairosIconButton(KairosIcons.Outlined.Notifications, "Notification settings", onNavigateToNotificationSettings)
             KairosIconButton(KairosIcons.Outlined.Person, "Profile", onNavigateToProfile)
         } }
         item {
