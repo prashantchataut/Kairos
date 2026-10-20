@@ -120,6 +120,7 @@ sealed class Screen(val route: String) {
     data object Capsules : Screen("capsules")
     data object WriteCapsule : Screen("capsules/new")
     data object OpenCapsule : Screen("capsules/open/{messageId}")
+    data object ReplyCapsule : Screen("capsules/reply/{messageId}")
     data object Games : Screen("games")
 
     data object InterestsSetup : Screen("interests_setup")
@@ -463,7 +464,15 @@ fun KairosNavHost(
                 messageId = entry.arguments?.getLong("messageId") ?: return@composable,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToJournal = { navController.navigate(Screen.NewJournalEntry.createRoute(it)) },
-                onNavigateToReply = { navController.navigate(Screen.NewJournalEntry.createRoute("A reply to my past self: ")) }
+                onNavigateToReply = { navController.navigate("capsules/reply/${entry.arguments?.getLong("messageId")}") }
+            )
+        }
+        composable(Screen.ReplyCapsule.route,
+            arguments = listOf(navArgument("messageId") { type = NavType.LongType })
+        ) {
+            com.kairos.app.ui.screens.futuremessage.FutureMessageReplyScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToJournal = { navController.navigate(Screen.NewJournalEntry.createRoute(it)) }
             )
         }
         composable(Screen.Games.route) {
