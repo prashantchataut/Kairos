@@ -81,6 +81,8 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FocusedTodayScreen(
+    onNavigateToCapsules: () -> Unit = {},
+    onNavigateToGames: () -> Unit = {},
     onNavigateToVocabulary: () -> Unit,
     onNavigateToQuotes: () -> Unit,
     onNavigateToJournal: () -> Unit,
@@ -90,118 +92,64 @@ fun FocusedTodayScreen(
     viewModel: TodayViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val listState = rememberLazyListState()
-    val snapBehavior = rememberSnapFlingBehavior(lazyListState = listState)
-
     LaunchedEffect(state.isLoading, state.error, state.wordOfTheDay, state.dailyQuote) {
         if (!state.isLoading && state.error == null) viewModel.onDailyContentVisible()
     }
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        TodayGreeting(
-            userName = state.userName,
-            actions = {
-                KairosIconButton(
-                    icon = KairosIcons.Outlined.Notifications,
-                    contentDescription = "Notification settings",
-                    onClick = onNavigateToNotificationSettings
-                )
-                KairosIconButton(
-                    icon = KairosIcons.Outlined.Person,
-                    contentDescription = "Profile",
-                    onClick = onNavigateToProfile
-                )
+    LazyColumn(
+        Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = 40.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        item { TodayGreeting(state.userName) {
+            KairosIconButton(KairosIcons.Outlined.Person, "Profile", onNavigateToProfile)
+        } }
+        item {
+            Column(Modifier.fillMaxWidth().padding(horizontal = KairosSpacing.screen)) {
+                Text("A little room to grow.", style = MaterialTheme.typography.headlineLarge, fontFamily = SerifFamily)
+                Text("Learn something. Keep a memory. Make time for play.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                com.kairos.app.ui.components.kairos.PaintedGarden(Modifier.fillMaxWidth().height(200.dp))
             }
-        )
-
-        when {
-            state.isLoading -> TodayLoading()
-            state.error != null -> TodayError(
-                message = state.error ?: "Today could not be loaded.",
-                onRetry = viewModel::retry
-            )
-            state.wordOfTheDay.isBlank() && state.dailyQuote.isBlank() -> {
-                KairosEmptyState(
-                    icon = KairosIcons.Outlined.AutoStories,
-                    title = "Your daily moment is not ready",
-                    body = "Kairos needs at least one word or quote in the local library. Add content and return here; the selection will remain stable for the day.",
-                    actionLabel = "Open library",
-                    onAction = onNavigateToQuotes,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    state = listState,
-                    flingBehavior = snapBehavior,
-                    contentPadding = PaddingValues(
-                        start = KairosSpacing.screen,
-                        end = KairosSpacing.screen,
-                        top = 4.dp,
-                        bottom = 40.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(26.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (state.wordOfTheDay.isNotBlank()) {
-                        item(key = "daily-word") {
-                            WordMoment(
-                                state = state,
-                                onToggleSave = viewModel::toggleWordSaved,
-                                onPractice = {
-                                    viewModel.onDailyWordFeedback(ContentInteractionType.OPENED)
-                                    onNavigateToVocabulary()
-                                },
-                                onTooEasy = { viewModel.onDailyWordFeedback(ContentInteractionType.TOO_EASY) },
-                                onTooHard = { viewModel.onDailyWordFeedback(ContentInteractionType.TOO_HARD) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .widthIn(max = 680.dp)
-                            )
-                        }
+        }
+        item {
+            Row(Modifier.fillMaxWidth().padding(horizontal = KairosSpacing.screen), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                KairosGlassSurface(modifier = Modifier.weight(1f), onClick = onNavigateToCapsules, contentPadding = PaddingValues(20.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(KairosIcons.Outlined.Edit, null, tint = MaterialTheme.colorScheme.primary)
+                        Text("Time capsule", style = MaterialTheme.typography.titleMedium)
+                        Text("A gift for future you", style = MaterialTheme.typography.bodySmall)
                     }
-                    if (state.dailyQuote.isNotBlank()) {
-                        item(key = "daily-thought") {
-                            ThoughtMoment(
-                                state = state,
-                                onReflect = {
-                                    viewModel.onDailyQuoteFeedback(ContentInteractionType.COMPLETED)
-                                    val quote = state.dailyQuote
-                                    val author = state.dailyQuoteAuthor
-                                    val prefill = buildString {
-                                        append("“").append(quote).append("”")
-                                        if (author.isNotBlank()) append(" — ").append(author)
-                                    }
-                                    onNavigateToNewEntry(prefill)
-                                },
-                                onLibrary = {
-                                    viewModel.onDailyQuoteFeedback(ContentInteractionType.OPENED)
-                                    onNavigateToQuotes()
-                                },
-                                onToggleSave = viewModel::toggleQuoteSaved,
-                                onMoreLikeThis = { viewModel.onDailyQuoteFeedback(ContentInteractionType.MORE_LIKE_THIS) },
-                                onLessLikeThis = { viewModel.onDailyQuoteFeedback(ContentInteractionType.LESS_LIKE_THIS) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .widthIn(max = 680.dp)
-                            )
-                        }
-                    }
-                    item(key = "weekly-rhythm") {
-                        Text(
-                            text = progressLine(state),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 6.dp)
-                        )
+                }
+                KairosGlassSurface(modifier = Modifier.weight(1f), onClick = onNavigateToGames, contentPadding = PaddingValues(20.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(KairosIcons.Outlined.AutoStories, null, tint = MaterialTheme.colorScheme.primary)
+                        Text("Play a little", style = MaterialTheme.typography.titleMedium)
+                        Text("Visit your pocket garden", style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
         }
+        if (state.isLoading) item { TodayLoading() }
+        else if (state.error != null) item { TodayError(state.error ?: "Unable to load today.", viewModel::retry) }
+        else {
+            if (state.wordOfTheDay.isNotBlank()) item {
+                WordMoment(state, viewModel::toggleWordSaved, onNavigateToVocabulary,
+                    { viewModel.onDailyWordFeedback(ContentInteractionType.TOO_EASY) },
+                    { viewModel.onDailyWordFeedback(ContentInteractionType.TOO_HARD) },
+                    Modifier.padding(horizontal = KairosSpacing.screen).fillMaxWidth())
+            }
+            if (state.dailyQuote.isNotBlank()) item {
+                ThoughtMoment(state,
+                    { onNavigateToNewEntry("“${state.dailyQuote}” — ${state.dailyQuoteAuthor}") },
+                    onNavigateToQuotes, viewModel::toggleQuoteSaved,
+                    { viewModel.onDailyQuoteFeedback(ContentInteractionType.MORE_LIKE_THIS) },
+                    { viewModel.onDailyQuoteFeedback(ContentInteractionType.LESS_LIKE_THIS) },
+                    Modifier.padding(horizontal = KairosSpacing.screen).fillMaxWidth())
+            }
+            if (state.wordOfTheDay.isBlank() && state.dailyQuote.isBlank()) item {
+                KairosEmptyState(KairosIcons.Outlined.AutoStories, "Your next discovery is waiting", "Open the library to explore words and thoughts.", "Open library", onNavigateToQuotes)
+            }
+        }
+        item { Text(progressLine(state), Modifier.fillMaxWidth().padding(24.dp), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall) }
     }
 }
 
@@ -241,7 +189,7 @@ private fun TodayGreeting(
                 )
                 Text(
                     text = cleanName?.let { "Good ${timeOfDay()}, ${it.substringBefore(' ')}" }
-                        ?: "One word. One thought worth keeping.",
+                        ?: "Hello, little explorer",
                     style = MaterialTheme.typography.displaySmall,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 2.dp)
@@ -289,8 +237,8 @@ private fun WordMoment(
                     Brush.verticalGradient(
                         colors = listOf(
                             scheme.primary,
-                            Color(0xFF1B3FBF),
-                            Color(0xFF0F2C8F)
+                            scheme.primary,
+                            scheme.primary
                         )
                     )
                 )
@@ -330,7 +278,7 @@ private fun WordMoment(
                         }
                     }
                     Text(
-                        text = "DAILY WORD",
+                        text = "Today’s word",
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.72f),
                         fontWeight = FontWeight.SemiBold
@@ -449,7 +397,7 @@ private fun WordMoment(
                             modifier = Modifier.weight(1f).height(52.dp),
                             shape = RoundedCornerShape(KairosRadius.controlLarge),
                             color = Color.White,
-                            contentColor = Color(0xFF0F2C8F)
+                            contentColor = scheme.primary
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxSize(),

@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -349,32 +350,30 @@ private fun LetterProvenance(message: FutureMessageEntity, timeAgo: String) {
 
 @Composable
 private fun AttachmentMemory(message: FutureMessageEntity) {
-    val photoCount = message.attachedPhotos.split(',').count { it.isNotBlank() }
-    val videoCount = message.attachedVideos.split(',').count { it.isNotBlank() }
-    KairosGlassSurface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        contentPadding = PaddingValues(18.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            Icon(KairosIcons.Image, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-            Column(Modifier.weight(1f)) {
-                Text("Memories attached", fontWeight = FontWeight.SemiBold)
-                Text(
-                    listOfNotNull(
-                        photoCount.takeIf { it > 0 }?.let { "$it photo${if (it == 1) "" else "s"}" },
-                        videoCount.takeIf { it > 0 }?.let { "$it video${if (it == 1) "" else "s"}" },
-                        message.voiceRecordingUri?.let { "voice note" }
-                    ).joinToString(" · "),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var openError by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
+    val attachments = message.attachedPhotos.split(',').filter(String::isNotBlank).map { it to "image/*" } +
+        message.attachedVideos.split(',').filter(String::isNotBlank).map { it to "video/*" } +
+        listOfNotNull(message.voiceRecordingUri?.let { it to "audio/*" })
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text("Memories attached", style = MaterialTheme.typography.titleMedium)
+        attachments.forEachIndexed { index, (value, type) ->
+            androidx.compose.material3.OutlinedButton(onClick = {
+                runCatching {
+                    val parsed = android.net.Uri.parse(value)
+                    val uri = if (parsed.scheme == "file") {
+                        androidx.core.content.FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", java.io.File(requireNotNull(parsed.path)))
+                    } else parsed
+                    context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                        setDataAndType(uri, type)
+                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    })
+                }.onFailure { openError = "This memory could not be opened. Install an app that supports this file type, or check that the file still exists." }
+            }, modifier = Modifier.fillMaxWidth()) {
+                Text("Open ${type.substringBefore('/')} ${index + 1}")
             }
         }
+        openError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
     }
 }
 

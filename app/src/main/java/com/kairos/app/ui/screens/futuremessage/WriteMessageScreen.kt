@@ -102,11 +102,11 @@ fun WriteMessageScreen(
     val reduceMotion = rememberKairosReducedMotion()
 
     val photoPicker = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> -> viewModel.addPhotos(uris.map(Uri::toString)) }
+        ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris: List<Uri> -> viewModel.importAttachments(uris, videos = false) }
     val videoPicker = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> -> viewModel.addVideos(uris.map(Uri::toString)) }
+        ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris: List<Uri> -> viewModel.importAttachments(uris, videos = true) }
     val microphonePermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -175,8 +175,8 @@ fun WriteMessageScreen(
                 KairosReveal(visible = true, delayMillis = 170) {
                     LetterAttachments(
                         state = state,
-                        onPickPhotos = { photoPicker.launch("image/*") },
-                        onPickVideos = { videoPicker.launch("video/*") },
+                        onPickPhotos = { photoPicker.launch(arrayOf("image/*")) },
+                        onPickVideos = { videoPicker.launch(arrayOf("video/*")) },
                         onRecord = {
                             if (state.isRecording) viewModel.stopRecording()
                             else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)

@@ -3,7 +3,7 @@ package com.kairos.app.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * Kairos color system — "Moment Blue".
+ * Kairos color system — "Painted tide".
  *
  * A vivid royal-blue brand anchor with periwinkle, soft cyan, and mint
  * supporting tones. Light mode is pearl with a blue tint; dark mode is
@@ -15,24 +15,24 @@ import androidx.compose.ui.graphics.Color
 // BRAND COLORS - Core Identity
 // =============================================================================
 
-val KairosMineralIndigo = Color(0xFF2E5BFF)   // Royal/electric blue — the brand anchor
-val KairosClay = Color(0xFFE86A5E)            // Warm coral — emotional accent
-val KairosVerdigris = Color(0xFF2E9E6B)       // Mint — success/progress
-val KairosPeriwinkle = Color(0xFF8FA6FF)      // Periwinkle — dark-mode primary
+val KairosMineralIndigo = Color(0xFF326C81)   // Royal/electric blue — the brand anchor
+val KairosClay = Color(0xFFA74F46)            // Warm coral — emotional accent
+val KairosVerdigris = Color(0xFF477963)       // Mint — success/progress
+val KairosPeriwinkle = Color(0xFF9ACEDB)      // Periwinkle — dark-mode primary
 val KairosSoftClay = Color(0xFFE8947F)        // Soft coral for dark secondary
 val KairosSeaGlass = Color(0xFF7BD9A5)        // Pale mint — dark success
 
-val KairosIndigoContainerLight = Color(0xFFDDE5FF)   // Blue wash
-val KairosOnIndigoContainerLight = Color(0xFF0A2A75) // Deep navy on wash
-val KairosClayContainerLight = Color(0xFFFFE0DC)     // Coral wash
+val KairosIndigoContainerLight = Color(0xFFDCEEF1)   // Blue wash
+val KairosOnIndigoContainerLight = Color(0xFF194655) // Deep navy on wash
+val KairosClayContainerLight = Color(0xFFF7DDD2)     // Coral wash
 val KairosOnClayContainerLight = Color(0xFF6E241C)
 val KairosVerdigrisContainerLight = Color(0xFFD5F5E2) // Mint wash
 val KairosOnVerdigrisContainerLight = Color(0xFF0F3B28)
 
 val KairosIndigoContainerDark = Color(0xFF1B2F6E)     // Night blue wash
-val KairosOnIndigoContainerDark = Color(0xFFDDE5FF)
+val KairosOnIndigoContainerDark = Color(0xFFDCEEF1)
 val KairosClayContainerDark = Color(0xFF6E2E26)
-val KairosOnClayContainerDark = Color(0xFFFFE0DC)
+val KairosOnClayContainerDark = Color(0xFFF7DDD2)
 val KairosVerdigrisContainerDark = Color(0xFF0F3B28)
 val KairosOnVerdigrisContainerDark = Color(0xFF7BD9A5)
 
@@ -46,14 +46,14 @@ val KairosSecondary = KairosWarmAmber
 // LIGHT THEME COLORS — Pearl with a blue tint
 // =============================================================================
 
-val KairosBackgroundLight = Color(0xFFF5F7FC)          // Pearl blue-tinted ground
-val KairosSurfaceLight = Color(0xFFFBFCFE)             // Pearl surface
+val KairosBackgroundLight = Color(0xFFF3F7F6)          // Pearl blue-tinted ground
+val KairosSurfaceLight = Color(0xFFFCFDFC)             // Pearl surface
 val KairosSurfaceVariantLight = Color(0xFFEDF1F9)      // Pale blue-gray
 val KairosSurfaceContainerLight = Color(0xFFE7ECF7)    // Blue-tinted container
 
-val KairosTextPrimaryLight = Color(0xFF101828)         // Ink navy
-val KairosTextSecondaryLight = Color(0xFF5A6478)       // Soft slate
-val KairosTextTertiaryLight = Color(0xFF65708A)        // Faint slate (4.6:1 on pearl)
+val KairosTextPrimaryLight = Color(0xFF213D46)         // Ink navy
+val KairosTextSecondaryLight = Color(0xFF526B70)       // Soft slate
+val KairosTextTertiaryLight = Color(0xFF526B70)        // Faint slate (4.6:1 on pearl)
 val KairosTextOnPrimaryLight = Color(0xFFFFFFFF)       // White on blue
 val KairosTextOnAccentLight = Color(0xFFFFFFFF)
 
@@ -147,7 +147,7 @@ val MoodSad = Color(0xFF7D8FB3)
 val MoodMotivated = Color(0xFFF2A02E)
 val MoodGrateful = Color(0xFF8FC48A)
 val MoodConfused = Color(0xFFA99BC8)
-val MoodExcited = Color(0xFFE86A5E)
+val MoodExcited = Color(0xFFA74F46)
 val MoodEnergetic = Color(0xFFE8932E)
 val MoodInspired = Color(0xFF7C8FE0)
 val MoodNostalgic = Color(0xFFC79BB0)

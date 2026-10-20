@@ -61,6 +61,7 @@ private fun getDefaultDeliveryDate(): Long {
 @HiltViewModel
 class WriteMessageViewModel @Inject constructor(
     private val futureMessageRepository: FutureMessageRepository,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val userIdProvider: UserIdProvider,
     private val audioRecorderManager: AudioRecorderManager,
     private val gameSessionManager: GameSessionManager
@@ -264,6 +265,45 @@ class WriteMessageViewModel @Inject constructor(
     /**
      * Add photos to the message.
      */
+    /** Copy picked memories into private storage so they survive provider permission expiry. */
+    fun importAttachments(uris: List<android.net.Uri>, videos: Boolean) {
+        viewModelScope.launch {
+            val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                runCatching {
+                    val directory = java.io.File(appContext.filesDir, "capsule_memories").apply { mkdirs() }
+                    val imported = mutableListOf<java.io.File>()
+                    try {
+                        uris.take(10).map { uri ->
+                            val extension = if (videos) ".mp4" else ".jpg"
+                            val file = java.io.File(directory, java.util.UUID.randomUUID().toString() + extension)
+                            imported.add(file)
+                            appContext.contentResolver.openInputStream(uri).use { input ->
+                                requireNotNull(input) { "Cannot read this attachment" }
+                                file.outputStream().use { output ->
+                                    val buffer = ByteArray(8192)
+                                    var total = 0L
+                                    while (true) {
+                                        val count = input.read(buffer)
+                                        if (count < 0) break
+                                        total += count
+                                        require(total <= 50L * 1024 * 1024) { "Attachment exceeds 50 MB" }
+                                        output.write(buffer, 0, count)
+                                    }
+                                }
+                            }
+                            file.toURI().toString()
+                        }
+                    } catch (error: Exception) {
+                        imported.forEach { it.delete() }
+                        throw error
+                    }
+                }
+            }
+            result.onSuccess { paths -> if (videos) addVideos(paths) else addPhotos(paths) }
+                .onFailure { _uiState.update { it.copy(error = "Could not keep these memories. Choose readable files under 50 MB and try again.") } }
+        }
+    }
+
     fun addPhotos(photoUris: List<String>) {
         _uiState.update {
             it.copy(
