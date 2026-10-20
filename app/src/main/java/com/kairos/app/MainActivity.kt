@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -104,14 +105,12 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             is AuthState.Unauthenticated, is AuthState.Error -> {
-                                AuthScreen(
-                                    onAuthSuccess = {
-                                        // Auth state change will trigger recomposition
-                                    }
-                                )
+                                com.kairos.app.ui.garden.GardenWelcome(onContinue = { authRepository.continueLocally() })
                             }
                             AuthState.Idle, AuthState.Loading -> {
-                                // Show nothing or a loading indicator while determining auth state
+                                androidx.compose.foundation.layout.Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                                    androidx.compose.material3.CircularProgressIndicator()
+                                }
                             }
                         }
                     }
@@ -171,6 +170,12 @@ class MainActivity : ComponentActivity() {
 fun KairosApp(
     startDestination: String
 ) {
+    var showTools by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
+    if (!showTools) {
+        com.kairos.app.ui.garden.GardenExperience(onOpenTools = { showTools = true })
+        return
+    }
+    androidx.activity.compose.BackHandler { showTools = false }
     val navController = rememberNavController()
     val haptic = rememberKairosHaptic()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -206,7 +211,7 @@ fun KairosApp(
                     )
                     KairosNavHost(
                         navController = navController,
-                        startDestination = startDestination,
+                        startDestination = com.kairos.app.ui.navigation.Screen.JournalList.route,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize()
@@ -229,7 +234,7 @@ fun KairosApp(
                 ) { innerPadding ->
                     KairosNavHost(
                         navController = navController,
-                        startDestination = startDestination,
+                        startDestination = com.kairos.app.ui.navigation.Screen.JournalList.route,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)

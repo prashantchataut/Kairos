@@ -63,7 +63,8 @@ class WriteMessageViewModel @Inject constructor(
     private val futureMessageRepository: FutureMessageRepository,
     private val userIdProvider: UserIdProvider,
     private val audioRecorderManager: AudioRecorderManager,
-    private val gameSessionManager: GameSessionManager
+    private val gameSessionManager: GameSessionManager,
+    private val attachmentStore: com.kairos.app.ui.garden.CapsuleAttachmentStore
 ) : ViewModel() {
 
     companion object {
@@ -195,8 +196,8 @@ class WriteMessageViewModel @Inject constructor(
                     deliveryDate = state.deliveryDate,
                     category = state.selectedCategory.name.lowercase(),
                     createdAt = System.currentTimeMillis(),
-                    attachedPhotos = state.attachedPhotos.distinct().joinToString(","),
-                    attachedVideos = state.attachedVideos.distinct().joinToString(","),
+                    attachedPhotos = state.attachedPhotos.distinct().map { attachmentStore.keep(android.net.Uri.parse(it)) }.joinToString(","),
+                    attachedVideos = state.attachedVideos.distinct().map { attachmentStore.keep(android.net.Uri.parse(it)) }.joinToString(","),
                     voiceRecordingUri = state.voiceRecordingUri,
                     voiceRecordingDuration = state.voiceRecordingDuration
                 )

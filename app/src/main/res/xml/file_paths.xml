@@ -12,4 +12,5 @@
     <files-path
         name="voice_recordings"
         path="voice_recordings/" />
+    <files-path name="capsules" path="capsules/" />
 </paths>
