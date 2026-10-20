@@ -1,1 +1,202 @@
-[{"id":"water","text":"Drink a glass of water slowly, like it is a treat.","kind":"body"}]
+[
+{
+"id": "water",
+"text": "Drink a glass of water slowly, like it's a treat.",
+"kind": "body"
+},
+{
+"id": "sky",
+"text": "Step outside and look at the sky for one whole minute.",
+"kind": "nature"
+},
+{
+"id": "text",
+"text": "Send a friend a message that just says why you like them.",
+"kind": "people"
+},
+{
+"id": "stretch",
+"text": "Stretch like a cat who just woke up.",
+"kind": "body"
+},
+{
+"id": "song",
+"text": "Play one song you loved at fifteen. Dance a little.",
+"kind": "joy"
+},
+{
+"id": "thank",
+"text": "Thank someone who usually goes unthanked.",
+"kind": "people"
+},
+{
+"id": "tidy",
+"text": "Tidy one tiny corner. Just one.",
+"kind": "home"
+},
+{
+"id": "walk",
+"text": "Take a ten-minute walk with no phone.",
+"kind": "body"
+},
+{
+"id": "compliment",
+"text": "Give a stranger a genuine compliment.",
+"kind": "people"
+},
+{
+"id": "plant",
+"text": "Water a plant, or say hello to a tree.",
+"kind": "nature"
+},
+{
+"id": "breathe",
+"text": "Breathe in for four, hold for four, out for six. Three times.",
+"kind": "calm"
+},
+{
+"id": "doodle",
+"text": "Doodle something silly in the margin of anything.",
+"kind": "joy"
+},
+{
+"id": "window",
+"text": "Open a window and let fresh air in.",
+"kind": "home"
+},
+{
+"id": "snack",
+"text": "Eat a piece of fruit really slowly and notice every bite.",
+"kind": "body"
+},
+{
+"id": "photo",
+"text": "Take a photo of something small and beautiful.",
+"kind": "nature"
+},
+{
+"id": "letter",
+"text": "Write two lines to future you in the capsule.",
+"kind": "self"
+},
+{
+"id": "call",
+"text": "Call someone instead of texting.",
+"kind": "people"
+},
+{
+"id": "laugh",
+"text": "Watch something that makes you laugh out loud.",
+"kind": "joy"
+},
+{
+"id": "forgive",
+"text": "Let go of one tiny grudge today.",
+"kind": "self"
+},
+{
+"id": "learn",
+"text": "Look up something you've always wondered about.",
+"kind": "mind"
+},
+{
+"id": "sun",
+"text": "Sit in the sun for five minutes.",
+"kind": "nature"
+},
+{
+"id": "noscreen",
+"text": "Spend the first ten minutes after waking without a screen.",
+"kind": "calm"
+},
+{
+"id": "praise",
+"text": "Write down one thing you did well today.",
+"kind": "self"
+},
+{
+"id": "cook",
+"text": "Make yourself something warm to drink, with care.",
+"kind": "home"
+},
+{
+"id": "hug",
+"text": "Hug someone (a pet absolutely counts).",
+"kind": "people"
+},
+{
+"id": "music",
+"text": "Listen to a whole album with your eyes closed.",
+"kind": "calm"
+},
+{
+"id": "read",
+"text": "Read five pages of a book just for fun.",
+"kind": "mind"
+},
+{
+"id": "posture",
+"text": "Roll your shoulders back and unclench your jaw.",
+"kind": "body"
+},
+{
+"id": "gift",
+"text": "Leave a little note for someone to find.",
+"kind": "people"
+},
+{
+"id": "cloud",
+"text": "Find a cloud shaped like an animal.",
+"kind": "nature"
+},
+{
+"id": "word",
+"text": "Use today's word in a real sentence.",
+"kind": "mind"
+},
+{
+"id": "declutter",
+"text": "Delete ten photos you don't need.",
+"kind": "home"
+},
+{
+"id": "bed",
+"text": "Make your bed like a fancy hotel.",
+"kind": "home"
+},
+{
+"id": "savor",
+"text": "Recall your favourite memory from this year.",
+"kind": "self"
+},
+{
+"id": "hum",
+"text": "Hum your favourite tune while doing chores.",
+"kind": "joy"
+},
+{
+"id": "donate",
+"text": "Put one thing you no longer use aside to give away.",
+"kind": "home"
+},
+{
+"id": "barefoot",
+"text": "Stand barefoot on grass or a cool floor.",
+"kind": "nature"
+},
+{
+"id": "slow",
+"text": "Do one ordinary thing at half speed.",
+"kind": "calm"
+},
+{
+"id": "ask",
+"text": "Ask someone how they're really doing, and listen.",
+"kind": "people"
+},
+{
+"id": "proud",
+"text": "Tell someone you're proud of them.",
+"kind": "people"
+}
+]

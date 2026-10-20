@@ -1,1 +1,557 @@
-[{"text":"The best time to plant a tree was twenty years ago. The second best time is now.","by":"Chinese proverb","theme":"growth"}]
+[
+{
+"text": "Hope is the thing with feathers that perches in the soul.",
+"by": "Emily Dickinson",
+"theme": "hope"
+},
+{
+"text": "Keep your face always toward the sunshine, and shadows will fall behind you.",
+"by": "Walt Whitman",
+"theme": "hope"
+},
+{
+"text": "Even the darkest night will end and the sun will rise.",
+"by": "Victor Hugo",
+"theme": "hope"
+},
+{
+"text": "Once you choose hope, anything's possible.",
+"by": "Christopher Reeve",
+"theme": "hope"
+},
+{
+"text": "There is always light, if only we're brave enough to see it. If only we're brave enough to be it.",
+"by": "Amanda Gorman",
+"theme": "hope"
+},
+{
+"text": "The sun himself is weak when he first rises, and gathers strength and courage as the day gets on.",
+"by": "Charles Dickens",
+"theme": "hope"
+},
+{
+"text": "No winter lasts forever; no spring skips its turn.",
+"by": "Hal Borland",
+"theme": "hope"
+},
+{
+"text": "Where there is love there is life.",
+"by": "Mahatma Gandhi",
+"theme": "hope"
+},
+{
+"text": "We must accept finite disappointment, but never lose infinite hope.",
+"by": "Martin Luther King Jr.",
+"theme": "hope"
+},
+{
+"text": "Hope is being able to see that there is light despite all of the darkness.",
+"by": "Desmond Tutu",
+"theme": "hope"
+},
+{
+"text": "Every day may not be good, but there is something good in every day.",
+"by": "Alice Morse Earle",
+"theme": "hope"
+},
+{
+"text": "It's always darkest before the dawn.",
+"by": "English proverb",
+"theme": "hope"
+},
+{
+"text": "Tomorrow is a new day with no mistakes in it yet.",
+"by": "L. M. Montgomery",
+"theme": "hope"
+},
+{
+"text": "In the middle of every difficulty lies opportunity.",
+"by": "Albert Einstein (attributed)",
+"theme": "hope"
+},
+{
+"text": "The best is yet to be.",
+"by": "Robert Browning",
+"theme": "hope"
+},
+{
+"text": "You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face.",
+"by": "Eleanor Roosevelt",
+"theme": "courage"
+},
+{
+"text": "Courage doesn't always roar. Sometimes courage is the quiet voice at the end of the day saying, \"I will try again tomorrow.\"",
+"by": "Mary Anne Radmacher",
+"theme": "courage"
+},
+{
+"text": "Life shrinks or expands in proportion to one's courage.",
+"by": "Anaïs Nin",
+"theme": "courage"
+},
+{
+"text": "It always seems impossible until it's done.",
+"by": "Nelson Mandela",
+"theme": "courage"
+},
+{
+"text": "Do one thing every day that scares you.",
+"by": "Mary Schmich",
+"theme": "courage"
+},
+{
+"text": "You are braver than you believe, stronger than you seem, and smarter than you think.",
+"by": "A. A. Milne (Christopher Robin)",
+"theme": "courage"
+},
+{
+"text": "Fall seven times, stand up eight.",
+"by": "Japanese proverb",
+"theme": "courage"
+},
+{
+"text": "The cave you fear to enter holds the treasure you seek.",
+"by": "Joseph Campbell",
+"theme": "courage"
+},
+{
+"text": "Courage is grace under pressure.",
+"by": "Ernest Hemingway",
+"theme": "courage"
+},
+{
+"text": "Vulnerability is the birthplace of innovation, creativity and change.",
+"by": "Brené Brown",
+"theme": "courage"
+},
+{
+"text": "What would life be if we had no courage to attempt anything?",
+"by": "Vincent van Gogh",
+"theme": "courage"
+},
+{
+"text": "You can't cross the sea merely by standing and staring at the water.",
+"by": "Rabindranath Tagore",
+"theme": "courage"
+},
+{
+"text": "Be bold, and mighty forces will come to your aid.",
+"by": "Basil King",
+"theme": "courage"
+},
+{
+"text": "I am not afraid of storms, for I am learning how to sail my ship.",
+"by": "Louisa May Alcott",
+"theme": "courage"
+},
+{
+"text": "No act of kindness, no matter how small, is ever wasted.",
+"by": "Aesop",
+"theme": "kindness"
+},
+{
+"text": "Be kind, for everyone you meet is fighting a hard battle.",
+"by": "Ian Maclaren",
+"theme": "kindness"
+},
+{
+"text": "Kindness is the language which the deaf can hear and the blind can see.",
+"by": "Mark Twain (attributed)",
+"theme": "kindness"
+},
+{
+"text": "How lovely to think that no one need wait a moment; we can start now, start slowly, changing the world.",
+"by": "Anne Frank",
+"theme": "kindness"
+},
+{
+"text": "Wherever there is a human being, there is an opportunity for a kindness.",
+"by": "Seneca",
+"theme": "kindness"
+},
+{
+"text": "Carry out a random act of kindness, with no expectation of reward.",
+"by": "Princess Diana",
+"theme": "kindness"
+},
+{
+"text": "You cannot do a kindness too soon, for you never know how soon it will be too late.",
+"by": "Ralph Waldo Emerson",
+"theme": "kindness"
+},
+{
+"text": "Too often we underestimate the power of a touch, a smile, a kind word, a listening ear.",
+"by": "Leo Buscaglia",
+"theme": "kindness"
+},
+{
+"text": "Be the reason someone smiles today.",
+"by": "Unknown",
+"theme": "kindness"
+},
+{
+"text": "In a world where you can be anything, be kind.",
+"by": "Unknown",
+"theme": "kindness"
+},
+{
+"text": "Talk to yourself like you would to someone you love.",
+"by": "Brené Brown",
+"theme": "kindness"
+},
+{
+"text": "We rise by lifting others.",
+"by": "Robert Ingersoll",
+"theme": "kindness"
+},
+{
+"text": "If you want others to be happy, practice compassion. If you want to be happy, practice compassion.",
+"by": "Dalai Lama",
+"theme": "kindness"
+},
+{
+"text": "Kind words can be short and easy to speak, but their echoes are truly endless.",
+"by": "Mother Teresa (attributed)",
+"theme": "kindness"
+},
+{
+"text": "The best time to plant a tree was twenty years ago. The second best time is now.",
+"by": "Chinese proverb",
+"theme": "growth"
+},
+{
+"text": "It does not matter how slowly you go as long as you do not stop.",
+"by": "Confucius",
+"theme": "growth"
+},
+{
+"text": "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+"by": "Will Durant",
+"theme": "growth"
+},
+{
+"text": "The man who moves a mountain begins by carrying away small stones.",
+"by": "Confucius",
+"theme": "growth"
+},
+{
+"text": "Live as if you were to die tomorrow. Learn as if you were to live forever.",
+"by": "Mahatma Gandhi",
+"theme": "growth"
+},
+{
+"text": "I am always doing that which I cannot do, in order that I may learn how to do it.",
+"by": "Pablo Picasso",
+"theme": "growth"
+},
+{
+"text": "Not all those who wander are lost.",
+"by": "J. R. R. Tolkien",
+"theme": "growth"
+},
+{
+"text": "What we plant in the soil of contemplation, we shall reap in the harvest of action.",
+"by": "Meister Eckhart",
+"theme": "growth"
+},
+{
+"text": "You don't have to see the whole staircase, just take the first step.",
+"by": "Martin Luther King Jr.",
+"theme": "growth"
+},
+{
+"text": "Be not afraid of growing slowly; be afraid only of standing still.",
+"by": "Chinese proverb",
+"theme": "growth"
+},
+{
+"text": "A journey of a thousand miles begins with a single step.",
+"by": "Lao Tzu",
+"theme": "growth"
+},
+{
+"text": "The more that you read, the more things you will know. The more that you learn, the more places you'll go.",
+"by": "Dr. Seuss",
+"theme": "growth"
+},
+{
+"text": "Mistakes are proof that you are trying.",
+"by": "Unknown",
+"theme": "growth"
+},
+{
+"text": "Growth is painful. Change is painful. But nothing is as painful as staying stuck somewhere you don't belong.",
+"by": "Mandy Hale",
+"theme": "growth"
+},
+{
+"text": "Little by little, one travels far.",
+"by": "J. R. R. Tolkien",
+"theme": "growth"
+},
+{
+"text": "Almost everything will work again if you unplug it for a few minutes, including you.",
+"by": "Anne Lamott",
+"theme": "calm"
+},
+{
+"text": "Nature does not hurry, yet everything is accomplished.",
+"by": "Lao Tzu",
+"theme": "calm"
+},
+{
+"text": "Within you, there is a stillness and a sanctuary to which you can retreat at any time.",
+"by": "Hermann Hesse",
+"theme": "calm"
+},
+{
+"text": "You should sit in meditation for twenty minutes a day, unless you're too busy; then you should sit for an hour.",
+"by": "Zen saying",
+"theme": "calm"
+},
+{
+"text": "Peace comes from within. Do not seek it without.",
+"by": "Buddhist saying",
+"theme": "calm"
+},
+{
+"text": "Feelings come and go like clouds in a windy sky. Conscious breathing is my anchor.",
+"by": "Thich Nhat Hanh",
+"theme": "calm"
+},
+{
+"text": "Do not anticipate trouble, or worry about what may never happen. Keep in the sunlight.",
+"by": "Benjamin Franklin",
+"theme": "calm"
+},
+{
+"text": "The present moment is filled with joy and happiness. If you are attentive, you will see it.",
+"by": "Thich Nhat Hanh",
+"theme": "calm"
+},
+{
+"text": "You have power over your mind, not outside events. Realize this, and you will find strength.",
+"by": "Marcus Aurelius",
+"theme": "calm"
+},
+{
+"text": "Smile, breathe and go slowly.",
+"by": "Thich Nhat Hanh",
+"theme": "calm"
+},
+{
+"text": "We suffer more often in imagination than in reality.",
+"by": "Seneca",
+"theme": "calm"
+},
+{
+"text": "Muddy water is best cleared by leaving it alone.",
+"by": "Alan Watts",
+"theme": "calm"
+},
+{
+"text": "Calm mind brings inner strength and self-confidence.",
+"by": "Dalai Lama",
+"theme": "calm"
+},
+{
+"text": "For fast-acting relief, try slowing down.",
+"by": "Lily Tomlin",
+"theme": "calm"
+},
+{
+"text": "Joy is not in things; it is in us.",
+"by": "Richard Wagner",
+"theme": "joy"
+},
+{
+"text": "The most wasted of all days is one without laughter.",
+"by": "Nicolas Chamfort",
+"theme": "joy"
+},
+{
+"text": "Find ecstasy in life; the mere sense of living is joy enough.",
+"by": "Emily Dickinson",
+"theme": "joy"
+},
+{
+"text": "Let us be grateful to the people who make us happy; they are the charming gardeners who make our souls blossom.",
+"by": "Marcel Proust",
+"theme": "joy"
+},
+{
+"text": "Happiness is not something ready made. It comes from your own actions.",
+"by": "Dalai Lama",
+"theme": "joy"
+},
+{
+"text": "I would rather have roses on my table than diamonds on my neck.",
+"by": "Emma Goldman",
+"theme": "joy"
+},
+{
+"text": "Joy is the simplest form of gratitude.",
+"by": "Karl Barth",
+"theme": "joy"
+},
+{
+"text": "If you have a garden and a library, you have everything you need.",
+"by": "Cicero",
+"theme": "joy"
+},
+{
+"text": "Folks are usually about as happy as they make up their minds to be.",
+"by": "Abraham Lincoln (attributed)",
+"theme": "joy"
+},
+{
+"text": "Some days are just bad days, that's all. You have to experience sadness to know happiness.",
+"by": "Taylor Swift",
+"theme": "joy"
+},
+{
+"text": "Today you are You, that is truer than true. There is no one alive who is Youer than You.",
+"by": "Dr. Seuss",
+"theme": "joy"
+},
+{
+"text": "Laughter is timeless, imagination has no age, and dreams are forever.",
+"by": "Walt Disney (attributed)",
+"theme": "joy"
+},
+{
+"text": "Enjoy the little things, for one day you may look back and realize they were the big things.",
+"by": "Robert Brault",
+"theme": "joy"
+},
+{
+"text": "Happiness can be found even in the darkest of times, if one only remembers to turn on the light.",
+"by": "Albus Dumbledore (J. K. Rowling)",
+"theme": "joy"
+},
+{
+"text": "The world is full of magic things, patiently waiting for our senses to grow sharper.",
+"by": "W. B. Yeats (attributed)",
+"theme": "wonder"
+},
+{
+"text": "Look up at the stars and not down at your feet.",
+"by": "Stephen Hawking",
+"theme": "wonder"
+},
+{
+"text": "To see a world in a grain of sand and a heaven in a wild flower.",
+"by": "William Blake",
+"theme": "wonder"
+},
+{
+"text": "The most beautiful thing we can experience is the mysterious.",
+"by": "Albert Einstein",
+"theme": "wonder"
+},
+{
+"text": "Wonder is the beginning of wisdom.",
+"by": "Socrates (attributed)",
+"theme": "wonder"
+},
+{
+"text": "Somewhere, something incredible is waiting to be known.",
+"by": "Sharon Begley",
+"theme": "wonder"
+},
+{
+"text": "Look deep into nature, and then you will understand everything better.",
+"by": "Albert Einstein",
+"theme": "wonder"
+},
+{
+"text": "I have loved the stars too fondly to be fearful of the night.",
+"by": "Sarah Williams",
+"theme": "wonder"
+},
+{
+"text": "Not knowing where I'm going is what inspires me to travel.",
+"by": "Rosalía de Castro",
+"theme": "wonder"
+},
+{
+"text": "We are all in the gutter, but some of us are looking at the stars.",
+"by": "Oscar Wilde",
+"theme": "wonder"
+},
+{
+"text": "In every walk with nature one receives far more than he seeks.",
+"by": "John Muir",
+"theme": "wonder"
+},
+{
+"text": "The universe is under no obligation to make sense to you.",
+"by": "Neil deGrasse Tyson",
+"theme": "wonder"
+},
+{
+"text": "There are always flowers for those who want to see them.",
+"by": "Henri Matisse",
+"theme": "wonder"
+},
+{
+"text": "Imagination is the only weapon in the war against reality.",
+"by": "Jules de Gaultier",
+"theme": "wonder"
+},
+{
+"text": "Rest is not idleness, and to lie sometimes on the grass under trees on a summer's day is by no means a waste of time.",
+"by": "John Lubbock",
+"theme": "rest"
+},
+{
+"text": "Sometimes the most productive thing you can do is relax.",
+"by": "Mark Black",
+"theme": "rest"
+},
+{
+"text": "Take rest; a field that has rested gives a bountiful crop.",
+"by": "Ovid",
+"theme": "rest"
+},
+{
+"text": "Your calm mind is the ultimate weapon against your challenges. So relax.",
+"by": "Bryant McGill",
+"theme": "rest"
+},
+{
+"text": "There is virtue in work and there is virtue in rest. Use both and overlook neither.",
+"by": "Alan Cohen",
+"theme": "rest"
+},
+{
+"text": "Tension is who you think you should be. Relaxation is who you are.",
+"by": "Chinese proverb",
+"theme": "rest"
+},
+{
+"text": "Sleep is the best meditation.",
+"by": "Dalai Lama",
+"theme": "rest"
+},
+{
+"text": "You can't pour from an empty cup. Take care of yourself first.",
+"by": "Unknown",
+"theme": "rest"
+},
+{
+"text": "Doing nothing is very hard to do. You never know when you're finished.",
+"by": "Leslie Nielsen",
+"theme": "rest"
+},
+{
+"text": "Learn to rest, not to quit.",
+"by": "Unknown",
+"theme": "rest"
+},
+{
+"text": "And if tonight my soul may find her peace in sleep, and sink in good oblivion, I shall be content.",
+"by": "D. H. Lawrence",
+"theme": "rest"
+}
+]
