@@ -1,6 +1,6 @@
 # Kairos
 
-**Learn one useful thing. Notice it in your life. Remember it when it matters.**
+**A little room to grow.**
 
 Kairos is a local-first Android learning and reflection app built with Kotlin, Jetpack Compose, Room, Hilt, and Material 3. The focused product surface is organized around four destinations: **Today**, **Learn**, **Reflect**, and **Library**.
 
@@ -10,7 +10,8 @@ Kairos is a local-first Android learning and reflection app built with Kotlin, J
 
 ### Today
 - One stable vocabulary recommendation and one thoughtful quote per local date.
-- Explainable selection and direct feedback: too easy, too hard, more like this, and less like this.
+- Stable daily selection and save signals for the recommendation engine.
+- A painted seed garden with doors to time capsules and play.
 - A calm vertical reading flow instead of a dashboard of unrelated modules.
 
 ### Learn
@@ -31,6 +32,22 @@ Kairos is a local-first Android learning and reflection app built with Kotlin, J
 - Quotes, proverbs, idioms, and phrases behind one repository boundary.
 - Search and favorite controls across all content types.
 - Editorial reading surfaces designed for longer text.
+
+
+## Time capsules and play
+
+Write a letter, attach photos/video or a voice note, and choose its future date.
+Open arrived letters and reply to your past self. Photo/video document access is
+retained; originals still need to remain available. Custom dates arrive at 9 a.m.
+in the device timezone. This is local storage, not a cloud delivery service.
+
+Word Garden is a gentle offline vocabulary game with saved flower progress.
+The external game library downloads an official Shattered Pixel Dungeon Android
+release using Android DownloadManager. Pokemon fan games link to creator release
+pages; no ROMs or emulator are distributed. Android handles APK installation
+separately from Kairos.
+
+See [the rebuild review](docs/rebuild/REVIEW.md) for scope and known limitations.
 
 ## Experience principles
 
@@ -53,10 +70,10 @@ Onboarding completion is written only after the local catalog and profile transa
 
 ## Visual system
 
-- Mineral indigo, clay, verdigris, and warm editorial neutrals.
+- Pond blue, leaf green, rose petals and pale sky with a painted seed companion.
 - Restrained glass navigation and control surfaces.
 - Matte reading surfaces for definitions, quotations, and journal text.
-- Native Android sans for interface density and the platform serif family for reflective content; no missing font resources or runtime downloads.
+- Rounded Android sans and bundled Lora for reflective content; no runtime font downloads.
 - Edge-to-edge layout, explicit system insets, 48dp minimum controls, compact bottom navigation, and an adaptive wide-screen rail.
 - Short state transitions and pressed feedback; looping motion is limited to the active cosmetic preview or hero and respects reduced-motion settings.
 
@@ -158,7 +175,7 @@ Visible branding and UI implementation names may migrate independently.
 
 The four primary destinations, local entry flow, onboarding, notification consent, recommendation feedback, release AI boundary, launcher identity, and adaptive navigation use the Kairos system.
 
-Secondary experiment routes (Haven, Missions, Challenges, Collaborative messaging, Learning Paths, Deep Dive, Weekly Digest, Future Messages, Meditation, Micro Journal, Daily Ritual, Locker, Wrapped, and the legacy Home dashboard's Explore section) have been removed from the navigation graph so the app presents one honest product: Today, Learn, Reflect, Library, and Profile/Settings. Their source trees remain for reference until their data can be retired safely; they are unreachable from the UI.
+Secondary experiment routes (Haven, Missions, Challenges, Collaborative messaging, Learning Paths, Deep Dive, Weekly Digest, Meditation, Micro Journal, Daily Ritual, Locker, Wrapped, and the legacy Home dashboard's Explore section) have been removed from the navigation graph so the app presents one honest product: Today, Learn, Reflect, Library, and Profile/Settings. Their source trees remain for reference until their data can be retired safely. Time capsules and Play Garden are now reachable from Today, including write/reveal/reply and original Word Garden gameplay.
 
 ## Verification
 

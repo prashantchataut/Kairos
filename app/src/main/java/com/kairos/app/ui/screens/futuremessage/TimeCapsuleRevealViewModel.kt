@@ -73,6 +73,10 @@ class TimeCapsuleRevealViewModel @Inject constructor(
                     return@launch
                 }
 
+                if (!com.kairos.app.domain.capsule.CapsuleClock.canOpen(message.deliveryDate, System.currentTimeMillis())) {
+                    _uiState.update { it.copy(isLoading = false, message = null, error = "This capsule is still sealed. Come back on its delivery date.") }
+                    return@launch
+                }
                 // Check if there's a reply
                 val hasReply = futureMessageReplyRepository.hasReplyForMessage(messageId)
 
@@ -113,6 +117,7 @@ class TimeCapsuleRevealViewModel @Inject constructor(
         val state = _uiState.value
         if (state.hasBeenRevealed) return
         val message = state.message ?: return
+        if (!com.kairos.app.domain.capsule.CapsuleClock.canOpen(message.deliveryDate, System.currentTimeMillis())) return
         _uiState.update { it.copy(hasBeenRevealed = true) }
         viewModelScope.launch {
             // Reading state changes only when the user deliberately opens the sealed message.

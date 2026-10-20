@@ -76,25 +76,12 @@ fun AuthScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                KairosGlassSurface(
-                    modifier = Modifier.size(76.dp),
-                    shape = RoundedCornerShape(KairosRadius.controlLarge),
-                    strong = true
-                ) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = KairosIcons.Outlined.AutoStories,
-                            contentDescription = null,
-                            modifier = Modifier.size(31.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
+                com.kairos.app.ui.components.painted.PocketGarden(Modifier.fillMaxWidth().height(160.dp))
 
                 Spacer(Modifier.height(4.dp))
 
                 Text(
-                    text = "A quieter way to learn",
+                    text = "A little room to grow",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center
@@ -147,7 +134,7 @@ fun AuthScreen(
                 }
 
                 Text(
-                    text = "Everything you need works on this device. Sign in with Google whenever you want your account on another phone.",
+                    text = "Your letters and progress are stored on this device. Google sign-in identifies your account; it does not back up your memories.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center

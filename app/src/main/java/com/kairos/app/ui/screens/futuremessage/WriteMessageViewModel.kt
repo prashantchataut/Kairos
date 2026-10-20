@@ -157,7 +157,7 @@ class WriteMessageViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 selectedPreset = DatePreset.CUSTOM,
-                deliveryDate = date,
+                deliveryDate = com.kairos.app.domain.capsule.CapsuleClock.deliveryOnSelectedDay(date, java.time.ZoneId.systemDefault()),
                 showDatePicker = false,
                 hasUnsavedChanges = true
             )
@@ -244,6 +244,10 @@ class WriteMessageViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun attachmentAccessFailed() {
+        _uiState.update { it.copy(error = "This provider could not keep the attachment available. Choose a file saved on your device.") }
     }
 
     fun clearError() {

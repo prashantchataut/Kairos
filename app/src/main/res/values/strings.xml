@@ -738,4 +738,6 @@
     <!-- ==================== -->
     <!-- Note: All text is RTL-compatible. Icons should use autoMirrored variants. -->
     <!-- For formats with numbers, use xliff:g for proper RTL handling -->
+    <string name="nav_capsules">Capsules</string>
+    <string name="nav_play">Play</string>
 </resources>

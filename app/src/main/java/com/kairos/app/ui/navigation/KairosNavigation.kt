@@ -114,8 +114,14 @@ sealed class Screen(val route: String) {
 
     data object VocabularySession : Screen("vocabulary/session?mode={mode}") {
         fun createRoute(mode: com.kairos.app.ui.screens.vocabulary.SessionMode): String =
-            "vocabulary/session?mode=${'$'}{mode.name}"
+            "vocabulary/session?mode=${mode.name}"
     }
+
+    data object Capsules : Screen("capsules")
+    data object WriteCapsule : Screen("capsules/new")
+    data object OpenCapsule : Screen("capsules/open/{messageId}")
+    data object ReplyCapsule : Screen("capsules/reply/{messageId}")
+    data object Games : Screen("games")
 
     data object InterestsSetup : Screen("interests_setup")
 }
@@ -218,6 +224,8 @@ fun KairosNavHost(
 
         composable(Screen.Home.route) {
             FocusedTodayScreen(
+                onNavigateToCapsules = { navController.navigate(Screen.Capsules.route) },
+                onNavigateToGames = { navController.navigate(Screen.Games.route) },
                 onNavigateToVocabulary = {
                     navController.navigate(Screen.VocabularyList.route)
                 },
@@ -434,6 +442,41 @@ fun KairosNavHost(
                 initialMode = initialMode,
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+
+        composable(Screen.Capsules.route) {
+            com.kairos.app.ui.screens.futuremessage.FutureMessageListScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToWrite = { navController.navigate(Screen.WriteCapsule.route) },
+                onNavigateToMessage = { navController.navigate("capsules/open/$it") }
+            )
+        }
+        composable(Screen.WriteCapsule.route) {
+            com.kairos.app.ui.screens.futuremessage.WriteMessageScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onMessageSaved = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.OpenCapsule.route,
+            arguments = listOf(navArgument("messageId") { type = NavType.LongType })
+        ) { entry ->
+            com.kairos.app.ui.screens.futuremessage.TimeCapsuleRevealScreen(
+                messageId = entry.arguments?.getLong("messageId") ?: return@composable,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToJournal = { navController.navigate(Screen.NewJournalEntry.createRoute(it)) },
+                onNavigateToReply = { navController.navigate("capsules/reply/${entry.arguments?.getLong("messageId")}") }
+            )
+        }
+        composable(Screen.ReplyCapsule.route,
+            arguments = listOf(navArgument("messageId") { type = NavType.LongType })
+        ) {
+            com.kairos.app.ui.screens.futuremessage.FutureMessageReplyScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToJournal = { navController.navigate(Screen.NewJournalEntry.createRoute(it)) }
+            )
+        }
+        composable(Screen.Games.route) {
+            com.kairos.app.ui.screens.play.PlayScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Screen.InterestsSetup.route) {

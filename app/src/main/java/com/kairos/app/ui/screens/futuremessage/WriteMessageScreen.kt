@@ -1,5 +1,7 @@
 package com.kairos.app.ui.screens.futuremessage
 
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -101,12 +103,22 @@ fun WriteMessageScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val reduceMotion = rememberKairosReducedMotion()
 
+    val attachmentContext = LocalContext.current
+    fun retainAttachments(uris: List<Uri>, photos: Boolean) {
+        val retained = uris.filter { uri ->
+            runCatching {
+                attachmentContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }.isSuccess
+        }.map(Uri::toString)
+        if (photos) viewModel.addPhotos(retained) else viewModel.addVideos(retained)
+        if (retained.size != uris.size) viewModel.attachmentAccessFailed()
+    }
     val photoPicker = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> -> viewModel.addPhotos(uris.map(Uri::toString)) }
+        ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris: List<Uri> -> retainAttachments(uris, true) }
     val videoPicker = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> -> viewModel.addVideos(uris.map(Uri::toString)) }
+        ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris: List<Uri> -> retainAttachments(uris, false) }
     val microphonePermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -175,8 +187,8 @@ fun WriteMessageScreen(
                 KairosReveal(visible = true, delayMillis = 170) {
                     LetterAttachments(
                         state = state,
-                        onPickPhotos = { photoPicker.launch("image/*") },
-                        onPickVideos = { videoPicker.launch("video/*") },
+                        onPickPhotos = { photoPicker.launch(arrayOf("image/*")) },
+                        onPickVideos = { videoPicker.launch(arrayOf("video/*")) },
                         onRecord = {
                             if (state.isRecording) viewModel.stopRecording()
                             else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
@@ -581,7 +593,7 @@ private fun FutureDatePicker(
                 onClick = {
                     state.selectedDateMillis?.let(onConfirm)
                 },
-                enabled = (state.selectedDateMillis ?: 0L) > System.currentTimeMillis()
+                enabled = state.selectedDateMillis?.let { com.kairos.app.domain.capsule.CapsuleClock.deliveryOnSelectedDay(it, java.time.ZoneId.systemDefault()) > System.currentTimeMillis() } == true
             ) { Text("Use date") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }

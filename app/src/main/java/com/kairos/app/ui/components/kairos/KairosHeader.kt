@@ -75,10 +75,6 @@ fun KairosScreenHeader(
                 content = actions
             )
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = KairosSpacing.screen),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
+        androidx.compose.foundation.layout.Spacer(Modifier.padding(bottom = 8.dp))
     }
 }

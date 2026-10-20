@@ -32,11 +32,21 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import java.io.File
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -349,32 +359,32 @@ private fun LetterProvenance(message: FutureMessageEntity, timeAgo: String) {
 
 @Composable
 private fun AttachmentMemory(message: FutureMessageEntity) {
-    val photoCount = message.attachedPhotos.split(',').count { it.isNotBlank() }
-    val videoCount = message.attachedVideos.split(',').count { it.isNotBlank() }
-    KairosGlassSurface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        contentPadding = PaddingValues(18.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            Icon(KairosIcons.Image, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-            Column(Modifier.weight(1f)) {
-                Text("Memories attached", fontWeight = FontWeight.SemiBold)
-                Text(
-                    listOfNotNull(
-                        photoCount.takeIf { it > 0 }?.let { "$it photo${if (it == 1) "" else "s"}" },
-                        videoCount.takeIf { it > 0 }?.let { "$it video${if (it == 1) "" else "s"}" },
-                        message.voiceRecordingUri?.let { "voice note" }
-                    ).joinToString(" · "),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+    val context = LocalContext.current
+    var error by remember { mutableStateOf<String?>(null) }
+    fun openAttachment(value: String, mime: String) {
+        runCatching {
+            val original = Uri.parse(value)
+            val uri = if (original.scheme == "file") {
+                FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", File(requireNotNull(original.path)))
+            } else original
+            val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, mime)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            context.startActivity(intent)
+        }.onFailure { error = "This attachment could not open. It may have been moved, or this device needs an app that can play it." }
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text("Memories attached", style = MaterialTheme.typography.titleMedium)
+        message.attachedPhotos.split(',').filter(String::isNotBlank).forEachIndexed { index, uri ->
+            coil.compose.AsyncImage(model = uri, contentDescription = "Photo ${index + 1} attached to this letter", modifier = Modifier.fillMaxWidth().height(220.dp).clip(RoundedCornerShape(24.dp)).clickable { openAttachment(uri, "image/*") })
+            TextButton(onClick = { openAttachment(uri, "image/*") }) { Text("Open photo ${index + 1}") }
         }
+        message.attachedVideos.split(',').filter(String::isNotBlank).forEachIndexed { index, uri ->
+            TextButton(onClick = { openAttachment(uri, "video/*") }) { Text("Play video ${index + 1}") }
+        }
+        message.voiceRecordingUri?.let { uri ->
+            TextButton(onClick = { openAttachment(uri, "audio/*") }) { Text("Listen to your voice note") }
+        }
+        error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
     }
 }
 

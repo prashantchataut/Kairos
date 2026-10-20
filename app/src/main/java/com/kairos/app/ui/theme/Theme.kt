@@ -37,7 +37,7 @@ private val LightColorScheme = lightColorScheme(
     secondaryContainer = KairosClayContainerLight,
     onSecondaryContainer = KairosOnClayContainerLight,
 
-    tertiary = Color(0xFF0090B2),
+    tertiary = KairosVerdigris,
     onTertiary = Color(0xFFFFFFFF),
     tertiaryContainer = Color(0xFFD2F2FF),
     onTertiaryContainer = Color(0xFF004E63),
@@ -84,7 +84,7 @@ private val DarkColorScheme = darkColorScheme(
     secondaryContainer = KairosClayContainerDark,
     onSecondaryContainer = KairosOnClayContainerDark,
 
-    tertiary = Color(0xFF5FD0E8),
+    tertiary = KairosSeaGlass,
     onTertiary = Color(0xFF003642),
     tertiaryContainer = Color(0xFF00536B),
     onTertiaryContainer = Color(0xFFB8EDFB),

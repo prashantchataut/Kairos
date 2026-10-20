@@ -69,22 +69,30 @@ class DailyPlanRepositoryImpl @Inject constructor(
         val quoteCategories = preferencesManager.selectedWisdomCategories.first()
         val wordCategories = preferencesManager.preferredWordCategories.first()
         val targetDifficulty = preferencesManager.vocabularyDifficulty.first().coerceIn(1, 5)
-        val feedback = FeedbackProfile.from(recentInteractions)
+        val signals = recentInteractions.mapNotNull { interaction ->
+            val type = runCatching { DailyContentType.valueOf(interaction.contentType) }.getOrNull() ?: return@mapNotNull null
+            val event = runCatching { ContentInteractionType.valueOf(interaction.interactionType) }.getOrNull() ?: return@mapNotNull null
+            com.kairos.app.domain.recommendation.FeedbackSignal(type, event, interaction.category, interaction.sourceKey, interaction.createdAt)
+        }
+        val wordFeedback = com.kairos.app.domain.recommendation.DailyFeedbackEngine.profile(DailyContentType.VOCABULARY, signals, now)
+        val quoteFeedback = com.kairos.app.domain.recommendation.DailyFeedbackEngine.profile(DailyContentType.QUOTE, signals, now)
 
         val quoteContext = RecommendationContext(
             userId = userId,
             epochDay = localDate.toEpochDay(),
             now = now,
-            targetDifficulty = (targetDifficulty + feedback.difficultyDelta).coerceIn(1, 5),
+            targetDifficulty = (targetDifficulty + wordFeedback.difficultyDelta).coerceIn(1, 5),
             preferredCategories = quoteCategories.associate { it.normalized() to 1.0 },
             recentSelections = recentSelections.mapNotNull { it.toCandidateHistoryOrNull() },
-            categoryFeedback = feedback.categoryScores,
-            sourceFeedback = feedback.sourceScores,
+            categoryFeedback = quoteFeedback.categories,
+            sourceFeedback = quoteFeedback.sources,
             temporalCategories = temporalCategories(localDate.dayOfWeek)
         )
 
         val wordContext = quoteContext.copy(
-            preferredCategories = wordCategories.associate { it.normalized() to 1.0 }
+            preferredCategories = wordCategories.associate { it.normalized() to 1.0 },
+            categoryFeedback = wordFeedback.categories,
+            sourceFeedback = wordFeedback.sources
         )
 
         val selectionsToInsert = buildList {
@@ -287,43 +295,6 @@ class DailyPlanRepositoryImpl @Inject constructor(
         )
     }
 
-    private data class FeedbackProfile(
-        val categoryScores: Map<String, Double>,
-        val sourceScores: Map<String, Double>,
-        val difficultyDelta: Int
-    ) {
-        companion object {
-            fun from(interactions: List<ContentInteractionEntity>): FeedbackProfile {
-                val category = mutableMapOf<String, Double>()
-                val source = mutableMapOf<String, Double>()
-                interactions.forEach { interaction ->
-                    val weight = INTERACTION_WEIGHTS[interaction.interactionType] ?: 0.0
-                    if (weight == 0.0) return@forEach
-                    interaction.category.trim().lowercase().takeIf { it.isNotEmpty() }?.let { key ->
-                        category[key] = (category[key] ?: 0.0) + weight
-                    }
-                    interaction.sourceKey.trim().lowercase().takeIf { it.isNotEmpty() }?.let { key ->
-                        source[key] = (source[key] ?: 0.0) + weight * 0.5
-                    }
-                }
-                val difficultyDelta = interactions
-                    .asSequence()
-                    .filter { it.contentType == DailyContentType.VOCABULARY.name }
-                    .take(12)
-                    .map { interaction ->
-                        when (interaction.interactionType) {
-                            ContentInteractionType.TOO_EASY.name -> 1
-                            ContentInteractionType.TOO_HARD.name -> -1
-                            else -> 0
-                        }
-                    }
-                    .sum()
-                    .coerceIn(-1, 1)
-                return FeedbackProfile(category, source, difficultyDelta)
-            }
-        }
-    }
-
     private fun DailyContentSelectionEntity.toCandidateHistoryOrNull(): CandidateHistory? {
         val type = runCatching { DailyContentType.valueOf(contentType) }.getOrNull() ?: return null
         return CandidateHistory(selectedAt, contentId, type, category, sourceKey)
@@ -381,7 +352,7 @@ class DailyPlanRepositoryImpl @Inject constructor(
     private fun String.normalized(): String = trim().lowercase()
 
     private companion object {
-        const val ALGORITHM_VERSION = 1
+        const val ALGORITHM_VERSION = 2
         const val DAY_MS = 24L * 60L * 60L * 1_000L
         const val SELECTION_LOOKBACK_MS = 60L * DAY_MS
         const val INTERACTION_LOOKBACK_MS = 90L * DAY_MS
@@ -391,14 +362,6 @@ class DailyPlanRepositoryImpl @Inject constructor(
             ContentInteractionType.USED_IN_JOURNAL
         )
 
-        val INTERACTION_WEIGHTS = mapOf(
-            ContentInteractionType.OPENED.name to 0.5,
-            ContentInteractionType.SAVED.name to 3.0,
-            ContentInteractionType.DISMISSED.name to -2.0,
-            ContentInteractionType.COMPLETED.name to 2.0,
-            ContentInteractionType.USED_IN_JOURNAL.name to 4.0,
-            ContentInteractionType.MORE_LIKE_THIS.name to 5.0,
-            ContentInteractionType.LESS_LIKE_THIS.name to -5.0
-        )
+
     }
 }

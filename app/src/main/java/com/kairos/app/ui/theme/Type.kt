@@ -40,7 +40,7 @@ val LoraFamily: FontFamily = FontFamily(
 val SerifFamily: FontFamily = LoraFamily
 
 /** Native Android sans-serif for interface text and dense controls. */
-val KairosSansFamily: FontFamily = FontFamily.SansSerif
+val KairosSansFamily: FontFamily = FontFamily(android.graphics.Typeface.create("sans-serif-rounded", android.graphics.Typeface.NORMAL))
 
 /** Compatibility alias for legacy UI styles. */
 val PoppinsFamily: FontFamily = KairosSansFamily

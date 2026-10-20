@@ -34,7 +34,12 @@ class FutureMessageViewModel @Inject constructor(
 
     init {
         loadMessages()
-        checkForDeliveredMessages()
+        viewModelScope.launch {
+            while (true) {
+                checkForDeliveredMessages()
+                kotlinx.coroutines.delay(30_000)
+            }
+        }
     }
 
     private fun loadMessages() {

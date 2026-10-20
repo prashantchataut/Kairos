@@ -77,6 +77,12 @@ class TodayViewModel @Inject constructor(
 
     init {
         load()
+        viewModelScope.launch {
+            while (true) {
+                kotlinx.coroutines.delay(30_000)
+                if (LocalDate.now() != currentDate) load()
+            }
+        }
     }
 
     fun retry() = load()
@@ -90,8 +96,11 @@ class TodayViewModel @Inject constructor(
         if (currentWordId <= 0) return
         viewModelScope.launch {
             val saving = !_uiState.value.wordSaved
-            todayProgressRepository.setWordSaved(currentUserId, currentWordId, saving)
-                .onError { _uiState.update { state -> state.copy(error = it.userMessage) } }
+            val result = todayProgressRepository.setWordSaved(currentUserId, currentWordId, saving)
+            if (result is Result.Error) {
+                _uiState.update { it.copy(error = result.userMessage) }
+                return@launch
+            }
             dailyPlanRepository.recordInteraction(
                 userId = currentUserId,
                 localDate = currentDate,
@@ -134,8 +143,11 @@ class TodayViewModel @Inject constructor(
         if (currentQuoteId <= 0) return
         viewModelScope.launch {
             val saving = !_uiState.value.quoteSaved
-            todayProgressRepository.setQuoteSaved(currentUserId, currentQuoteId, saving)
-                .onError { error -> _uiState.update { it.copy(error = error.userMessage) } }
+            val result = todayProgressRepository.setQuoteSaved(currentUserId, currentQuoteId, saving)
+            if (result is Result.Error) {
+                _uiState.update { it.copy(error = result.userMessage) }
+                return@launch
+            }
             dailyPlanRepository.recordInteraction(
                 userId = currentUserId,
                 localDate = currentDate,
