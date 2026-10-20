@@ -71,11 +71,9 @@ fun KairosAppBackground(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-    ) {
-        PaintedPaper(Modifier.matchParentSize())
-        content()
-    }
+            .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f), MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.background))),
+        content = content
+    )
 }
 
 /**
