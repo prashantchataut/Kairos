@@ -204,7 +204,7 @@ fun KairosNavHost(
         }
     ) {
         composable(Screen.Capsules.route) {
-            com.kairos.app.ui.screens.futuremessage.FutureMessageScreen(
+            com.kairos.app.ui.screens.futuremessage.FutureMessageListScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToWrite = { navController.navigate(Screen.WriteCapsule.route) },
                 onNavigateToMessage = { navController.navigate("capsules/reveal/$it") }

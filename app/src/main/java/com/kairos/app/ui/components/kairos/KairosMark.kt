@@ -46,117 +46,20 @@ fun KairosMark(
     accent: Color = MaterialTheme.colorScheme.primary,
     revealed: Boolean = true
 ) {
-    val reducedMotion = rememberKairosReducedMotion()
-    val reveal by animateFloatAsState(
-        targetValue = if (revealed) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = if (reducedMotion) KairosDurations.Micro else 520,
-            easing = KairosEasing.EaseOutExpo
-        ),
-        label = "kairos-mark-reveal"
-    )
-
-    val transition = rememberInfiniteTransition(label = "kairos-mark-breathe")
-    val breathe by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(3200),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "kairos-mark-breathe-scale"
-    )
-    val idleScale = if (reducedMotion) 1f else 1f + breathe * 0.02f
-
-    Canvas(
-        modifier = modifier.graphicsLayer {
-            alpha = reveal
-            scaleX = (0.86f + 0.14f * reveal) * idleScale
-            scaleY = (0.86f + 0.14f * reveal) * idleScale
+    // The open moment becomes a living seed: a stem and two welcoming leaves.
+    Canvas(modifier) {
+        val u = size.minDimension / 100f
+        drawRoundRect(accent, cornerRadius = CornerRadius(28*u), size = Size(100*u, 100*u))
+        drawCircle(Color.White.copy(alpha = .12f), 38*u, Offset(28*u, 24*u))
+        drawLine(Color.White, Offset(50*u, 77*u), Offset(50*u, 43*u), 6*u, androidx.compose.ui.graphics.StrokeCap.Round)
+        val left = androidx.compose.ui.graphics.Path().apply {
+            moveTo(50*u, 56*u); cubicTo(20*u, 60*u, 18*u, 23*u, 50*u, 43*u); close()
         }
-    ) {
-        val min = size.minDimension
-        val tileInset = min * 0.02f
-        val tileSize = min - tileInset * 2f
-        val r = tileSize * 0.30f
-
-        // Tile — rounded square, volumetric vertical gradient.
-        drawRoundRect(
-            brush = Brush.verticalGradient(
-                colors = listOf(
-                    lighten(accent, 0.14f),
-                    accent,
-                    darken(accent, 0.22f)
-                ),
-                startY = tileInset,
-                endY = size.height - tileInset
-            ),
-            topLeft = Offset(tileInset, tileInset),
-            size = Size(tileSize, tileSize),
-            cornerRadius = CornerRadius(r, r)
-        )
-
-        // A soft inner highlight along the top edge.
-        drawRoundRect(
-            brush = Brush.verticalGradient(
-                colors = listOf(Color.White.copy(alpha = 0.28f * reveal), Color.Transparent),
-                startY = tileInset,
-                endY = tileInset + tileSize * 0.42f
-            ),
-            topLeft = Offset(tileInset, tileInset),
-            size = Size(tileSize, tileSize),
-            cornerRadius = CornerRadius(r, r)
-        )
-
-        // The flowing K — strokes in relative tile coordinates.
-        val u = tileSize / 100f
-        val ox = tileInset
-        val oy = tileInset
-        val strokeW = u * 8.5f
-        val ink = Color.White
-
-        // Vertical stem.
-        drawLine(
-            color = ink.copy(alpha = 0.96f * reveal),
-            start = Offset(ox + u * 30f, oy + u * 26f),
-            end = Offset(ox + u * 30f, oy + u * 74f),
-            strokeWidth = strokeW,
-            cap = StrokeCap.Round
-        )
-
-        // Upper arm — sweeps from the stem toward the upper right.
-        drawLine(
-            color = ink.copy(alpha = 0.96f * reveal),
-            start = Offset(ox + u * 30f, oy + u * 36f),
-            end = Offset(ox + u * 66f, oy + u * 25f),
-            strokeWidth = strokeW,
-            cap = StrokeCap.Round
-        )
-
-        // Lower arm — converges toward the moment dot.
-        drawLine(
-            color = ink.copy(alpha = 0.96f * reveal),
-            start = Offset(ox + u * 30f, oy + u * 48f),
-            end = Offset(ox + u * 58f, oy + u * 71f),
-            strokeWidth = strokeW,
-            cap = StrokeCap.Round
-        )
-
-        // The moment — a filled dot where the movement gathers.
-        drawCircle(
-            color = Color.White.copy(alpha = 0.98f * reveal),
-            radius = u * 7.5f,
-            center = Offset(ox + u * 74f, oy + u * 78f)
-        )
-
-        // Motion trail from the dot — momentum, a moment captured in motion.
-        drawLine(
-            color = Color.White.copy(alpha = 0.55f * reveal),
-            start = Offset(ox + u * 78f, oy + u * 82f),
-            end = Offset(ox + u * 88f, oy + u * 90f),
-            strokeWidth = strokeW * 0.55f,
-            cap = StrokeCap.Round
-        )
+        val right = androidx.compose.ui.graphics.Path().apply {
+            moveTo(50*u, 43*u); cubicTo(48*u, 13*u, 86*u, 20*u, 50*u, 43*u); close()
+        }
+        drawPath(left, Color.White.copy(alpha = .85f)); drawPath(right, Color.White)
+        drawArc(Color.White, 10f, 160f, false, Offset(26*u, 60*u), Size(48*u, 26*u), style = Stroke(4*u, cap = androidx.compose.ui.graphics.StrokeCap.Round))
     }
 }
 

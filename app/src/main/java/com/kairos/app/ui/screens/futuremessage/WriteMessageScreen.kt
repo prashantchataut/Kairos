@@ -581,12 +581,14 @@ private fun FutureDatePicker(
                 onClick = {
                     state.selectedDateMillis?.let(onConfirm)
                 },
-                enabled = (state.selectedDateMillis ?: 0L) > System.currentTimeMillis()
+                enabled = state.selectedDateMillis?.let {
+                    com.kairos.app.domain.futuremessage.CapsuleDeliveryDate.fromPicker(it) > System.currentTimeMillis()
+                } ?: false
             ) { Text("Use date") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
     ) {
-        DatePicker(state = state, title = { Text("Choose when this letter arrives", modifier = Modifier.padding(24.dp)) })
+        DatePicker(state = state, title = { Text("Arrives at 9 am on this date", modifier = Modifier.padding(24.dp)) })
     }
 }
 

@@ -1,0 +1,10 @@
+{
+  "title": "Cloud Post",
+  "opening": "A letter has landed on your little cloud island. Its envelope says: For someone who could use a softer day.",
+  "scenes": [
+    {"text": "The wind is impatient. A tiny snail is carrying the letter uphill. What do you do?", "choices": ["Walk beside the snail", "Build a little leaf shelter"], "responses": ["You match its pace. For once, there is nowhere else to be. The snail offers you a dew-drop stamp.", "Under your leaf roof, the rain sounds like applause. The snail settles in and shares its warm tea."]},
+    {"text": "At the hilltop, a sleepy star has forgotten what it is good at.", "choices": ["Sit with it in the dark", "Tell it about the path it lit"], "responses": ["You don't ask it to shine. Slowly, a small light returns on its own.", "You show it the snail's silver trail. Sometimes we cannot see the light we leave behind."]},
+    {"text": "Inside the envelope is a blank postcard. Who will receive it?", "choices": ["My future self", "Someone taking their time"], "responses": ["You write: I hope you remember this. A slow day can still be a beautiful one.", "You write: There is room for you here, at exactly the pace you are going."]}
+  ],
+  "ending": "The snail stamps your postcard. The star lights the way home. Nothing on the island was in a hurry, and everything that mattered still happened."
+}

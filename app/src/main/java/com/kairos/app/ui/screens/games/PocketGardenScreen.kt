@@ -20,7 +20,10 @@ import java.time.LocalDate
 
 /** A small original daily word game. Progress persists locally; no network or account needed. */
 @Composable
-fun PocketGardenScreen(onBack: () -> Unit) {
+fun PocketGardenScreen(onBack: () -> Unit, cloudPost: CloudPostViewModel = androidx.hilt.navigation.compose.hiltViewModel()) {
+    val cloud by cloudPost.state.collectAsState()
+    var sceneIndex by androidx.compose.runtime.saveable.rememberSaveable { mutableIntStateOf(-1) }
+    var responseIndex by androidx.compose.runtime.saveable.rememberSaveable { mutableIntStateOf(-1) }
     val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("pocket_garden", Context.MODE_PRIVATE) }
     val day = LocalDate.now().toEpochDay()
@@ -35,7 +38,7 @@ fun PocketGardenScreen(onBack: () -> Unit) {
         TextButton(onClick = onBack) { Text("Back to today") }
         Text("The playroom", style = MaterialTheme.typography.displaySmall, fontFamily = SerifFamily)
         Text("A small adventure is time well spent.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        KairosReadingSurface {
+        KairosReadingSurface(contentPadding = PaddingValues(0.dp)) {
             Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text("Pocket Garden", style = MaterialTheme.typography.headlineMedium)
                 Text("An original Kairos game • Included offline", style = MaterialTheme.typography.bodySmall)
@@ -63,6 +66,42 @@ fun PocketGardenScreen(onBack: () -> Unit) {
                 }
             }
         }
+        HorizontalDivider()
+        Text("Cloud Post", style = MaterialTheme.typography.headlineSmall)
+        Text("An original, gentle story about a snail, a sleepy star, and a letter. Download once, then play offline.")
+        when {
+            cloud.busy -> CircularProgressIndicator(Modifier.size(24.dp))
+            cloud.story == null -> Button(onClick = cloudPost::download) { Text("Download Cloud Post • 2 KB") }
+            else -> {
+                val story = requireNotNull(cloud.story)
+                AnimatedContent(targetState = sceneIndex to responseIndex, label = "story-page") { (page, answer) ->
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        when {
+                            page < 0 -> {
+                                Text(story.opening)
+                                Button(onClick = { sceneIndex = 0 }) { Text("Begin the story") }
+                            }
+                            page >= story.scenes.size -> {
+                                Text(story.ending)
+                                TextButton(onClick = { sceneIndex = -1; responseIndex = -1 }) { Text("Read again") }
+                            }
+                            else -> {
+                                val scene = story.scenes[page]
+                                Text(scene.text, style = MaterialTheme.typography.titleMedium)
+                                if (answer < 0) scene.choices.forEachIndexed { i, choice ->
+                                    OutlinedButton(onClick = { responseIndex = i }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
+                                } else {
+                                    Text(scene.responses[answer])
+                                    Button(onClick = { responseIndex = -1; sceneIndex++ }) { Text("Continue") }
+                                }
+                            }
+                        }
+                    }
+                }
+                TextButton(onClick = { cloudPost.remove(); sceneIndex = -1; responseIndex = -1 }) { Text("Remove download") }
+            }
+        }
+        cloud.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Text("Beyond the garden", style = MaterialTheme.typography.headlineSmall)
         Text("Pokémon fan games", style = MaterialTheme.typography.titleLarge)
         Text("Visit the creators for releases, instructions and Android compatibility. Some fan games require a separate emulator. Kairos does not include game ROMs.")

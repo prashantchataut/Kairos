@@ -90,8 +90,11 @@ class TodayViewModel @Inject constructor(
         if (currentWordId <= 0) return
         viewModelScope.launch {
             val saving = !_uiState.value.wordSaved
-            todayProgressRepository.setWordSaved(currentUserId, currentWordId, saving)
-                .onError { _uiState.update { state -> state.copy(error = it.userMessage) } }
+            val saveResult = todayProgressRepository.setWordSaved(currentUserId, currentWordId, saving)
+            if (saveResult is Result.Error) {
+                _uiState.update { it.copy(error = saveResult.userMessage) }
+                return@launch
+            }
             dailyPlanRepository.recordInteraction(
                 userId = currentUserId,
                 localDate = currentDate,
@@ -134,8 +137,11 @@ class TodayViewModel @Inject constructor(
         if (currentQuoteId <= 0) return
         viewModelScope.launch {
             val saving = !_uiState.value.quoteSaved
-            todayProgressRepository.setQuoteSaved(currentUserId, currentQuoteId, saving)
-                .onError { error -> _uiState.update { it.copy(error = error.userMessage) } }
+            val saveResult = todayProgressRepository.setQuoteSaved(currentUserId, currentQuoteId, saving)
+            if (saveResult is Result.Error) {
+                _uiState.update { it.copy(error = saveResult.userMessage) }
+                return@launch
+            }
             dailyPlanRepository.recordInteraction(
                 userId = currentUserId,
                 localDate = currentDate,

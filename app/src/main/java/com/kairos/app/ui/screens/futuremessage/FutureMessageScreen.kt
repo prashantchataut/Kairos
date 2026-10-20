@@ -128,7 +128,6 @@ fun FutureMessageListScreen(
                     tab == 0 -> ArrivedLetters(
                         messages = state.deliveredMessages,
                         onOpen = { message ->
-                            viewModel.markAsRead(message.id)
                             onNavigateToMessage(message.id)
                         },
                         onWrite = onNavigateToWrite

@@ -239,7 +239,7 @@ class NotificationScheduler @Inject constructor(
                             triggerTime = message.deliveryDate,
                             extras = mapOf(
                                 NotificationReceiver.EXTRA_MESSAGE_TITLE to message.title,
-                                NotificationReceiver.EXTRA_MESSAGE_BODY to message.content.take(200)
+                                NotificationReceiver.EXTRA_MESSAGE_BODY to "A letter from your past self is ready to open."
                             )
                         )
                     }
