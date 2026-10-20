@@ -1,5 +1,7 @@
 package com.kairos.app.ui.screens.futuremessage
 
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -101,12 +103,22 @@ fun WriteMessageScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val reduceMotion = rememberKairosReducedMotion()
 
+    val attachmentContext = LocalContext.current
+    fun retainAttachments(uris: List<Uri>, photos: Boolean) {
+        val retained = uris.filter { uri ->
+            runCatching {
+                attachmentContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }.isSuccess
+        }.map(Uri::toString)
+        if (photos) viewModel.addPhotos(retained) else viewModel.addVideos(retained)
+        if (retained.size != uris.size) viewModel.attachmentAccessFailed()
+    }
     val photoPicker = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments()
-    ) { uris: List<Uri> -> viewModel.importAttachments(uris, videos = false) }
+    ) { uris: List<Uri> -> retainAttachments(uris, true) }
     val videoPicker = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments()
-    ) { uris: List<Uri> -> viewModel.importAttachments(uris, videos = true) }
+    ) { uris: List<Uri> -> retainAttachments(uris, false) }
     val microphonePermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -182,9 +194,7 @@ fun WriteMessageScreen(
                             else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
                         },
                         onPlayVoice = viewModel::toggleVoicePlayback,
-                        onRemoveVoice = viewModel::removeVoiceRecording,
-                        onRemovePhoto = viewModel::removePhoto,
-                        onRemoveVideo = viewModel::removeVideo
+                        onRemoveVoice = viewModel::removeVoiceRecording
                     )
                 }
 
@@ -208,7 +218,7 @@ fun WriteMessageScreen(
             contentPadding = PaddingValues(8.dp)
         ) {
             KairosPrimaryButton(
-                text = if (state.isImporting) "Keeping your memories…" else if (state.isSaving) "Sealing…" else "Seal until ${shortDate(state.deliveryDate)}",
+                text = if (state.isSaving) "Sealing…" else "Seal until ${shortDate(state.deliveryDate)}",
                 onClick = viewModel::saveMessage,
                 enabled = state.canSave && !state.isSaving,
                 icon = if (state.isSaving) null else KairosIcons.Lock,
@@ -485,9 +495,7 @@ private fun LetterAttachments(
     onPickVideos: () -> Unit,
     onRecord: () -> Unit,
     onPlayVoice: () -> Unit,
-    onRemoveVoice: () -> Unit,
-    onRemovePhoto: (String) -> Unit,
-    onRemoveVideo: (String) -> Unit
+    onRemoveVoice: () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(11.dp)) {
         Text("Add a trace of this moment", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -511,19 +519,6 @@ private fun LetterAttachments(
                 selected = state.isRecording,
                 onClick = onRecord
             )
-        }
-
-        if (state.isImporting) Text("Keeping your memories…", style = MaterialTheme.typography.bodySmall)
-        (state.attachedPhotos.map { it to false } + state.attachedVideos.map { it to true }).forEachIndexed { index, (uri, video) ->
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                if (!video) coil.compose.AsyncImage(
-                    model = uri, contentDescription = "Attached photo ${index + 1}",
-                    modifier = Modifier.size(64.dp).clip(RoundedCornerShape(12.dp)),
-                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
-                )
-                Text(if (video) "Video ${index + 1}" else "Photo ${index + 1}", Modifier.weight(1f).padding(horizontal = 12.dp))
-                KairosIconButton(KairosIcons.Delete, "Remove attachment ${index + 1}", { if (video) onRemoveVideo(uri) else onRemovePhoto(uri) })
-            }
         }
 
         AnimatedVisibility(visible = state.voiceRecordingUri != null) {
@@ -598,14 +593,12 @@ private fun FutureDatePicker(
                 onClick = {
                     state.selectedDateMillis?.let(onConfirm)
                 },
-                enabled = state.selectedDateMillis?.let {
-                    com.kairos.app.domain.futuremessage.CapsuleDeliveryDate.fromPicker(it) > System.currentTimeMillis()
-                } ?: false
+                enabled = (state.selectedDateMillis ?: 0L) > System.currentTimeMillis()
             ) { Text("Use date") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
     ) {
-        DatePicker(state = state, title = { Text("Arrives at 9 am on this date", modifier = Modifier.padding(24.dp)) })
+        DatePicker(state = state, title = { Text("Choose when this letter arrives", modifier = Modifier.padding(24.dp)) })
     }
 }
 

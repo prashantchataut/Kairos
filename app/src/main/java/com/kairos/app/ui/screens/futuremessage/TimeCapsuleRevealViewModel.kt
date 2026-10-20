@@ -74,10 +74,9 @@ class TimeCapsuleRevealViewModel @Inject constructor(
                 }
 
                 if (message.deliveryDate > System.currentTimeMillis()) {
-                    _uiState.update { it.copy(isLoading = false, message = null, error = "This letter is still sealed. Come back on its delivery date.") }
+                    _uiState.update { it.copy(isLoading = false, message = null, error = "This capsule is still sealed. Come back on its delivery date.") }
                     return@launch
                 }
-
                 // Check if there's a reply
                 val hasReply = futureMessageReplyRepository.hasReplyForMessage(messageId)
 

@@ -1,84 +1,23 @@
 package com.kairos.app.ui.screens.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.expandVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kairos.app.domain.recommendation.ContentInteractionType
-import com.kairos.app.ui.components.kairos.KairosActionRow
-import com.kairos.app.ui.components.kairos.KairosEmptyState
-import com.kairos.app.ui.components.kairos.KairosGlassSurface
-import com.kairos.app.ui.components.kairos.KairosIconButton
-import com.kairos.app.ui.components.kairos.KairosMark
-import com.kairos.app.ui.components.kairos.KairosPrimaryButton
-import com.kairos.app.ui.components.kairos.KairosSecondaryButton
-import com.kairos.app.ui.components.kairos.KairosSkeletonList
+import com.kairos.app.ui.components.kairos.*
+import com.kairos.app.ui.components.painted.PaintedWelcome
 import com.kairos.app.ui.icons.KairosIcons
-import com.kairos.app.ui.theme.KairosMotion
-import com.kairos.app.ui.theme.KairosRadius
-import com.kairos.app.ui.theme.KairosSpacing
 import com.kairos.app.ui.theme.SerifFamily
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-/**
- * The focused daily loop, Moment Blue style.
- *
- * One dominant moment at a time: a large blue word card and a layered thought
- * card, preceded by a strong personalized greeting. Content stays the daily
- * vocabulary + reflection ritual — only the hierarchy changed.
- */
-@OptIn(ExperimentalFoundationApi::class)
+/** Home is an invitation, rather than a list of overdue obligations. */
 @Composable
 fun FocusedTodayScreen(
     onNavigateToCapsules: () -> Unit = {},
@@ -88,608 +27,83 @@ fun FocusedTodayScreen(
     onNavigateToJournal: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToNotificationSettings: () -> Unit,
-    onNavigateToNewEntry: (String) -> Unit = { _ -> },
+    onNavigateToNewEntry: (String) -> Unit = {},
     viewModel: TodayViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    androidx.lifecycle.compose.LifecycleResumeEffect(Unit) {
-        viewModel.refreshIfDateChanged()
-        onPauseOrDispose { }
-    }
     LaunchedEffect(state.isLoading, state.error, state.wordOfTheDay, state.dailyQuote) {
         if (!state.isLoading && state.error == null) viewModel.onDailyContentVisible()
     }
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 40.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        item { TodayGreeting(state.userName) {
-            KairosIconButton(KairosIcons.Outlined.Notifications, "Notification settings", onNavigateToNotificationSettings)
-            KairosIconButton(KairosIcons.Outlined.Person, "Profile", onNavigateToProfile)
-        } }
-        item {
-            Column(Modifier.fillMaxWidth().padding(horizontal = KairosSpacing.screen)) {
-                Text("A little room to grow.", style = MaterialTheme.typography.headlineLarge, fontFamily = SerifFamily)
-                Text("Learn something. Keep a memory. Make time for play.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                com.kairos.app.ui.components.kairos.PaintedGarden(Modifier.fillMaxWidth().height(200.dp))
-            }
-        }
-        item {
-            Row(Modifier.fillMaxWidth().padding(horizontal = KairosSpacing.screen), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                KairosGlassSurface(modifier = Modifier.weight(1f), onClick = onNavigateToCapsules, contentPadding = PaddingValues(20.dp)) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Icon(KairosIcons.Outlined.Edit, null, tint = MaterialTheme.colorScheme.primary)
-                        Text("Time capsule", style = MaterialTheme.typography.titleMedium)
-                        Text("A gift for future you", style = MaterialTheme.typography.bodySmall)
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        LazyColumn(
+            Modifier.widthIn(max = 720.dp).fillMaxSize(),
+            contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 40.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            item {
+                Row(Modifier.fillMaxWidth().statusBarsPadding().padding(top = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+                    KairosMark(Modifier.size(42.dp))
+                    Column(Modifier.weight(1f).padding(start = 12.dp)) {
+                        Text("Kairos", style = MaterialTheme.typography.titleLarge)
+                        Text(LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, d MMMM")), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                }
-                KairosGlassSurface(modifier = Modifier.weight(1f), onClick = onNavigateToGames, contentPadding = PaddingValues(20.dp)) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Icon(KairosIcons.Outlined.AutoStories, null, tint = MaterialTheme.colorScheme.primary)
-                        Text("Play a little", style = MaterialTheme.typography.titleMedium)
-                        Text("Visit your pocket garden", style = MaterialTheme.typography.bodySmall)
-                    }
+                    KairosIconButton(KairosIcons.Outlined.Notifications, "Notification settings", onNavigateToNotificationSettings)
+                    KairosIconButton(KairosIcons.Outlined.Person, "Profile", onNavigateToProfile)
                 }
             }
-        }
-        if (state.isLoading) item { TodayLoading() }
-        else if (state.error != null) item { TodayError(state.error ?: "Unable to load today.", viewModel::retry) }
-        else {
-            if (state.wordOfTheDay.isNotBlank()) item {
-                WordMoment(state, viewModel::toggleWordSaved, onNavigateToVocabulary,
-                    { viewModel.onDailyWordFeedback(ContentInteractionType.TOO_EASY) },
-                    { viewModel.onDailyWordFeedback(ContentInteractionType.TOO_HARD) },
-                    Modifier.padding(horizontal = KairosSpacing.screen).fillMaxWidth())
+            item { PaintedWelcome(onCapsules = onNavigateToCapsules, onPlay = onNavigateToGames) }
+            if (state.userName.isNotBlank()) {
+                item { Text("Welcome back, ${state.userName}.", style = MaterialTheme.typography.titleMedium) }
             }
-            if (state.dailyQuote.isNotBlank()) item {
-                ThoughtMoment(state,
-                    { onNavigateToNewEntry("“${state.dailyQuote}” — ${state.dailyQuoteAuthor}") },
-                    onNavigateToQuotes, viewModel::toggleQuoteSaved,
-                    { viewModel.onDailyQuoteFeedback(ContentInteractionType.MORE_LIKE_THIS) },
-                    { viewModel.onDailyQuoteFeedback(ContentInteractionType.LESS_LIKE_THIS) },
-                    Modifier.padding(horizontal = KairosSpacing.screen).fillMaxWidth())
-            }
-            if (state.wordOfTheDay.isBlank() && state.dailyQuote.isBlank()) item {
-                KairosEmptyState(KairosIcons.Outlined.AutoStories, "Your next discovery is waiting", "Open the library to explore words and thoughts.", "Open library", onNavigateToQuotes)
-            }
-        }
-        item {
-            KairosSecondaryButton("Open the quote library", onNavigateToQuotes, Modifier.fillMaxWidth().padding(horizontal = KairosSpacing.screen))
-        }
-        item { Text(progressLine(state), Modifier.fillMaxWidth().padding(24.dp), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall) }
-    }
-}
-
-/**
- * Large personalized greeting — typography as the design element.
- */
-@Composable
-private fun TodayGreeting(
-    userName: String,
-    actions: @Composable () -> Unit
-) {
-    val cleanName = userName.takeIf { it.isNotBlank() && it != "Growth Seeker" }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(
-                start = KairosSpacing.screen,
-                end = KairosSpacing.screen,
-                top = 12.dp,
-                bottom = 14.dp
-            )
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                Text(
-                    text = LocalDate.now().format(DATE_FORMATTER),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = cleanName?.let { "Good ${timeOfDay()}, ${it.substringBefore(' ')}" }
-                        ?: "Hello, little explorer",
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                content = { actions() }
-            )
-        }
-    }
-}
-
-@Composable
-private fun WordMoment(
-    state: TodayUiState,
-    onToggleSave: () -> Unit,
-    onPractice: () -> Unit,
-    onTooEasy: () -> Unit,
-    onTooHard: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var tuneExpanded by rememberSaveable { mutableStateOf(false) }
-    val scheme = MaterialTheme.colorScheme
-    val cardShape = RoundedCornerShape(KairosRadius.card)
-
-    Box(modifier = modifier) {
-        // Stacked card behind, for depth.
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-                .height(120.dp)
-                .clip(cardShape)
-                .background(scheme.surfaceContainerHighest)
-                .graphicsLayer { rotationZ = -1.2f }
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(14.dp, cardShape, ambientColor = Color(0x66102A8A), spotColor = Color(0x55102A8A))
-                .clip(cardShape)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            scheme.primary,
-                            scheme.primary,
-                            scheme.primary
-                        )
-                    )
-                )
-                .graphicsLayer { rotationZ = 0.5f }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 26.dp, vertical = 24.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        KairosMark(
-                            modifier = Modifier.size(42.dp),
-                            tint = Color.White,
-                            accent = Color.White.copy(alpha = 0.9f)
-                        )
-                        KairosGlassSurface(
-                            modifier = Modifier.size(48.dp),
-                            shape = CircleShape,
-                            strong = state.wordSaved,
-                            onClick = onToggleSave
-                        ) {
-                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = if (state.wordSaved) KairosIcons.Favorite else KairosIcons.FavoriteBorder,
-                                    contentDescription = if (state.wordSaved) "Remove from saved words" else "Save this word",
-                                    tint = if (state.wordSaved) scheme.primary else Color.White.copy(alpha = 0.85f),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                        }
-                    }
-                    Text(
-                        text = "Today’s word",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.White.copy(alpha = 0.72f),
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = state.wordOfTheDay,
-                        style = MaterialTheme.typography.displayMedium.copy(fontFamily = SerifFamily),
-                        color = Color.White,
-                        modifier = Modifier.semantics { heading() }
-                    )
-                    val metadata = listOfNotNull(
-                        state.wordPartOfSpeech.takeIf(String::isNotBlank),
-                        state.wordPronunciation.takeIf(String::isNotBlank)?.let { "/$it/" }
-                    ).joinToString("  ·  ")
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        if (metadata.isNotBlank()) {
-                            Text(
-                                text = metadata,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.72f)
-                            )
-                        }
-                        if (state.wordOfTheDay.isNotBlank()) {
-                            val tts = com.kairos.app.di.KairosEntryPoints.textToSpeech()
-                            KairosGlassSurface(
-                                modifier = Modifier.size(36.dp),
-                                shape = CircleShape,
-                                onClick = { tts.speak(state.wordOfTheDay) }
-                            ) {
-                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = KairosIcons.PlayArrow,
-                                        contentDescription = "Hear pronunciation",
-                                        modifier = Modifier.size(17.dp),
-                                        tint = Color.White.copy(alpha = 0.9f)
-                                    )
+            when {
+                state.isLoading -> item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
+                state.error != null -> item {
+                    Text(state.error.orEmpty(), color = MaterialTheme.colorScheme.error)
+                    TextButton(onClick = viewModel::retry) { Text("Try again") }
+                }
+                else -> {
+                    if (state.wordOfTheDay.isNotBlank()) item {
+                        Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = MaterialTheme.shapes.extraLarge) {
+                            Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                                    Text("A word to carry", style = MaterialTheme.typography.labelLarge)
+                                    TextButton(onClick = viewModel::toggleWordSaved) { Text(if (state.wordSaved) "Saved" else "Save word") }
                                 }
+                                Text(state.wordOfTheDay, style = MaterialTheme.typography.displayMedium, fontFamily = SerifFamily)
+                                if (state.wordPronunciation.isNotBlank()) Text(state.wordPronunciation, style = MaterialTheme.typography.bodyMedium)
+                                Text(state.wordDefinition, style = MaterialTheme.typography.bodyLarge)
+                                if (state.wordExampleSentence.isNotBlank()) Text(state.wordExampleSentence, style = MaterialTheme.typography.bodyMedium)
+                                Button(onClick = onNavigateToVocabulary) { Text("Spend a minute learning") }
                             }
                         }
                     }
-                    Text(
-                        text = state.wordDefinition,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White.copy(alpha = 0.95f)
-                    )
-                    if (state.wordRecommendationReason.isNotBlank()) {
-                        Text(
-                            text = "Chosen because ${state.wordRecommendationReason}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.62f)
-                        )
-                    }
-                }
-
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (state.wordExampleSentence.isNotBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(KairosRadius.controlLarge))
-                                .background(Color.White.copy(alpha = 0.12f))
-                                .border(1.dp, Color.White.copy(alpha = 0.16f), RoundedCornerShape(KairosRadius.controlLarge))
-                                .padding(16.dp)
-                        ) {
-                            Text(
-                                text = "“${state.wordExampleSentence}”",
-                                style = MaterialTheme.typography.bodyLarge.copy(fontFamily = SerifFamily),
-                                fontStyle = FontStyle.Italic,
-                                color = Color.White.copy(alpha = 0.92f)
-                            )
-                        }
-                    }
-                    AnimatedVisibility(
-                        visible = tuneExpanded,
-                        enter = expandVertically(animationSpec = androidx.compose.animation.core.tween(KairosMotion.state)) + fadeIn(),
-                        exit = shrinkVertically(animationSpec = androidx.compose.animation.core.tween(KairosMotion.state)) + fadeOut()
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Surface(
-                                onClick = onTooEasy,
-                                modifier = Modifier.weight(1f).height(48.dp),
-                                shape = RoundedCornerShape(KairosRadius.controlLarge),
-                                color = Color.White.copy(alpha = 0.14f),
-                                contentColor = Color.White
-                            ) {
-                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    Text("Too easy", style = MaterialTheme.typography.labelLarge)
-                                }
-                            }
-                            Surface(
-                                onClick = onTooHard,
-                                modifier = Modifier.weight(1f).height(48.dp),
-                                shape = RoundedCornerShape(KairosRadius.controlLarge),
-                                color = Color.White.copy(alpha = 0.14f),
-                                contentColor = Color.White
-                            ) {
-                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    Text("Too hard", style = MaterialTheme.typography.labelLarge)
-                                }
+                    if (state.dailyQuote.isNotBlank()) item {
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            Text("Something to sit with", style = MaterialTheme.typography.titleMedium)
+                            Text("“${state.dailyQuote}”", style = MaterialTheme.typography.headlineMedium, fontFamily = SerifFamily)
+                            Text(state.dailyQuoteAuthor, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                TextButton(onClick = viewModel::toggleQuoteSaved) { Text(if (state.quoteSaved) "Saved" else "Keep this thought") }
+                                TextButton(onClick = { onNavigateToNewEntry("“${state.dailyQuote}”\n\nWhat this means to me today:\n") }) { Text("Reflect") }
                             }
                         }
                     }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Surface(
-                            onClick = onPractice,
-                            modifier = Modifier.weight(1f).height(52.dp),
-                            shape = RoundedCornerShape(KairosRadius.controlLarge),
-                            color = Color.White,
-                            contentColor = scheme.primary
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("Practice", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                        TextButton(
-                            onClick = { tuneExpanded = !tuneExpanded },
-                            modifier = Modifier.height(52.dp)
-                        ) {
-                            Text(
-                                if (tuneExpanded) "Close" else "Tune",
-                                color = Color.White.copy(alpha = 0.85f)
-                            )
-                        }
+                    if (state.wordOfTheDay.isBlank() && state.dailyQuote.isBlank()) item {
+                        Text("Your library is ready to explore.", style = MaterialTheme.typography.titleMedium)
+                        TextButton(onClick = onNavigateToQuotes) { Text("Open the library") }
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun ThoughtMoment(
-    state: TodayUiState,
-    onReflect: () -> Unit,
-    onLibrary: () -> Unit,
-    onToggleSave: () -> Unit,
-    onMoreLikeThis: () -> Unit,
-    onLessLikeThis: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var tuneExpanded by rememberSaveable { mutableStateOf(false) }
-    val scheme = MaterialTheme.colorScheme
-    val cardShape = RoundedCornerShape(KairosRadius.card)
-
-    Box(modifier = modifier) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-                .height(120.dp)
-                .clip(cardShape)
-                .background(scheme.surfaceContainerHighest)
-                .graphicsLayer { rotationZ = 1.2f }
-        )
-        KairosGlassSurface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = cardShape,
-            strong = true,
-            elevation = 10.dp
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 380.dp)
-                    .padding(horizontal = 26.dp, vertical = 24.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .widthIn(min = 56.dp)
-                                .height(2.dp)
-                                .clip(CircleShape)
-                                .background(scheme.outlineVariant)
-                        )
-                        KairosGlassSurface(
-                            modifier = Modifier.size(48.dp),
-                            shape = CircleShape,
-                            strong = state.quoteSaved,
-                            onClick = onToggleSave
-                        ) {
-                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = if (state.quoteSaved) KairosIcons.Favorite else KairosIcons.FavoriteBorder,
-                                    contentDescription = if (state.quoteSaved) "Remove from saved quotes" else "Save this quote",
-                                    tint = if (state.quoteSaved) scheme.primary else scheme.onSurfaceVariant,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                        }
+            item {
+                HorizontalDivider()
+                Row(Modifier.fillMaxWidth().padding(top = 16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Leave a little of today", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
+                        Text("A sentence is enough.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    Text(
-                        text = "“${state.dailyQuote}”",
-                        style = MaterialTheme.typography.headlineLarge.copy(fontFamily = SerifFamily),
-                        fontWeight = FontWeight.Normal,
-                        lineHeight = MaterialTheme.typography.headlineLarge.lineHeight * 1.15f,
-                        color = scheme.onSurface,
-                        modifier = Modifier.semantics { heading() }
-                    )
-                    if (state.dailyQuoteAuthor.isNotBlank()) {
-                        Text(
-                            text = state.dailyQuoteAuthor,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = scheme.onSurfaceVariant
-                        )
-                    }
-                    RecommendationReason(state.dailyQuoteReason)
-                }
-
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    AnimatedVisibility(
-                        visible = tuneExpanded,
-                        enter = expandVertically(animationSpec = androidx.compose.animation.core.tween(KairosMotion.state)) + fadeIn(),
-                        exit = shrinkVertically(animationSpec = androidx.compose.animation.core.tween(KairosMotion.state)) + fadeOut()
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            KairosSecondaryButton(
-                                text = "More like this",
-                                onClick = onMoreLikeThis,
-                                modifier = Modifier.weight(1f)
-                            )
-                            KairosSecondaryButton(
-                                text = "Less like this",
-                                onClick = onLessLikeThis,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                    KairosActionRow {
-                        KairosPrimaryButton(
-                            text = "Reflect",
-                            onClick = onReflect,
-                            icon = KairosIcons.Outlined.Edit,
-                            modifier = Modifier.weight(1f)
-                        )
-                        KairosSecondaryButton(
-                            text = "Library",
-                            onClick = onLibrary,
-                            modifier = Modifier.weight(1f)
-                        )
-                        TextButton(
-                            onClick = { tuneExpanded = !tuneExpanded },
-                            modifier = Modifier.height(54.dp)
-                        ) {
-                            Text(if (tuneExpanded) "Close" else "Tune")
-                        }
-                    }
+                    TextButton(onClick = onNavigateToJournal) { Text("Write") }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun RecommendationReason(reason: String) {
-    if (reason.isBlank()) return
-    Text(
-        text = "Chosen because $reason",
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis
-    )
-}
-
-@Composable
-private fun TodayLoading() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = KairosSpacing.screen, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(KairosRadius.card))
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-        ) {
-            KairosSkeletonList(rows = 5, modifier = Modifier.padding(24.dp))
-        }
-    }
-}
-
-@Composable
-private fun TodayError(
-    message: String,
-    onRetry: () -> Unit
-) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 420.dp)
-                .padding(KairosSpacing.xl),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            Text(
-                text = "Today is unavailable",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-            KairosPrimaryButton(text = "Try again", onClick = onRetry)
-        }
-    }
-}
-
-private fun timeOfDay(): String = when (java.time.LocalTime.now().hour) {
-    in 5..11 -> "morning"
-    in 12..16 -> "afternoon"
-    else -> "evening"
-}
-
-
-private fun progressLine(state: TodayUiState): String {
-    val parts = buildList {
-        if (state.wordsLearnedThisWeek > 0) add("${state.wordsLearnedThisWeek} words this week")
-        if (state.journalEntriesThisWeek > 0) add("${state.journalEntriesThisWeek} reflections")
-        if (state.currentStreak > 1) add("${state.currentStreak}-day rhythm")
-    }
-    return parts.joinToString("  ·  ").ifBlank { "Your weekly rhythm will appear after the first action." }
-}
-
-private val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE · MMMM d")
-
-@androidx.compose.ui.tooling.preview.Preview(
-    name = "Today word — light",
-    showBackground = true,
-    backgroundColor = 0xFFF5F7FC,
-    widthDp = 390,
-    heightDp = 760
-)
-@Composable
-private fun WordMomentPreview() {
-    com.kairos.app.ui.theme.KairosTheme(themeMode = com.kairos.app.ui.theme.ThemeMode.LIGHT) {
-        WordMoment(
-            state = TodayUiState(
-                wordOfTheDay = "Liminal",
-                wordDefinition = "Existing at a threshold; between one state and the next.",
-                wordPronunciation = "lim-uh-nuhl",
-                wordPartOfSpeech = "adjective",
-                wordExampleSentence = "The quiet hour before sunrise felt like a liminal space.",
-                wordRecommendationReason = "it matches your recent interest in change and is due at your current level"
-            ),
-            onToggleSave = {},
-            onPractice = {},
-            onTooEasy = {},
-            onTooHard = {},
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@androidx.compose.ui.tooling.preview.Preview(
-    name = "Today thought — dark",
-    showBackground = true,
-    backgroundColor = 0xFF0B0E15,
-    widthDp = 390,
-    heightDp = 760
-)
-@Composable
-private fun ThoughtMomentPreview() {
-    com.kairos.app.ui.theme.KairosTheme(themeMode = com.kairos.app.ui.theme.ThemeMode.DARK) {
-        ThoughtMoment(
-            state = TodayUiState(
-                dailyQuote = "We do not learn from experience. We learn from reflecting on experience.",
-                dailyQuoteAuthor = "John Dewey",
-                dailyQuoteReason = "reflection has been part of your recent rhythm"
-            ),
-            onReflect = {},
-            onLibrary = {},
-            onToggleSave = {},
-            onMoreLikeThis = {},
-            onLessLikeThis = {},
-            modifier = Modifier.padding(16.dp)
-        )
     }
 }

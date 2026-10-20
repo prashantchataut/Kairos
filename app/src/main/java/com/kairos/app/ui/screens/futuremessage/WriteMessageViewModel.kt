@@ -22,7 +22,6 @@ data class WriteMessageUiState(
     val selectedCategory: MessageCategory = MessageCategory.GENERAL,
     val selectedCategories: Set<MessageCategory> = setOf(MessageCategory.GENERAL),
     val isSaving: Boolean = false,
-    val isImporting: Boolean = false,
     val isSaved: Boolean = false,
     val error: String? = null,
     val showDatePicker: Boolean = false,
@@ -45,7 +44,7 @@ data class WriteMessageUiState(
     val showSessionResult: Boolean = false
 ) {
     val canSave: Boolean
-        get() = !isImporting && content.isNotBlank() && deliveryDate > System.currentTimeMillis()
+        get() = content.isNotBlank() && deliveryDate > System.currentTimeMillis()
 
     val hasContent: Boolean
         get() = title.isNotBlank() || content.isNotBlank() ||
@@ -62,10 +61,8 @@ private fun getDefaultDeliveryDate(): Long {
 @HiltViewModel
 class WriteMessageViewModel @Inject constructor(
     private val futureMessageRepository: FutureMessageRepository,
-    @dagger.hilt.android.qualifiers.ApplicationContext private val appContext: android.content.Context,
     private val userIdProvider: UserIdProvider,
     private val audioRecorderManager: AudioRecorderManager,
-    private val notificationScheduler: com.kairos.app.notification.NotificationScheduler,
     private val gameSessionManager: GameSessionManager
 ) : ViewModel() {
 
@@ -157,12 +154,10 @@ class WriteMessageViewModel @Inject constructor(
     }
 
     fun selectCustomDate(date: Long) {
-        // Material date picker values represent midnight UTC, not the chosen local time.
-        val delivery = com.kairos.app.domain.futuremessage.CapsuleDeliveryDate.fromPicker(date)
         _uiState.update {
             it.copy(
                 selectedPreset = DatePreset.CUSTOM,
-                deliveryDate = delivery,
+                deliveryDate = date,
                 showDatePicker = false,
                 hasUnsavedChanges = true
             )
@@ -179,7 +174,6 @@ class WriteMessageViewModel @Inject constructor(
 
     fun saveMessage() {
         val state = _uiState.value
-        if (state.isImporting) return
         if (state.content.isBlank()) {
             _uiState.update { it.copy(error = "Write something before sealing this letter.") }
             return
@@ -213,10 +207,6 @@ class WriteMessageViewModel @Inject constructor(
                         (createResult as? com.kairos.app.domain.common.Result.Error)?.userMessage
                             ?: "Kairos could not seal this letter."
                     )
-
-                runCatching {
-                    notificationScheduler.scheduleFutureMessage(messageId, state.deliveryDate, message.title, "A letter from your past self is ready to open.")
-                }.onFailure { android.util.Log.w(TAG, "Letter saved; reminder could not be scheduled", it) }
 
                 // Rewards are secondary to preserving the letter. A reward failure must
                 // never make the user believe their already-saved writing was lost.
@@ -256,6 +246,10 @@ class WriteMessageViewModel @Inject constructor(
         }
     }
 
+    fun attachmentAccessFailed() {
+        _uiState.update { it.copy(error = "This provider could not keep the attachment available. Choose a file saved on your device.") }
+    }
+
     fun clearError() {
         _uiState.update { it.copy(error = null) }
     }
@@ -274,50 +268,6 @@ class WriteMessageViewModel @Inject constructor(
     /**
      * Add photos to the message.
      */
-    /** Copy picked memories into private storage so they survive provider permission expiry. */
-    fun importAttachments(uris: List<android.net.Uri>, videos: Boolean) {
-        if (_uiState.value.isImporting || uris.isEmpty()) return
-        _uiState.update { it.copy(isImporting = true) }
-        viewModelScope.launch {
-            val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                runCatching {
-                    val directory = java.io.File(appContext.filesDir, "capsule_memories").apply { mkdirs() }
-                    val imported = mutableListOf<java.io.File>()
-                    try {
-                        uris.take(10).map { uri ->
-                            val mime = appContext.contentResolver.getType(uri)
-                            val extension = android.webkit.MimeTypeMap.getSingleton().getExtensionFromMimeType(mime)?.let { ".$it" }
-                                ?: if (videos) ".mp4" else ".jpg"
-                            val file = java.io.File(directory, java.util.UUID.randomUUID().toString() + extension)
-                            imported.add(file)
-                            appContext.contentResolver.openInputStream(uri).use { input ->
-                                requireNotNull(input) { "Cannot read this attachment" }
-                                file.outputStream().use { output ->
-                                    val buffer = ByteArray(8192)
-                                    var total = 0L
-                                    while (true) {
-                                        val count = input.read(buffer)
-                                        if (count < 0) break
-                                        total += count
-                                        require(total <= 50L * 1024 * 1024) { "Attachment exceeds 50 MB" }
-                                        output.write(buffer, 0, count)
-                                    }
-                                }
-                            }
-                            file.toURI().toString()
-                        }
-                    } catch (error: Exception) {
-                        imported.forEach { it.delete() }
-                        throw error
-                    }
-                }
-            }
-            _uiState.update { it.copy(isImporting = false) }
-            result.onSuccess { paths -> if (videos) addVideos(paths) else addPhotos(paths) }
-                .onFailure { _uiState.update { it.copy(error = "Could not keep these memories. Choose readable files under 50 MB and try again.") } }
-        }
-    }
-
     fun addPhotos(photoUris: List<String>) {
         _uiState.update {
             it.copy(
@@ -331,7 +281,6 @@ class WriteMessageViewModel @Inject constructor(
      * Remove a photo from the message.
      */
     fun removePhoto(uri: String) {
-        deleteImportedMemory(uri)
         _uiState.update {
             it.copy(
                 attachedPhotos = it.attachedPhotos - uri,
@@ -356,7 +305,6 @@ class WriteMessageViewModel @Inject constructor(
      * Remove a video from the message.
      */
     fun removeVideo(uri: String) {
-        deleteImportedMemory(uri)
         _uiState.update {
             it.copy(
                 attachedVideos = it.attachedVideos - uri,
@@ -447,19 +395,7 @@ class WriteMessageViewModel @Inject constructor(
     /**
      * Clean up audio resources when ViewModel is cleared.
      */
-    private fun deleteImportedMemory(value: String) {
-        runCatching {
-            val uri = android.net.Uri.parse(value)
-            val file = java.io.File(requireNotNull(uri.path))
-            val directory = java.io.File(appContext.filesDir, "capsule_memories").canonicalFile
-            if (uri.scheme == "file" && file.canonicalFile.parentFile == directory) file.delete()
-        }
-    }
-
     override fun onCleared() {
-        if (!_uiState.value.isSaved) {
-            (_uiState.value.attachedPhotos + _uiState.value.attachedVideos).forEach(::deleteImportedMemory)
-        }
         super.onCleared()
         audioRecorderManager.release()
     }
