@@ -1,1 +1,2394 @@
-[{"word":"Serendipity","pos":"noun","say":"ser-uhn-DIP-i-tee","def":"Finding something good without looking for it.","ex":"Meeting her old teacher at the bookshop was pure serendipity.","cat":"wonder","level":2}]
+[
+{
+"word": "Sonder",
+"pos": "noun",
+"say": "SON-der",
+"def": "The sudden realisation that every passer-by has a life as full and complicated as yours.",
+"ex": "Stuck in traffic, she felt a wave of sonder looking at all the lit windows.",
+"origin": "Coined in 2012 by John Koenig's Dictionary of Obscure Sorrows.",
+"syn": [
+"empathy",
+"awareness"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Euphoria",
+"pos": "noun",
+"say": "yoo-FOR-ee-uh",
+"def": "A burst of intense happiness and excitement.",
+"ex": "Finishing the marathon filled him with pure euphoria.",
+"origin": "Greek euphoros, \"bearing well\".",
+"syn": [
+"elation",
+"bliss",
+"joy"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Wistful",
+"pos": "adjective",
+"say": "WIST-ful",
+"def": "Gently sad and longing, often for something past.",
+"ex": "She gave a wistful smile at the old photo.",
+"origin": "Probably from obsolete \"wistly\", intently.",
+"syn": [
+"nostalgic",
+"yearning"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Contentment",
+"pos": "noun",
+"say": "kun-TENT-ment",
+"def": "A calm, settled happiness with how things are.",
+"ex": "There was real contentment in their quiet Sunday.",
+"origin": "Latin contentus, \"held together, satisfied\".",
+"syn": [
+"satisfaction",
+"ease"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Elated",
+"pos": "adjective",
+"say": "ih-LAY-tid",
+"def": "Lifted up with joy and pride.",
+"ex": "He was elated when the letter finally arrived.",
+"origin": "Latin elatus, \"carried away, lifted\".",
+"syn": [
+"thrilled",
+"overjoyed"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Melancholy",
+"pos": "noun",
+"say": "MEL-un-kol-ee",
+"def": "A soft, lingering sadness that can feel almost tender.",
+"ex": "Autumn evenings bring a sweet melancholy.",
+"origin": "Greek melankholia, \"black bile\".",
+"syn": [
+"sorrow",
+"wistfulness"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Exuberant",
+"pos": "adjective",
+"say": "ig-ZOO-ber-unt",
+"def": "Full of lively energy and cheer.",
+"ex": "The puppy gave us an exuberant welcome.",
+"origin": "Latin exuberare, \"to be abundant\".",
+"syn": [
+"bubbly",
+"vivacious"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Solace",
+"pos": "noun",
+"say": "SOL-is",
+"def": "Comfort found in a hard time.",
+"ex": "She found solace in long walks by the river.",
+"origin": "Latin solacium, from solari, \"to console\".",
+"syn": [
+"comfort",
+"consolation"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Giddy",
+"pos": "adjective",
+"say": "GID-ee",
+"def": "Dizzy with excitement or happiness.",
+"ex": "They felt giddy planning the surprise.",
+"origin": "Old English gidig, \"possessed by a god\".",
+"syn": [
+"lightheaded",
+"excited"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Rapture",
+"pos": "noun",
+"say": "RAP-cher",
+"def": "A feeling of overwhelming delight.",
+"ex": "The crowd listened in rapture to the final song.",
+"origin": "Latin raptus, \"seized, carried off\".",
+"syn": [
+"ecstasy",
+"bliss"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Gratitude",
+"pos": "noun",
+"say": "GRAT-ih-tood",
+"def": "The warm sense of being thankful for something.",
+"ex": "She wrote three lines of gratitude every night.",
+"origin": "Latin gratus, \"pleasing, thankful\".",
+"syn": [
+"thankfulness",
+"appreciation"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Hiraeth",
+"pos": "noun",
+"say": "HEER-eyeth",
+"def": "A deep longing for a home you can't return to, or that maybe never was.",
+"ex": "Old songs fill him with hiraeth for his grandmother's kitchen.",
+"origin": "Welsh, with no exact English equivalent.",
+"syn": [
+"homesickness",
+"yearning"
+],
+"cat": "feelings",
+"level": 3
+},
+{
+"word": "Saudade",
+"pos": "noun",
+"say": "sow-DAH-djee",
+"def": "A loving, aching nostalgia for someone or something absent.",
+"ex": "The postcard stirred a gentle saudade.",
+"origin": "Portuguese, from Latin solitas, \"solitude\".",
+"syn": [
+"longing",
+"nostalgia"
+],
+"cat": "feelings",
+"level": 3
+},
+{
+"word": "Buoyant",
+"pos": "adjective",
+"say": "BOY-unt",
+"def": "Cheerful and able to stay light, even when things are heavy.",
+"ex": "Her buoyant mood carried the whole team.",
+"origin": "Spanish boyar, \"to float\".",
+"syn": [
+"upbeat",
+"resilient"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Tranquil",
+"pos": "adjective",
+"say": "TRANG-kwil",
+"def": "Peaceful, calm and free from disturbance.",
+"ex": "The lake was tranquil at dawn.",
+"origin": "Latin tranquillus, \"quiet, calm\".",
+"syn": [
+"serene",
+"still"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Compersion",
+"pos": "noun",
+"say": "kum-PER-zhun",
+"def": "Joy you feel because someone else is happy.",
+"ex": "Watching her friend's wedding, she felt pure compersion.",
+"origin": "Coined in the 1990s, possibly from \"compassion\".",
+"syn": [
+"vicarious joy"
+],
+"cat": "feelings",
+"level": 3
+},
+{
+"word": "Vulnerable",
+"pos": "adjective",
+"say": "VUL-ner-uh-bul",
+"def": "Open to being hurt, and brave enough to let that show.",
+"ex": "Being vulnerable with friends made them closer.",
+"origin": "Latin vulnus, \"wound\".",
+"syn": [
+"open",
+"exposed"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Jubilant",
+"pos": "adjective",
+"say": "JOO-bih-lunt",
+"def": "Shouting-happy, especially after a win.",
+"ex": "The jubilant kids ran around the field.",
+"origin": "Latin jubilare, \"to shout with joy\".",
+"syn": [
+"triumphant",
+"joyful"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Pensive",
+"pos": "adjective",
+"say": "PEN-siv",
+"def": "Quietly thoughtful, sometimes a little dreamy.",
+"ex": "He sat pensive by the window, watching the rain.",
+"origin": "French penser, \"to think\".",
+"syn": [
+"reflective",
+"contemplative"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Ebullient",
+"pos": "adjective",
+"say": "ih-BUL-yunt",
+"def": "Overflowing with enthusiasm, like water bubbling up.",
+"ex": "Her ebullient laugh filled the café.",
+"origin": "Latin ebullire, \"to bubble out\".",
+"syn": [
+"exuberant",
+"effervescent"
+],
+"cat": "feelings",
+"level": 3
+},
+{
+"word": "Wonderstruck",
+"pos": "adjective",
+"say": "WUN-der-struk",
+"def": "So amazed you forget to speak.",
+"ex": "The children stood wonderstruck under the northern lights.",
+"origin": "English compound, wonder + struck.",
+"syn": [
+"awed",
+"spellbound"
+],
+"cat": "feelings",
+"level": 2
+},
+{
+"word": "Ataraxia",
+"pos": "noun",
+"say": "at-uh-RAK-see-uh",
+"def": "Calm, untroubled peace of mind.",
+"ex": "After the retreat she felt a rare ataraxia.",
+"origin": "Greek, prized by the Epicureans and Stoics.",
+"syn": [
+"serenity",
+"equanimity"
+],
+"cat": "feelings",
+"level": 3
+},
+{
+"word": "Glee",
+"pos": "noun",
+"say": "GLEE",
+"def": "Bright, bubbly delight.",
+"ex": "She clapped with glee when the cake arrived.",
+"origin": "Old English gleo, \"entertainment, music\".",
+"syn": [
+"delight",
+"merriment"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Fernweh",
+"pos": "noun",
+"say": "FAIRN-vay",
+"def": "An ache to be somewhere far away.",
+"ex": "Every train whistle gives him fernweh.",
+"origin": "German, \"far-pain\", the opposite of homesickness.",
+"syn": [
+"wanderlust"
+],
+"cat": "feelings",
+"level": 3
+},
+{
+"word": "Cozy",
+"pos": "adjective",
+"say": "KOH-zee",
+"def": "Warm, snug and comfortable in a way that relaxes you.",
+"ex": "They spent a cozy evening with tea and blankets.",
+"origin": "Probably Scots, origin uncertain.",
+"syn": [
+"snug",
+"homely"
+],
+"cat": "feelings",
+"level": 1
+},
+{
+"word": "Clarity",
+"pos": "noun",
+"say": "KLAIR-ih-tee",
+"def": "The state of thinking clearly, without fog.",
+"ex": "A short walk gave her the clarity she needed.",
+"origin": "Latin claritas, \"brightness\".",
+"syn": [
+"lucidity",
+"focus"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Lucid",
+"pos": "adjective",
+"say": "LOO-sid",
+"def": "Clear and easy to understand; thinking clearly.",
+"ex": "He gave a lucid explanation of the plan.",
+"origin": "Latin lucidus, \"full of light\".",
+"syn": [
+"clear",
+"coherent"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Ruminate",
+"pos": "verb",
+"say": "ROO-mih-nate",
+"def": "To think deeply and slowly about something, turning it over.",
+"ex": "She ruminated on the question all afternoon.",
+"origin": "Latin ruminari, \"to chew the cud\".",
+"syn": [
+"ponder",
+"mull"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Metacognition",
+"pos": "noun",
+"say": "met-uh-kog-NISH-un",
+"def": "Thinking about your own thinking.",
+"ex": "Metacognition helps you notice when you're spiralling.",
+"origin": "Greek meta, \"beyond\", + cognition.",
+"syn": [
+"self-awareness",
+"reflection"
+],
+"cat": "mind",
+"level": 3
+},
+{
+"word": "Discernment",
+"pos": "noun",
+"say": "dih-SURN-ment",
+"def": "The ability to judge well and see what really matters.",
+"ex": "She chose her battles with discernment.",
+"origin": "Latin discernere, \"to separate\".",
+"syn": [
+"judgement",
+"insight"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Curiosity",
+"pos": "noun",
+"say": "kyoor-ee-OS-ih-tee",
+"def": "A strong wish to know or learn something.",
+"ex": "Curiosity led him down a rabbit hole about octopuses.",
+"origin": "Latin curiosus, \"careful, inquisitive\".",
+"syn": [
+"inquisitiveness",
+"interest"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Epiphany",
+"pos": "noun",
+"say": "ih-PIF-uh-nee",
+"def": "A sudden, lightbulb moment of understanding.",
+"ex": "In the shower she had an epiphany about the ending.",
+"origin": "Greek epiphaneia, \"appearance, manifestation\".",
+"syn": [
+"revelation",
+"realisation"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Equanimity",
+"pos": "noun",
+"say": "ee-kwuh-NIM-ih-tee",
+"def": "Staying calm and steady, especially when things wobble.",
+"ex": "He met the bad news with equanimity.",
+"origin": "Latin aequus, \"even\", + animus, \"mind\".",
+"syn": [
+"composure",
+"poise"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Mindful",
+"pos": "adjective",
+"say": "MIND-ful",
+"def": "Aware of the present moment, gently and on purpose.",
+"ex": "She took a mindful sip of her coffee.",
+"origin": "Old English gemynd, \"memory, thought\".",
+"syn": [
+"attentive",
+"present"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Perspicacious",
+"pos": "adjective",
+"say": "per-spih-KAY-shus",
+"def": "Quick to notice and understand things others miss.",
+"ex": "A perspicacious friend noticed she was tired before she did.",
+"origin": "Latin perspicax, \"sharp-sighted\".",
+"syn": [
+"astute",
+"perceptive"
+],
+"cat": "mind",
+"level": 3
+},
+{
+"word": "Introspection",
+"pos": "noun",
+"say": "in-truh-SPEK-shun",
+"def": "Looking inward at your own thoughts and feelings.",
+"ex": "Journaling is a gentle form of introspection.",
+"origin": "Latin introspicere, \"to look into\".",
+"syn": [
+"self-reflection"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Cogent",
+"pos": "adjective",
+"say": "KOH-junt",
+"def": "Clear, logical and convincing.",
+"ex": "She made a cogent case for a four-day week.",
+"origin": "Latin cogere, \"to drive together\".",
+"syn": [
+"compelling",
+"persuasive"
+],
+"cat": "mind",
+"level": 3
+},
+{
+"word": "Reverie",
+"pos": "noun",
+"say": "REV-er-ee",
+"def": "A pleasant daydream you drift into.",
+"ex": "The bus ride passed in a happy reverie.",
+"origin": "French rêverie, from rêver, \"to dream\".",
+"syn": [
+"daydream",
+"musing"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Sagacious",
+"pos": "adjective",
+"say": "suh-GAY-shus",
+"def": "Wise, with sound practical judgement.",
+"ex": "Her sagacious grandmother always knew what to say.",
+"origin": "Latin sagax, \"keen-scented, wise\".",
+"syn": [
+"wise",
+"shrewd"
+],
+"cat": "mind",
+"level": 3
+},
+{
+"word": "Flow",
+"pos": "noun",
+"say": "FLOH",
+"def": "The happy state of being completely absorbed in what you're doing.",
+"ex": "Hours vanished while she painted, lost in flow.",
+"origin": "Named as a mental state by psychologist Mihaly Csikszentmihalyi.",
+"syn": [
+"absorption",
+"zone"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Ponder",
+"pos": "verb",
+"say": "PON-der",
+"def": "To think about something carefully.",
+"ex": "He paused to ponder the menu like a big life choice.",
+"origin": "Latin ponderare, \"to weigh\".",
+"syn": [
+"consider",
+"reflect"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Insight",
+"pos": "noun",
+"say": "IN-site",
+"def": "A deep, clear understanding of something.",
+"ex": "The book gave her real insight into her habits.",
+"origin": "Middle English, \"inner sight\".",
+"syn": [
+"understanding",
+"perception"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Lateral",
+"pos": "adjective",
+"say": "LAT-er-ul",
+"def": "Coming at a problem sideways, from an unexpected angle.",
+"ex": "A bit of lateral thinking solved the puzzle.",
+"origin": "Latin lateralis, \"of the side\".",
+"syn": [
+"sideways",
+"creative"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Erudite",
+"pos": "adjective",
+"say": "AIR-yoo-dite",
+"def": "Having or showing great knowledge from study.",
+"ex": "The erudite librarian had a story for every shelf.",
+"origin": "Latin eruditus, \"instructed, polished\".",
+"syn": [
+"learned",
+"scholarly"
+],
+"cat": "mind",
+"level": 3
+},
+{
+"word": "Heuristic",
+"pos": "noun",
+"say": "hyoo-RIS-tik",
+"def": "A simple rule of thumb that helps you decide quickly.",
+"ex": "Her heuristic: if it takes two minutes, do it now.",
+"origin": "Greek heuriskein, \"to find\" (as in eureka).",
+"syn": [
+"shortcut",
+"rule of thumb"
+],
+"cat": "mind",
+"level": 3
+},
+{
+"word": "Savvy",
+"pos": "adjective",
+"say": "SAV-ee",
+"def": "Practically smart and well informed.",
+"ex": "A savvy traveller packs snacks.",
+"origin": "From Spanish sabe usted, \"do you know\".",
+"syn": [
+"shrewd",
+"knowing"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Musing",
+"pos": "noun",
+"say": "MYOO-zing",
+"def": "A slow, thoughtful wandering of the mind.",
+"ex": "His musings filled a whole notebook.",
+"origin": "French muser, \"to idle, dream\".",
+"syn": [
+"reflection",
+"rumination"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Acumen",
+"pos": "noun",
+"say": "AK-yoo-men",
+"def": "Sharpness of mind in making good decisions.",
+"ex": "Her business acumen turned a stall into a shop.",
+"origin": "Latin acumen, \"point, sharpness\".",
+"syn": [
+"shrewdness",
+"insight"
+],
+"cat": "mind",
+"level": 3
+},
+{
+"word": "Focus",
+"pos": "noun",
+"say": "FOH-kus",
+"def": "Attention gathered on one thing.",
+"ex": "She put her phone away to find her focus.",
+"origin": "Latin focus, \"hearth, fireplace\".",
+"syn": [
+"concentration",
+"attention"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Nuance",
+"pos": "noun",
+"say": "NOO-ahns",
+"def": "A subtle difference in meaning, feeling or colour.",
+"ex": "The poem's nuance revealed itself on the second read.",
+"origin": "French nuer, \"to shade\".",
+"syn": [
+"subtlety",
+"shade"
+],
+"cat": "mind",
+"level": 2
+},
+{
+"word": "Wisdom",
+"pos": "noun",
+"say": "WIZ-dum",
+"def": "Knowing what is true and right, and using it kindly.",
+"ex": "Wisdom often sounds like a quiet question.",
+"origin": "Old English wisdom, \"knowledge, learning\".",
+"syn": [
+"sagacity",
+"judgement"
+],
+"cat": "mind",
+"level": 1
+},
+{
+"word": "Petrichor",
+"pos": "noun",
+"say": "PET-rih-kor",
+"def": "The earthy smell of rain falling on dry ground.",
+"ex": "After the storm, the garden smelled of petrichor.",
+"origin": "Coined in 1964 from Greek petra, \"stone\", + ichor, the fluid of the gods.",
+"syn": [
+"rain-scent"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Komorebi",
+"pos": "noun",
+"say": "koh-moh-REH-bee",
+"def": "Sunlight filtering through the leaves of trees.",
+"ex": "They picnicked in the soft komorebi of the park.",
+"origin": "Japanese, \"tree-leak-sun\".",
+"syn": [
+"dappled light"
+],
+"cat": "nature",
+"level": 3
+},
+{
+"word": "Halcyon",
+"pos": "adjective",
+"say": "HAL-see-un",
+"def": "Calm, golden and peaceful, usually about a happy past time.",
+"ex": "They remember those halcyon summers at the lake.",
+"origin": "Greek halkyon, a mythical bird that calmed the sea.",
+"syn": [
+"idyllic",
+"serene"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Effervescent",
+"pos": "adjective",
+"say": "ef-er-VES-unt",
+"def": "Fizzy with bubbles; bubbly and lively.",
+"ex": "Her effervescent personality lit up the room.",
+"origin": "Latin effervescere, \"to boil up\".",
+"syn": [
+"bubbly",
+"sparkling"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Luminous",
+"pos": "adjective",
+"say": "LOO-mih-nus",
+"def": "Softly glowing with light.",
+"ex": "The luminous moon hung over the hills.",
+"origin": "Latin lumen, \"light\".",
+"syn": [
+"radiant",
+"glowing"
+],
+"cat": "nature",
+"level": 1
+},
+{
+"word": "Verdant",
+"pos": "adjective",
+"say": "VUR-dunt",
+"def": "Green and lush with plants.",
+"ex": "They hiked through verdant valleys after the rains.",
+"origin": "Old French verdoyant, \"becoming green\".",
+"syn": [
+"lush",
+"leafy"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Gossamer",
+"pos": "noun",
+"say": "GOS-uh-mer",
+"def": "Something extremely light, thin and delicate, like spider silk.",
+"ex": "Morning dew hung on gossamer threads.",
+"origin": "Middle English \"goose summer\", when spider silk drifts.",
+"syn": [
+"delicate",
+"filmy"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Dappled",
+"pos": "adjective",
+"say": "DAP-uld",
+"def": "Marked with spots of light and shade.",
+"ex": "The path was dappled with sunlight.",
+"origin": "Probably Old Norse depill, \"spot\".",
+"syn": [
+"speckled",
+"mottled"
+],
+"cat": "nature",
+"level": 1
+},
+{
+"word": "Crepuscular",
+"pos": "adjective",
+"say": "krih-PUS-kyoo-ler",
+"def": "Relating to twilight; active at dusk.",
+"ex": "Rabbits are crepuscular creatures.",
+"origin": "Latin crepusculum, \"twilight\".",
+"syn": [
+"twilit",
+"dusky"
+],
+"cat": "nature",
+"level": 3
+},
+{
+"word": "Susurrus",
+"pos": "noun",
+"say": "soo-SUR-us",
+"def": "A soft whispering or rustling sound.",
+"ex": "The susurrus of the wheat field lulled her to sleep.",
+"origin": "Latin susurrus, \"a whisper\".",
+"syn": [
+"murmur",
+"rustle"
+],
+"cat": "nature",
+"level": 3
+},
+{
+"word": "Aurora",
+"pos": "noun",
+"say": "uh-ROR-uh",
+"def": "The glowing ribbons of light in polar night skies; also, the dawn.",
+"ex": "They drove north hoping to see the aurora.",
+"origin": "Latin, after the Roman goddess of dawn.",
+"syn": [
+"northern lights",
+"dawn"
+],
+"cat": "nature",
+"level": 1
+},
+{
+"word": "Blossom",
+"pos": "verb",
+"say": "BLOS-um",
+"def": "To flower; to grow into something lovely.",
+"ex": "She blossomed once she found her people.",
+"origin": "Old English blostm, \"flower\".",
+"syn": [
+"bloom",
+"flourish"
+],
+"cat": "nature",
+"level": 1
+},
+{
+"word": "Mellifluous",
+"pos": "adjective",
+"say": "meh-LIF-loo-us",
+"def": "Sweet and smooth to hear, like flowing honey.",
+"ex": "His mellifluous voice made the story come alive.",
+"origin": "Latin mel, \"honey\", + fluere, \"to flow\".",
+"syn": [
+"dulcet",
+"honeyed"
+],
+"cat": "nature",
+"level": 3
+},
+{
+"word": "Dewdrop",
+"pos": "noun",
+"say": "DOO-drop",
+"def": "A tiny bead of water that forms on cool surfaces overnight.",
+"ex": "Every blade of grass held a dewdrop.",
+"origin": "English compound, dew + drop.",
+"syn": [
+"droplet"
+],
+"cat": "nature",
+"level": 1
+},
+{
+"word": "Zephyr",
+"pos": "noun",
+"say": "ZEF-er",
+"def": "A soft, gentle breeze.",
+"ex": "A warm zephyr carried the smell of jasmine.",
+"origin": "Greek Zephyros, god of the west wind.",
+"syn": [
+"breeze",
+"breath of wind"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Lambent",
+"pos": "adjective",
+"say": "LAM-bunt",
+"def": "Softly flickering or glowing; light and brilliant.",
+"ex": "Lambent candlelight danced on the walls.",
+"origin": "Latin lambere, \"to lick\", like a flame.",
+"syn": [
+"flickering",
+"glowing"
+],
+"cat": "nature",
+"level": 3
+},
+{
+"word": "Phosphorescence",
+"pos": "noun",
+"say": "fos-fuh-RES-unce",
+"def": "A soft glow that continues in the dark, like glowing plankton.",
+"ex": "The waves sparkled with phosphorescence at night.",
+"origin": "Greek phosphoros, \"light-bearer\".",
+"syn": [
+"glow",
+"luminescence"
+],
+"cat": "nature",
+"level": 3
+},
+{
+"word": "Solstice",
+"pos": "noun",
+"say": "SOL-stis",
+"def": "The longest or shortest day of the year, when the sun seems to pause.",
+"ex": "They watched the sunrise on the summer solstice.",
+"origin": "Latin sol, \"sun\", + sistere, \"to stand still\".",
+"syn": [
+"midsummer",
+"midwinter"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Bloom",
+"pos": "noun",
+"say": "BLOOM",
+"def": "A flower; the state of being at your freshest and best.",
+"ex": "The cherry trees are in full bloom.",
+"origin": "Old Norse blóm, \"flower\".",
+"syn": [
+"blossom",
+"flourish"
+],
+"cat": "nature",
+"level": 1
+},
+{
+"word": "Thalassophile",
+"pos": "noun",
+"say": "thuh-LAS-oh-file",
+"def": "A person who loves the sea.",
+"ex": "A true thalassophile, she swam every morning year-round.",
+"origin": "Greek thalassa, \"sea\", + philos, \"loving\".",
+"syn": [
+"sea lover"
+],
+"cat": "nature",
+"level": 3
+},
+{
+"word": "Nimbus",
+"pos": "noun",
+"say": "NIM-bus",
+"def": "A rain cloud; also a glowing halo.",
+"ex": "A grey nimbus rolled in over the hills.",
+"origin": "Latin nimbus, \"cloud, rainstorm\".",
+"syn": [
+"raincloud",
+"halo"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Meander",
+"pos": "verb",
+"say": "mee-AN-der",
+"def": "To wander slowly with no fixed path, like a winding river.",
+"ex": "They meandered through the old town.",
+"origin": "Greek Maiandros, a famously winding river.",
+"syn": [
+"wander",
+"ramble"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Iridescent",
+"pos": "adjective",
+"say": "ir-ih-DES-unt",
+"def": "Shimmering with rainbow colours that shift as you move.",
+"ex": "Iridescent soap bubbles floated past.",
+"origin": "Greek iris, \"rainbow\".",
+"syn": [
+"opalescent",
+"shimmering"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Hygge",
+"pos": "noun",
+"say": "HOO-guh",
+"def": "A cosy, warm feeling of contentment with simple things.",
+"ex": "Candles, socks and soup: peak hygge.",
+"origin": "Danish, from Old Norse hyggja, \"to think, feel satisfied\".",
+"syn": [
+"coziness",
+"comfort"
+],
+"cat": "nature",
+"level": 2
+},
+{
+"word": "Selcouth",
+"pos": "adjective",
+"say": "SEL-kooth",
+"def": "Unfamiliar and strange, yet marvellous.",
+"ex": "Snow in the desert was a selcouth sight.",
+"origin": "Old English seldcuth, \"seldom known\".",
+"syn": [
+"wondrous",
+"uncommon"
+],
+"cat": "nature",
+"level": 3
+},
+{
+"word": "Kindred",
+"pos": "adjective",
+"say": "KIN-drid",
+"def": "Alike in spirit; feeling like family even if you're not.",
+"ex": "They met at a bookshop and knew they were kindred souls.",
+"origin": "Old English cynn, \"family, kind\".",
+"syn": [
+"like-minded",
+"related"
+],
+"cat": "connection",
+"level": 1
+},
+{
+"word": "Camaraderie",
+"pos": "noun",
+"say": "kam-uh-RAH-duh-ree",
+"def": "Warm trust and friendship among people who share something.",
+"ex": "The team's camaraderie made long days fun.",
+"origin": "French camarade, \"roommate\".",
+"syn": [
+"fellowship",
+"friendship"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Empathy",
+"pos": "noun",
+"say": "EM-puh-thee",
+"def": "Understanding and feeling what someone else feels.",
+"ex": "Her empathy made people feel safe telling her things.",
+"origin": "Greek empatheia, \"in feeling\".",
+"syn": [
+"compassion",
+"understanding"
+],
+"cat": "connection",
+"level": 1
+},
+{
+"word": "Rapport",
+"pos": "noun",
+"say": "ra-POR",
+"def": "An easy, friendly understanding between people.",
+"ex": "The new teacher built rapport with the class quickly.",
+"origin": "French rapporter, \"to bring back\".",
+"syn": [
+"connection",
+"harmony"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Benevolent",
+"pos": "adjective",
+"say": "buh-NEV-uh-lunt",
+"def": "Kind and wanting good things for others.",
+"ex": "A benevolent neighbour left soup on our doorstep.",
+"origin": "Latin bene, \"well\", + volens, \"wishing\".",
+"syn": [
+"kind",
+"generous"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Altruism",
+"pos": "noun",
+"say": "AL-troo-iz-um",
+"def": "Caring about others' wellbeing without expecting anything back.",
+"ex": "Donating blood is a small act of altruism.",
+"origin": "French altruisme, from Latin alter, \"other\".",
+"syn": [
+"selflessness",
+"generosity"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Ubuntu",
+"pos": "noun",
+"say": "oo-BOON-too",
+"def": "\"I am because we are\": the belief that we're human through each other.",
+"ex": "Their village lived by ubuntu, sharing every harvest.",
+"origin": "Nguni Bantu languages of southern Africa.",
+"syn": [
+"humanity",
+"togetherness"
+],
+"cat": "connection",
+"level": 3
+},
+{
+"word": "Confidant",
+"pos": "noun",
+"say": "KON-fih-dahnt",
+"def": "A person you trust with your secrets.",
+"ex": "Her sister has always been her closest confidant.",
+"origin": "French confident, \"one trusted\".",
+"syn": [
+"friend",
+"ally"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Cherish",
+"pos": "verb",
+"say": "CHAIR-ish",
+"def": "To hold something dear and care for it lovingly.",
+"ex": "I cherish our slow morning calls.",
+"origin": "French cherir, from cher, \"dear\".",
+"syn": [
+"treasure",
+"adore"
+],
+"cat": "connection",
+"level": 1
+},
+{
+"word": "Magnanimous",
+"pos": "adjective",
+"say": "mag-NAN-ih-mus",
+"def": "Generous and forgiving, especially toward rivals.",
+"ex": "She was magnanimous in victory and shook every hand.",
+"origin": "Latin magnus, \"great\", + animus, \"soul\".",
+"syn": [
+"big-hearted",
+"gracious"
+],
+"cat": "connection",
+"level": 3
+},
+{
+"word": "Solidarity",
+"pos": "noun",
+"say": "sol-ih-DAIR-ih-tee",
+"def": "Standing together and supporting each other.",
+"ex": "Neighbours showed solidarity after the flood.",
+"origin": "French solidarité, \"mutual responsibility\".",
+"syn": [
+"unity",
+"support"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Affable",
+"pos": "adjective",
+"say": "AF-uh-bul",
+"def": "Friendly, warm and easy to talk to.",
+"ex": "The affable baker knew every customer's name.",
+"origin": "Latin affabilis, \"easy to speak to\".",
+"syn": [
+"genial",
+"approachable"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Philia",
+"pos": "noun",
+"say": "FIL-ee-uh",
+"def": "Deep, loyal friendship-love.",
+"ex": "Aristotle wrote that philia is essential to a good life.",
+"origin": "Greek, one of the ancient words for love.",
+"syn": [
+"friendship",
+"affection"
+],
+"cat": "connection",
+"level": 3
+},
+{
+"word": "Reciprocity",
+"pos": "noun",
+"say": "res-ih-PROS-ih-tee",
+"def": "Giving and receiving in return; mutual exchange.",
+"ex": "Good friendships run on gentle reciprocity.",
+"origin": "Latin reciprocus, \"moving back and forth\".",
+"syn": [
+"mutuality",
+"exchange"
+],
+"cat": "connection",
+"level": 3
+},
+{
+"word": "Gezelligheid",
+"pos": "noun",
+"say": "kheh-ZEL-ikh-hite",
+"def": "The warm, cosy feeling of being together with people you like.",
+"ex": "Board games, candles and friends: pure gezelligheid.",
+"origin": "Dutch, with no exact English equivalent.",
+"syn": [
+"conviviality",
+"coziness"
+],
+"cat": "connection",
+"level": 3
+},
+{
+"word": "Convivial",
+"pos": "adjective",
+"say": "kun-VIV-ee-ul",
+"def": "Friendly, lively and enjoyable, especially around food.",
+"ex": "It was a convivial dinner full of laughter.",
+"origin": "Latin convivium, \"feast\".",
+"syn": [
+"festive",
+"sociable"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Clement",
+"pos": "adjective",
+"say": "KLEM-unt",
+"def": "Mild and merciful; also, pleasantly mild weather.",
+"ex": "The judge was clement, and so was the weather.",
+"origin": "Latin clemens, \"mild, merciful\".",
+"syn": [
+"lenient",
+"gentle"
+],
+"cat": "connection",
+"level": 3
+},
+{
+"word": "Considerate",
+"pos": "adjective",
+"say": "kun-SID-er-it",
+"def": "Thoughtfully careful not to cause trouble for others.",
+"ex": "He's considerate enough to text when he's running late.",
+"origin": "Latin considerare, \"to look at closely\".",
+"syn": [
+"thoughtful",
+"kind"
+],
+"cat": "connection",
+"level": 1
+},
+{
+"word": "Belonging",
+"pos": "noun",
+"say": "bih-LONG-ing",
+"def": "The feeling of being accepted and at home with others.",
+"ex": "The choir gave her a deep sense of belonging.",
+"origin": "Middle English, be + longen, \"to go along with\".",
+"syn": [
+"acceptance",
+"inclusion"
+],
+"cat": "connection",
+"level": 1
+},
+{
+"word": "Tenderness",
+"pos": "noun",
+"say": "TEN-der-nis",
+"def": "Gentle, caring affection.",
+"ex": "He tucked the blanket in with great tenderness.",
+"origin": "Latin tener, \"soft, delicate\".",
+"syn": [
+"gentleness",
+"warmth"
+],
+"cat": "connection",
+"level": 1
+},
+{
+"word": "Forbearance",
+"pos": "noun",
+"say": "for-BAIR-unce",
+"def": "Patient self-control and tolerance.",
+"ex": "Her forbearance with the noisy toddler was heroic.",
+"origin": "Old English forberan, \"to endure\".",
+"syn": [
+"patience",
+"tolerance"
+],
+"cat": "connection",
+"level": 3
+},
+{
+"word": "Gracious",
+"pos": "adjective",
+"say": "GRAY-shus",
+"def": "Kind, warm and polite, with a generous spirit.",
+"ex": "She was gracious even when the order was wrong.",
+"origin": "Latin gratiosus, \"favourable\".",
+"syn": [
+"courteous",
+"kind"
+],
+"cat": "connection",
+"level": 1
+},
+{
+"word": "Mudita",
+"pos": "noun",
+"say": "MOO-dih-tah",
+"def": "Sympathetic joy: delight in other people's good fortune.",
+"ex": "Practising mudita made her friend's promotion feel like her own win.",
+"origin": "Pali and Sanskrit, from Buddhist teachings.",
+"syn": [
+"vicarious joy",
+"compersion"
+],
+"cat": "connection",
+"level": 3
+},
+{
+"word": "Fellowship",
+"pos": "noun",
+"say": "FEL-oh-ship",
+"def": "Friendly companionship among people with a shared purpose.",
+"ex": "The hiking club offered fellowship and fresh air.",
+"origin": "Old Norse felagi, \"partner\".",
+"syn": [
+"companionship",
+"community"
+],
+"cat": "connection",
+"level": 1
+},
+{
+"word": "Earnest",
+"pos": "adjective",
+"say": "UR-nist",
+"def": "Sincere and serious in intention.",
+"ex": "He made an earnest apology and meant every word.",
+"origin": "Old English eornoste, \"zeal\".",
+"syn": [
+"sincere",
+"heartfelt"
+],
+"cat": "connection",
+"level": 2
+},
+{
+"word": "Craftsmanship",
+"pos": "noun",
+"say": "KRAFTS-mun-ship",
+"def": "The skill and care that goes into making something well.",
+"ex": "You can feel the craftsmanship in a hand-thrown mug.",
+"origin": "Old English craeft, \"skill, strength\".",
+"syn": [
+"artistry",
+"workmanship"
+],
+"cat": "craft",
+"level": 1
+},
+{
+"word": "Meticulous",
+"pos": "adjective",
+"say": "muh-TIK-yoo-lus",
+"def": "Paying very careful attention to every detail.",
+"ex": "Her meticulous notes saved the project.",
+"origin": "Latin meticulosus, \"fearful\", later \"careful\".",
+"syn": [
+"thorough",
+"precise"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Ingenuity",
+"pos": "noun",
+"say": "in-juh-NOO-ih-tee",
+"def": "Cleverness in inventing or solving things.",
+"ex": "With some ingenuity, a shoebox became a dollhouse.",
+"origin": "Latin ingenuus, \"native, inborn\".",
+"syn": [
+"inventiveness",
+"resourcefulness"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Opus",
+"pos": "noun",
+"say": "OH-pus",
+"def": "A creative work, especially a major one.",
+"ex": "The mural was her finest opus.",
+"origin": "Latin opus, \"work\".",
+"syn": [
+"work",
+"creation"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Diligent",
+"pos": "adjective",
+"say": "DIL-ih-junt",
+"def": "Showing steady, careful effort.",
+"ex": "A diligent gardener checks the seedlings every day.",
+"origin": "Latin diligere, \"to value highly\".",
+"syn": [
+"hardworking",
+"conscientious"
+],
+"cat": "craft",
+"level": 1
+},
+{
+"word": "Bricolage",
+"pos": "noun",
+"say": "bree-koh-LAHZH",
+"def": "Making something new from whatever is at hand.",
+"ex": "Her studio was a joyful bricolage of found objects.",
+"origin": "French bricoler, \"to tinker\".",
+"syn": [
+"improvisation",
+"assemblage"
+],
+"cat": "craft",
+"level": 3
+},
+{
+"word": "Virtuoso",
+"pos": "noun",
+"say": "vur-choo-OH-soh",
+"def": "A person with dazzling skill, especially in music or art.",
+"ex": "The young cellist was a true virtuoso.",
+"origin": "Italian, \"skilled, learned\".",
+"syn": [
+"maestro",
+"master"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Kaizen",
+"pos": "noun",
+"say": "KY-zen",
+"def": "Steady, small, continuous improvement.",
+"ex": "Their kaizen approach: get one percent better each week.",
+"origin": "Japanese kai, \"change\", + zen, \"good\".",
+"syn": [
+"continuous improvement"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Wabi-sabi",
+"pos": "noun",
+"say": "WAH-bee SAH-bee",
+"def": "Finding beauty in things that are imperfect, impermanent and unfinished.",
+"ex": "The chipped bowl was pure wabi-sabi.",
+"origin": "Japanese aesthetic rooted in Zen thought.",
+"syn": [
+"imperfect beauty"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Artisan",
+"pos": "noun",
+"say": "AR-tih-zun",
+"def": "A skilled worker who makes things by hand.",
+"ex": "The artisan carved each spoon from a single branch.",
+"origin": "Italian artigiano, from Latin ars, \"art\".",
+"syn": [
+"craftsperson",
+"maker"
+],
+"cat": "craft",
+"level": 1
+},
+{
+"word": "Prolific",
+"pos": "adjective",
+"say": "pruh-LIF-ik",
+"def": "Producing lots of work or results.",
+"ex": "A prolific writer, she published a book every year.",
+"origin": "Latin proles, \"offspring\".",
+"syn": [
+"productive",
+"fertile"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Deft",
+"pos": "adjective",
+"say": "DEFT",
+"def": "Quick, neat and skilful.",
+"ex": "With a deft flick, he flipped the pancake.",
+"origin": "Middle English defte, \"gentle, humble\".",
+"syn": [
+"nimble",
+"adroit"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Tinker",
+"pos": "verb",
+"say": "TING-ker",
+"def": "To make small playful adjustments, trying to improve something.",
+"ex": "He loves to tinker with old radios.",
+"origin": "Middle English tinkere, a mender of pots.",
+"syn": [
+"fiddle",
+"adjust"
+],
+"cat": "craft",
+"level": 1
+},
+{
+"word": "Kintsugi",
+"pos": "noun",
+"say": "kin-TSOO-gee",
+"def": "The art of mending broken pottery with gold, making the cracks beautiful.",
+"ex": "Kintsugi reminds us that repair can be part of the story.",
+"origin": "Japanese kin, \"gold\", + tsugi, \"joinery\".",
+"syn": [
+"golden repair"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Atelier",
+"pos": "noun",
+"say": "AT-ul-yay",
+"def": "An artist's or designer's workshop.",
+"ex": "The atelier smelled of linseed oil and coffee.",
+"origin": "French, from Old French astelle, \"wood chip\".",
+"syn": [
+"studio",
+"workshop"
+],
+"cat": "craft",
+"level": 3
+},
+{
+"word": "Finesse",
+"pos": "noun",
+"say": "fih-NESS",
+"def": "Delicate skill and grace in handling something.",
+"ex": "She handled the awkward question with finesse.",
+"origin": "French fin, \"fine\".",
+"syn": [
+"grace",
+"subtlety"
+],
+"cat": "craft",
+"level": 2
+},
+{
+"word": "Resourceful",
+"pos": "adjective",
+"say": "rih-SORS-ful",
+"def": "Good at finding clever ways to deal with problems.",
+"ex": "Resourceful campers turned a tarp into a kitchen.",
+"origin": "French ressource, \"relief, means\".",
+"syn": [
+"enterprising",
+"inventive"
+],
+"cat": "craft",
+"level": 1
+},
+{
+"word": "Handiwork",
+"pos": "noun",
+"say": "HAN-dee-wurk",
+"def": "Something you made or did yourself.",
+"ex": "She admired her handiwork: a perfectly folded crane.",
+"origin": "Old English handgeweorc.",
+"syn": [
+"creation",
+"craft"
+],
+"cat": "craft",
+"level": 1
+},
+{
+"word": "Polymath",
+"pos": "noun",
+"say": "POL-ee-math",
+"def": "A person who knows a lot about many subjects.",
+"ex": "Leonardo da Vinci was a famous polymath.",
+"origin": "Greek polymathes, \"having learned much\".",
+"syn": [
+"renaissance person"
+],
+"cat": "craft",
+"level": 3
+},
+{
+"word": "Mastery",
+"pos": "noun",
+"say": "MAS-ter-ee",
+"def": "Deep skill gained through long practice.",
+"ex": "Mastery comes from a thousand small repetitions.",
+"origin": "Latin magister, \"master, teacher\".",
+"syn": [
+"expertise",
+"command"
+],
+"cat": "craft",
+"level": 1
+},
+{
+"word": "Sprezzatura",
+"pos": "noun",
+"say": "spret-suh-TOOR-uh",
+"def": "Making something hard look effortless.",
+"ex": "The dancer's sprezzatura hid years of training.",
+"origin": "Italian, coined by Castiglione in 1528.",
+"syn": [
+"nonchalance",
+"ease"
+],
+"cat": "craft",
+"level": 3
+},
+{
+"word": "Serendipity",
+"pos": "noun",
+"say": "ser-un-DIP-ih-tee",
+"def": "Finding something good without looking for it.",
+"ex": "Meeting her old teacher at the bookshop was pure serendipity.",
+"origin": "Coined in 1754 by Horace Walpole, after a Persian fairy tale.",
+"syn": [
+"happy chance",
+"fluke"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Ethereal",
+"pos": "adjective",
+"say": "ih-THEER-ee-ul",
+"def": "So light and delicate it seems not of this world.",
+"ex": "The choir's ethereal harmony gave her chills.",
+"origin": "Greek aither, \"the upper, pure air\".",
+"syn": [
+"otherworldly",
+"airy"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Ineffable",
+"pos": "adjective",
+"say": "in-EF-uh-bul",
+"def": "Too great or beautiful to be put into words.",
+"ex": "The view from the summit was ineffable.",
+"origin": "Latin in-, \"not\", + effabilis, \"utterable\".",
+"syn": [
+"indescribable",
+"unspeakable"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Quintessential",
+"pos": "adjective",
+"say": "kwin-tih-SEN-shul",
+"def": "The most perfect, typical example of something.",
+"ex": "A rainy Sunday with a book is the quintessential slow day.",
+"origin": "Latin quinta essentia, the \"fifth element\".",
+"syn": [
+"classic",
+"archetypal"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Whimsical",
+"pos": "adjective",
+"say": "WIM-zih-kul",
+"def": "Playful and charmingly unusual.",
+"ex": "They painted the door a whimsical shade of mint.",
+"origin": "From whim-wham, \"a fanciful object\".",
+"syn": [
+"fanciful",
+"quirky"
+],
+"cat": "wonder",
+"level": 1
+},
+{
+"word": "Phosphene",
+"pos": "noun",
+"say": "FOS-feen",
+"def": "The colours and lights you see when you close and press your eyes.",
+"ex": "Squeezing his eyes shut, he watched the phosphenes swirl.",
+"origin": "Greek phos, \"light\", + phainein, \"to show\".",
+"syn": [
+"light spots"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Eudaimonia",
+"pos": "noun",
+"say": "yoo-dy-MOH-nee-uh",
+"def": "A deep, lasting happiness that comes from living well and meaningfully.",
+"ex": "For Aristotle, eudaimonia was the goal of life.",
+"origin": "Greek eu, \"good\", + daimon, \"spirit\".",
+"syn": [
+"flourishing",
+"wellbeing"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Mirth",
+"pos": "noun",
+"say": "MURTH",
+"def": "Amusement and laughter.",
+"ex": "The dinner table rang with mirth.",
+"origin": "Old English myrgth, \"pleasure, joy\".",
+"syn": [
+"merriment",
+"glee"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Enchanting",
+"pos": "adjective",
+"say": "in-CHANT-ing",
+"def": "Delightfully charming, as if by magic.",
+"ex": "The little village was utterly enchanting.",
+"origin": "Latin incantare, \"to sing a spell\".",
+"syn": [
+"charming",
+"captivating"
+],
+"cat": "wonder",
+"level": 1
+},
+{
+"word": "Felicity",
+"pos": "noun",
+"say": "fih-LIS-ih-tee",
+"def": "Great happiness; also, a well-chosen, graceful way of saying something.",
+"ex": "Their small house was full of felicity.",
+"origin": "Latin felix, \"happy, lucky\".",
+"syn": [
+"bliss",
+"aptness"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Scintilla",
+"pos": "noun",
+"say": "sin-TIL-uh",
+"def": "A tiny trace or spark of something.",
+"ex": "There wasn't a scintilla of doubt in her voice.",
+"origin": "Latin scintilla, \"spark\".",
+"syn": [
+"speck",
+"glimmer"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Numinous",
+"pos": "adjective",
+"say": "NOO-mih-nus",
+"def": "Filled with a sense of something sacred, mysterious and awe-inspiring.",
+"ex": "The ancient forest felt numinous.",
+"origin": "Latin numen, \"divine presence\".",
+"syn": [
+"spiritual",
+"awe-inspiring"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Peregrinate",
+"pos": "verb",
+"say": "PAIR-ih-grih-nate",
+"def": "To travel or wander around, especially on foot.",
+"ex": "They peregrinated through Lisbon's hilly streets.",
+"origin": "Latin peregrinari, \"to travel abroad\".",
+"syn": [
+"roam",
+"journey"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Brouhaha",
+"pos": "noun",
+"say": "BROO-hah-hah",
+"def": "A noisy, overexcited fuss.",
+"ex": "There was quite a brouhaha over the last cookie.",
+"origin": "French, possibly imitating a crowd's noise.",
+"syn": [
+"commotion",
+"hubbub"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Kerfuffle",
+"pos": "noun",
+"say": "ker-FUF-ul",
+"def": "A small commotion or fuss.",
+"ex": "A pigeon caused a kerfuffle in the café.",
+"origin": "Scottish curfuffle, from fuffle, \"to disorder\".",
+"syn": [
+"fuss",
+"flap"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Lollygag",
+"pos": "verb",
+"say": "LOL-ee-gag",
+"def": "To spend time lazily and happily doing nothing much.",
+"ex": "We lollygagged by the pond all afternoon.",
+"origin": "American, origin uncertain.",
+"syn": [
+"dawdle",
+"idle"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Defenestrate",
+"pos": "verb",
+"say": "dee-FEN-ih-strate",
+"def": "To throw out of a window (often jokingly about things like bad ideas).",
+"ex": "He defenestrated his old to-do list.",
+"origin": "Latin de, \"out of\", + fenestra, \"window\".",
+"syn": [
+"toss out"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Bumbershoot",
+"pos": "noun",
+"say": "BUM-ber-shoot",
+"def": "A playful old word for umbrella.",
+"ex": "Grab your bumbershoot, it's pouring.",
+"origin": "American, umbrella + parachute.",
+"syn": [
+"umbrella",
+"brolly"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Flabbergasted",
+"pos": "adjective",
+"say": "FLAB-er-gas-tid",
+"def": "So surprised you're lost for words.",
+"ex": "She was flabbergasted to win the raffle.",
+"origin": "English, 1770s, origin uncertain.",
+"syn": [
+"astonished",
+"amazed"
+],
+"cat": "wonder",
+"level": 1
+},
+{
+"word": "Gobsmacked",
+"pos": "adjective",
+"say": "GOB-smakt",
+"def": "Utterly astonished.",
+"ex": "We were gobsmacked by the surprise party.",
+"origin": "British slang, \"gob\" (mouth) + smacked.",
+"syn": [
+"stunned",
+"amazed"
+],
+"cat": "wonder",
+"level": 1
+},
+{
+"word": "Collywobbles",
+"pos": "noun",
+"say": "KOL-ee-wob-ulz",
+"def": "Nervous butterflies in your stomach.",
+"ex": "He got the collywobbles before his speech.",
+"origin": "Possibly colic + wobble.",
+"syn": [
+"jitters",
+"butterflies"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Lagniappe",
+"pos": "noun",
+"say": "LAN-yap",
+"def": "A small extra gift given for free, a little bonus.",
+"ex": "The baker added a cookie as lagniappe.",
+"origin": "Louisiana French, from Quechua yapa, \"addition\".",
+"syn": [
+"bonus",
+"extra"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Cynosure",
+"pos": "noun",
+"say": "SY-nuh-shoor",
+"def": "Something that draws everyone's attention and admiration.",
+"ex": "The glowing lantern was the cynosure of the garden.",
+"origin": "Greek kynosoura, \"dog's tail\", the Little Bear constellation.",
+"syn": [
+"centre of attention"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Apricity",
+"pos": "noun",
+"say": "uh-PRIS-ih-tee",
+"def": "The warmth of the sun on a cold winter day.",
+"ex": "They sat on the bench soaking up the apricity.",
+"origin": "Latin apricitas, \"sunniness\".",
+"syn": [
+"winter sun"
+],
+"cat": "wonder",
+"level": 3
+},
+{
+"word": "Fika",
+"pos": "noun",
+"say": "FEE-kuh",
+"def": "A Swedish pause for coffee, something sweet and good company.",
+"ex": "Every afternoon at three, the office stops for fika.",
+"origin": "Swedish, playful reversal of kaffi.",
+"syn": [
+"coffee break"
+],
+"cat": "wonder",
+"level": 2
+},
+{
+"word": "Resilience",
+"pos": "noun",
+"say": "rih-ZIL-yunce",
+"def": "The ability to bend without breaking and bounce back after hard times.",
+"ex": "Her resilience carried her through a tough year.",
+"origin": "Latin resilire, \"to leap back\".",
+"syn": [
+"toughness",
+"grit"
+],
+"cat": "courage",
+"level": 1
+},
+{
+"word": "Tenacity",
+"pos": "noun",
+"say": "tuh-NAS-ih-tee",
+"def": "Holding on firmly; not giving up.",
+"ex": "Through sheer tenacity he finished the course.",
+"origin": "Latin tenax, \"holding fast\".",
+"syn": [
+"persistence",
+"determination"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Fortitude",
+"pos": "noun",
+"say": "FOR-tih-tood",
+"def": "Quiet courage in facing pain or difficulty.",
+"ex": "She showed fortitude throughout her recovery.",
+"origin": "Latin fortis, \"strong\".",
+"syn": [
+"courage",
+"endurance"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Valiant",
+"pos": "adjective",
+"say": "VAL-ee-unt",
+"def": "Brave and determined.",
+"ex": "He made a valiant attempt to fix the leak himself.",
+"origin": "Old French vaillant, \"strong, worthy\".",
+"syn": [
+"brave",
+"heroic"
+],
+"cat": "courage",
+"level": 1
+},
+{
+"word": "Indomitable",
+"pos": "adjective",
+"say": "in-DOM-ih-tuh-bul",
+"def": "Impossible to defeat or discourage.",
+"ex": "Her indomitable spirit inspired everyone.",
+"origin": "Latin indomitus, \"untamed\".",
+"syn": [
+"unconquerable",
+"resilient"
+],
+"cat": "courage",
+"level": 3
+},
+{
+"word": "Gumption",
+"pos": "noun",
+"say": "GUMP-shun",
+"def": "Spirited courage and common sense; get-up-and-go.",
+"ex": "It took gumption to start a business at nineteen.",
+"origin": "Scottish, origin uncertain.",
+"syn": [
+"initiative",
+"spunk"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Audacity",
+"pos": "noun",
+"say": "aw-DAS-ih-tee",
+"def": "Bold daring; willingness to take big risks.",
+"ex": "She had the audacity to dream bigger than anyone expected.",
+"origin": "Latin audax, \"bold\".",
+"syn": [
+"boldness",
+"nerve"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Perseverance",
+"pos": "noun",
+"say": "pur-suh-VEER-unce",
+"def": "Continuing steadily despite difficulty or delay.",
+"ex": "Learning the violin takes perseverance.",
+"origin": "Latin perseverare, \"to persist\".",
+"syn": [
+"persistence",
+"steadfastness"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Undaunted",
+"pos": "adjective",
+"say": "un-DAWN-tid",
+"def": "Not discouraged by difficulty or danger.",
+"ex": "Undaunted by the rain, they finished the hike.",
+"origin": "Latin domitare, \"to tame\".",
+"syn": [
+"fearless",
+"unflinching"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Grit",
+"pos": "noun",
+"say": "GRIT",
+"def": "Passion and staying power for long-term goals.",
+"ex": "It was grit, not talent, that got her through.",
+"origin": "Old English greot, \"sand, gravel\".",
+"syn": [
+"determination",
+"backbone"
+],
+"cat": "courage",
+"level": 1
+},
+{
+"word": "Mettle",
+"pos": "noun",
+"say": "MET-ul",
+"def": "A person's ability to cope well with difficulty.",
+"ex": "The final exam really tested her mettle.",
+"origin": "A variant spelling of \"metal\".",
+"syn": [
+"spirit",
+"resolve"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Steadfast",
+"pos": "adjective",
+"say": "STED-fast",
+"def": "Firm, loyal and unwavering.",
+"ex": "He was a steadfast friend through everything.",
+"origin": "Old English stedefaest, \"standing firm\".",
+"syn": [
+"loyal",
+"constant"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Phoenix",
+"pos": "noun",
+"say": "FEE-niks",
+"def": "Something that rises again, renewed, after disaster.",
+"ex": "The burned bakery rose like a phoenix, better than before.",
+"origin": "Greek myth of a bird reborn from its ashes.",
+"syn": [
+"rebirth",
+"renewal"
+],
+"cat": "courage",
+"level": 1
+},
+{
+"word": "Metamorphosis",
+"pos": "noun",
+"say": "met-uh-MOR-fuh-sis",
+"def": "A complete change in form or nature.",
+"ex": "Moving abroad sparked a quiet metamorphosis.",
+"origin": "Greek meta, \"change\", + morphe, \"form\".",
+"syn": [
+"transformation"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Intrepid",
+"pos": "adjective",
+"say": "in-TREP-id",
+"def": "Fearless and adventurous.",
+"ex": "The intrepid explorers crossed the glacier.",
+"origin": "Latin intrepidus, \"not alarmed\".",
+"syn": [
+"daring",
+"bold"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Becoming",
+"pos": "noun",
+"say": "bih-KUM-ing",
+"def": "The ongoing process of growing into who you are.",
+"ex": "Life is less about being and more about becoming.",
+"origin": "Old English becuman, \"to come to, arrive\".",
+"syn": [
+"growth",
+"evolution"
+],
+"cat": "courage",
+"level": 1
+},
+{
+"word": "Unfurl",
+"pos": "verb",
+"say": "un-FURL",
+"def": "To open out, like a leaf or a flag, from being rolled up.",
+"ex": "Slowly, her confidence began to unfurl.",
+"origin": "English un- + furl, \"to roll up\".",
+"syn": [
+"unfold",
+"open"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Ikigai",
+"pos": "noun",
+"say": "ee-kee-GUY",
+"def": "Your reason for getting up in the morning; what makes life worth living.",
+"ex": "Teaching children was his ikigai.",
+"origin": "Japanese iki, \"life\", + gai, \"worth\".",
+"syn": [
+"purpose",
+"calling"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Sisu",
+"pos": "noun",
+"say": "SEE-soo",
+"def": "Finnish grit: courage and determination in the face of hardship.",
+"ex": "Swimming in the icy lake took real sisu.",
+"origin": "Finnish, from sisus, \"interior, guts\".",
+"syn": [
+"grit",
+"resolve"
+],
+"cat": "courage",
+"level": 3
+},
+{
+"word": "Aplomb",
+"pos": "noun",
+"say": "uh-PLOM",
+"def": "Calm self-confidence, especially under pressure.",
+"ex": "She handled the live interview with aplomb.",
+"origin": "French à plomb, \"straight as a plumb line\".",
+"syn": [
+"poise",
+"composure"
+],
+"cat": "courage",
+"level": 3
+},
+{
+"word": "Unwavering",
+"pos": "adjective",
+"say": "un-WAY-ver-ing",
+"def": "Steady and not changing.",
+"ex": "They had unwavering faith in each other.",
+"origin": "English un- + waver.",
+"syn": [
+"constant",
+"steady"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Ameliorate",
+"pos": "verb",
+"say": "uh-MEEL-yuh-rate",
+"def": "To make something bad a little better.",
+"ex": "A kind word can ameliorate a rough day.",
+"origin": "Latin melior, \"better\".",
+"syn": [
+"improve",
+"ease"
+],
+"cat": "courage",
+"level": 3
+},
+{
+"word": "Flourish",
+"pos": "verb",
+"say": "FLUR-ish",
+"def": "To grow well and thrive.",
+"ex": "The garden, and she, began to flourish.",
+"origin": "Latin florere, \"to bloom\".",
+"syn": [
+"thrive",
+"prosper"
+],
+"cat": "courage",
+"level": 1
+},
+{
+"word": "Emboldened",
+"pos": "adjective",
+"say": "em-BOHL-dund",
+"def": "Given the courage to do something.",
+"ex": "Emboldened by her friends, she sang on stage.",
+"origin": "English em- + bold.",
+"syn": [
+"encouraged",
+"heartened"
+],
+"cat": "courage",
+"level": 2
+},
+{
+"word": "Renaissance",
+"pos": "noun",
+"say": "REN-uh-sahns",
+"def": "A revival or rebirth of energy and interest.",
+"ex": "After the holiday her painting had a renaissance.",
+"origin": "French, \"rebirth\".",
+"syn": [
+"revival",
+"renewal"
+],
+"cat": "courage",
+"level": 2
+}
+]
