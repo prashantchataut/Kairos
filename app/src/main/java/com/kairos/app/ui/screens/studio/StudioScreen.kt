@@ -33,7 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -96,7 +95,8 @@ fun StudioScreen(kind: String, id: String, onBack: () -> Unit) {
     var formatIdx by rememberSaveable { mutableStateOf(0) }
     var busy by remember { mutableStateOf(false) }
     val pager = rememberPagerState(pageCount = { CardTemplate.entries.size })
-    val layers = remember { mutableStateMapOf<Int, GraphicsLayer>() }
+    // Plain map: written during composition, read only on click, so it must not be snapshot state.
+    val layers = remember { HashMap<Int, GraphicsLayer>() }
     val palette = CardPalette.entries[paletteIdx]
     val format = CardFormat.entries[formatIdx]
     Scene(Wash.Peach, Wash.Lilac, Wash.Cerulean, Wash.Rose, Wash.Butter)
