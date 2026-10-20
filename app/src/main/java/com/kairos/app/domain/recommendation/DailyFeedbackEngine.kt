@@ -42,7 +42,7 @@ object DailyFeedbackEngine {
         val difficulty = if (type == DailyContentType.VOCABULARY) relevant
             .filter { it.interaction == ContentInteractionType.TOO_EASY || it.interaction == ContentInteractionType.TOO_HARD }
             .sortedByDescending { it.timestamp }.take(12)
-            .sumOf { if (it.interaction == ContentInteractionType.TOO_EASY) 1 else -1 }.coerceIn(-1, 1) else 0
+            .map { if (it.interaction == ContentInteractionType.TOO_EASY) 1 else -1 }.sum().coerceIn(-1, 1) else 0
         return DailyFeedbackProfile(categories.mapValues { it.value.coerceIn(-10.0, 10.0) }, sources.mapValues { it.value.coerceIn(-10.0, 10.0) }, difficulty)
     }
 }
