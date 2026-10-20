@@ -58,3 +58,18 @@ fun PaintedGarden(modifier: Modifier = Modifier, growth: Float = 1f) {
         drawCircle(Color(0xFFDC9C95).copy(alpha = .6f), w * .017f, point(.58f, .75f))
     }
 }
+
+/** Low-contrast paper grain and pigment wash, cached by Canvas rather than bitmap allocations. */
+@Composable
+fun PaintedPaper(modifier: Modifier = Modifier) {
+    val wash = MaterialTheme.colorScheme.primary
+    val ink = MaterialTheme.colorScheme.onBackground
+    Canvas(modifier) {
+        drawRect(androidx.compose.ui.graphics.Brush.verticalGradient(listOf(wash.copy(alpha = .09f), Color.Transparent), endY = size.height * .48f))
+        repeat(480) { i ->
+            val x = ((i * 73) % 997) / 997f * size.width
+            val y = ((i * 137) % 991) / 991f * size.height
+            drawCircle(ink.copy(alpha = .025f), .65.dp.toPx(), Offset(x, y))
+        }
+    }
+}

@@ -139,7 +139,7 @@ private val OnboardingPaper = Color(0xFFE9EDF6)
 private val OnboardingMuted = Color(0xFF9AA5BE)
 private val OnboardingPanel = Color(0xFF151B28)
 private val OnboardingPanelHairline = Color(0xFF2A3345)
-private val OnboardingBlue = Color(0xFF2E5BFF)
+private val OnboardingBlue = Color(0xFF326C81)
 
 @Composable
 fun OnboardingScreen(
@@ -426,7 +426,7 @@ private fun ReflectionStoryPage(
 ) {
     OnboardingStoryPage(
         modifier = modifier,
-        title = "Understand\nyourself.",
+        title = "Make room\nfor yourself.",
         body = "A short reflection each day turns passing moments into patterns."
     ) {
         // Layered journal fragments.
@@ -612,14 +612,14 @@ private fun JourneyPage(modifier: Modifier = Modifier) {
     ) {
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Turn insight into\naction.",
+            text = "Small joys.\nRoom to grow.",
             style = MaterialTheme.typography.displayMedium,
             color = OnboardingPaper,
             lineHeight = MaterialTheme.typography.displayMedium.lineHeight * 1.05f
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
-            text = "One quiet loop keeps everything connected.",
+            text = "Learn, reflect, leave a letter for later, or wander into a little game.",
             style = MaterialTheme.typography.bodyLarge,
             color = OnboardingMuted
         )
@@ -640,13 +640,13 @@ private fun JourneyPage(modifier: Modifier = Modifier) {
                 icon = Icons.Outlined.School,
                 title = "Learn",
                 subtitle = "Review at the right moment",
-                accent = Color(0xFF5B7FFF)
+                accent = Color(0xFF78AFB6)
             )
             JourneyNode(
                 icon = Icons.Outlined.EditNote,
                 title = "Reflect",
                 subtitle = "Turn ideas into your own words",
-                accent = Color(0xFF8FA6FF)
+                accent = Color(0xFF9ACEDB)
             )
             JourneyNode(
                 icon = Icons.Outlined.Favorite,

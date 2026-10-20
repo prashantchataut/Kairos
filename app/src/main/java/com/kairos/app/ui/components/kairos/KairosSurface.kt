@@ -72,8 +72,10 @@ fun KairosAppBackground(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
-        content = content
-    )
+    ) {
+        PaintedPaper(Modifier.matchParentSize())
+        content()
+    }
 }
 
 /**

@@ -149,6 +149,9 @@ fun FocusedTodayScreen(
                 KairosEmptyState(KairosIcons.Outlined.AutoStories, "Your next discovery is waiting", "Open the library to explore words and thoughts.", "Open library", onNavigateToQuotes)
             }
         }
+        item {
+            KairosSecondaryButton("Open the quote library", onNavigateToQuotes, Modifier.fillMaxWidth().padding(horizontal = KairosSpacing.screen))
+        }
         item { Text(progressLine(state), Modifier.fillMaxWidth().padding(24.dp), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall) }
     }
 }

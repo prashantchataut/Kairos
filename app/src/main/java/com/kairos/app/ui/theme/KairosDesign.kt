@@ -38,8 +38,8 @@ internal val LightKairosGlassColors = KairosGlassColors(
     border = KairosOutlineLight.copy(alpha = 0.85f),
     highlight = Color(0x59FFFFFF),
     shadow = Color(0x2E1B2A4A),
-    coolWash = Color(0x1F2E5BFF),
-    warmWash = Color(0x14E86A5E),
+    coolWash = KairosPrimary.copy(alpha = .12f),
+    warmWash = KairosClay.copy(alpha = .08f),
     success = KairosVerdigris
 )
 
@@ -49,8 +49,8 @@ internal val DarkKairosGlassColors = KairosGlassColors(
     border = KairosOutlineDark.copy(alpha = 0.60f),
     highlight = Color(0x26FFFFFF),
     shadow = Color(0x59000000),
-    coolWash = Color(0x1F2E5BFF),
-    warmWash = Color(0x12E86A5E),
+    coolWash = KairosPrimary.copy(alpha = .12f),
+    warmWash = KairosClay.copy(alpha = .07f),
     success = KairosSeaGlass
 )
 

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
  * This object provides efficient access to Material Design icons and custom icons.
  */
 object KairosIcons {
+    val SportsEsports: ImageVector = Icons.Filled.SportsEsports
     
     // === CORE MATERIAL ICONS (Pre-loaded) ===
     

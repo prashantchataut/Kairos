@@ -49,8 +49,22 @@ sealed class BottomNavItem(
         unselectedIcon = KairosIcons.Outlined.AutoStories
     )
 
+    data object Capsules : BottomNavItem(
+        route = Screen.Capsules.route,
+        labelResId = R.string.nav_capsules,
+        selectedIcon = KairosIcons.Email,
+        unselectedIcon = KairosIcons.Email
+    )
+
+    data object Play : BottomNavItem(
+        route = Screen.Games.route,
+        labelResId = R.string.nav_play,
+        selectedIcon = KairosIcons.SportsEsports,
+        unselectedIcon = KairosIcons.SportsEsports
+    )
+
     companion object {
-        val items: List<BottomNavItem> by lazy { listOf(Today, Learn, Reflect, Library) }
+        val items: List<BottomNavItem> by lazy { listOf(Today, Learn, Capsules, Reflect, Play) }
         val bottomBarRoutes: Set<String> by lazy { items.mapTo(mutableSetOf()) { it.destinationRoute } }
     }
 }

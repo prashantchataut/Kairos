@@ -273,29 +273,23 @@ private fun KairosNavigationItem(
                 }
             )
         } else {
-            Row(
-                modifier = Modifier
-                    .height(52.dp)
-                    .width(pillWidth),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            Column(
+                modifier = Modifier.fillMaxWidth().height(60.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
                     imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                    contentDescription = stringResource(item.contentDescriptionResId),
+                    contentDescription = null,
                     modifier = Modifier.size(22.dp)
                 )
-                if (selected) {
-                    Text(
-                        text = stringResource(item.labelResId),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        modifier = Modifier
-                            .padding(start = 6.dp)
-                            .alpha(labelAlpha)
-                    )
-                }
+                Text(
+                    text = stringResource(item.labelResId),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                    maxLines = 1,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
         }
     }

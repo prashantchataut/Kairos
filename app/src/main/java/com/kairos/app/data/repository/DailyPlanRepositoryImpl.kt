@@ -69,22 +69,25 @@ class DailyPlanRepositoryImpl @Inject constructor(
         val quoteCategories = preferencesManager.selectedWisdomCategories.first()
         val wordCategories = preferencesManager.preferredWordCategories.first()
         val targetDifficulty = preferencesManager.vocabularyDifficulty.first().coerceIn(1, 5)
-        val feedback = FeedbackProfile.from(recentInteractions)
+        val wordFeedback = FeedbackProfile.from(recentInteractions.filter { it.contentType == DailyContentType.VOCABULARY.name })
+        val quoteFeedback = FeedbackProfile.from(recentInteractions.filter { it.contentType == DailyContentType.QUOTE.name })
 
         val quoteContext = RecommendationContext(
             userId = userId,
             epochDay = localDate.toEpochDay(),
             now = now,
-            targetDifficulty = (targetDifficulty + feedback.difficultyDelta).coerceIn(1, 5),
+            targetDifficulty = (targetDifficulty + wordFeedback.difficultyDelta).coerceIn(1, 5),
             preferredCategories = quoteCategories.associate { it.normalized() to 1.0 },
             recentSelections = recentSelections.mapNotNull { it.toCandidateHistoryOrNull() },
-            categoryFeedback = feedback.categoryScores,
-            sourceFeedback = feedback.sourceScores,
+            categoryFeedback = quoteFeedback.categoryScores,
+            sourceFeedback = quoteFeedback.sourceScores,
             temporalCategories = temporalCategories(localDate.dayOfWeek)
         )
 
         val wordContext = quoteContext.copy(
-            preferredCategories = wordCategories.associate { it.normalized() to 1.0 }
+            preferredCategories = wordCategories.associate { it.normalized() to 1.0 },
+            categoryFeedback = wordFeedback.categoryScores,
+            sourceFeedback = wordFeedback.sourceScores
         )
 
         val selectionsToInsert = buildList {

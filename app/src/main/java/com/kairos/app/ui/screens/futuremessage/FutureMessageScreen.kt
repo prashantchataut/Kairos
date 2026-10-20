@@ -91,9 +91,9 @@ fun FutureMessageListScreen(
             ) {
                 KairosIconButton(KairosIcons.ArrowBack, "Back", onNavigateBack)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Future letters", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text("Time capsule", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     Text(
-                        "Write across time, not for a feed",
+                        "Something lovely to come back to",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
