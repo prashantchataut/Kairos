@@ -113,7 +113,7 @@ fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewMode
                     composing -> CapsuleComposer(vm, { composing=false })
                     opened != null && CapsulePolicy.canOpen(opened.deliveryDate,System.currentTimeMillis()) -> CapsuleLetter(opened,{openedId=null})
                     showThoughts -> ThoughtGarden(quotes, vm::saveThought, { showThoughts=false })
-                    practice -> RecallGarden(words.filter { it.isFavorite || it.isLearned }.ifEmpty { words }.take(10), saving, vm::review, {practice=false})
+                    practice -> RecallGarden(words, saving, vm::review, {practice=false})
                     else -> AnimatedContent(targetState=tab, transitionSpec={
                         (fadeIn(tween(if(reduced) 0 else 220)) togetherWith fadeOut(tween(if(reduced) 0 else 120))).using(SizeTransform(clip=false))
                     },label="garden-destination") { destination ->
@@ -191,7 +191,7 @@ private fun GardenToday(word: VocabularyEntity?,quote: QuoteEntity?,onWord:()->U
                 }
             }
         }
-        item { Surface(onClick=onCapsule,shape=Shape,color=MaterialTheme.colorScheme.secondaryContainer) {
+        item { Surface(modifier=Modifier.gardenPress(onCapsule),shape=Shape,color=MaterialTheme.colorScheme.secondaryContainer) {
             Row(Modifier.padding(20.dp),verticalAlignment=Alignment.CenterVertically) {
                 GardenPainting(Modifier.size(96.dp),letter=true)
                 Column(Modifier.weight(1f).padding(start=12.dp)) { Text("Hello, future me.",fontFamily=SerifFamily,fontSize=24.sp);Text("Leave a little piece of today for later.",modifier=Modifier.padding(top=8.dp)) }
@@ -234,7 +234,7 @@ private fun CapsuleGarden(letters:List<FutureMessageEntity>,now:Long,onCompose:(
         item { GardenHeader("THE TIME CAPSULE","A little now.\nA lovely later.","Letters and keepsakes for the person you're becoming.") }
         item { GardenPainting(Modifier.fillMaxWidth().height(180.dp),letter=true) }
         item { Button(onClick=onCompose,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)) { Icon(Icons.Outlined.Edit,null);Text(" Write to future me",modifier=Modifier.padding(start=8.dp)) } }
-        item { Text("Kept privately on this device. Back up before uninstalling or switching phones.",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant) }
+        item { Text("Kept privately on this device. Uninstalling removes local letters and keepsakes.",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant) }
         if(letters.isEmpty()) item { Text("Your first letter starts with today.",fontFamily=SerifFamily,fontSize=24.sp,modifier=Modifier.padding(vertical=24.dp)) }
         items(letters,key={it.id}) { letter ->
             val ready=CapsulePolicy.canOpen(letter.deliveryDate,now)
@@ -265,6 +265,7 @@ private fun CapsuleComposer(vm:GardenViewModel,onClose:()->Unit) {
     BackHandler { if(!sealing&&!copying) close() }
     if(discard) AlertDialog(onDismissRequest={discard=false},title={Text("Leave this letter?")},text={Text("Your unsaved writing and attachments will be discarded.")},confirmButton={TextButton(onClick={vm.discardDraft();onClose()}) { Text("Discard draft") }},dismissButton={TextButton(onClick={discard=false}) { Text("Keep writing") }})
     if(sealed) {
+        BackHandler { vm.consumeSealed(); onClose() }
         Column(Modifier.fillMaxSize().padding(32.dp),verticalArrangement=Arrangement.Center,horizontalAlignment=Alignment.CenterHorizontally) {
             GardenPainting(Modifier.size(220.dp),letter=true)
             Text("A moment, safely kept.",fontFamily=SerifFamily,fontSize=32.sp,lineHeight=40.sp)
@@ -341,19 +342,22 @@ private fun WordPrintStudio(word:VocabularyEntity,onBack:()->Unit) {
 }
 
 @Composable
-private fun RecallGarden(words:List<VocabularyEntity>,saving:Boolean,onGrade:(VocabularyEntity,Boolean)->Unit,onBack:()->Unit) {
+private fun RecallGarden(words:List<VocabularyEntity>,saving:Boolean,onGrade:(VocabularyEntity,Boolean,()->Unit)->Unit,onBack:()->Unit) {
     var index by rememberSaveable { mutableIntStateOf(0) };var revealed by rememberSaveable { mutableStateOf(false) }
-    val word=words.getOrNull(index)
+    val queueIds = remember { com.kairos.app.domain.learning.GardenRecallQueue.select(words.map {
+        com.kairos.app.domain.learning.GardenRecallQueue.Seed(it.id,it.isFavorite,it.isLearned,it.nextReviewAt)
+    },System.currentTimeMillis()) }
+    val word=words.firstOrNull { it.id == queueIds.getOrNull(index) }
     Column(Modifier.widthIn(max=720.dp).fillMaxSize().verticalScroll(rememberScrollState()).padding(Page),verticalArrangement=Arrangement.spacedBy(24.dp)) {
-        GardenHeader("A LITTLE RECALL",if(word==null) "Room to grow." else "Let it come back.",if(word==null) "You've reached the end of this little practice." else "${index+1} of ${words.size} · What does this word mean?",onBack)
+        GardenHeader("A LITTLE RECALL",if(word==null) "Room to grow." else "Let it come back.",if(word==null) "You've reached the end of this little practice." else "${index+1} of ${queueIds.size} · What does this word mean?",onBack)
         if(word!=null) {
             GardenPainting(Modifier.align(Alignment.CenterHorizontally).size(160.dp))
             Text(word.word,fontFamily=SerifFamily,fontSize=36.sp,lineHeight=44.sp)
             if(revealed) {
                 Text(word.definition,style=MaterialTheme.typography.bodyLarge)
                 if(word.exampleSentence.isNotBlank()) Text(word.exampleSentence,fontFamily=SerifFamily,fontStyle=FontStyle.Italic)
-                Button(onClick={onGrade(word,true);index++;revealed=false},enabled=!saving,modifier=Modifier.fillMaxWidth()) { Text("I remembered") }
-                OutlinedButton(onClick={onGrade(word,false);index++;revealed=false},enabled=!saving,modifier=Modifier.fillMaxWidth()) { Text("Let's meet again") }
+                Button(onClick={onGrade(word,true) { index++;revealed=false }},enabled=!saving,modifier=Modifier.fillMaxWidth()) { Text("I remembered") }
+                OutlinedButton(onClick={onGrade(word,false) { index++;revealed=false }},enabled=!saving,modifier=Modifier.fillMaxWidth()) { Text("Let's meet again") }
             } else Button(onClick={revealed=true},modifier=Modifier.fillMaxWidth()) { Text("Reveal meaning") }
         } else Button(onClick=onBack) { Text("Back to the garden") }
     }
@@ -374,7 +378,7 @@ private fun GardenSpace(onTools:()->Unit,onCapsule:()->Unit,onWords:()->Unit,onT
 
 @Composable
 private fun SpaceLink(title:String,body:String,icon:ImageVector,onClick:()->Unit) {
-    Surface(onClick=onClick,shape=Shape,color=MaterialTheme.colorScheme.surface) {
+    Surface(modifier=Modifier.gardenPress(onClick),shape=Shape,color=MaterialTheme.colorScheme.surface) {
         Row(Modifier.fillMaxWidth().padding(24.dp),verticalAlignment=Alignment.CenterVertically) {
             Icon(icon,null,modifier=Modifier.size(28.dp));Column(Modifier.weight(1f).padding(horizontal=16.dp)) { Text(title,style=MaterialTheme.typography.titleMedium);Text(body,style=MaterialTheme.typography.bodySmall,modifier=Modifier.padding(top=8.dp)) };Icon(Icons.Outlined.ChevronRight,null)
         }

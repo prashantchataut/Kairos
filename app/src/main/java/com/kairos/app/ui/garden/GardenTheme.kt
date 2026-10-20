@@ -10,6 +10,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.Role
+import com.kairos.app.ui.animation.rememberKairosPressScale
+import com.kairos.app.ui.animation.kairosScale
 import com.kairos.app.ui.theme.KairosTypography
 
 /** Small semantic palette shared by the rebuilt product surfaces. */
@@ -100,4 +106,12 @@ fun GardenPainting(modifier: Modifier = Modifier, letter: Boolean = false) {
             drawArc(GardenInk.ink,0f,180f,false,Offset(w*.48f,h*.80f),Size(w*.07f,h*.035f),style=Stroke(w*.009f,cap=StrokeCap.Round))
         }
     }
+}
+
+/** A press starts feedback immediately and remains interruptible. */
+@Composable
+fun Modifier.gardenPress(onClick: () -> Unit): Modifier {
+    val interactions = remember { MutableInteractionSource() }
+    val scale = rememberKairosPressScale(interactions, .985f)
+    return this.kairosScale(scale).clickable(interactionSource = interactions, indication = null, role = Role.Button, onClick = onClick)
 }

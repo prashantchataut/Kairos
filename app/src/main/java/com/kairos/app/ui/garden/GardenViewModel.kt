@@ -77,7 +77,14 @@ class GardenViewModel @Inject constructor(
     fun consumeSealed() { _sealed.value = false }
     fun saveWord(word: VocabularyEntity) = mutate { vocabulary.updateFavoriteStatus(word.id, !word.isFavorite) }
     fun saveThought(quote: QuoteEntity) = launchSafely { quotes.updateFavoriteStatus(quote.id, !quote.isFavorite) }
-    fun review(word: VocabularyEntity, remembered: Boolean) = mutate { vocabulary.processWordReview(word.id, if (remembered) 4 else 1) }
+    fun review(word: VocabularyEntity, remembered: Boolean, onComplete: () -> Unit) = launchSafely {
+        if (_saving.value) return@launchSafely
+        _saving.value = true
+        try {
+            vocabulary.processWordReview(word.id, if (remembered) 4 else 1)
+                .onSuccess { onComplete() }.onError { _error.value = it.userMessage }
+        } finally { _saving.value = false }
+    }
 
     fun addAttachments(uris: List<Uri>) {
         if (_copying.value || _sealing.value) return
