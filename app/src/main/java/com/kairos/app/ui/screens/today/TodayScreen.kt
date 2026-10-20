@@ -99,7 +99,8 @@ fun TodayScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     KairosWordmark(Modifier.weight(1f), markSize = 26.dp, textSize = androidx.compose.ui.unit.TextUnit(24f, androidx.compose.ui.unit.TextUnitType.Sp))
-                    Pill("${state.joy.map { it.epochDay }.distinct().size} days of good", icon = KairosIcons.Sparkle)
+                    val days = state.joy.map { it.epochDay }.distinct().size
+                    Pill(if (days <= 1) "Day one" else "$days good days", icon = KairosIcons.Sparkle)
                 }
                 Spacer(Modifier.height(Space.lg))
                 WeekStrip(state)

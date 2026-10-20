@@ -1,7 +1,6 @@
 package com.kairos.app.ui.paint
 
 import android.graphics.Bitmap
-import android.os.Build
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -20,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -30,10 +28,13 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.toArgb
+import android.graphics.BlurMaskFilter
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.platform.LocalDensity
 import com.kairos.app.ui.theme.Kairos
 import com.kairos.app.ui.theme.Wash
 import kotlin.math.PI
@@ -90,34 +91,37 @@ fun DrawScope.watercolorPool(
     strength: Float = 1f,
     edge: Boolean = true,
 ) {
-    // Bleed: the water that travelled past the pigment.
-    drawCircle(
-        brush = Brush.radialGradient(
-            listOf(color.copy(alpha = 0.22f * strength), Color.Transparent),
-            center = center, radius = radius * 1.45f,
-        ),
-        radius = radius * 1.45f, center = center,
-    )
-    // Body: three offset layers, each a little smaller, so the pool reads as built-up glazes.
     val rnd = Random(seed * 31)
-    for (layer in 0 until 3) {
-        val r = radius * (1f - layer * 0.17f)
-        val c = Offset(center.x + (rnd.nextFloat() - 0.5f) * radius * 0.25f, center.y + (rnd.nextFloat() - 0.5f) * radius * 0.25f)
-        val path = blobPath(c, r, seed + layer * 13, wobble = 0.16f + layer * 0.04f, phase = phase * (1f + layer * 0.3f))
-        drawPath(
-            path,
-            brush = Brush.radialGradient(
-                listOf(color.copy(alpha = (0.30f + layer * 0.06f) * strength), color.copy(alpha = 0.16f * strength)),
-                center = c, radius = r * 1.1f,
-            ),
-        )
-        if (edge && layer == 0) {
-            // Pigment rim: slightly darker, the tell-tale of real watercolour drying.
-            drawPath(
-                path,
-                color = lerp(color, PigmentInk, 0.18f).copy(alpha = 0.20f * strength),
-                style = Stroke(width = radius * 0.022f),
+    drawIntoCanvas { canvas ->
+        val paint = Paint().asFrameworkPaint().apply { isAntiAlias = true }
+        // Bleed: the water that travelled past the pigment, very soft.
+        paint.shader = null
+        paint.color = color.copy(alpha = 0.22f * strength).toArgb()
+        paint.maskFilter = BlurMaskFilter(radius * 0.35f, BlurMaskFilter.Blur.NORMAL)
+        canvas.nativeCanvas.drawCircle(center.x, center.y, radius * 1.05f, paint)
+        // Body: three offset glazes with soft, slightly irregular edges.
+        for (layer in 0 until 3) {
+            val r = radius * (1f - layer * 0.18f)
+            val c = Offset(center.x + (rnd.nextFloat() - 0.5f) * radius * 0.25f, center.y + (rnd.nextFloat() - 0.5f) * radius * 0.25f)
+            val path = blobPath(c, r, seed + layer * 13, wobble = 0.16f + layer * 0.04f, phase = phase * (1f + layer * 0.3f))
+            paint.maskFilter = BlurMaskFilter(r * (0.07f - layer * 0.015f), BlurMaskFilter.Blur.NORMAL)
+            paint.shader = android.graphics.RadialGradient(
+                c.x, c.y, r * 1.1f,
+                color.copy(alpha = (0.42f + layer * 0.08f) * strength).toArgb(),
+                color.copy(alpha = (0.30f + layer * 0.04f) * strength).toArgb(),
+                android.graphics.Shader.TileMode.CLAMP,
             )
+            paint.style = android.graphics.Paint.Style.FILL
+            canvas.nativeCanvas.drawPath(path.asAndroidPath(), paint)
+            if (edge && layer == 0) {
+                // Pigment rim: where colour collects as the water dries. Soft, never an outline.
+                paint.shader = null
+                paint.style = android.graphics.Paint.Style.STROKE
+                paint.strokeWidth = radius * 0.045f
+                paint.maskFilter = BlurMaskFilter(radius * 0.03f, BlurMaskFilter.Blur.NORMAL)
+                paint.color = lerp(color, PigmentInk, 0.12f).copy(alpha = 0.22f * strength).toArgb()
+                canvas.nativeCanvas.drawPath(path.asAndroidPath(), paint)
+            }
         }
     }
     // Granulation: a few darker flecks where pigment settled into the paper.
@@ -125,7 +129,7 @@ fun DrawScope.watercolorPool(
         val a = rnd.nextFloat() * 2f * PI.toFloat()
         val d = rnd.nextFloat() * radius * 0.85f
         drawCircle(
-            color = lerp(color, PigmentInk, 0.25f).copy(alpha = 0.10f * strength),
+            color = lerp(color, PigmentInk, 0.2f).copy(alpha = 0.05f * strength),
             radius = radius * (0.006f + rnd.nextFloat() * 0.012f),
             center = Offset(center.x + cos(a) * d, center.y + sin(a) * d),
         )
@@ -192,16 +196,9 @@ fun WatercolorBackground(
             label = "t",
         )
     }
-    val blurPx = with(LocalDensity.current) { androidx.compose.ui.unit.Dp(14f).toPx() }
     Box(modifier.fillMaxSize()) {
         Canvas(
-            Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        renderEffect = BlurEffect(blurPx, blurPx, TileMode.Clamp)
-                    }
-                },
+            Modifier.fillMaxSize(),
         ) {
             drawRect(Brush.verticalGradient(listOf(palette.paper, palette.paperDeep)))
             val t = time.value
@@ -217,7 +214,7 @@ fun WatercolorBackground(
                     color = colors[i].value,
                     seed = s.seed,
                     phase = t,
-                    strength = intensity * if (palette.isDark) 0.9f else 1f,
+                    strength = intensity * if (palette.isDark) 0.85f else 0.9f,
                 )
             }
         }

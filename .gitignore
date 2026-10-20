@@ -48,3 +48,4 @@ apikey.properties
 
 # === Export zips ===
 *.tar.gz
+app/screenshots/

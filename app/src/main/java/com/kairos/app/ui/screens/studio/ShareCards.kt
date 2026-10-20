@@ -235,7 +235,7 @@ private fun NightPool(c: CardContent, p: CardPalette) {
     Box(Modifier.fillMaxSize()) {
         PaintedPaper(p, c.seed, layout = 1, dark = true)
         Canvas(Modifier.fillMaxSize()) {
-            listOf(0.12f to 0.15f, 0.8f to 0.1f, 0.88f to 0.4f, 0.2f to 0.82f, 0.7f to 0.9f).forEachIndexed { i, (x, y) ->
+            listOf(0.1f to 0.12f, 0.82f to 0.08f, 0.93f to 0.22f, 0.12f to 0.86f, 0.86f to 0.9f).forEachIndexed { i, (x, y) ->
                 drawSparkle(Offset(size.width * x, size.height * y), (4 + i % 3 * 3).dp.toPx(), Color.White.copy(alpha = 0.8f))
             }
         }

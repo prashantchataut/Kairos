@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -78,6 +79,13 @@ android {
         resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all { it.systemProperty("robolectric.graphicsMode", "NATIVE") }
+        }
+    }
+
     lint {
         abortOnError = false
         checkReleaseBuilds = false
@@ -115,4 +123,10 @@ dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
