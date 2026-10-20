@@ -1,80 +1,56 @@
 # Kairos
 
-**Learn one useful thing. Notice it in your life. Remember it when it matters.**
+**Keep something good.**
 
-Kairos is a local-first Android learning and reflection app built with Kotlin, Jetpack Compose, Room, Hilt, and Material 3. The focused product surface is organized around four destinations: **Today**, **Learn**, **Reflect**, and **Library**.
+A local-first Android companion for a new word, a thoughtful pause, and a letter
+to the person you’re becoming. Built with Kotlin, Jetpack Compose, Room and Hilt.
 
-> The canonical Android identity is now `com.kairos.app`. This is a new package identity relative to historical Prody builds, so old-package local data does not migrate automatically without an explicit export/import path.
+## The Garden of Time experience
 
-## Product surface
+- **Today:** a stable daily word and attributed thought. Save what speaks to you,
+  explore the word garden, or leave a little piece of today for your future self.
+- **Words:** searchable offline vocabulary, a saved collection, and recall that
+  puts due memories first. Review results persist before the next card appears.
+- **Word Prints:** original botanical 1080 × 1350 PNGs in Herbarium, Apricot and
+  Night garden styles. Preview and export share one renderer and Kairos branding.
+- **Capsules:** letters with a future opening date and up to six privately copied
+  images, videos, recordings or PDFs (25 MB each). Keepsakes open with a temporary
+  read grant. Letters remain date-gated even without a notification.
+- **Your space:** the thought collection and access to existing journal, settings,
+  profile and deeper learning tools.
 
-### Today
-- One stable vocabulary recommendation and one thoughtful quote per local date.
-- Explainable selection and direct feedback: too easy, too hard, more like this, and less like this.
-- A calm vertical reading flow instead of a dashboard of unrelated modules.
+## A little beginning
 
-### Learn
-- Searchable vocabulary catalog with All, New (never studied), and Saved (liked) states.
-- Saving a word or quote is the primary "I like this" signal: saved words/quotes in a category teach the recommendation engine to surface more like them.
-- Hybrid practice sessions: flashcard recall with self-grading (Again/Hard/Good/Easy), a definition-matching quiz for weak cards, and a session summary. A heart on each card saves the word instantly.
-- Spaced-repetition foundations (SM-2 + Leitner boxes) and contextual word-use tracking; "learned" is no longer a manual claim — recall is tracked by scheduling, preference by saves.
-- A personalized study queue: due reviews first, then fresh words matched to the user's saved-interest profile, with an explainable reason on every card.
-- Deterministic browse policies with unit coverage.
-- Growing offline catalog (curated roots plus genuine derived word families) with optional AI-generated words when a development key is configured; expansion is idempotent for existing installs.
+Start with a private local profile, choose interests and vocabulary difficulty,
+and step into the garden. No provider key or network is needed for the core loop.
+Setup commits the local catalog/profile before recording completion.
 
-### Reflect
-- Fast journal creation and a readable chronological history.
-- Search and bookmark filters without requiring AI.
-- Encrypted local storage and useful offline behavior.
-
-### Library
-- Quotes, proverbs, idioms, and phrases behind one repository boundary.
-- Search and favorite controls across all content types.
-- Editorial reading surfaces designed for longer text.
-
-## Experience principles
-
-- **Focused over crowded:** secondary experiments do not compete in primary navigation.
-- **Trustworthy over theatrical:** no fabricated community activity or fake remote behavior.
-- **Glass as hierarchy:** translucent material is limited to navigation and compact controls; reading surfaces stay legible.
-- **Useful without AI:** the core loop works when network and generated features are unavailable.
-- **Consent at the moment of intent:** notification permission is requested only after the user enables reminders.
-- **Migration-aware:** the current `com.kairos.app` identifiers are treated as stable; historical Prody package trees must be removed rather than overlaid.
-
-## First-run experience
-
-Users may continue with a persistent local profile or sign in with Google. Onboarding has three steps:
-
-1. Understand the daily word-and-thought loop.
-2. Choose a vocabulary pace, session size, **word interests**, and **quote themes** — separate sets, so a user can love stoic quotes without being pushed business words. These feed recommendation ranking.
-3. Review local-first storage and optional notification behavior.
-
-Onboarding completion is written only after the local catalog and profile transaction succeeds. The same choices are editable any time from Settings → Interests & setup.
+Daily discovery prefers unseen content, then the least recently seen item when the
+recent catalog has been covered. Saved feedback influences future ranking. Recall
+has its own due-first queue and uses the existing spaced-repetition storage.
+Daily picks persist by user and device-local calendar date.
 
 ## Visual system
 
-- Mineral indigo, clay, verdigris, and warm editorial neutrals.
-- Restrained glass navigation and control surfaces.
-- Matte reading surfaces for definitions, quotations, and journal text.
-- Native Android sans for interface density and the platform serif family for reflective content; no missing font resources or runtime downloads.
-- Edge-to-edge layout, explicit system insets, 48dp minimum controls, compact bottom navigation, and an adaptive wide-screen rail.
-- Short state transitions and pressed feedback; looping motion is limited to the active cosmetic preview or hero and respects reduced-motion settings.
+Warm paper, forest ink, sage and apricot. Bundled Lora for the reading voice,
+native sans for controls, and an original seed-and-orbit identity. Code-native
+painted-style illustrations work offline. Floating navigation uses translucent
+surfaces; reading surfaces stay legible. Brief destination fades and interruptible
+press/arrival motion respect Android’s disabled animator setting.
 
-## Architecture
+## Storage and compatibility
 
-The focused screens use a strangler migration around the legacy application:
+The Android identity remains `com.kairos.app` (`.debug` for debug builds). Existing
+Room data and migration history are retained. The new core sits alongside existing
+journal and advanced tools; those screens have not all been rewritten.
 
-```text
-Compose UI
-  -> feature ViewModel
-    -> domain repository / use case
-      <- data repository implementation
-        -> Room DAO / preferences / network client
-```
+Capsules and attachments stay on this device. Uninstalling removes them. Existing
+backup/sync paths have **not** been certified for the new attachment files. Date
+sealing is app behavior, not a cryptographic time lock. Notification timing depends
+on Android permissions, battery policy and device settings.
 
-Promoted ViewModels do not coordinate Room DAOs directly. Legacy routes remain in the source tree until their data and compatibility requirements can be retired safely.
-
-Repository boundaries and compatibility rules are enforced by `scripts/verify_kairos.sh` and documented in the phase implementation report included with release artifacts.
+See [implementation and review notes](docs/garden/IMPLEMENTATION.md) for scope,
+visual checks, artwork provenance, and public-release recommendations.
 
 ## Technical stack
 
