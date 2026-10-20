@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -171,6 +172,12 @@ class MainActivity : ComponentActivity() {
 fun KairosApp(
     startDestination: String
 ) {
+    var showTools by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
+    if (!showTools) {
+        com.kairos.app.ui.garden.GardenExperience(onOpenTools = { showTools = true })
+        return
+    }
+    androidx.activity.compose.BackHandler { showTools = false }
     val navController = rememberNavController()
     val haptic = rememberKairosHaptic()
     val navBackStackEntry by navController.currentBackStackEntryAsState()

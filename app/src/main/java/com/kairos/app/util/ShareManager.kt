@@ -159,6 +159,18 @@ class ShareManager @Inject constructor(
         }
     }
 
+    fun shareWordPrint(word: String, definition: String, pronunciation: String?, paper: com.kairos.app.ui.garden.WordPrintRenderer.Paper): Boolean {
+        return try {
+            val bitmap = com.kairos.app.ui.garden.WordPrintRenderer.render(word, definition, pronunciation, paper)
+            val uri = try { saveBitmapToCache(bitmap, "word_print_${System.currentTimeMillis()}.png") }
+                finally { bitmap.recycle() }
+            if (uri == null) false else {
+                launchShareSheet(uri, "$word — $definition\n\nA Kairos Word Print", "Share Word Print")
+                true
+            }
+        } catch (e: Exception) { Log.e(TAG, "Word Print export failed", e); false }
+    }
+
     /**
      * Share plain text without an image.
      */
@@ -220,7 +232,7 @@ class ShareManager @Inject constructor(
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
             }
 
-            FileProvider.getUriForFile(context, FILE_PROVIDER_AUTHORITY, file)
+            FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to save bitmap to cache", e)
             null
@@ -396,61 +408,7 @@ class ShareManager @Inject constructor(
         pronunciation: String?,
         isDarkTheme: Boolean
     ): Bitmap {
-        val bitmap = Bitmap.createBitmap(CARD_WIDTH, CARD_HEIGHT, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-
-        val bgColor = if (isDarkTheme) CARD_BG_DARK else CARD_BG_LIGHT
-        val primaryTextColor = if (isDarkTheme) TEXT_PRIMARY_DARK else TEXT_PRIMARY_LIGHT
-        val secondaryTextColor = if (isDarkTheme) TEXT_SECONDARY_DARK else TEXT_SECONDARY_LIGHT
-
-        canvas.drawColor(bgColor)
-
-        // Draw "WORD OF THE DAY" label
-        val labelPaint = Paint().apply {
-            color = Kairos_GREEN
-            textSize = 36f
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            isAntiAlias = true
-            letterSpacing = 0.2f
-        }
-        canvas.drawText("WORD OF THE DAY", CARD_PADDING.toFloat(), 200f, labelPaint)
-
-        // Draw word
-        val wordPaint = Paint().apply {
-            color = primaryTextColor
-            textSize = 72f
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            isAntiAlias = true
-        }
-        canvas.drawText(word, CARD_PADDING.toFloat(), 350f, wordPaint)
-
-        // Draw pronunciation if available
-        var yOffset = 420f
-        if (pronunciation != null) {
-            val pronPaint = Paint().apply {
-                color = secondaryTextColor
-                textSize = 36f
-                typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-                isAntiAlias = true
-            }
-            canvas.drawText("/$pronunciation/", CARD_PADDING.toFloat(), yOffset, pronPaint)
-            yOffset += 80f
-        }
-
-        // Draw definition
-        val defPaint = Paint().apply {
-            color = primaryTextColor
-            textSize = 42f
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-            isAntiAlias = true
-        }
-        drawWrappedText(canvas, definition, CARD_PADDING.toFloat(), yOffset + 40f,
-            CARD_WIDTH - CARD_PADDING * 2, defPaint)
-
-        // Draw Kairos branding at bottom
-        drawKairosBranding(canvas, isDarkTheme)
-
-        return bitmap
+        return com.kairos.app.ui.garden.WordPrintRenderer.render(word, definition, pronunciation)
     }
 
     /**
