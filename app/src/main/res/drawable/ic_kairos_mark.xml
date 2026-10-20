@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Kairos mark: a bookmark ribbon whose arms become two leaves, and the spark of the moment. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8.6,3.4c1.1,0 2,0.9 2,2v13.2c0,1.1 -0.9,2 -2,2s-2,-0.9 -2,-2V5.4c0,-1.1 0.9,-2 2,-2z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M11.2,10.9c1.9,-2.9 4.4,-4.7 7.4,-5.5c0.7,-0.2 1.3,0.5 1,1.2c-1.3,3 -3.7,4.9 -6.9,5.9c-0.9,0.3 -1.8,-0.7 -1.5,-1.6z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M11.2,13.1c1.9,2.9 4.4,4.7 7.4,5.5c0.7,0.2 1.3,-0.5 1,-1.2c-1.3,-3 -3.7,-4.9 -6.9,-5.9c-0.9,-0.3 -1.8,0.7 -1.5,1.6z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M19.6,2.2l0.5,1.4l1.4,0.5l-1.4,0.5l-0.5,1.4l-0.5,-1.4l-1.4,-0.5l1.4,-0.5z" />
+</vector>

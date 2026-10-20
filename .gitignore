@@ -1,50 +1,13 @@
-# === IDE ===
-.idea/
 *.iml
+.gradle
+/local.properties
+/.idea
 .DS_Store
-.cxx
-.externalNativeBuild
-/captures
-
-# === Gradle / Build ===
-.gradle/
-.kotlin/
-build/
-app/build/
 /build
-build_output.txt
-
-# === Local Config (NEVER commit) ===
+/captures
+.externalNativeBuild
+.cxx
 local.properties
-app/apikey.properties
-*.env
-.env
-.env.*
-!.env.example
-
-# === Keystore (NEVER commit private/production keys) ===
-*.jks
-*.keystore
-keystore/
-# Public open-source test signing identity used by CI (not for Play Store).
-!keystore/
-!keystore/Kairos-release.jks
-!keystore/README.md
-
-# === Secrets (NEVER commit) ===
-# Keep specific properties that are project config
-apikey.properties
-
-# === Google Services ===
-# google-services.json is tracked (client IDs are public)
-
-# === AI/Tool Configs ===
-.Jules/
-.kiro/
-.qoder/
-.claude/
-.aider*
-.cursor/
-
-# === Export zips ===
-*.tar.gz
+app/build
+app/release
+*.hprof
