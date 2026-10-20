@@ -1,0 +1,13 @@
+<resources>
+    <style name="Theme.Kairos" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/night_paper</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.Kairos.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/night_paper</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Kairos</item>
+    </style>
+</resources>

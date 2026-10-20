@@ -2,38 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Network for Gemini AI -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-
-    <!-- Audio Recording for Voice Notes -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <!-- Notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".KairosApplication"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:allowBackup="false"
+        android:name=".KairosApp"
+        android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Kairos"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="35">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.Kairos.Splash"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -42,117 +29,14 @@
             </intent-filter>
         </activity>
 
-        <!-- Crash Debug Activity - Runs in separate process for crash isolation -->
-        <activity
-            android:name=".debug.CrashActivity"
-            android:process=":crash"
-            android:exported="false"
-            android:theme="@style/Theme.Kairos"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:launchMode="singleInstance"
-            android:noHistory="true"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <receiver
-            android:name=".notification.NotificationReceiver"
-            android:exported="false" />
-
-        <receiver
-            android:name=".notification.BootReceiver"
-            android:exported="false"
-            tools:ignore="ExportedReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-        </receiver>
-
-        <!-- Home Screen Widgets -->
-        <receiver
-            android:name=".widget.DailyQuoteWidgetReceiver"
-            android:exported="true"
-            android:label="@string/widget_daily_quote_description">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/daily_quote_widget_info" />
-        </receiver>
-
-        <receiver
-            android:name=".widget.WordOfDayWidgetReceiver"
-            android:exported="true"
-            android:label="@string/widget_word_of_day_description">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/word_of_day_widget_info" />
-        </receiver>
-
-        <receiver
-            android:name=".widget.StreakWidgetReceiver"
-            android:exported="true"
-            android:label="@string/widget_streak_description">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/streak_widget_info" />
-        </receiver>
-
-        <receiver
-            android:name=".widget.QuickJournalWidgetReceiver"
-            android:exported="true"
-            android:label="@string/widget_quick_journal_description">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/quick_journal_widget_info" />
-        </receiver>
-
-        <!-- Secure Trampoline Receiver for Widget Actions -->
-        <receiver
-            android:name=".widget.SecureWidgetActionReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.kairos.app.widget.action.QUICK_JOURNAL" />
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name="androidx.work.impl.foreground.SystemForegroundService"
-            android:foregroundServiceType="dataSync"
-            tools:node="merge" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:authorities="${applicationId}.files"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <!-- Disable default WorkManager initialization (using on-demand initialization via KairosApplication) -->
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-            <meta-data
-                android:name="androidx.work.WorkManagerInitializer"
-                android:value="androidx.startup"
-                tools:node="remove" />
-        </provider>
-
     </application>
-
 </manifest>

@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <cache-path
-        name="backups"
-        path="backups/" />
-    <cache-path
-        name="images"
-        path="images/" />
-    <cache-path
-        name="share_images"
-        path="share_images/" />
-    <files-path
-        name="voice_recordings"
-        path="voice_recordings/" />
+    <cache-path name="shared_cards" path="cards/" />
+    <files-path name="capsules" path="capsules/" />
 </paths>

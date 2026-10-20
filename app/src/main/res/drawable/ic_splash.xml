@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <group android:translateX="29" android:translateY="27" android:scaleX="0.5" android:scaleY="0.5">
+        <path android:pathData="M18,92a32,6 0 1,0 64,0a32,6 0 1,0 -64,0" android:strokeWidth="3" android:strokeColor="#998EC5FF" android:fillColor="#00000000"/>
+        <path android:pathData="M52,4C62,20 80,38 80,58C80,76 67,88 50,88C33,88 20,76 20,58C20,38 40,22 52,4Z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:type="linear" android:startX="30" android:startY="10" android:endX="72" android:endY="90">
+                    <item android:offset="0" android:color="#FF8EC5FF"/>
+                    <item android:offset="0.5" android:color="#FF3461E8"/>
+                    <item android:offset="1" android:color="#FF7A5CE0"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+        <path android:pathData="M52,4C62,20 80,38 80,58C80,76 67,88 50,88C33,88 20,76 20,58C20,38 40,22 52,4Z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:type="radial" android:centerX="38" android:centerY="46" android:gradientRadius="30">
+                    <item android:offset="0" android:color="#73FFFFFF"/>
+                    <item android:offset="1" android:color="#00FFFFFF"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+        <group android:rotation="-26" android:pivotX="36" android:pivotY="52">
+            <path android:pathData="M31,49a4,9 0 1,0 8,0a4,9 0 1,0 -8,0" android:fillColor="#D9FFFFFF"/>
+        </group>
+        <path android:pathData="M80,5Q82.1,15.9 93,18Q82.1,20.1 80,31Q77.9,20.1 67,18Q77.9,15.9 80,5Z" android:fillColor="#FFFFE59C"/>
+        <path android:pathData="M90,30Q91,35 96,36Q91,37 90,42Q89,37 84,36Q89,35 90,30Z" android:fillColor="#FFFFFFFF"/>
+    </group>
+</vector>
