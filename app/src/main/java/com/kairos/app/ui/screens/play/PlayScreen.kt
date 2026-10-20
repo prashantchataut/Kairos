@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.kairos.app.domain.play.WordGarden
+import com.kairos.app.domain.play.GameLibrary
 import com.kairos.app.ui.components.painted.PocketGarden
 import com.kairos.app.ui.animation.rememberKairosReducedMotion
 import androidx.compose.animation.fadeIn
@@ -28,6 +29,7 @@ fun PlayScreen(onBack: () -> Unit) {
     val word = WordGarden.question(index)
     val correct = chosen != null && WordGarden.isCorrect(index, chosen!!)
     val uriHandler = LocalUriHandler.current
+    var downloadMessage by rememberSaveable { mutableStateOf<String?>(null) }
     val reduced = rememberKairosReducedMotion()
     Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         TextButton(onClick = onBack) { Text("Back to today") }
@@ -56,8 +58,30 @@ fun PlayScreen(onBack: () -> Unit) {
         }
         HorizontalDivider(Modifier.padding(vertical = 8.dp))
         Text("Beyond the garden", style = MaterialTheme.typography.headlineSmall)
-        Text("Pokémon fan adventures live with their creators. Check each project's Android requirements and download instructions on its own site.", style = MaterialTheme.typography.bodyMedium)
-        OutlinedButton(onClick = { uriHandler.openUri("https://www.pokecommunity.com/forums/released-games.184/") }, modifier = Modifier.fillMaxWidth()) { Text("Explore creator releases") }
-        Text("Kairos does not include ROMs or an emulator. Direct downloads appear only when a creator-approved source is available.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        GameLibrary.releases.forEach { release ->
+            Text(release.title, style = MaterialTheme.typography.titleLarge)
+            Text(release.description, style = MaterialTheme.typography.bodyMedium)
+            TextButton(onClick = { uriHandler.openUri(release.creatorUrl) }) { Text("Visit creator") }
+            if (release.downloadUrl != null) {
+                OutlinedButton(onClick = {
+                    downloadMessage = runCatching {
+                        val request = android.app.DownloadManager.Request(android.net.Uri.parse(release.downloadUrl))
+                            .setTitle(release.title)
+                            .setDescription("Official creator release")
+                            .setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                        if (android.os.Build.VERSION.SDK_INT >= 29) {
+                            request.setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, release.filename)
+                        } else {
+                            request.setDestinationInExternalFilesDir(context, android.os.Environment.DIRECTORY_DOWNLOADS, release.filename)
+                        }
+                        val manager = context.getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+                        manager.enqueue(request)
+                        "Download started. Find the APK and its status in your device's Downloads app."
+                    }.getOrElse { "The download could not start. Visit the creator to download it directly." }
+                }, modifier = Modifier.fillMaxWidth()) { Text("Download Android game") }
+            }
+        }
+        downloadMessage?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+        Text("Downloads stay on your device. Android asks separately before installing an APK. Pokémon fan games need their creator's instructions; Kairos includes no ROMs or emulator.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

@@ -32,11 +32,19 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import java.io.File
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -350,30 +358,32 @@ private fun LetterProvenance(message: FutureMessageEntity, timeAgo: String) {
 
 @Composable
 private fun AttachmentMemory(message: FutureMessageEntity) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    var openError by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
-    val attachments = message.attachedPhotos.split(',').filter(String::isNotBlank).map { it to "image/*" } +
-        message.attachedVideos.split(',').filter(String::isNotBlank).map { it to "video/*" } +
-        listOfNotNull(message.voiceRecordingUri?.let { it to "audio/*" })
+    val context = LocalContext.current
+    var error by remember { mutableStateOf<String?>(null) }
+    fun openAttachment(value: String, mime: String) {
+        runCatching {
+            val original = Uri.parse(value)
+            val uri = if (original.scheme == "file") {
+                FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", File(requireNotNull(original.path)))
+            } else original
+            val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, mime)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            context.startActivity(intent)
+        }.onFailure { error = "This attachment could not open. It may have been moved, or this device needs an app that can play it." }
+    }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("Memories attached", style = MaterialTheme.typography.titleMedium)
-        attachments.forEachIndexed { index, (value, type) ->
-            androidx.compose.material3.OutlinedButton(onClick = {
-                runCatching {
-                    val parsed = android.net.Uri.parse(value)
-                    val uri = if (parsed.scheme == "file") {
-                        androidx.core.content.FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", java.io.File(requireNotNull(parsed.path)))
-                    } else parsed
-                    context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
-                        setDataAndType(uri, type)
-                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    })
-                }.onFailure { openError = "This memory could not be opened. Install an app that supports this file type, or check that the file still exists." }
-            }, modifier = Modifier.fillMaxWidth()) {
-                Text("Open ${type.substringBefore('/')} ${index + 1}")
-            }
+        message.attachedPhotos.split(',').filter(String::isNotBlank).forEachIndexed { index, uri ->
+            coil.compose.AsyncImage(model = uri, contentDescription = "Photo ${index + 1} attached to this letter", modifier = Modifier.fillMaxWidth().height(220.dp).clip(RoundedCornerShape(24.dp)).clickable { openAttachment(uri, "image/*") })
+            TextButton(onClick = { openAttachment(uri, "image/*") }) { Text("Open photo ${index + 1}") }
         }
-        openError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+        message.attachedVideos.split(',').filter(String::isNotBlank).forEachIndexed { index, uri ->
+            TextButton(onClick = { openAttachment(uri, "video/*") }) { Text("Play video ${index + 1}") }
+        }
+        message.voiceRecordingUri?.let { uri ->
+            TextButton(onClick = { openAttachment(uri, "audio/*") }) { Text("Listen to your voice note") }
+        }
+        error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
     }
 }
 
