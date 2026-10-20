@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
-    <!--
-      Sentinel 🛡️: Security Hardening
-      This file is intentionally configured to exclude all content from device-to-device
-      transfers. The primary control `android:allowBackup="false"` in AndroidManifest.xml also
-      governs this, but this rule provides an explicit defense-in-depth layer. It prevents
-      sensitive user data from being moved off the device via this mechanism.
-    -->
-    <cloud-backup disableIfNoEncryptionCapabilities="true" />
+    <cloud-backup>
+        <include domain="database" path="kairos2.db" />
+        <include domain="file" path="datastore/" />
+        <include domain="file" path="capsules/" />
+    </cloud-backup>
     <device-transfer>
-        <exclude domain="root" />
-        <exclude domain="file" />
-        <exclude domain="database" />
-        <exclude domain="sharedpref" />
-        <exclude domain="external" />
+        <include domain="database" path="kairos2.db" />
+        <include domain="file" path="datastore/" />
+        <include domain="file" path="capsules/" />
     </device-transfer>
 </data-extraction-rules>

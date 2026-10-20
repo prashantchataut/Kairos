@@ -1,10 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Kairos mark background: a wet wash of sky into lilac with a peach bloom. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path
-        android:fillColor="#111216"
-        android:pathData="M0,0h108v108h-108z" />
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="0" android:endX="108" android:endY="108">
+                <item android:offset="0" android:color="#FFBFDDFB" />
+                <item android:offset="0.55" android:color="#FFD7CCFA" />
+                <item android:offset="1" android:color="#FFF7D3E6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M78,80m-30,0a30,28 0,1 1,60 0a30,28 0,1 1,-60 0">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="78" android:centerY="80" android:gradientRadius="32">
+                <item android:offset="0" android:color="#55FFB59A" />
+                <item android:offset="0.85" android:color="#88FFB59A" />
+                <item android:offset="1" android:color="#00FFB59A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M22,26m-24,0a24,22 0,1 1,48 0a24,22 0,1 1,-48 0">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="22" android:centerY="26" android:gradientRadius="26">
+                <item android:offset="0" android:color="#448EDDC0" />
+                <item android:offset="0.85" android:color="#778EDDC0" />
+                <item android:offset="1" android:color="#008EDDC0" />
+            </gradient>
+        </aapt:attr>
+    </path>
 </vector>

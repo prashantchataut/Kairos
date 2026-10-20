@@ -48,3 +48,7 @@ apikey.properties
 
 # === Export zips ===
 *.tar.gz
+
+# Local build helpers
+local.properties
+app/schemas/

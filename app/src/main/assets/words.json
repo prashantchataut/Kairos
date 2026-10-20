@@ -1,0 +1,1162 @@
+[
+{
+"id": "w001",
+"word": "serendipity",
+"phonetic": "ser-uhn-DIP-i-tee",
+"pos": "noun",
+"definition": "Finding something good by happy accident.",
+"example": "Meeting her best friend at the wrong bus stop was pure serendipity.",
+"theme": "wonder",
+"level": 1
+},
+{
+"id": "w002",
+"word": "mellifluous",
+"phonetic": "muh-LIF-loo-uhs",
+"pos": "adjective",
+"definition": "Sweet and smooth to hear.",
+"example": "Her mellifluous voice made the bedtime story feel like a song.",
+"theme": "words",
+"level": 2
+},
+{
+"id": "w003",
+"word": "ebullient",
+"phonetic": "ih-BUL-yuhnt",
+"pos": "adjective",
+"definition": "Bubbling over with cheerful energy.",
+"example": "He was ebullient after his first sketch sold.",
+"theme": "feelings",
+"level": 2
+},
+{
+"id": "w004",
+"word": "sonder",
+"phonetic": "SON-der",
+"pos": "noun",
+"definition": "The realisation that every passer-by has a life as vivid as your own.",
+"example": "Watching the lit windows from the train, she felt a wave of sonder.",
+"theme": "wonder",
+"level": 2
+},
+{
+"id": "w005",
+"word": "petrichor",
+"phonetic": "PET-ri-kor",
+"pos": "noun",
+"definition": "The earthy smell after rain falls on dry ground.",
+"example": "We opened the window just to let the petrichor in.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w006",
+"word": "halcyon",
+"phonetic": "HAL-see-uhn",
+"pos": "adjective",
+"definition": "Calm, peaceful and happy, often remembered fondly.",
+"example": "Those halcyon summer evenings still glow in her memory.",
+"theme": "time",
+"level": 2
+},
+{
+"id": "w007",
+"word": "resilience",
+"phonetic": "ri-ZIL-yuhns",
+"pos": "noun",
+"definition": "The ability to bend without breaking and bounce back.",
+"example": "Resilience isn't never falling; it's getting up a little wiser.",
+"theme": "courage",
+"level": 1
+},
+{
+"id": "w008",
+"word": "equanimity",
+"phonetic": "ek-wuh-NIM-i-tee",
+"pos": "noun",
+"definition": "Steady calm, especially when things get hard.",
+"example": "She met the bad news with surprising equanimity.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w009",
+"word": "luminous",
+"phonetic": "LOO-muh-nuhs",
+"pos": "adjective",
+"definition": "Full of light; glowing.",
+"example": "The lake turned luminous at sunset.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w010",
+"word": "saudade",
+"phonetic": "sow-DAH-djee",
+"pos": "noun",
+"definition": "A tender longing for something or someone you love and miss.",
+"example": "Old photos filled him with a warm saudade.",
+"theme": "feelings",
+"level": 3
+},
+{
+"id": "w011",
+"word": "eudaimonia",
+"phonetic": "yoo-dy-MOH-nee-uh",
+"pos": "noun",
+"definition": "A deep, lasting kind of flourishing — living well, not just feeling good.",
+"example": "For Aristotle, eudaimonia came from living by your virtues.",
+"theme": "mind",
+"level": 3
+},
+{
+"id": "w012",
+"word": "quixotic",
+"phonetic": "kwik-SOT-ik",
+"pos": "adjective",
+"definition": "Hopeful and idealistic to the point of being impractical.",
+"example": "Planting a forest alone sounded quixotic, until it started to grow.",
+"theme": "courage",
+"level": 2
+},
+{
+"id": "w013",
+"word": "effervescent",
+"phonetic": "ef-er-VES-uhnt",
+"pos": "adjective",
+"definition": "Bubbly, lively and enthusiastic.",
+"example": "Her effervescent laugh filled the café.",
+"theme": "feelings",
+"level": 2
+},
+{
+"id": "w014",
+"word": "solace",
+"phonetic": "SOL-is",
+"pos": "noun",
+"definition": "Comfort in a time of sadness.",
+"example": "He found solace in long walks by the river.",
+"theme": "kindness",
+"level": 1
+},
+{
+"id": "w015",
+"word": "ineffable",
+"phonetic": "in-EF-uh-buhl",
+"pos": "adjective",
+"definition": "Too great or beautiful to put into words.",
+"example": "The view from the summit was ineffable.",
+"theme": "wonder",
+"level": 2
+},
+{
+"id": "w016",
+"word": "kindred",
+"phonetic": "KIN-drid",
+"pos": "adjective",
+"definition": "Similar in nature; deeply alike.",
+"example": "They knew at once they were kindred spirits.",
+"theme": "kindness",
+"level": 1
+},
+{
+"id": "w017",
+"word": "lagom",
+"phonetic": "LAH-gom",
+"pos": "noun",
+"definition": "Swedish idea of \"just the right amount\" — not too much, not too little.",
+"example": "Her desk was lagom: tidy, but lived-in.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w018",
+"word": "hygge",
+"phonetic": "HOO-guh",
+"pos": "noun",
+"definition": "A cosy, contented feeling of warmth and togetherness.",
+"example": "Candles, blankets and cocoa — peak hygge.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w019",
+"word": "wabi-sabi",
+"phonetic": "WAH-bee SAH-bee",
+"pos": "noun",
+"definition": "Finding beauty in things that are imperfect, impermanent and incomplete.",
+"example": "The cracked teacup had a wabi-sabi charm.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w020",
+"word": "ikigai",
+"phonetic": "ee-kee-GUY",
+"pos": "noun",
+"definition": "A reason for being; what makes your mornings worth waking for.",
+"example": "Teaching kids to paint became her ikigai.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w021",
+"word": "gumption",
+"phonetic": "GUMP-shuhn",
+"pos": "noun",
+"definition": "Spirited initiative and resourcefulness.",
+"example": "It took gumption to perform her poem on an open mic.",
+"theme": "courage",
+"level": 1
+},
+{
+"id": "w022",
+"word": "tenacity",
+"phonetic": "tuh-NAS-i-tee",
+"pos": "noun",
+"definition": "The quality of holding firmly to a goal.",
+"example": "With tenacity, she practised the chord until it rang clear.",
+"theme": "courage",
+"level": 1
+},
+{
+"id": "w023",
+"word": "verdant",
+"phonetic": "VUR-dnt",
+"pos": "adjective",
+"definition": "Green with growing plants.",
+"example": "The verdant hills looked freshly painted.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w024",
+"word": "gossamer",
+"phonetic": "GOS-uh-mer",
+"pos": "adjective",
+"definition": "Very light, thin and delicate.",
+"example": "Gossamer clouds drifted over the moon.",
+"theme": "nature",
+"level": 2
+},
+{
+"id": "w025",
+"word": "susurrus",
+"phonetic": "soo-SUR-uhs",
+"pos": "noun",
+"definition": "A soft whispering or rustling sound.",
+"example": "The susurrus of leaves lulled her to sleep.",
+"theme": "nature",
+"level": 3
+},
+{
+"id": "w026",
+"word": "apricity",
+"phonetic": "uh-PRIS-i-tee",
+"pos": "noun",
+"definition": "The warmth of the sun in winter.",
+"example": "They sat on the steps soaking up the apricity.",
+"theme": "nature",
+"level": 3
+},
+{
+"id": "w027",
+"word": "vellichor",
+"phonetic": "VEL-i-kor",
+"pos": "noun",
+"definition": "The wistful charm of old bookshops.",
+"example": "The dusty shelves were thick with vellichor.",
+"theme": "words",
+"level": 3
+},
+{
+"id": "w028",
+"word": "eloquent",
+"phonetic": "EL-uh-kwuhnt",
+"pos": "adjective",
+"definition": "Expressing things clearly and movingly.",
+"example": "His eloquent thank-you note made her cry.",
+"theme": "words",
+"level": 1
+},
+{
+"id": "w029",
+"word": "candor",
+"phonetic": "KAN-der",
+"pos": "noun",
+"definition": "The quality of being open and honest.",
+"example": "I appreciated the candor of her feedback.",
+"theme": "kindness",
+"level": 2
+},
+{
+"id": "w030",
+"word": "magnanimous",
+"phonetic": "mag-NAN-uh-muhs",
+"pos": "adjective",
+"definition": "Generous and forgiving, especially toward a rival.",
+"example": "She was magnanimous in victory, cheering for the runner-up.",
+"theme": "kindness",
+"level": 2
+},
+{
+"id": "w031",
+"word": "benevolent",
+"phonetic": "buh-NEV-uh-luhnt",
+"pos": "adjective",
+"definition": "Kind and wanting to do good.",
+"example": "A benevolent neighbour left soup on our doorstep.",
+"theme": "kindness",
+"level": 1
+},
+{
+"id": "w032",
+"word": "empathy",
+"phonetic": "EM-puh-thee",
+"pos": "noun",
+"definition": "Understanding and sharing what another person feels.",
+"example": "Empathy made him pause before replying.",
+"theme": "kindness",
+"level": 1
+},
+{
+"id": "w033",
+"word": "compassion",
+"phonetic": "kuhm-PASH-uhn",
+"pos": "noun",
+"definition": "Caring about someone's suffering and wanting to help.",
+"example": "Compassion starts with how you talk to yourself.",
+"theme": "kindness",
+"level": 1
+},
+{
+"id": "w034",
+"word": "gratitude",
+"phonetic": "GRAT-i-tood",
+"pos": "noun",
+"definition": "Thankful appreciation for what you have.",
+"example": "She ended each day writing one line of gratitude.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w035",
+"word": "wanderlust",
+"phonetic": "WON-der-luhst",
+"pos": "noun",
+"definition": "A strong desire to travel and explore.",
+"example": "Postcards from friends stirred her wanderlust.",
+"theme": "wonder",
+"level": 1
+},
+{
+"id": "w036",
+"word": "reverie",
+"phonetic": "REV-uh-ree",
+"pos": "noun",
+"definition": "A pleasant daydream.",
+"example": "The kettle's whistle broke his reverie.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w037",
+"word": "nostalgia",
+"phonetic": "no-STAL-juh",
+"pos": "noun",
+"definition": "A sentimental longing for the past.",
+"example": "The smell of crayons brought a rush of nostalgia.",
+"theme": "time",
+"level": 1
+},
+{
+"id": "w038",
+"word": "ephemeral",
+"phonetic": "ih-FEM-er-uhl",
+"pos": "adjective",
+"definition": "Lasting a very short time.",
+"example": "Cherry blossoms are lovely because they're ephemeral.",
+"theme": "time",
+"level": 2
+},
+{
+"id": "w039",
+"word": "perennial",
+"phonetic": "puh-REN-ee-uhl",
+"pos": "adjective",
+"definition": "Lasting or recurring again and again.",
+"example": "Pancakes on Sunday are a perennial favourite.",
+"theme": "time",
+"level": 2
+},
+{
+"id": "w040",
+"word": "fortuitous",
+"phonetic": "for-TOO-i-tuhs",
+"pos": "adjective",
+"definition": "Happening by lucky chance.",
+"example": "A fortuitous delay meant we caught the rainbow.",
+"theme": "wonder",
+"level": 2
+},
+{
+"id": "w041",
+"word": "jubilant",
+"phonetic": "JOO-buh-luhnt",
+"pos": "adjective",
+"definition": "Feeling or expressing great joy.",
+"example": "The team was jubilant after the final whistle.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w042",
+"word": "buoyant",
+"phonetic": "BOY-uhnt",
+"pos": "adjective",
+"definition": "Cheerful and optimistic; able to float.",
+"example": "After the call, her mood was buoyant all afternoon.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w043",
+"word": "sanguine",
+"phonetic": "SANG-gwin",
+"pos": "adjective",
+"definition": "Hopeful and confident, even in a difficult moment.",
+"example": "He stayed sanguine about the results.",
+"theme": "feelings",
+"level": 2
+},
+{
+"id": "w044",
+"word": "zest",
+"phonetic": "zest",
+"pos": "noun",
+"definition": "Great enthusiasm and energy.",
+"example": "She tackled every hobby with zest.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w045",
+"word": "whimsy",
+"phonetic": "WIM-zee",
+"pos": "noun",
+"definition": "Playful, quaint or fanciful humour.",
+"example": "The café's whimsy — teacups on the ceiling — made us grin.",
+"theme": "wonder",
+"level": 1
+},
+{
+"id": "w046",
+"word": "ethereal",
+"phonetic": "ih-THEER-ee-uhl",
+"pos": "adjective",
+"definition": "Extremely delicate and light, almost not of this world.",
+"example": "The fog gave the forest an ethereal glow.",
+"theme": "wonder",
+"level": 2
+},
+{
+"id": "w047",
+"word": "iridescent",
+"phonetic": "ir-i-DES-uhnt",
+"pos": "adjective",
+"definition": "Showing shifting rainbow colours.",
+"example": "Iridescent bubbles drifted over the park.",
+"theme": "nature",
+"level": 2
+},
+{
+"id": "w048",
+"word": "cascade",
+"phonetic": "kas-KAYD",
+"pos": "noun",
+"definition": "A small waterfall; something that falls in stages.",
+"example": "A cascade of laughter followed his joke.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w049",
+"word": "zephyr",
+"phonetic": "ZEF-er",
+"pos": "noun",
+"definition": "A soft, gentle breeze.",
+"example": "A warm zephyr carried the scent of lilacs.",
+"theme": "nature",
+"level": 2
+},
+{
+"id": "w050",
+"word": "aurora",
+"phonetic": "uh-ROR-uh",
+"pos": "noun",
+"definition": "Dawn; or the glowing lights in polar skies.",
+"example": "We stayed up until 2 a.m. to see the aurora.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w051",
+"word": "nebula",
+"phonetic": "NEB-yuh-luh",
+"pos": "noun",
+"definition": "A cloud of gas and dust in space where stars are born.",
+"example": "The nebula looked like spilled watercolour.",
+"theme": "wonder",
+"level": 2
+},
+{
+"id": "w052",
+"word": "cognizant",
+"phonetic": "KOG-nuh-zuhnt",
+"pos": "adjective",
+"definition": "Aware or mindful of something.",
+"example": "Be cognizant of how tired you are before saying yes.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w053",
+"word": "introspection",
+"phonetic": "in-truh-SPEK-shuhn",
+"pos": "noun",
+"definition": "Looking inward at your own thoughts and feelings.",
+"example": "Journaling gave her space for introspection.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w054",
+"word": "metacognition",
+"phonetic": "met-uh-kog-NISH-uhn",
+"pos": "noun",
+"definition": "Thinking about your own thinking.",
+"example": "Metacognition helped him notice when he was spiralling.",
+"theme": "mind",
+"level": 3
+},
+{
+"id": "w055",
+"word": "mindful",
+"phonetic": "MYND-fuhl",
+"pos": "adjective",
+"definition": "Paying calm, kind attention to the present.",
+"example": "She took a mindful breath before answering.",
+"theme": "mind",
+"level": 1
+},
+{
+"id": "w056",
+"word": "lucid",
+"phonetic": "LOO-sid",
+"pos": "adjective",
+"definition": "Clear and easy to understand; mentally sharp.",
+"example": "After a nap, her thoughts felt lucid again.",
+"theme": "mind",
+"level": 1
+},
+{
+"id": "w057",
+"word": "pensive",
+"phonetic": "PEN-siv",
+"pos": "adjective",
+"definition": "Quietly thoughtful, sometimes a little sad.",
+"example": "He grew pensive watching the rain.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w058",
+"word": "wistful",
+"phonetic": "WIST-fuhl",
+"pos": "adjective",
+"definition": "Gently longing or yearning.",
+"example": "She gave a wistful smile at the old playground.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w059",
+"word": "elated",
+"phonetic": "ih-LAY-tid",
+"pos": "adjective",
+"definition": "Extremely happy and excited.",
+"example": "I was elated when the seeds finally sprouted.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w060",
+"word": "content",
+"phonetic": "kuhn-TENT",
+"pos": "adjective",
+"definition": "Peacefully happy with what you have.",
+"example": "Curled up with a book, the cat looked utterly content.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w061",
+"word": "serene",
+"phonetic": "suh-REEN",
+"pos": "adjective",
+"definition": "Calm and untroubled.",
+"example": "The lake was serene at dawn.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w062",
+"word": "tranquil",
+"phonetic": "TRANG-kwil",
+"pos": "adjective",
+"definition": "Free from disturbance; peaceful.",
+"example": "The library's tranquil corner was her favourite spot.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w063",
+"word": "ardent",
+"phonetic": "AHR-dnt",
+"pos": "adjective",
+"definition": "Very enthusiastic or passionate.",
+"example": "He's an ardent fan of terrible puns.",
+"theme": "feelings",
+"level": 2
+},
+{
+"id": "w064",
+"word": "intrepid",
+"phonetic": "in-TREP-id",
+"pos": "adjective",
+"definition": "Fearless and adventurous.",
+"example": "The intrepid toddler climbed every slide in the park.",
+"theme": "courage",
+"level": 2
+},
+{
+"id": "w065",
+"word": "audacious",
+"phonetic": "aw-DAY-shuhs",
+"pos": "adjective",
+"definition": "Boldly daring.",
+"example": "It was an audacious plan — and it worked.",
+"theme": "courage",
+"level": 2
+},
+{
+"id": "w066",
+"word": "valiant",
+"phonetic": "VAL-yuhnt",
+"pos": "adjective",
+"definition": "Showing courage and determination.",
+"example": "She made a valiant effort to finish the marathon.",
+"theme": "courage",
+"level": 1
+},
+{
+"id": "w067",
+"word": "steadfast",
+"phonetic": "STED-fast",
+"pos": "adjective",
+"definition": "Firm and unwavering in loyalty or purpose.",
+"example": "Her steadfast friend showed up every week.",
+"theme": "courage",
+"level": 2
+},
+{
+"id": "w068",
+"word": "fortitude",
+"phonetic": "FOR-ti-tood",
+"pos": "noun",
+"definition": "Courage in pain or adversity.",
+"example": "It took fortitude to start over in a new city.",
+"theme": "courage",
+"level": 2
+},
+{
+"id": "w069",
+"word": "perseverance",
+"phonetic": "pur-suh-VEER-uhns",
+"pos": "noun",
+"definition": "Continuing despite difficulty or delay.",
+"example": "Perseverance turned her doodles into a comic.",
+"theme": "courage",
+"level": 1
+},
+{
+"id": "w070",
+"word": "grit",
+"phonetic": "grit",
+"pos": "noun",
+"definition": "Courage and resolve; strength of character.",
+"example": "Grit carried him through the final mile.",
+"theme": "courage",
+"level": 1
+},
+{
+"id": "w071",
+"word": "aplomb",
+"phonetic": "uh-PLOM",
+"pos": "noun",
+"definition": "Self-confidence and poise in a demanding situation.",
+"example": "She handled the broken mic with aplomb.",
+"theme": "courage",
+"level": 3
+},
+{
+"id": "w072",
+"word": "panache",
+"phonetic": "puh-NASH",
+"pos": "noun",
+"definition": "Flamboyant confidence of style.",
+"example": "He wore his rain boots with panache.",
+"theme": "courage",
+"level": 2
+},
+{
+"id": "w073",
+"word": "alacrity",
+"phonetic": "uh-LAK-ri-tee",
+"pos": "noun",
+"definition": "Brisk and cheerful readiness.",
+"example": "She accepted the invitation with alacrity.",
+"theme": "feelings",
+"level": 3
+},
+{
+"id": "w074",
+"word": "felicity",
+"phonetic": "fi-LIS-i-tee",
+"pos": "noun",
+"definition": "Intense happiness; or a perfectly apt way of saying something.",
+"example": "The poem's felicity of phrase made us gasp.",
+"theme": "words",
+"level": 3
+},
+{
+"id": "w075",
+"word": "euphony",
+"phonetic": "YOO-fuh-nee",
+"pos": "noun",
+"definition": "A pleasing, harmonious sound of words.",
+"example": "\"Cellar door\" is famous for its euphony.",
+"theme": "words",
+"level": 3
+},
+{
+"id": "w076",
+"word": "lexicon",
+"phonetic": "LEK-si-kon",
+"pos": "noun",
+"definition": "The vocabulary of a person or language.",
+"example": "\"Hygge\" has entered the English lexicon.",
+"theme": "words",
+"level": 2
+},
+{
+"id": "w077",
+"word": "verbose",
+"phonetic": "ver-BOHS",
+"pos": "adjective",
+"definition": "Using more words than needed.",
+"example": "His verbose email could have been one line.",
+"theme": "words",
+"level": 2
+},
+{
+"id": "w078",
+"word": "succinct",
+"phonetic": "suhk-SINGKT",
+"pos": "adjective",
+"definition": "Briefly and clearly expressed.",
+"example": "Her succinct answer said it all.",
+"theme": "words",
+"level": 2
+},
+{
+"id": "w079",
+"word": "articulate",
+"phonetic": "ahr-TIK-yuh-lit",
+"pos": "adjective",
+"definition": "Able to express ideas clearly.",
+"example": "He became more articulate with practice.",
+"theme": "words",
+"level": 1
+},
+{
+"id": "w080",
+"word": "anecdote",
+"phonetic": "AN-ik-doht",
+"pos": "noun",
+"definition": "A short, amusing or interesting true story.",
+"example": "Grandpa's anecdotes always ended with a wink.",
+"theme": "words",
+"level": 1
+},
+{
+"id": "w081",
+"word": "idiom",
+"phonetic": "ID-ee-uhm",
+"pos": "noun",
+"definition": "A phrase whose meaning isn't obvious from its words.",
+"example": "\"Break a leg\" is an idiom for good luck.",
+"theme": "words",
+"level": 1
+},
+{
+"id": "w082",
+"word": "palimpsest",
+"phonetic": "PAL-imp-sest",
+"pos": "noun",
+"definition": "Something reused or altered but still bearing traces of its earlier form.",
+"example": "The old city is a palimpsest of centuries.",
+"theme": "time",
+"level": 3
+},
+{
+"id": "w083",
+"word": "epiphany",
+"phonetic": "ih-PIF-uh-nee",
+"pos": "noun",
+"definition": "A sudden, striking realisation.",
+"example": "In the shower she had an epiphany about the plot.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w084",
+"word": "paradigm",
+"phonetic": "PAR-uh-dym",
+"pos": "noun",
+"definition": "A typical model or pattern of thinking.",
+"example": "The invention shifted the whole paradigm.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w085",
+"word": "catalyst",
+"phonetic": "KAT-l-ist",
+"pos": "noun",
+"definition": "Something that sparks change.",
+"example": "One kind teacher was the catalyst for her love of science.",
+"theme": "mind",
+"level": 2
+},
+{
+"id": "w086",
+"word": "nascent",
+"phonetic": "NAS-uhnt",
+"pos": "adjective",
+"definition": "Just beginning to develop.",
+"example": "Her nascent garden had three brave sprouts.",
+"theme": "time",
+"level": 2
+},
+{
+"id": "w087",
+"word": "burgeoning",
+"phonetic": "BUR-juh-ning",
+"pos": "adjective",
+"definition": "Growing or expanding quickly.",
+"example": "The burgeoning book club needed a bigger room.",
+"theme": "time",
+"level": 2
+},
+{
+"id": "w088",
+"word": "flourish",
+"phonetic": "FLUR-ish",
+"pos": "verb",
+"definition": "To grow or develop in a healthy, vigorous way.",
+"example": "Plants — and people — flourish with sunlight.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w089",
+"word": "blossom",
+"phonetic": "BLOS-uhm",
+"pos": "verb",
+"definition": "To develop and come into one's own.",
+"example": "He really blossomed in art class.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w090",
+"word": "kairos",
+"phonetic": "KY-ros",
+"pos": "noun",
+"definition": "Greek for the right, opportune moment — time as meaning, not minutes.",
+"example": "The pause before she said yes was pure kairos.",
+"theme": "time",
+"level": 2
+},
+{
+"id": "w091",
+"word": "chronos",
+"phonetic": "KROH-nos",
+"pos": "noun",
+"definition": "Greek for sequential, clock time.",
+"example": "Chronos says it's Tuesday; kairos says it's the day you begin.",
+"theme": "time",
+"level": 2
+},
+{
+"id": "w092",
+"word": "liminal",
+"phonetic": "LIM-uh-nl",
+"pos": "adjective",
+"definition": "In-between; on a threshold.",
+"example": "Airports feel strangely liminal at night.",
+"theme": "time",
+"level": 2
+},
+{
+"id": "w093",
+"word": "twilight",
+"phonetic": "TWY-lyt",
+"pos": "noun",
+"definition": "The soft light between sunset and dark.",
+"example": "Fireflies came out at twilight.",
+"theme": "time",
+"level": 1
+},
+{
+"id": "w094",
+"word": "dawn",
+"phonetic": "dawn",
+"pos": "noun",
+"definition": "The first light of day; a beginning.",
+"example": "The dawn of a new idea feels electric.",
+"theme": "time",
+"level": 1
+},
+{
+"id": "w095",
+"word": "crepuscular",
+"phonetic": "kri-PUHS-kyuh-ler",
+"pos": "adjective",
+"definition": "Relating to or active at twilight.",
+"example": "Rabbits are crepuscular, out at dawn and dusk.",
+"theme": "nature",
+"level": 3
+},
+{
+"id": "w096",
+"word": "bucolic",
+"phonetic": "byoo-KOL-ik",
+"pos": "adjective",
+"definition": "Pleasantly rural and pastoral.",
+"example": "They spent a bucolic weekend at the farm.",
+"theme": "nature",
+"level": 2
+},
+{
+"id": "w097",
+"word": "idyllic",
+"phonetic": "eye-DIL-ik",
+"pos": "adjective",
+"definition": "Extremely happy, peaceful or picturesque.",
+"example": "The cottage was idyllic, roses and all.",
+"theme": "nature",
+"level": 1
+},
+{
+"id": "w098",
+"word": "sanctuary",
+"phonetic": "SANGK-choo-er-ee",
+"pos": "noun",
+"definition": "A place of safety and refuge.",
+"example": "Her reading nook was a tiny sanctuary.",
+"theme": "kindness",
+"level": 1
+},
+{
+"id": "w099",
+"word": "camaraderie",
+"phonetic": "kah-muh-RAH-duh-ree",
+"pos": "noun",
+"definition": "Trust and friendship among people who spend time together.",
+"example": "Late-night study sessions built real camaraderie.",
+"theme": "kindness",
+"level": 2
+},
+{
+"id": "w100",
+"word": "conviviality",
+"phonetic": "kuhn-viv-ee-AL-i-tee",
+"pos": "noun",
+"definition": "Friendly, lively and enjoyable company.",
+"example": "The potluck buzzed with conviviality.",
+"theme": "kindness",
+"level": 3
+},
+{
+"id": "w101",
+"word": "altruism",
+"phonetic": "AL-troo-iz-uhm",
+"pos": "noun",
+"definition": "Selfless concern for others' wellbeing.",
+"example": "Donating blood is a quiet act of altruism.",
+"theme": "kindness",
+"level": 2
+},
+{
+"id": "w102",
+"word": "cherish",
+"phonetic": "CHER-ish",
+"pos": "verb",
+"definition": "To hold something dear and care for it lovingly.",
+"example": "Cherish the small Tuesday moments too.",
+"theme": "kindness",
+"level": 1
+},
+{
+"id": "w103",
+"word": "savor",
+"phonetic": "SAY-ver",
+"pos": "verb",
+"definition": "To enjoy something slowly and completely.",
+"example": "Savor the first sip of morning tea.",
+"theme": "feelings",
+"level": 1
+},
+{
+"id": "w104",
+"word": "dauntless",
+"phonetic": "DAWNT-lis",
+"pos": "adjective",
+"definition": "Showing fearlessness and determination.",
+"example": "The dauntless kitten chased a leaf twice its size.",
+"theme": "courage",
+"level": 2
+},
+{
+"id": "w105",
+"word": "curiosity",
+"phonetic": "kyoor-ee-OS-i-tee",
+"pos": "noun",
+"definition": "A strong desire to know or learn.",
+"example": "Curiosity kept her reading past midnight.",
+"theme": "wonder",
+"level": 1
+},
+{
+"id": "w106",
+"word": "awe",
+"phonetic": "aw",
+"pos": "noun",
+"definition": "A feeling of wonder mixed with respect.",
+"example": "The night sky filled him with awe.",
+"theme": "wonder",
+"level": 1
+},
+{
+"id": "w107",
+"word": "marvel",
+"phonetic": "MAHR-vuhl",
+"pos": "verb",
+"definition": "To be filled with wonder.",
+"example": "We marvelled at the tiny snail's spiral shell.",
+"theme": "wonder",
+"level": 1
+},
+{
+"id": "w108",
+"word": "enigma",
+"phonetic": "ih-NIG-muh",
+"pos": "noun",
+"definition": "Something mysterious or puzzling.",
+"example": "How the cat got on the roof remains an enigma.",
+"theme": "wonder",
+"level": 2
+},
+{
+"id": "w109",
+"word": "labyrinth",
+"phonetic": "LAB-uh-rinth",
+"pos": "noun",
+"definition": "A complicated network of paths; a maze.",
+"example": "The old market was a labyrinth of colour.",
+"theme": "wonder",
+"level": 2
+},
+{
+"id": "w110",
+"word": "cynosure",
+"phonetic": "SY-nuh-shoor",
+"pos": "noun",
+"definition": "A person or thing that is the centre of attention.",
+"example": "The glowing lantern was the cynosure of the night market.",
+"theme": "wonder",
+"level": 3
+},
+{
+"id": "w111",
+"word": "opulent",
+"phonetic": "OP-yuh-luhnt",
+"pos": "adjective",
+"definition": "Rich and luxurious.",
+"example": "The cake was opulent: three layers and gold leaf.",
+"theme": "wonder",
+"level": 2
+},
+{
+"id": "w112",
+"word": "quintessential",
+"phonetic": "kwin-tuh-SEN-shuhl",
+"pos": "adjective",
+"definition": "The most perfect example of something.",
+"example": "Fresh bread is the quintessential Sunday smell.",
+"theme": "words",
+"level": 2
+},
+{
+"id": "w113",
+"word": "juxtapose",
+"phonetic": "JUHK-stuh-pohz",
+"pos": "verb",
+"definition": "To place side by side for contrast.",
+"example": "The photo juxtaposes old temples and neon signs.",
+"theme": "words",
+"level": 2
+},
+{
+"id": "w114",
+"word": "penchant",
+"phonetic": "PEN-chuhnt",
+"pos": "noun",
+"definition": "A strong liking or habit.",
+"example": "She has a penchant for collecting smooth stones.",
+"theme": "feelings",
+"level": 2
+},
+{
+"id": "w115",
+"word": "respite",
+"phonetic": "RES-pit",
+"pos": "noun",
+"definition": "A short period of rest or relief.",
+"example": "The rain offered a brief respite from the heat.",
+"theme": "time",
+"level": 1
+},
+{
+"id": "w116",
+"word": "amble",
+"phonetic": "AM-buhl",
+"pos": "verb",
+"definition": "To walk at a slow, relaxed pace.",
+"example": "We ambled through the park with no plan.",
+"theme": "nature",
+"level": 1
+}
+]

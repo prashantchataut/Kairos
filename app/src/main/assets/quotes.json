@@ -1,0 +1,482 @@
+[
+{
+"id": "q001",
+"text": "The best time to plant a tree was twenty years ago. The second best time is now.",
+"author": "Chinese proverb",
+"theme": "growth"
+},
+{
+"id": "q002",
+"text": "We suffer more often in imagination than in reality.",
+"author": "Seneca",
+"theme": "calm"
+},
+{
+"id": "q003",
+"text": "It is not that we have a short time to live, but that we waste a lot of it.",
+"author": "Seneca",
+"theme": "time"
+},
+{
+"id": "q004",
+"text": "The impediment to action advances action. What stands in the way becomes the way.",
+"author": "Marcus Aurelius",
+"theme": "courage"
+},
+{
+"id": "q005",
+"text": "Nothing in life is to be feared, it is only to be understood.",
+"author": "Marie Curie",
+"theme": "courage"
+},
+{
+"id": "q006",
+"text": "In the depth of winter, I finally learned that within me there lay an invincible summer.",
+"author": "Albert Camus",
+"theme": "hope"
+},
+{
+"id": "q007",
+"text": "Hope is the thing with feathers that perches in the soul.",
+"author": "Emily Dickinson",
+"theme": "hope"
+},
+{
+"id": "q008",
+"text": "Forever is composed of nows.",
+"author": "Emily Dickinson",
+"theme": "time"
+},
+{
+"id": "q009",
+"text": "I dwell in possibility.",
+"author": "Emily Dickinson",
+"theme": "hope"
+},
+{
+"id": "q010",
+"text": "Tell me, what is it you plan to do with your one wild and precious life?",
+"author": "Mary Oliver",
+"theme": "wonder"
+},
+{
+"id": "q011",
+"text": "How we spend our days is, of course, how we spend our lives.",
+"author": "Annie Dillard",
+"theme": "time"
+},
+{
+"id": "q012",
+"text": "Do the best you can until you know better. Then when you know better, do better.",
+"author": "Maya Angelou",
+"theme": "growth"
+},
+{
+"id": "q013",
+"text": "You can't use up creativity. The more you use, the more you have.",
+"author": "Maya Angelou",
+"theme": "play"
+},
+{
+"id": "q014",
+"text": "Not all those who wander are lost.",
+"author": "J.R.R. Tolkien",
+"theme": "wonder"
+},
+{
+"id": "q015",
+"text": "All we have to decide is what to do with the time that is given us.",
+"author": "J.R.R. Tolkien",
+"theme": "time"
+},
+{
+"id": "q016",
+"text": "There's some good in this world, and it's worth fighting for.",
+"author": "J.R.R. Tolkien",
+"theme": "hope"
+},
+{
+"id": "q017",
+"text": "It does not do to dwell on dreams and forget to live.",
+"author": "J.K. Rowling",
+"theme": "time"
+},
+{
+"id": "q018",
+"text": "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+"author": "Will Durant",
+"theme": "growth"
+},
+{
+"id": "q019",
+"text": "Be patient toward all that is unsolved in your heart and try to love the questions themselves.",
+"author": "Rainer Maria Rilke",
+"theme": "calm"
+},
+{
+"id": "q020",
+"text": "Let everything happen to you: beauty and terror. Just keep going. No feeling is final.",
+"author": "Rainer Maria Rilke",
+"theme": "courage"
+},
+{
+"id": "q021",
+"text": "If you want to go fast, go alone. If you want to go far, go together.",
+"author": "African proverb",
+"theme": "kindness"
+},
+{
+"id": "q022",
+"text": "Fall seven times, stand up eight.",
+"author": "Japanese proverb",
+"theme": "courage"
+},
+{
+"id": "q023",
+"text": "A journey of a thousand miles begins with a single step.",
+"author": "Lao Tzu",
+"theme": "growth"
+},
+{
+"id": "q024",
+"text": "Nature does not hurry, yet everything is accomplished.",
+"author": "Lao Tzu",
+"theme": "calm"
+},
+{
+"id": "q025",
+"text": "Knowing others is intelligence; knowing yourself is true wisdom.",
+"author": "Lao Tzu",
+"theme": "growth"
+},
+{
+"id": "q026",
+"text": "Almost everything will work again if you unplug it for a few minutes, including you.",
+"author": "Anne Lamott",
+"theme": "calm"
+},
+{
+"id": "q027",
+"text": "Perfectionism is the voice of the oppressor.",
+"author": "Anne Lamott",
+"theme": "growth"
+},
+{
+"id": "q028",
+"text": "Talk to yourself like you would to someone you love.",
+"author": "Brené Brown",
+"theme": "kindness"
+},
+{
+"id": "q029",
+"text": "I am not afraid of storms, for I am learning how to sail my ship.",
+"author": "Louisa May Alcott",
+"theme": "courage"
+},
+{
+"id": "q030",
+"text": "The beautiful thing about learning is that nobody can take it away from you.",
+"author": "B.B. King",
+"theme": "learning"
+},
+{
+"id": "q031",
+"text": "Anyone who stops learning is old, whether at twenty or eighty.",
+"author": "Henry Ford",
+"theme": "learning"
+},
+{
+"id": "q032",
+"text": "Curiosity is the wick in the candle of learning.",
+"author": "William Arthur Ward",
+"theme": "learning"
+},
+{
+"id": "q033",
+"text": "Rest is not idleness, and to lie sometimes on the grass under trees on a summer's day, listening to the murmur of the water, or watching the clouds float across the sky, is by no means a waste of time.",
+"author": "John Lubbock",
+"theme": "calm"
+},
+{
+"id": "q034",
+"text": "The sun himself is weak when he first rises, and gathers strength and courage as the day gets on.",
+"author": "Charles Dickens",
+"theme": "hope"
+},
+{
+"id": "q035",
+"text": "Write it on your heart that every day is the best day in the year.",
+"author": "Ralph Waldo Emerson",
+"theme": "hope"
+},
+{
+"id": "q036",
+"text": "Adopt the pace of nature: her secret is patience.",
+"author": "Ralph Waldo Emerson",
+"theme": "calm"
+},
+{
+"id": "q037",
+"text": "I took a deep breath and listened to the old brag of my heart. I am, I am, I am.",
+"author": "Sylvia Plath",
+"theme": "courage"
+},
+{
+"id": "q038",
+"text": "The most common way people give up their power is by thinking they don't have any.",
+"author": "Alice Walker",
+"theme": "courage"
+},
+{
+"id": "q039",
+"text": "And now that you don't have to be perfect, you can be good.",
+"author": "John Steinbeck",
+"theme": "kindness"
+},
+{
+"id": "q040",
+"text": "There is a crack in everything. That's how the light gets in.",
+"author": "Leonard Cohen",
+"theme": "hope"
+},
+{
+"id": "q041",
+"text": "No act of kindness, no matter how small, is ever wasted.",
+"author": "Aesop",
+"theme": "kindness"
+},
+{
+"id": "q042",
+"text": "Enjoy the little things, for one day you may look back and realize they were the big things.",
+"author": "Robert Brault",
+"theme": "time"
+},
+{
+"id": "q043",
+"text": "There are years that ask questions and years that answer.",
+"author": "Zora Neale Hurston",
+"theme": "time"
+},
+{
+"id": "q044",
+"text": "If they don't give you a seat at the table, bring a folding chair.",
+"author": "Shirley Chisholm",
+"theme": "courage"
+},
+{
+"id": "q045",
+"text": "With the new day comes new strength and new thoughts.",
+"author": "Eleanor Roosevelt",
+"theme": "hope"
+},
+{
+"id": "q046",
+"text": "You must do the thing you think you cannot do.",
+"author": "Eleanor Roosevelt",
+"theme": "courage"
+},
+{
+"id": "q047",
+"text": "The best way out is always through.",
+"author": "Robert Frost",
+"theme": "courage"
+},
+{
+"id": "q048",
+"text": "In three words I can sum up everything I've learned about life: it goes on.",
+"author": "Robert Frost",
+"theme": "hope"
+},
+{
+"id": "q049",
+"text": "The two most powerful warriors are patience and time.",
+"author": "Leo Tolstoy",
+"theme": "time"
+},
+{
+"id": "q050",
+"text": "We are a way for the cosmos to know itself.",
+"author": "Carl Sagan",
+"theme": "wonder"
+},
+{
+"id": "q051",
+"text": "Look up at the stars and not down at your feet.",
+"author": "Stephen Hawking",
+"theme": "wonder"
+},
+{
+"id": "q052",
+"text": "Imagination is more important than knowledge.",
+"author": "Albert Einstein",
+"theme": "play"
+},
+{
+"id": "q053",
+"text": "Life is like riding a bicycle. To keep your balance, you must keep moving.",
+"author": "Albert Einstein",
+"theme": "growth"
+},
+{
+"id": "q054",
+"text": "The creative adult is the child who survived.",
+"author": "Ursula K. Le Guin",
+"theme": "play"
+},
+{
+"id": "q055",
+"text": "It is good to have an end to journey toward; but it is the journey that matters, in the end.",
+"author": "Ursula K. Le Guin",
+"theme": "growth"
+},
+{
+"id": "q056",
+"text": "Somewhere, something incredible is waiting to be known.",
+"author": "Sharon Begley",
+"theme": "wonder"
+},
+{
+"id": "q057",
+"text": "Joy is the simplest form of gratitude.",
+"author": "Karl Barth",
+"theme": "kindness"
+},
+{
+"id": "q058",
+"text": "Small deeds done are better than great deeds planned.",
+"author": "Peter Marshall",
+"theme": "growth"
+},
+{
+"id": "q059",
+"text": "It always seems impossible until it's done.",
+"author": "Nelson Mandela",
+"theme": "courage"
+},
+{
+"id": "q060",
+"text": "Wherever you go, go with all your heart.",
+"author": "Confucius",
+"theme": "courage"
+},
+{
+"id": "q061",
+"text": "It does not matter how slowly you go as long as you do not stop.",
+"author": "Confucius",
+"theme": "growth"
+},
+{
+"id": "q062",
+"text": "Lost time is never found again.",
+"author": "Benjamin Franklin",
+"theme": "time"
+},
+{
+"id": "q063",
+"text": "Owning our story and loving ourselves through that process is the bravest thing we'll ever do.",
+"author": "Brené Brown",
+"theme": "courage"
+},
+{
+"id": "q064",
+"text": "The wound is the place where the light enters you.",
+"author": "Rumi",
+"theme": "hope"
+},
+{
+"id": "q065",
+"text": "Happiness is not something ready made. It comes from your own actions.",
+"author": "Dalai Lama",
+"theme": "growth"
+},
+{
+"id": "q066",
+"text": "Limits, like fears, are often just an illusion.",
+"author": "Michael Jordan",
+"theme": "courage"
+},
+{
+"id": "q067",
+"text": "Act as if what you do makes a difference. It does.",
+"author": "William James",
+"theme": "kindness"
+},
+{
+"id": "q068",
+"text": "Today can be small and still be good.",
+"author": "Kairos",
+"theme": "calm"
+},
+{
+"id": "q069",
+"text": "Water the thing you want to grow.",
+"author": "Kairos",
+"theme": "growth"
+},
+{
+"id": "q070",
+"text": "Future you is quietly cheering for present you.",
+"author": "Kairos",
+"theme": "hope"
+},
+{
+"id": "q071",
+"text": "You don't have to earn rest.",
+"author": "Kairos",
+"theme": "calm"
+},
+{
+"id": "q072",
+"text": "Tiny counts. Tiny always counts.",
+"author": "Kairos",
+"theme": "growth"
+},
+{
+"id": "q073",
+"text": "Be the reason someone's notifications feel kind today.",
+"author": "Kairos",
+"theme": "kindness"
+},
+{
+"id": "q074",
+"text": "A new word is a new window.",
+"author": "Kairos",
+"theme": "learning"
+},
+{
+"id": "q075",
+"text": "Curiosity first. Confidence follows.",
+"author": "Kairos",
+"theme": "learning"
+},
+{
+"id": "q076",
+"text": "Some days you bloom; some days you grow roots. Both are growing.",
+"author": "Kairos",
+"theme": "growth"
+},
+{
+"id": "q077",
+"text": "Play is not a break from life. It's part of it.",
+"author": "Kairos",
+"theme": "play"
+},
+{
+"id": "q078",
+"text": "Softness is not weakness. It takes strength to stay gentle.",
+"author": "Kairos",
+"theme": "kindness"
+},
+{
+"id": "q079",
+"text": "Drink some water. Unclench your jaw. You're doing better than you think.",
+"author": "Kairos",
+"theme": "calm"
+},
+{
+"id": "q080",
+"text": "The moment you're in is the only one you can paint.",
+"author": "Kairos",
+"theme": "time"
+}
+]

@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "updated": "2026-10-20",
+  "runners": {
+    "joiplay": {
+      "name": "JoiPlay",
+      "packages": [
+        "cyou.joiplay.joiplay",
+        "com.joiplay.joiplay"
+      ],
+      "homepage": "https://joiplay.net/"
+    },
+    "kirin": {
+      "name": "Kirin",
+      "packages": [],
+      "homepage": "https://www.rebornevo.com/rejuvdown/"
+    }
+  },
+  "games": [
+    {
+      "id": "word-bloom",
+      "title": "Word Bloom",
+      "author": "Kairos Originals",
+      "kind": "original",
+      "accent": "mint",
+      "tagline": "Guess the five-letter word. Watch it bloom.",
+      "description": "Six tries to find a five-letter word from the Kairos garden. Every guess paints the tiles: mint if the letter is home, butter if it's somewhere else, grey if it's not in the word. Win and the word's meaning blooms open.",
+      "tags": [
+        "word",
+        "daily",
+        "cozy"
+      ],
+      "sizeLabel": "Built in"
+    },
+    {
+      "id": "pip-raindrops",
+      "title": "Pip's Raindrops",
+      "author": "Kairos Originals",
+      "kind": "original",
+      "accent": "sky",
+      "tagline": "Catch the good drops. Dodge the ink.",
+      "description": "Slide Pip left and right to catch falling paint drops. Golden sparkles are worth extra. Ink blots make Pip grumpy — three and the round is over. It gets a little faster the longer you last.",
+      "tags": [
+        "arcade",
+        "one-thumb"
+      ],
+      "sizeLabel": "Built in"
+    },
+    {
+      "id": "memory-pond",
+      "title": "Memory Pond",
+      "author": "Kairos Originals",
+      "kind": "original",
+      "accent": "lilac",
+      "tagline": "Match words with their meanings.",
+      "description": "Lily pads hide words and their meanings. Flip two at a time and match each word to what it means. Fewer flips, more stars. Quietly sneaky vocabulary practice.",
+      "tags": [
+        "memory",
+        "vocabulary"
+      ],
+      "sizeLabel": "Built in"
+    },
+    {
+      "id": "pokerogue",
+      "title": "PokéRogue",
+      "author": "PokéRogue team (fan project)",
+      "kind": "web",
+      "accent": "peach",
+      "tagline": "A Pokémon roguelite you play in the browser.",
+      "description": "A free, open-source fan-made roguelite: build a team, battle wave after wave, and see how far you get. Runs right here in Kairos — no download needed. Progress saves to a PokéRogue account if you make one.",
+      "tags": [
+        "pokémon",
+        "roguelite",
+        "no download"
+      ],
+      "url": "https://pokerogue.net/",
+      "homepage": "https://pokerogue.net/",
+      "runner": "browser",
+      "sizeLabel": "Plays online"
+    },
+    {
+      "id": "showdown",
+      "title": "Pokémon Showdown",
+      "author": "Smogon / Showdown contributors",
+      "kind": "web",
+      "accent": "rose",
+      "tagline": "The classic online battle simulator.",
+      "description": "Build teams and battle other trainers in real time. The fan-run battle simulator competitive players use. Opens here in Kairos.",
+      "tags": [
+        "pokémon",
+        "battles",
+        "online"
+      ],
+      "url": "https://play.pokemonshowdown.com/",
+      "homepage": "https://pokemonshowdown.com/",
+      "runner": "browser",
+      "sizeLabel": "Plays online"
+    },
+    {
+      "id": "reborn",
+      "title": "Pokémon Reborn",
+      "author": "Amethyst & the Reborn team",
+      "kind": "guide",
+      "accent": "lilac",
+      "tagline": "A gritty, story-rich fan game in a ruined city.",
+      "description": "A full-length Pokémon Essentials fan game with a dark, ambitious story and famously tough battles. The team publishes official builds, including a JoiPlay build for Android.",
+      "tags": [
+        "pokémon",
+        "rpg",
+        "hard",
+        "complete"
+      ],
+      "homepage": "https://www.rebornevo.com/pr/download/",
+      "runner": "joiplay",
+      "sizeLabel": "~700 MB",
+      "steps": [
+        "Open the official download page and grab the JoiPlay build.",
+        "Install JoiPlay and its RPG Maker plugin (see the JoiPlay page).",
+        "Unzip the game, then add the folder as a new game in JoiPlay."
+      ]
+    },
+    {
+      "id": "rejuvenation",
+      "title": "Pokémon Rejuvenation",
+      "author": "Jan & the Rejuvenation team",
+      "kind": "guide",
+      "accent": "mint",
+      "tagline": "A huge adventure with a time-bending story.",
+      "description": "Another Reborn Evolved project: a long, ambitious story across many chapters. The official page lists builds for JoiPlay and Kirin (Android); the team recommends Kirin on Android.",
+      "tags": [
+        "pokémon",
+        "rpg",
+        "episodic"
+      ],
+      "homepage": "https://www.rebornevo.com/rejuvdown/",
+      "runner": "joiplay",
+      "sizeLabel": "Several GB",
+      "steps": [
+        "Open the official download page and pick the Android build (Kirin or JoiPlay).",
+        "Follow the page's notes for your launcher — Kirin is the team's recommendation.",
+        "Add the unzipped folder in your launcher and start playing."
+      ]
+    },
+    {
+      "id": "insurgence",
+      "title": "Pokémon Insurgence",
+      "author": "Insurgence team",
+      "kind": "guide",
+      "accent": "peach",
+      "tagline": "Cults, Delta Pokémon and a wild open region.",
+      "description": "A long-running fan game with original Delta-species Pokémon, a darker storyline and online features. Choose the Full Download on the official site; it runs on Android through JoiPlay.",
+      "tags": [
+        "pokémon",
+        "rpg",
+        "delta forms"
+      ],
+      "homepage": "https://p-insurgence.com/",
+      "runner": "joiplay",
+      "sizeLabel": "~1 GB",
+      "steps": [
+        "Open the official site and choose Downloads → Full Download (not the installer).",
+        "Install JoiPlay with its RPG Maker plugin.",
+        "Unzip and add the game folder in JoiPlay."
+      ]
+    },
+    {
+      "id": "infinite-fusion",
+      "title": "Pokémon Infinite Fusion",
+      "author": "Schrroms & the PIF team",
+      "kind": "guide",
+      "accent": "butter",
+      "tagline": "Fuse any two Pokémon. Yes, any two.",
+      "description": "Explore Kanto and fuse Pokémon into hundreds of thousands of combinations with community-drawn sprites. There's no official website — the only official sources are the PokéCommunity thread and the team's Discord. Be careful of look-alike download sites.",
+      "tags": [
+        "pokémon",
+        "fusion",
+        "community art"
+      ],
+      "homepage": "https://www.pokecommunity.com/threads/v6-7-pok%C3%A9mon-infinite-fusion-new-pok%C3%A9mon-character-customization-and-more.347883/",
+      "runner": "joiplay",
+      "sizeLabel": "~6 GB free space",
+      "steps": [
+        "Open the official PokéCommunity thread or the team Discord (discord.gg/infinitefusion) for the current download.",
+        "Install JoiPlay with the RPG Maker plugin version the guide recommends.",
+        "Unzip and add the folder in JoiPlay. Allow plenty of storage."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,282 @@
+[
+{
+"id": "j001",
+"title": "Step outside and find three different greens",
+"detail": "Leaves, moss, a door — anything counts.",
+"kind": "notice",
+"minutes": 5
+},
+{
+"id": "j002",
+"title": "Drink a full glass of water, slowly",
+"detail": "Pip says thank you, on behalf of your cells.",
+"kind": "rest",
+"minutes": 2
+},
+{
+"id": "j003",
+"title": "Send someone a \"this made me think of you\"",
+"detail": "A song, a meme, a memory. No reason needed.",
+"kind": "connect",
+"minutes": 3
+},
+{
+"id": "j004",
+"title": "Stretch like a cat who just woke up",
+"detail": "Arms, back, the big yawn. Commit to it.",
+"kind": "move",
+"minutes": 2
+},
+{
+"id": "j005",
+"title": "Doodle the view from where you're sitting",
+"detail": "Ugly doodles are the best doodles.",
+"kind": "create",
+"minutes": 10
+},
+{
+"id": "j006",
+"title": "Put on one song and actually listen",
+"detail": "No scrolling. Just the song.",
+"kind": "rest",
+"minutes": 4
+},
+{
+"id": "j007",
+"title": "Write down one thing you're quietly proud of",
+"detail": "Small wins are still wins.",
+"kind": "notice",
+"minutes": 3
+},
+{
+"id": "j008",
+"title": "Make your bed like a hotel would",
+"detail": "Future you will flop into it gratefully.",
+"kind": "rest",
+"minutes": 3
+},
+{
+"id": "j009",
+"title": "Go on a five-minute \"nothing walk\"",
+"detail": "No destination, no podcast. Just walk.",
+"kind": "move",
+"minutes": 5
+},
+{
+"id": "j010",
+"title": "Text a friend a question you've never asked them",
+"detail": "\"What's a smell that makes you happy?\"",
+"kind": "connect",
+"minutes": 3
+},
+{
+"id": "j011",
+"title": "Learn how to say \"thank you\" in a new language",
+"detail": "Then use it today.",
+"kind": "learn",
+"minutes": 5
+},
+{
+"id": "j012",
+"title": "Open a window and take ten slow breaths",
+"detail": "In through the nose, out like you're fogging a mirror.",
+"kind": "rest",
+"minutes": 3
+},
+{
+"id": "j013",
+"title": "Tidy one tiny space",
+"detail": "One drawer. One shelf. One corner.",
+"kind": "create",
+"minutes": 10
+},
+{
+"id": "j014",
+"title": "Look at the sky for one whole minute",
+"detail": "Clouds, stars, blank blue — all good.",
+"kind": "notice",
+"minutes": 1
+},
+{
+"id": "j015",
+"title": "Compliment someone on something they chose",
+"detail": "Their playlist, their jacket, their idea.",
+"kind": "connect",
+"minutes": 2
+},
+{
+"id": "j016",
+"title": "Dance to one song, badly, on purpose",
+"detail": "No one is watching. Pip is cheering.",
+"kind": "move",
+"minutes": 4
+},
+{
+"id": "j017",
+"title": "Make a tiny list of five things you like right now",
+"detail": "Fast. No thinking. Go.",
+"kind": "notice",
+"minutes": 3
+},
+{
+"id": "j018",
+"title": "Water a plant — or adopt one",
+"detail": "Even a basil from the shop counts.",
+"kind": "create",
+"minutes": 5
+},
+{
+"id": "j019",
+"title": "Read one poem out loud",
+"detail": "Your voice deserves good words.",
+"kind": "learn",
+"minutes": 5
+},
+{
+"id": "j020",
+"title": "Take a photo of something ordinary that looks beautiful",
+"detail": "Light on a wall, steam from a cup.",
+"kind": "notice",
+"minutes": 3
+},
+{
+"id": "j021",
+"title": "Eat one piece of fruit slowly and properly",
+"detail": "Notice the first bite.",
+"kind": "rest",
+"minutes": 5
+},
+{
+"id": "j022",
+"title": "Write a two-line note to future you",
+"detail": "Or seal it in a capsule.",
+"kind": "create",
+"minutes": 3
+},
+{
+"id": "j023",
+"title": "Hum while you do the dishes",
+"detail": "Dishes become a concert.",
+"kind": "play",
+"minutes": 5
+},
+{
+"id": "j024",
+"title": "Do ten jumping jacks and laugh at yourself",
+"detail": "The laugh is the point.",
+"kind": "move",
+"minutes": 2
+},
+{
+"id": "j025",
+"title": "Ask someone older about their favourite memory",
+"detail": "Then actually listen.",
+"kind": "connect",
+"minutes": 10
+},
+{
+"id": "j026",
+"title": "Draw Pip",
+"detail": "Wobbly is correct.",
+"kind": "create",
+"minutes": 5
+},
+{
+"id": "j027",
+"title": "Look up why the sky is blue",
+"detail": "Rayleigh scattering is a delight.",
+"kind": "learn",
+"minutes": 5
+},
+{
+"id": "j028",
+"title": "Leave a kind review for a small shop or creator",
+"detail": "It makes their whole week.",
+"kind": "connect",
+"minutes": 4
+},
+{
+"id": "j029",
+"title": "Put your phone in another room for twenty minutes",
+"detail": "See what you reach for instead.",
+"kind": "rest",
+"minutes": 20
+},
+{
+"id": "j030",
+"title": "Find a word you love the sound of and say it three times",
+"detail": "Mellifluous. Mellifluous. Mellifluous.",
+"kind": "learn",
+"minutes": 1
+},
+{
+"id": "j031",
+"title": "Make your favourite warm drink and hold it with both hands",
+"detail": "That's it. That's the activity.",
+"kind": "rest",
+"minutes": 5
+},
+{
+"id": "j032",
+"title": "Write the names of three people who helped you this year",
+"detail": "Bonus: tell one of them.",
+"kind": "connect",
+"minutes": 4
+},
+{
+"id": "j033",
+"title": "Walk somewhere you've never walked before",
+"detail": "A new street, a new aisle, a new path.",
+"kind": "move",
+"minutes": 10
+},
+{
+"id": "j034",
+"title": "Play one round of a Kairos game",
+"detail": "Word Bloom is waiting.",
+"kind": "play",
+"minutes": 5
+},
+{
+"id": "j035",
+"title": "Fold a paper plane and throw it as far as you can",
+"detail": "Measure the flight. Beat it.",
+"kind": "play",
+"minutes": 3
+},
+{
+"id": "j036",
+"title": "Write down a worry, then fold the paper in half",
+"detail": "Out of your head, onto the page.",
+"kind": "rest",
+"minutes": 3
+},
+{
+"id": "j037",
+"title": "Notice five sounds around you",
+"detail": "Near, far, loud, soft, surprising.",
+"kind": "notice",
+"minutes": 2
+},
+{
+"id": "j038",
+"title": "Cook or assemble something colourful",
+"detail": "Eat the rainbow, or at least three colours of it.",
+"kind": "create",
+"minutes": 15
+},
+{
+"id": "j039",
+"title": "Learn one fun fact and tell someone",
+"detail": "Octopuses have three hearts.",
+"kind": "learn",
+"minutes": 3
+},
+{
+"id": "j040",
+"title": "Smile at your reflection like you mean it",
+"detail": "It's weird. Do it anyway.",
+"kind": "play",
+"minutes": 1
+}
+]

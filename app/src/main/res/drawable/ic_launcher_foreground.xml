@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Kairos mark: a drop of paint holding a four-point sparkle — the right moment, caught. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <!-- Kairos aperture: an open attentive form and a six-ray moment mark. -->
-    <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#F6F4EF"
-        android:strokeWidth="11"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M31,73C21,64 18,50 22,38C26,25 38,17 52,17C67,17 79,27 83,41C87,54 82,66 72,74" />
-    <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#F6F4EF"
-        android:strokeWidth="11"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M53,66L53,87L73,87" />
-    <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#AEB8FF"
-        android:strokeWidth="6"
-        android:strokeLineCap="round"
-        android:pathData="M53,30L53,56M42,36L64,51M42,51L64,36" />
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- soft contact shadow -->
+    <path android:fillColor="#221D2640" android:pathData="M54,84m-15,0a15,3 0,1 1,30 0a15,3 0,1 1,-30 0" />
+    <!-- droplet -->
+    <path android:pathData="M54,25 C60.5,35 75,45.5 75,61 A21,21 0 1,1 33,61 C33,45.5 47.5,35 54,25 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="54" android:startY="25" android:endX="54" android:endY="82">
+                <item android:offset="0" android:color="#FFE4F1FF" />
+                <item android:offset="0.5" android:color="#FF8FC1F7" />
+                <item android:offset="1" android:color="#FF3E8EDE" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- pigment pooling at the rim -->
+    <path android:strokeColor="#552A6FB8" android:strokeWidth="1.2"
+        android:pathData="M54,25 C60.5,35 75,45.5 75,61 A21,21 0 1,1 33,61 C33,45.5 47.5,35 54,25 Z" />
+    <!-- gloss -->
+    <path android:fillColor="#AAFFFFFF" android:pathData="M42.5,52.5m-4,-2.5a4.5,2.6 -35,1 1,9 5a4.5,2.6 -35,1 1,-9 -5" />
+    <!-- the moment: four-point sparkle -->
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M54,51 Q55.6,60.4 65,62 Q55.6,63.6 54,73 Q52.4,63.6 43,62 Q52.4,60.4 54,51 Z" />
+    <path android:fillColor="#FFFFE07A" android:pathData="M54,62m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
 </vector>
