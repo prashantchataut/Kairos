@@ -50,6 +50,7 @@ import com.kairos.app.ui.components.PrimaryButton
 import com.kairos.app.ui.components.SecondaryButton
 import com.kairos.app.ui.components.Status
 import com.kairos.app.ui.components.pressable
+import com.kairos.app.ui.components.SkyTail
 import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.feature.detail.TopBar
 import com.kairos.app.ui.theme.Gap
@@ -121,7 +122,7 @@ fun CuratorScreen(onBack: () -> Unit) {
     var custom by remember { mutableStateOf("") }
     val s = settings ?: return
     Column(Modifier.fillMaxSize().background(p.canvas).verticalScroll(rememberScrollState()).imePadding().navigationBarsPadding().padding(bottom = Gap.huge)) {
-        Column(Modifier.fillMaxWidth().sky().padding(bottom = Gap.xxl)) {
+        Column(Modifier.fillMaxWidth().sky().padding(bottom = SkyTail)) {
             TopBar(onBack, onSky = true)
             Column(Modifier.padding(horizontal = Gap.gutter)) {
                 Spacer(Modifier.height(Gap.md))

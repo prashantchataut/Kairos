@@ -23,6 +23,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -70,7 +71,7 @@ private val sans = TextStyle(fontFamily = Sans)
 /** Every card is laid out on a 360dp-wide artboard; the studio scales it, the exporter renders it at 1080px. */
 @Composable
 fun ShareCard(c: CardContent, t: Template, h: Hue, modifier: Modifier = Modifier) {
-    Box(modifier) {
+    Box(modifier.clipToBounds()) {
         when (t) {
             Template.Sky -> SkyCard(c, h)
             Template.Paper -> PaperCard(c, h)
@@ -115,7 +116,7 @@ private fun QuoteBlock(c: CardContent, ink: Color, soft: Color, center: Boolean)
 /** Sky: the app's own hero, a blue gradient fading to white. */
 @Composable
 private fun SkyCard(c: CardContent, h: Hue) {
-    Box(Modifier.fillMaxSize().background(Brush.verticalGradient(0f to h.a, 0.55f to h.b, 1f to Color(0xFFF6F8FB)))) {
+    Box(Modifier.fillMaxSize().background(Brush.verticalGradient(0f to h.a, 0.7f to h.b, 1f to androidx.compose.ui.graphics.lerp(h.b, Color.White, 0.45f)))) {
         Canvas(Modifier.fillMaxSize()) {
             drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = 0.3f), Color.Transparent), Offset(size.width * 0.85f, size.height * 0.1f), size.width * 0.6f), size.width * 0.6f, Offset(size.width * 0.85f, size.height * 0.1f))
         }

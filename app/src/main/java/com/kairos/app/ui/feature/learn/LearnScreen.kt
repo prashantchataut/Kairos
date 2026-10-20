@@ -68,7 +68,7 @@ import com.kairos.app.ui.components.PrimaryButton
 import com.kairos.app.ui.components.Progress
 import com.kairos.app.ui.components.Segmented
 import com.kairos.app.ui.components.pressable
-import com.kairos.app.ui.components.sky
+import com.kairos.app.ui.components.skyPanel
 import com.kairos.app.ui.nav.shared
 import com.kairos.app.ui.theme.Gap
 import com.kairos.app.ui.theme.K
@@ -158,7 +158,7 @@ private fun ExploreBox(s: LearnState, onExplore: (String) -> Unit, openAiSetting
         Modifier
             .fillMaxWidth()
             .clip(Radius.card)
-            .sky()
+            .skyPanel()
             .padding(Gap.lg)
     ) {
         Text("Ask for words about…", style = K.type.label, color = p.onSky)

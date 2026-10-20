@@ -107,7 +107,8 @@ class RefillWorker(context: Context, params: WorkerParameters) : CoroutineWorker
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
                 .build()
-            WorkManager.getInstance(context).enqueueUniqueWork("refill", ExistingWorkPolicy.KEEP, request)
+            // Never let background scheduling break a foreground action.
+            runCatching { WorkManager.getInstance(context).enqueueUniqueWork("refill", ExistingWorkPolicy.KEEP, request) }
         }
     }
 }

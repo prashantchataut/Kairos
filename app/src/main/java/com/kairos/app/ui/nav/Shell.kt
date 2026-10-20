@@ -58,8 +58,8 @@ fun Modifier.frosted(shape: androidx.compose.ui.graphics.Shape = CircleShape): M
     val p = K.colors
     val haze = LocalHaze.current
     clip(shape).then(
-        if (haze != null) Modifier.hazeChild(haze, HazeStyle(backgroundColor = p.canvas, tint = HazeTint(p.surface.copy(alpha = 0.72f)), blurRadius = 24.dp, noiseFactor = 0f, fallbackTint = HazeTint(p.surface.copy(alpha = 0.96f))))
-        else Modifier.background(p.surface.copy(alpha = 0.96f))
+        if (haze != null) Modifier.hazeChild(haze, HazeStyle(backgroundColor = p.canvas, tint = HazeTint(p.surface.copy(alpha = 0.8f)), blurRadius = 24.dp, noiseFactor = 0f, fallbackTint = HazeTint(p.surface)))
+        else Modifier.background(p.surface)
     ).border(1.dp, p.line.copy(alpha = 0.7f), shape)
 }
 

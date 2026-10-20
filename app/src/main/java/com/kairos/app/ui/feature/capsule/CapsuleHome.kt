@@ -45,6 +45,7 @@ import com.kairos.app.ui.components.Card
 import com.kairos.app.ui.components.Icons
 import com.kairos.app.ui.components.PrimaryButton
 import com.kairos.app.ui.components.pressable
+import com.kairos.app.ui.components.SkyTail
 import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.nav.shared
 import com.kairos.app.ui.theme.Gap
@@ -71,7 +72,7 @@ fun CapsuleHome(openCompose: () -> Unit, openLetter: (Long) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(Gap.md), verticalArrangement = Arrangement.spacedBy(Gap.md),
     ) {
         item(span = { GridItemSpan(2) }) {
-            Column(Modifier.fillMaxWidth().sky().windowInsetsPadding(WindowInsets.statusBars).padding(horizontal = Gap.gutter).padding(top = Gap.xl, bottom = Gap.xxl)) {
+            Column(Modifier.fillMaxWidth().sky().windowInsetsPadding(WindowInsets.statusBars).padding(horizontal = Gap.gutter).padding(top = Gap.xl, bottom = SkyTail)) {
                 Text("Letters to", style = K.type.serifLarge.copy(fontSize = 48.sp, lineHeight = 50.sp), color = p.onSky)
                 Text("future you", style = K.type.serifLarge.copy(fontSize = 48.sp, lineHeight = 50.sp), color = p.onSkySoft)
                 Spacer(Modifier.height(Gap.md))

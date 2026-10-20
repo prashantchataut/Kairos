@@ -64,6 +64,7 @@ import com.kairos.app.ui.components.Segmented
 import com.kairos.app.ui.components.Shimmer
 import com.kairos.app.ui.components.Status
 import com.kairos.app.ui.components.pressable
+import com.kairos.app.ui.components.SkyTail
 import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.nav.shared
 import com.kairos.app.ui.theme.Gap
@@ -104,7 +105,7 @@ fun TodayScreen(
                     .fillMaxWidth()
                     .sky()
                     .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(bottom = Gap.xxl)
+                    .padding(bottom = SkyTail)
             ) {
                 TopRow(s.name, openYou)
                 Spacer(Modifier.height(Gap.lg))
@@ -197,7 +198,7 @@ private fun WeekArc(active: Set<Long>) {
 @Composable
 private fun Hero(s: TodayState, mode: Int, openAiSettings: () -> Unit, retry: () -> Unit, openWord: (String) -> Unit, openQuote: (String) -> Unit) {
     val p = K.colors
-    Box(Modifier.fillMaxWidth().height(250.dp).padding(horizontal = Gap.gutter), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxWidth().height(232.dp).padding(horizontal = Gap.gutter), contentAlignment = Alignment.Center) {
         val t = s.today
         when {
             t != null -> AnimatedContent(

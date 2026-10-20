@@ -82,6 +82,7 @@ import com.kairos.app.ui.components.Chip
 import com.kairos.app.ui.components.Icons
 import com.kairos.app.ui.components.PrimaryButton
 import com.kairos.app.ui.components.pressable
+import com.kairos.app.ui.components.SkyTail
 import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.feature.detail.TopBar
 import com.kairos.app.ui.feature.today.tint
@@ -184,7 +185,7 @@ fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit) {
 
     Box(Modifier.fillMaxSize().background(p.canvas)) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding().padding(bottom = 120.dp)) {
-            Column(Modifier.fillMaxWidth().sky().padding(bottom = Gap.xxl)) {
+            Column(Modifier.fillMaxWidth().sky().padding(bottom = SkyTail)) {
                 TopBar({ if (s.dirty) confirm = true else onBack() }, onSky = true)
                 Column(Modifier.padding(horizontal = Gap.gutter)) {
                     Spacer(Modifier.height(Gap.md))

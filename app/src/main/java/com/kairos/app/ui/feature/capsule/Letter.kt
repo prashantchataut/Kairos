@@ -75,6 +75,7 @@ import com.kairos.app.ui.components.RoundIcon
 import com.kairos.app.ui.components.SecondaryButton
 import com.kairos.app.ui.components.Status
 import com.kairos.app.ui.components.pressable
+import com.kairos.app.ui.components.SkyTail
 import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.feature.detail.TopBar
 import com.kairos.app.ui.feature.today.tint
@@ -132,7 +133,7 @@ private fun Sealed(cap: CapsuleWithAttachments, now: Long) {
     val scope = rememberCoroutineScope()
     var pokes by remember { mutableIntStateOf(0) }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding()) {
-        Column(Modifier.fillMaxWidth().sky().padding(top = 96.dp, bottom = Gap.xxl), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(Modifier.fillMaxWidth().sky().padding(top = 96.dp, bottom = SkyTail), horizontalAlignment = Alignment.CenterHorizontally) {
             Envelope(
                 p.tint(tintOf(c.tint)),
                 modifier = Modifier.size(width = 230.dp, height = 158.dp).shared("capsule-${c.id}").graphicsLayer { rotationZ = wiggle.value }
@@ -219,7 +220,7 @@ private fun Opened(cap: CapsuleWithAttachments, onReply: (String) -> Unit, onWri
     var reply by rememberSaveable(c.id) { mutableStateOf(c.reply) }
     DisposableEffect(Unit) { onDispose { player.stop() } }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding().navigationBarsPadding().padding(bottom = Gap.huge)) {
-        Column(Modifier.fillMaxWidth().sky().padding(top = 92.dp, bottom = Gap.xxl).padding(horizontal = Gap.gutter)) {
+        Column(Modifier.fillMaxWidth().sky().padding(top = 92.dp, bottom = SkyTail).padding(horizontal = Gap.gutter)) {
             Text("From you, ${Fmt.ago(c.createdAt)}", style = K.type.label, color = p.onSkySoft)
             Text(c.title.ifBlank { Fmt.ordinalDate(Fmt.localDate(c.createdAt)) }, style = K.type.serifLarge, color = p.onSky)
         }

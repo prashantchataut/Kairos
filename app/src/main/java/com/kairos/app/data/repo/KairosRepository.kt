@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -196,7 +196,9 @@ class KairosRepository(
         }
     }
 
-    fun observeToday(day: Long): Flow<Today?> = db.days().observe(day).filterNotNull().flatMapLatest { d ->
+    fun observeToday(day: Long): Flow<Today?> = db.days().observe(day).flatMapLatest { d ->
+        // Emit null straight away while the day isn't prepared, so screens can show their state.
+        if (d == null) return@flatMapLatest flowOf(null)
         combine(db.words().observe(d.wordId), db.quotes().observe(d.quoteId)) { w, q ->
             if (w == null || q == null) null else Today(day, w, d.wordReason, q, d.quoteReason, d.spark, d.sparkDone)
         }

@@ -70,6 +70,7 @@ import com.kairos.app.ui.components.Segmented
 import com.kairos.app.ui.components.Status
 import com.kairos.app.ui.components.Wordmark
 import com.kairos.app.ui.components.pressable
+import com.kairos.app.ui.components.SkyTail
 import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.feature.detail.TopBar
 import com.kairos.app.ui.feature.today.tint
@@ -104,7 +105,7 @@ fun YouScreen(openCurator: () -> Unit, openInterests: () -> Unit) {
     }
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 120.dp)) {
         item {
-            Column(Modifier.fillMaxWidth().sky().windowInsetsPadding(WindowInsets.statusBars).padding(horizontal = Gap.gutter).padding(top = Gap.xl, bottom = Gap.xxl)) {
+            Column(Modifier.fillMaxWidth().sky().windowInsetsPadding(WindowInsets.statusBars).padding(horizontal = Gap.gutter).padding(top = Gap.xl, bottom = SkyTail)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(56.dp).clip(CircleShape).background(p.glassOnSky).border(1.dp, p.glassOnSkyRim, CircleShape), contentAlignment = Alignment.Center) {
                         Text(y.s.name.take(1).uppercase().ifBlank { "K" }, style = K.type.serifLarge.copy(fontSize = 28.sp), color = p.onSky)
@@ -112,7 +113,8 @@ fun YouScreen(openCurator: () -> Unit, openInterests: () -> Unit) {
                     Spacer(Modifier.width(Gap.lg))
                     Column {
                         Text(y.s.name.ifBlank { "You" }, style = K.type.display, color = p.onSky)
-                        Text("${y.moments.map { it.epochDay }.distinct().size} days with a good moment", style = K.type.label, color = p.onSkySoft)
+                        val days = y.moments.map { it.epochDay }.distinct().size
+                        Text(if (days == 0) "Your first good moment is waiting" else "$days ${if (days == 1) "day" else "days"} with a good moment", style = K.type.label, color = p.onSkySoft)
                     }
                 }
                 Spacer(Modifier.height(Gap.xl))

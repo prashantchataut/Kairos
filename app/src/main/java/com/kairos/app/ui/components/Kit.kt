@@ -88,12 +88,24 @@ fun Modifier.pressable(
 @Composable
 private fun MutableInteractionSourceRemembered() = androidx.compose.runtime.remember { MutableInteractionSource() }
 
-/** The sky: a vertical gradient into the canvas with two soft light orbs for depth. */
+/**
+ * The sky: a vertical gradient into the canvas with two soft light orbs for depth. It stays blue
+ * through the content and only melts into the canvas in the last stretch, so sky sections end
+ * with [SkyTail] of breathing room.
+ */
+val SkyTail = 64.dp
+
+/** A solid sky panel (no fade), for cards that sit on the canvas. */
+fun Modifier.skyPanel(): Modifier = composed {
+    val p = K.colors
+    background(Brush.verticalGradient(listOf(p.skyTop, androidx.compose.ui.graphics.lerp(p.skyTop, p.skyMid, 0.7f))))
+}
+
 fun Modifier.sky(height: Dp? = null): Modifier = composed {
     val p = K.colors
     drawBehind {
         val h = height?.toPx() ?: size.height
-        drawRect(Brush.verticalGradient(0f to p.skyTop, 0.45f to p.skyMid, 0.8f to p.skyFade, 1f to p.canvas, startY = 0f, endY = h), size = size.copy(height = h))
+        drawRect(Brush.verticalGradient(0f to p.skyTop, 0.55f to p.skyMid, 0.84f to androidx.compose.ui.graphics.lerp(p.skyMid, p.skyFade, 0.45f), 1f to p.canvas, startY = 0f, endY = h), size = size.copy(height = h))
         drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = if (p.isDark) 0.10f else 0.28f), Color.Transparent), Offset(size.width * 0.85f, h * 0.12f), size.width * 0.55f), size.width * 0.55f, Offset(size.width * 0.85f, h * 0.12f))
         drawCircle(Brush.radialGradient(listOf(Color(0xFFBFD7FF).copy(alpha = if (p.isDark) 0.08f else 0.35f), Color.Transparent), Offset(size.width * 0.1f, h * 0.5f), size.width * 0.6f), size.width * 0.6f, Offset(size.width * 0.1f, h * 0.5f))
     }
@@ -218,7 +230,7 @@ fun Segmented(options: List<String>, selected: Int, onSelect: (Int) -> Unit, mod
                 .fillMaxHeight()
                 .shadow(if (onSky) 0.dp else 4.dp, CircleShape, ambientColor = p.shadow, spotColor = p.shadow)
                 .clip(CircleShape)
-                .background(if (onSky) Color.White.copy(alpha = 0.32f) else p.surface)
+                .background(if (onSky) Color.White.copy(alpha = 0.32f) else if (p.isDark) p.line else p.surface)
         )
         Row(Modifier.fillMaxSize()) {
             options.forEachIndexed { i, label ->

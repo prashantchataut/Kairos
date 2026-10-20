@@ -47,6 +47,7 @@ import com.kairos.app.ui.components.Icons
 import com.kairos.app.ui.components.PrimaryButton
 import com.kairos.app.ui.components.RoundIcon
 import com.kairos.app.ui.components.Status
+import com.kairos.app.ui.components.SkyTail
 import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.feature.today.WordFeedback
 import com.kairos.app.ui.nav.shared
@@ -89,7 +90,7 @@ fun WordScreen(id: String, onBack: () -> Unit, onShare: () -> Unit, onPractice: 
     val w = word ?: return
     val p = K.colors
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().padding(bottom = Gap.huge)) {
-        Column(Modifier.fillMaxWidth().sky().padding(bottom = Gap.xxl)) {
+        Column(Modifier.fillMaxWidth().sky().padding(bottom = SkyTail)) {
             TopBar(onBack, onSky = true)
             Spacer(Modifier.height(Gap.lg))
             Text("${Topics.wordLabel(w.category)}, ${Topics.levels[(w.level - 1).coerceIn(0, 4)].lowercase()}", style = K.type.label, color = p.onSkySoft, modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -164,7 +165,7 @@ fun QuoteScreen(id: String, onBack: () -> Unit, onShare: () -> Unit) {
     val q = quote ?: return
     val p = K.colors
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().padding(bottom = Gap.huge)) {
-        Column(Modifier.fillMaxWidth().sky().padding(bottom = Gap.xxl)) {
+        Column(Modifier.fillMaxWidth().sky().padding(bottom = SkyTail)) {
             TopBar(onBack, onSky = true)
             Spacer(Modifier.height(Gap.xl))
             Text("“${q.text}”", style = K.type.quote.copy(fontSize = 32.sp, lineHeight = 40.sp), color = p.onSky, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(horizontal = Gap.xl))

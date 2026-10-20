@@ -1,81 +1,89 @@
 # Kairos
 
-**A small good moment, every day.**
+**A word, a thought and a small good thing, written for you every day.**
 
-Kairos (καιρός) is the Greek word for *the opportune moment*. The app gives you one lovely word,
-one thought worth keeping and one tiny good thing to do each day, plus a time capsule for
-letters to future you. It's local-first: no account, no ads, nothing leaves your phone.
+Kairos (καιρός) is Greek for *the right moment*. Each day it gives you one word worth knowing,
+one thought worth keeping and one small good thing to do. All of it is written by an AI curator
+that learns from what you save, skip and practise. There's also a time capsule for letters to
+future you.
 
 <p>
 <img src="docs/screenshots/01_today.png" width="200" />
-<img src="docs/screenshots/03_library.png" width="200" />
-<img src="docs/screenshots/04_capsule.png" width="200" />
-<img src="docs/screenshots/02_today_dusk.png" width="200" />
+<img src="docs/screenshots/03_learn.png" width="200" />
+<img src="docs/screenshots/05_capsule.png" width="200" />
+<img src="docs/screenshots/02_today_dark.png" width="200" />
 </p>
 
-## What's inside
+## Nothing is bundled: the curator writes everything
+
+Kairos ships with **no word lists and no quote lists**. Every word, quote, small good thing and
+capsule prompt is generated for one person, in real time, through [OpenRouter](https://openrouter.ai).
+Each person adds their own key in the app (onboarding or You → Curator). It's encrypted on the
+device and only ever sent to OpenRouter.
+
+How the recommendation loop works:
+
+1. **Signals.** Kairos records what you save, what you mark *too easy*, *too hard*, *more like this*
+   or *not for me*, which words you keep forgetting in practice, which authors and themes you keep,
+   your recent moods, your interests and level, and the time of day.
+2. **Curator** (`engine/Curator.kt`). Turns those signals into a profile and asks the model
+   (structured JSON output) for a batch of new words, quotes, small good things and prompts.
+   Anything you've already seen goes into an "avoid" list.
+3. **Validation.** Every item is checked before it's stored. Invented-looking words, definitions
+   that use the word itself, missing fields, unknown categories, duplicates and bad attributions
+   are dropped.
+4. **Picker** (`engine/DailyEngine.kt`). Each day it chooses the best word and quote from your
+   personal pool, deterministically, and says why it chose them ("You keep saving quiet weather
+   words").
+5. **Refill** (`work/RefillWorker`). A background job keeps a few unseen items ready, so Today
+   opens instantly and works offline.
+6. **Ask for words about…** in Learn generates a focused batch on any topic, live.
+
+Three "too easy" votes in a row move your level up (and three "too hard" move it down). Saving a
+word enrols it in SM-2 spaced repetition.
+
+## Screens
 
 | | |
 |---|---|
-| **Today** | A word and a quote chosen for you, a mood check-in that steers the quote, a "tiny good thing" to try, and a peek at your next capsule letter. |
-| **Library** | A Pinterest-style board of 172 hand-written words (pronunciation, origin, examples, close cousins) and 111 quotes. Search, filter, save. |
-| **Practice** | Flip cards and quick quizzes scheduled with SM-2 spaced repetition, so words come back right before you'd forget them. |
-| **Card studio** | Turn any word or quote into a painted share card: 6 styles, 5 palettes, Pin/Story/Square, exported at 1080px with the Kairos postmark. |
-| **Time capsule** | Handwritten letters with photos, videos, files and voice notes, sealed with wax until a day you choose. A live countdown, a notification on the day, a seal-breaking animation, and a place to write back. |
-| **Me** | The joy jar (every good moment becomes a paint drop, with no streaks to lose), a four-week mood garden, everything you kept, and settings. |
-| **Drop** | The mascot: a watercolour water-drop who blinks, bobs, giggles when poked and wears your mood. |
+| **Today** | A sky hero with today's word or thought in large serif, glass actions (listen, save, share), an arched week strip, meaning / in use / origin, feedback for the curator, a mood check-in, a small good thing, a review nudge and your next capsule letter. |
+| **Learn** | "Ask for words about…", a review banner, and a two-column board of pastel word tiles (tinted by topic) and quote tiles. |
+| **Word / thought pages** | Everything about one item, with feedback controls. |
+| **Practice** | 3D flip cards and quick quizzes graded with SM-2. |
+| **Card studio** | Five editorial share-card templates (Sky, Paper, Note, Night, Glass), five hues and three formats, exported at 1080px. |
+| **Time capsule** | Letters with photos, videos, files and voice notes, sealed until a chosen day, with a live countdown, an unlock notification, a seal-breaking animation and a reply to past you. |
+| **You** | Stats, four weeks of moods, recent good moments, and settings: curator, interests and level, reminder, motion and appearance. |
 
-## How the engine picks things
+## Design: airy sky glass
 
-`engine/DailyEngine.kt` is deterministic and explains itself. The same day, install salt and history
-always give the same pick, and every pick carries a reason ("From your wonder interests",
-"For a low day").
-
-- **Words** score on your chosen interests, the categories of words you've saved, how close they are to your
-  level, and freshness. A word that's been shown recently is skipped for 120 days.
-- **Quotes** score on today's mood, your themes, the themes you save most and the time of day. Quotes have
-  a 60-day cooldown, and "Another" re-picks without repeating.
-- **Sparks** rotate through the whole set before any repeats.
-- **Saving a word** enrols it in spaced repetition. Saving is taste; grading is memory.
-
-## Design system
-
-- **Look:** liquid glass over a living acrylic-watercolour paper, with cute 2D characters.
-- **Watercolour:** painted procedurally (`ui/paint/Watercolor.kt`): layered glazes, soft pigment rims,
-  granulation and paper grain. The pools drift slowly and re-tint per screen.
-- **Glass:** real backdrop blur via [Haze](https://github.com/chrisbanes/haze) on Android 12L+, with a
-  frosted tint fallback, a caustic sheen and a bevelled rim.
-- **Type:** Fraunces (soft, wonky serif) for words and quotes, Nunito (rounded) for interface text,
-  and Caveat (handwriting) for capsule letters.
-- **Colour:** cobalt ink with cerulean, lilac, peach, mint, butter and rose washes, plus a separate
-  *Dusk* dark palette.
-- **Icons:** a custom 1.9dp rounded set (`ui/icons/KairosIcons.kt`).
-- **Motion:** one spring family. Squish on touch, a gooey liquid tab indicator, shared-element word
-  transitions and 3D card flips. A "Calmer motion" setting (and the system animator scale) turns it all down.
+- **Look:** a sky-blue hero that fades into a quiet white canvas, crisp frosted glass and one
+  cobalt accent. Pastels appear only as tile tints.
+- **Type:** Instrument Sans for the interface, Instrument Serif for words and quotes.
+- **Navigation:** a minimal bottom bar with a dark "+" for quick actions.
+- **Motion:** one spring family, shared-element word transitions, 3D card flips and envelope
+  animations. *Calmer motion* (or the system animator scale) turns them down.
+- **Logo:** an eight-ray mark, a moment opening up.
 
 ## Building
 
 ```bash
-./gradlew :app:assembleDebug          # debug APK
-./gradlew :app:testDebugUnitTest      # engine tests + screenshot tests
-./gradlew :app:recordRoborazziDebug   # re-record screenshots into app/screenshots
+./gradlew :app:assembleDebug                 # debug APK
+./gradlew :app:testDebugUnitTest             # 37 tests: curator, OpenRouter client, SM-2, picker, screenshots
+./gradlew :app:recordRoborazziDebug          # re-render screenshots into app/screenshots
 ```
 
-Kotlin 2.0, Jetpack Compose (BOM 2024.12), Room, DataStore, WorkManager, Coil and Haze. Min SDK 26,
-target 35. There's no DI framework: `AppContainer` in `KairosApp.kt` wires everything by hand.
+Kotlin 2.0, Jetpack Compose, Room, DataStore, WorkManager, OkHttp, Haze, Coil and
+security-crypto. Min SDK 26, target 35. Dependencies are wired by hand in `KairosApp.kt`.
 
 ```
 app/src/main/java/com/kairos/app/
-  data/        Room entities & DAOs, DataStore settings, bundled content loader, repositories
-  engine/      DailyEngine (picks), Srs (SM-2), Mood
-  work/        daily reminder + capsule unlock workers, notifications
-  ui/theme     palette, type scale, radii/spacing, motion
-  ui/paint     procedural watercolour
-  ui/glass     liquid glass
-  ui/mascot    Drop
-  ui/brand     logo, wordmark, postmark stamp
-  ui/screens   today, words, practice, studio, capsule, me, onboarding, settings
+  data/ai      OpenRouter client, encrypted key store
+  data/db      Room entities and DAOs
+  data/repo    KairosRepository (curator loop, today, feedback), CapsuleRepository
+  engine/      Curator (prompt, schema, validation), DailyEngine, Srs, Mood, Topics
+  work/        refill, daily reminder, capsule unlock, notifications
+  ui/theme     palette, type, motion
+  ui/components  design-system kit and icons
+  ui/nav       shell, bottom bar, navigation
+  ui/feature   today, learn, detail, practice, studio, capsule, you, onboarding
 ```
-
-Content lives in `app/src/main/assets/content/*.json`. Bump `ContentLoader.VERSION` after editing it;
-new rows are added and existing progress is kept.
