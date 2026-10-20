@@ -59,6 +59,7 @@ class KairosApp : Application() {
             container.games.load()
             runCatching { container.capsules.rescheduleAll() }
         }
+        container.scope.launch { container.settings.settings.collect { container.speaker.enabled = it.ttsOn } }
     }
 }
 

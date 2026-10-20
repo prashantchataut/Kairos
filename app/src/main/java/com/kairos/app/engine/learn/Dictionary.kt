@@ -65,8 +65,10 @@ class Speaker(private val context: Context) : TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var ready = false
     private var pending: String? = null
+    @Volatile var enabled = true
 
     fun say(text: String) {
+        if (!enabled) return
         val engine = tts ?: TextToSpeech(context.applicationContext, this).also { tts = it }
         if (ready) {
             engine.setSpeechRate(0.92f)
