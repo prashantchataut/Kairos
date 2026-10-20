@@ -211,7 +211,7 @@ fun KairosApp(
                     )
                     KairosNavHost(
                         navController = navController,
-                        startDestination = startDestination,
+                        startDestination = com.kairos.app.ui.navigation.Screen.JournalList.route,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize()
@@ -234,7 +234,7 @@ fun KairosApp(
                 ) { innerPadding ->
                     KairosNavHost(
                         navController = navController,
-                        startDestination = startDestination,
+                        startDestination = com.kairos.app.ui.navigation.Screen.JournalList.route,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)

@@ -115,3 +115,20 @@ fun Modifier.gardenPress(onClick: () -> Unit): Modifier {
     val scale = rememberKairosPressScale(interactions, .985f)
     return this.kairosScale(scale).clickable(interactionSource = interactions, indication = null, role = Role.Button, onClick = onClick)
 }
+
+@Composable
+fun GardenArrival(content: @Composable () -> Unit) {
+    val reduced = com.kairos.app.ui.animation.rememberKairosReducedMotion()
+    var arrived by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { arrived = true }
+    val progress by androidx.compose.animation.core.animateFloatAsState(
+        if (arrived) 1f else 0f,
+        androidx.compose.animation.core.tween(if (reduced) 0 else 300), label = "garden-arrival"
+    )
+    androidx.compose.foundation.layout.Box(Modifier.graphicsLayer {
+        alpha = progress
+        scaleX = if (reduced) 1f else .96f + .04f * progress
+        scaleY = scaleX
+        translationY = if (reduced) 0f else 12.dp.toPx() * (1f - progress)
+    }) { content() }
+}

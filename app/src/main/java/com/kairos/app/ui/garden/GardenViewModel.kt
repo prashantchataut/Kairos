@@ -31,7 +31,8 @@ class GardenViewModel @Inject constructor(
     private val attachments: CapsuleAttachmentStore,
     private val scheduler: NotificationScheduler,
     private val preferences: com.kairos.app.data.local.preferences.PreferencesManager,
-    private val onboarding: com.kairos.app.domain.repository.OnboardingRepository
+    private val onboarding: com.kairos.app.domain.repository.OnboardingRepository,
+    private val savedState: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
     val setupComplete = preferences.onboardingCompleted.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
     private val _settingUp = MutableStateFlow(false)
@@ -56,18 +57,26 @@ class GardenViewModel @Inject constructor(
     val saving = _saving.asStateFlow()
     private val _sealing = MutableStateFlow(false)
     val sealing = _sealing.asStateFlow()
-    private val _sealed = MutableStateFlow(false)
+    private val _sealed = MutableStateFlow(savedState.get<Boolean>("capsule_sealed") ?: false)
     val sealed = _sealed.asStateFlow()
-    private val _draftFiles = MutableStateFlow<List<String>>(emptyList())
+    private val _draftFiles = MutableStateFlow<List<String>>(savedState.get<ArrayList<String>>("capsule_files")?.toList().orEmpty())
     val draftFiles = _draftFiles.asStateFlow()
     private val _copying = MutableStateFlow(false)
     val copying = _copying.asStateFlow()
 
-    init { refresh() }
+    init {
+        viewModelScope.launch { _sealed.collect { savedState["capsule_sealed"] = it } }
+        viewModelScope.launch { _draftFiles.collect { savedState["capsule_files"] = ArrayList(it) } }
+        viewModelScope.launch { preferences.onboardingCompleted.filter { it }.collect { refresh() } }
+    }
 
+    private var planOwner: String? = null
     fun refresh() = launchSafely {
+        if (!preferences.onboardingCompleted.first()) return@launchSafely
         val today = LocalDate.now()
-        if (_plan.value?.localDate != today || _plan.value?.word == null || _plan.value?.quote == null) _plan.value = daily.getOrCreateDailyPlan(user.getUserId(), today, System.currentTimeMillis())
+        val owner = user.getCurrentUserId()
+        if (planOwner != owner) { _plan.value = null; planOwner = owner }
+        if (_plan.value?.localDate != today || _plan.value?.word == null || _plan.value?.quote == null) _plan.value = daily.getOrCreateDailyPlan(user.getCurrentUserId(), today, System.currentTimeMillis())
         capsules.getMessagesReadyForDelivery(System.currentTimeMillis()).getOrDefault(emptyList()).forEach {
             capsules.markDelivered(it.id).onError { e -> _error.value = e.userMessage }
         }
@@ -75,8 +84,23 @@ class GardenViewModel @Inject constructor(
 
     fun clearError() { _error.value = null }
     fun consumeSealed() { _sealed.value = false }
-    fun saveWord(word: VocabularyEntity) = mutate { vocabulary.updateFavoriteStatus(word.id, !word.isFavorite) }
-    fun saveThought(quote: QuoteEntity) = launchSafely { quotes.updateFavoriteStatus(quote.id, !quote.isFavorite) }
+    fun saveWord(word: VocabularyEntity) = mutate {
+        val result = vocabulary.updateFavoriteStatus(word.id, !word.isFavorite)
+        if (result.isSuccess) feedback(word.id, com.kairos.app.domain.recommendation.DailyContentType.VOCABULARY, word.category, !word.isFavorite)
+        result
+    }
+    fun saveThought(quote: QuoteEntity) = launchSafely {
+        quotes.updateFavoriteStatus(quote.id, !quote.isFavorite)
+        feedback(quote.id, com.kairos.app.domain.recommendation.DailyContentType.QUOTE, quote.category, !quote.isFavorite)
+    }
+    private suspend fun feedback(id: Long, type: com.kairos.app.domain.recommendation.DailyContentType, category: String, saved: Boolean) {
+        // Learning is secondary to saving. A failed signal must not undo the bookmark.
+        runCatching {
+            daily.recordInteraction(user.getCurrentUserId(), LocalDate.now(), type, id,
+                if (saved) com.kairos.app.domain.recommendation.ContentInteractionType.SAVED else com.kairos.app.domain.recommendation.ContentInteractionType.UNSAVED,
+                category = category)
+        }
+    }
     fun review(word: VocabularyEntity, remembered: Boolean, onComplete: () -> Unit) = launchSafely {
         if (_saving.value) return@launchSafely
         _saving.value = true
@@ -119,7 +143,7 @@ class GardenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val message = FutureMessageEntity(
-                    userId = user.getUserId(), title = title.trim().ifBlank { "A little note from today" },
+                    userId = user.getCurrentUserId(), title = title.trim().ifBlank { "A little note from today" },
                     content = content.trim(), deliveryDate = at,
                     attachedPhotos = _draftFiles.value.joinToString(",")
                 )

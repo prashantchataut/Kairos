@@ -205,7 +205,7 @@ class DailyPlanRepositoryImpl @Inject constructor(
                 isMastered = progress?.isMastered == true
             )
         }
-        return ranker.rank(candidates, context).firstOrNull()?.let { ranked ->
+        return com.kairos.app.domain.recommendation.GardenDiscoveryEngine.choose(ranker.rank(candidates, context), context)?.let { ranked ->
             byId[ranked.candidate.id]?.let { RankedContent(it, ranked.candidate, ranked.score, ranked.reason) }
         }
     }
@@ -224,7 +224,7 @@ class DailyPlanRepositoryImpl @Inject constructor(
                 quality = quoteQuality(quote)
             )
         }
-        return ranker.rank(candidates, context).firstOrNull()?.let { ranked ->
+        return com.kairos.app.domain.recommendation.GardenDiscoveryEngine.choose(ranker.rank(candidates, context), context)?.let { ranked ->
             byId[ranked.candidate.id]?.let { RankedContent(it, ranked.candidate, ranked.score, ranked.reason) }
         }
     }
@@ -381,7 +381,7 @@ class DailyPlanRepositoryImpl @Inject constructor(
     private fun String.normalized(): String = trim().lowercase()
 
     private companion object {
-        const val ALGORITHM_VERSION = 1
+        const val ALGORITHM_VERSION = 2
         const val DAY_MS = 24L * 60L * 60L * 1_000L
         const val SELECTION_LOOKBACK_MS = 60L * DAY_MS
         const val INTERACTION_LOOKBACK_MS = 90L * DAY_MS

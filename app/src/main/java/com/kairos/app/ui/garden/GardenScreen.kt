@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -77,8 +78,10 @@ fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewMode
             onDispose { lifecycle.lifecycle.removeObserver(observer) }
         }
         var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
-        LaunchedEffect(Unit) {
-            while (true) { delay(30_000); now = System.currentTimeMillis(); vm.refresh() }
+        LaunchedEffect(lifecycle) {
+            lifecycle.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (true) { now = System.currentTimeMillis(); vm.refresh(); delay(30_000) }
+            }
         }
         val reduced = rememberKairosReducedMotion()
         val snackbar = remember { SnackbarHostState() }
@@ -92,7 +95,7 @@ fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewMode
             bottomBar = {
                 if (setupComplete == true && !composing && openedId == null && printId == null && !practice && !showThoughts) {
                     Surface(modifier = Modifier.navigationBarsPadding().padding(horizontal=24.dp, vertical=12.dp),
-                        shape=RoundedCornerShape(32.dp), color=MaterialTheme.colorScheme.surface.copy(alpha=.94f), tonalElevation=3.dp, shadowElevation=8.dp) {
+                        shape=RoundedCornerShape(32.dp), color=MaterialTheme.colorScheme.surface.copy(alpha=.88f), border=BorderStroke(1.dp,MaterialTheme.colorScheme.surface), tonalElevation=3.dp, shadowElevation=8.dp) {
                         Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement=Arrangement.SpaceEvenly) {
                             listOf("Today" to Icons.Outlined.WbSunny,"Words" to Icons.Outlined.AutoStories,"Capsules" to Icons.Outlined.MailOutline,"Your space" to Icons.Outlined.Spa).forEachIndexed { i, (label, icon) ->
                                 NavigationBarItem(selected=tab==i,onClick={tab=i},icon={Icon(icon,null)},label={Text(label,style=MaterialTheme.typography.labelSmall)},
@@ -103,7 +106,7 @@ fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewMode
                 }
             }
         ) { padding ->
-            Box(Modifier.fillMaxSize().padding(padding).statusBarsPadding(), contentAlignment=Alignment.TopCenter) {
+            Box(Modifier.fillMaxSize().padding(top=padding.calculateTopPadding()).statusBarsPadding(), contentAlignment=Alignment.TopCenter) {
                 val selectedWord = words.firstOrNull { it.id == printId }
                 val opened = letters.firstOrNull { it.id == openedId }
                 when {
@@ -151,7 +154,7 @@ private fun GardenHeader(kicker: String, title: String, subtitle: String, back: 
 
 @Composable
 private fun GardenToday(word: VocabularyEntity?,quote: QuoteEntity?,onWord:()->Unit,onCapsule:()->Unit,onPrint:(VocabularyEntity)->Unit,onSaveWord:(VocabularyEntity)->Unit,onSaveQuote:(QuoteEntity)->Unit,onRetry:()->Unit,saving:Boolean) {
-    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(24.dp)) {
+    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(start=Page,end=Page,top=Page,bottom=120.dp),verticalArrangement=Arrangement.spacedBy(24.dp)) {
         item { GardenHeader("KAIROS  /  ${LocalDate.now().format(DateTimeFormatter.ofPattern("EEE, d MMM"))}","Make room for\nsomething good.","One word. One thought. A moment that's yours.") }
         item {
             Surface(shape=Shape,color=MaterialTheme.colorScheme.primaryContainer) {
@@ -206,7 +209,7 @@ private fun GardenToday(word: VocabularyEntity?,quote: QuoteEntity?,onWord:()->U
 private fun WordGarden(words:List<VocabularyEntity>,saving:Boolean,onSave:(VocabularyEntity)->Unit,onPrint:(VocabularyEntity)->Unit,onPractice:()->Unit) {
     var query by rememberSaveable { mutableStateOf("") };var savedOnly by rememberSaveable { mutableStateOf(false) }
     val filtered=remember(words,query,savedOnly) { words.filter { (!savedOnly||it.isFavorite) && (it.word.contains(query,true)||it.definition.contains(query,true)) && !it.origin.startsWith("kairos:family:") } }
-    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(start=Page,end=Page,top=Page,bottom=120.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
         item { GardenHeader("THE WORD GARDEN","Find your next\nfavorite word.","Collect a word. Use it. Make it yours.") }
         item { OutlinedTextField(query,{query=it},label={Text("Search words and meanings")},leadingIcon={Icon(Icons.Outlined.Search,null)},singleLine=true,modifier=Modifier.fillMaxWidth(),shape=RoundedCornerShape(20.dp)) }
         item { Row(horizontalArrangement=Arrangement.spacedBy(12.dp),verticalAlignment=Alignment.CenterVertically) { FilterChip(selected=savedOnly,onClick={savedOnly=!savedOnly},label={Text("Saved words")});OutlinedButton(onClick=onPractice,enabled=words.isNotEmpty()) { Icon(Icons.Outlined.Psychology,null);Text(" Recall",modifier=Modifier.padding(start=4.dp)) } } }
@@ -230,7 +233,7 @@ private fun WordGarden(words:List<VocabularyEntity>,saving:Boolean,onSave:(Vocab
 
 @Composable
 private fun CapsuleGarden(letters:List<FutureMessageEntity>,now:Long,onCompose:()->Unit,onOpen:(FutureMessageEntity)->Unit) {
-    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(20.dp)) {
+    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(start=Page,end=Page,top=Page,bottom=120.dp),verticalArrangement=Arrangement.spacedBy(20.dp)) {
         item { GardenHeader("THE TIME CAPSULE","A little now.\nA lovely later.","Letters and keepsakes for the person you're becoming.") }
         item { GardenPainting(Modifier.fillMaxWidth().height(180.dp),letter=true) }
         item { Button(onClick=onCompose,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)) { Icon(Icons.Outlined.Edit,null);Text(" Write to future me",modifier=Modifier.padding(start=8.dp)) } }
@@ -267,13 +270,13 @@ private fun CapsuleComposer(vm:GardenViewModel,onClose:()->Unit) {
     if(sealed) {
         BackHandler { vm.consumeSealed(); onClose() }
         Column(Modifier.fillMaxSize().padding(32.dp),verticalArrangement=Arrangement.Center,horizontalAlignment=Alignment.CenterHorizontally) {
-            GardenPainting(Modifier.size(220.dp),letter=true)
+            GardenArrival { GardenPainting(Modifier.size(220.dp),letter=true) }
             Text("A moment, safely kept.",fontFamily=SerifFamily,fontSize=32.sp,lineHeight=40.sp)
             Text("Your letter opens on ${LocalDate.parse(dateText).format(DateLabel)}.",modifier=Modifier.padding(vertical=24.dp))
             Button(onClick={vm.consumeSealed();onClose()}) { Text("Back to capsules") }
         };return
     }
-    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize().imePadding(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(20.dp)) {
+    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize().imePadding(),contentPadding=PaddingValues(start=Page,end=Page,top=Page,bottom=120.dp),verticalArrangement=Arrangement.spacedBy(20.dp)) {
         item { GardenHeader("A LETTER THROUGH TIME","Dear future me,","What would you love to remember about right now?",{if(!sealing&&!copying)close()}) }
         item { OutlinedTextField(title,{title=it},label={Text("Give your letter a name")},enabled=!sealing,modifier=Modifier.fillMaxWidth(),shape=Shape) }
         item { OutlinedTextField(body,{body=it},label={Text("Your letter")},placeholder={Text("Today felt like…\nOne thing I hope you remember…")},enabled=!sealing,modifier=Modifier.fillMaxWidth().heightIn(min=240.dp),shape=Shape) }
@@ -282,7 +285,7 @@ private fun CapsuleComposer(vm:GardenViewModel,onClose:()->Unit) {
                 Text("OPEN ON",style=MaterialTheme.typography.labelSmall)
                 TextButton(onClick={
                     val d=LocalDate.parse(dateText)
-                    DatePickerDialog(context,{_,y,m,day->dateText=LocalDate.of(y,m+1,day).toString()},d.year,d.monthValue-1,d.dayOfMonth).apply { datePicker.minDate=System.currentTimeMillis()+86400000L;show() }
+                    DatePickerDialog(context,{_,y,m,day->dateText=LocalDate.of(y,m+1,day).toString()},d.year,d.monthValue-1,d.dayOfMonth).apply { datePicker.minDate=LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();show() }
                 },enabled=!sealing) { Icon(Icons.Outlined.CalendarToday,null);Text(LocalDate.parse(dateText).format(DateLabel),modifier=Modifier.padding(start=12.dp)) }
                 Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                     listOf("1 week" to LocalDate.now().plusWeeks(1),"1 month" to LocalDate.now().plusMonths(1),"1 year" to LocalDate.now().plusYears(1)).forEach { (label,d) ->
@@ -302,12 +305,12 @@ private fun CapsuleComposer(vm:GardenViewModel,onClose:()->Unit) {
 private fun CapsuleLetter(letter:FutureMessageEntity,onBack:()->Unit) {
     val context=LocalContext.current
     var error by remember { mutableStateOf<String?>(null) }
-    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(24.dp)) {
+    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(start=Page,end=Page,top=Page,bottom=120.dp),verticalArrangement=Arrangement.spacedBy(24.dp)) {
         item { GardenHeader("A MOMENT RETURNED",letter.title,"Written ${Instant.ofEpochMilli(letter.createdAt).atZone(ZoneId.systemDefault()).toLocalDate().format(DateLabel)}",onBack) }
-        item { Text(letter.content,fontFamily=SerifFamily,fontSize=20.sp,lineHeight=32.sp) }
+        item { GardenArrival { Text(letter.content,fontFamily=SerifFamily,fontSize=20.sp,lineHeight=32.sp) } }
         val files=(letter.attachedPhotos.split(',')+letter.attachedVideos.split(',')+listOfNotNull(letter.voiceRecordingUri)).filter { it.isNotBlank() }
         items(files) { uri ->
-            if(context.contentResolver.getType(Uri.parse(uri))?.startsWith("image/")==true) coil.compose.AsyncImage(model=uri,contentDescription="A photo kept with your letter",modifier=Modifier.fillMaxWidth().heightIn(max=400.dp).clip(Shape))
+            if(runCatching { context.contentResolver.getType(Uri.parse(uri))?.startsWith("image/") }.getOrDefault(false)==true) coil.compose.AsyncImage(model=uri,contentDescription="A photo kept with your letter",modifier=Modifier.fillMaxWidth().heightIn(max=400.dp).clip(Shape))
             OutlinedButton(onClick={
                 runCatching {
                     val parsed=Uri.parse(uri)
@@ -326,7 +329,7 @@ private fun WordPrintStudio(word:VocabularyEntity,onBack:()->Unit) {
     var bitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) };var exporting by remember { mutableStateOf(false) };var failure by remember { mutableStateOf<String?>(null) }
     val context=LocalContext.current;val scope=rememberCoroutineScope()
     LaunchedEffect(word.id,paper) { bitmap=withContext(Dispatchers.Default) { WordPrintRenderer.render(word.word,word.definition,word.pronunciation,style) } }
-    LazyColumn(Modifier.widthIn(max=600.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(20.dp)) {
+    LazyColumn(Modifier.widthIn(max=600.dp).fillMaxSize(),contentPadding=PaddingValues(start=Page,end=Page,top=Page,bottom=120.dp),verticalArrangement=Arrangement.spacedBy(20.dp)) {
         item { GardenHeader("KAIROS WORD PRINTS","A word worth keeping.","A pocket-sized piece of the word garden.",onBack) }
         item { bitmap?.let { Image(it.asImageBitmap(),contentDescription="${style.label} Word Print preview for ${word.word}",modifier=Modifier.fillMaxWidth().aspectRatio(.8f).clip(Shape)) } }
         item { Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(8.dp)) { WordPrintRenderer.Paper.entries.forEachIndexed { i,p -> FilterChip(selected=paper==i,onClick={paper=i},label={Text(p.label)}) } } }
@@ -337,7 +340,7 @@ private fun WordPrintStudio(word:VocabularyEntity,onBack:()->Unit) {
                 val ok=withContext(Dispatchers.IO) { ShareManager(context.applicationContext).shareWordPrint(word.word,word.definition,word.pronunciation,style) }
                 exporting=false;if(!ok)failure="Could not share this print. Please try again."
             }
-        },enabled=!exporting,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)) { Icon(Icons.Outlined.IosShare,null);Text(if(exporting) " Preparing print…" else " Share Word Print") } }
+        },enabled=!exporting&&bitmap!=null,modifier=Modifier.fillMaxWidth().heightIn(min=52.dp)) { Icon(Icons.Outlined.IosShare,null);Text(if(exporting) " Preparing print…" else " Share Word Print") } }
     }
 }
 
@@ -365,7 +368,7 @@ private fun RecallGarden(words:List<VocabularyEntity>,saving:Boolean,onGrade:(Vo
 
 @Composable
 private fun GardenSpace(onTools:()->Unit,onCapsule:()->Unit,onWords:()->Unit,onThoughts:()->Unit) {
-    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(24.dp)) {
+    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(start=Page,end=Page,top=Page,bottom=120.dp),verticalArrangement=Arrangement.spacedBy(24.dp)) {
         item { GardenHeader("YOUR OWN LITTLE SPACE","A softer kind\nof progress.","There is no perfect pace. Just a little more you.") }
         item { GardenPainting(Modifier.fillMaxWidth().height(220.dp)) }
         item { SpaceLink("A thought to carry","Quotes, sources and your saved thoughts",Icons.Outlined.FormatQuote,onThoughts) }
@@ -393,7 +396,7 @@ private fun ThoughtGarden(quotes: List<QuoteEntity>, onSave: (QuoteEntity) -> Un
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val visible = remember(quotes, query, saved) { quotes.filter { (!saved || it.isFavorite) && (it.content.contains(query,true) || it.author.contains(query,true)) } }
-    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(24.dp)) {
+    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(start=Page,end=Page,top=Page,bottom=120.dp),verticalArrangement=Arrangement.spacedBy(24.dp)) {
         item { GardenHeader("THE THOUGHT COLLECTION","A few words\nto come back to.","Keep the thoughts that meet you where you are.",onBack) }
         item { OutlinedTextField(query,{query=it},label={Text("Search thoughts and authors")},modifier=Modifier.fillMaxWidth(),singleLine=true,shape=Shape) }
         item { FilterChip(selected=saved,onClick={saved=!saved},label={Text("Saved thoughts")}) }
