@@ -26,7 +26,7 @@ The painted palette flows through Material light/dark themes. Floating controls 
 
 ## Build and review
 
-Feature branches and PRs test, lint and produce a review APK. Publishing signed GitHub releases is restricted to main. No schema reset or destructive migration is introduced. Review the diff and run the acceptance checklist below before merging.
+A proposed CI patch makes feature branches and PRs test, lint and produce a review APK while restricting signed releases to main. GitHub rejected workflow-file writes through this session’s connector, so that patch is supplied separately and the existing workflow remains in place. No schema reset or destructive migration is introduced. Review the diff and run the acceptance checklist below before merging.
 
 - Fresh local onboarding; daily word and quote visible offline.
 - Review/new-word session buttons choose the intended mode.
