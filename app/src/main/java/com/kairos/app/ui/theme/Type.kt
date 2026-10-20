@@ -12,74 +12,45 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.kairos.app.R
 
-/*
- * Three families, each with one job:
- *  - Fraunces (soft, slightly wonky optical serif): words, quotes, big dates.
- *  - Nunito (rounded sans): every piece of interface text.
- *  - Caveat (handwriting): letters sealed in the time capsule.
- */
+/* Two families: Instrument Sans carries the interface; Instrument Serif carries the words and quotes. */
 
-private fun fraunces(weight: Int, italic: Boolean = false, opsz: Float = 72f) = Font(
-    resId = if (italic) R.font.fraunces_italic else R.font.fraunces,
-    weight = FontWeight(weight),
-    style = if (italic) FontStyle.Italic else FontStyle.Normal,
-    variationSettings = FontVariation.Settings(
-        FontVariation.weight(weight),
-        FontVariation.Setting("opsz", opsz),
-        FontVariation.Setting("SOFT", 100f),
-        FontVariation.Setting("WONK", 1f),
-    ),
+private fun sans(w: Int) = Font(R.font.instrument_sans, FontWeight(w), variationSettings = FontVariation.Settings(FontVariation.weight(w)))
+
+val Sans = FontFamily(sans(400), sans(500), sans(600), sans(700))
+val Serif = FontFamily(
+    Font(R.font.instrument_serif, FontWeight.Normal, FontStyle.Normal),
+    Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
 )
 
-private fun nunito(weight: Int) = Font(
-    resId = R.font.nunito,
-    weight = FontWeight(weight),
-    variationSettings = FontVariation.Settings(FontVariation.weight(weight)),
-)
-
-private fun caveat(weight: Int) = Font(
-    resId = R.font.caveat,
-    weight = FontWeight(weight),
-    variationSettings = FontVariation.Settings(FontVariation.weight(weight)),
-)
-
-val FrauncesFamily = FontFamily(
-    fraunces(300), fraunces(400), fraunces(500), fraunces(600), fraunces(700),
-    fraunces(300, italic = true), fraunces(400, italic = true), fraunces(600, italic = true),
-)
-val NunitoFamily = FontFamily(nunito(400), nunito(500), nunito(600), nunito(700), nunito(800), nunito(900))
-val CaveatFamily = FontFamily(caveat(400), caveat(600), caveat(700))
-
-/** The whole type scale: eight sizes, nothing else. */
 @Immutable
-data class KairosType(
-    /** 56 — hero word, big dates. */
+data class Typography(
+    /** 72 serif — the word of the day on the sky. */
     val hero: TextStyle,
-    /** 34 — screen titles. */
-    val display: TextStyle,
-    /** 24 — quotes and card headlines. */
+    /** 40 serif — word titles, big dates. */
+    val serifLarge: TextStyle,
+    /** 26 serif italic — quotes. */
     val quote: TextStyle,
-    /** 20 — section and card titles. */
+    /** 30 sans — screen titles. */
+    val display: TextStyle,
+    /** 19 sans — card titles. */
     val title: TextStyle,
-    /** 16 — body copy. */
+    /** 16 sans — body. */
     val body: TextStyle,
-    /** 14 — secondary copy, buttons. */
+    /** 14 sans — labels, buttons. */
     val label: TextStyle,
-    /** 12 — captions, meta. */
+    /** 12 sans — captions. */
     val caption: TextStyle,
-    /** 26 — handwritten capsule letters. */
-    val hand: TextStyle,
 )
 
-val DefaultKairosType = KairosType(
-    hero = TextStyle(fontFamily = FrauncesFamily, fontWeight = FontWeight(600), fontSize = 56.sp, lineHeight = 60.sp, letterSpacing = (-0.02).em),
-    display = TextStyle(fontFamily = FrauncesFamily, fontWeight = FontWeight(600), fontSize = 34.sp, lineHeight = 40.sp, letterSpacing = (-0.01).em),
-    quote = TextStyle(fontFamily = FrauncesFamily, fontWeight = FontWeight(400), fontStyle = FontStyle.Italic, fontSize = 24.sp, lineHeight = 33.sp),
-    title = TextStyle(fontFamily = NunitoFamily, fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, lineHeight = 26.sp),
-    body = TextStyle(fontFamily = NunitoFamily, fontWeight = FontWeight.Medium, fontSize = 16.sp, lineHeight = 25.sp),
-    label = TextStyle(fontFamily = NunitoFamily, fontWeight = FontWeight.Bold, fontSize = 14.sp, lineHeight = 20.sp),
-    caption = TextStyle(fontFamily = NunitoFamily, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, lineHeight = 16.sp),
-    hand = TextStyle(fontFamily = CaveatFamily, fontWeight = FontWeight(500), fontSize = 26.sp, lineHeight = 32.sp),
+val DefaultTypography = Typography(
+    hero = TextStyle(fontFamily = Serif, fontSize = 72.sp, lineHeight = 74.sp, letterSpacing = (-0.02).em),
+    serifLarge = TextStyle(fontFamily = Serif, fontSize = 40.sp, lineHeight = 44.sp, letterSpacing = (-0.01).em),
+    quote = TextStyle(fontFamily = Serif, fontStyle = FontStyle.Italic, fontSize = 26.sp, lineHeight = 33.sp),
+    display = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontSize = 30.sp, lineHeight = 36.sp, letterSpacing = (-0.02).em),
+    title = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontSize = 19.sp, lineHeight = 25.sp, letterSpacing = (-0.01).em),
+    body = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp),
+    label = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Medium, fontSize = 14.sp, lineHeight = 20.sp),
+    caption = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Medium, fontSize = 12.sp, lineHeight = 16.sp),
 )
 
-val LocalKairosType = staticCompositionLocalOf { DefaultKairosType }
+val LocalTypography = staticCompositionLocalOf { DefaultTypography }

@@ -1,6 +1,5 @@
 package com.kairos.app.engine
 
-import com.kairos.app.data.content.Spark
 import com.kairos.app.data.db.QuoteEntity
 import com.kairos.app.data.db.WordEntity
 import org.junit.Assert.assertEquals
@@ -10,7 +9,7 @@ import org.junit.Test
 
 class DailyEngineTest {
     private fun word(id: String, cat: String, level: Int = 2, shown: Int = 0, last: Long? = null) =
-        WordEntity(id, id, "noun", "", "def", "ex", "", "", cat, level, timesShown = shown, lastShownDay = last)
+        WordEntity(id, id, "noun", "", "def", "ex", "", "", cat, level, timesShown = shown, lastShownDay = last, generatedAt = 0)
 
     private fun quote(id: String, theme: String) = QuoteEntity(id, "text $id", "author", theme)
 
@@ -30,6 +29,11 @@ class DailyEngineTest {
     @Test fun `interests win most days`() {
         val hits = (0 until 100).count { d -> DailyEngine.pickWord(words, taste, 20_000L + d)?.item?.category == "nature" }
         assertTrue("nature picked on $hits/100 days", hits > 60)
+    }
+
+    @Test fun `words marked not for me never come back`() {
+        val disliked = words.map { if (it.category == "nature") it.copy(taste = -1) else it }
+        repeat(30) { d -> assertNotEquals("nature", DailyEngine.pickWord(disliked, taste, 20_000L + d)!!.item.category) }
     }
 
     @Test fun `recently shown words are skipped`() {
@@ -58,10 +62,4 @@ class DailyEngineTest {
         assertTrue(pick.reason.isNotBlank())
     }
 
-    @Test fun `sparks do not repeat within a cycle`() {
-        val sparks = (1..10).map { Spark("s$it", "spark $it", "kind") }
-        val start = 20_000L - 20_000L % 10
-        val cycle = (0 until 10).map { DailyEngine.pickSpark(sparks, start + it, 7)!!.id }
-        assertEquals(10, cycle.toSet().size)
-    }
 }

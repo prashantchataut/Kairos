@@ -11,14 +11,18 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WordDao {
+    /** Returns row ids; -1 for words that already existed (the unique index on `word`). */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(words: List<WordEntity>)
+    suspend fun insertAll(words: List<WordEntity>): List<Long>
 
-    @Query("SELECT * FROM words ORDER BY word COLLATE NOCASE")
+    @Query("SELECT * FROM words ORDER BY generatedAt DESC")
     fun observeAll(): Flow<List<WordEntity>>
 
     @Query("SELECT * FROM words")
     suspend fun all(): List<WordEntity>
+
+    @Query("SELECT word FROM words")
+    suspend fun allWords(): List<String>
 
     @Query("SELECT * FROM words WHERE id = :id")
     fun observe(id: String): Flow<WordEntity?>
@@ -26,14 +30,14 @@ interface WordDao {
     @Query("SELECT * FROM words WHERE id = :id")
     suspend fun get(id: String): WordEntity?
 
-    @Query("SELECT COUNT(*) FROM words")
-    suspend fun count(): Int
+    @Query("SELECT COUNT(*) FROM words WHERE timesShown = 0 AND taste >= 0")
+    suspend fun unseenCount(): Int
+
+    @Query("SELECT COUNT(*) FROM words WHERE timesShown = 0 AND taste >= 0")
+    fun observeUnseenCount(): Flow<Int>
 
     @Update
     suspend fun update(word: WordEntity)
-
-    @Query("UPDATE words SET saved = :saved, savedAt = :at WHERE id = :id")
-    suspend fun setSaved(id: String, saved: Boolean, at: Long?)
 
     @Query("SELECT * FROM words WHERE dueDay IS NOT NULL AND dueDay <= :today ORDER BY dueDay")
     suspend fun due(today: Long): List<WordEntity>
@@ -41,11 +45,8 @@ interface WordDao {
     @Query("SELECT COUNT(*) FROM words WHERE dueDay IS NOT NULL AND dueDay <= :today")
     fun observeDueCount(today: Long): Flow<Int>
 
-    @Query("SELECT * FROM words WHERE dueDay IS NULL AND (saved = 1 OR timesShown > 0) ORDER BY saved DESC, savedAt DESC, lastShownDay DESC LIMIT :limit")
+    @Query("SELECT * FROM words WHERE dueDay IS NULL AND taste >= 0 AND (saved = 1 OR timesShown > 0) ORDER BY saved DESC, savedAt DESC, lastShownDay DESC LIMIT :limit")
     suspend fun freshForPractice(limit: Int): List<WordEntity>
-
-    @Query("SELECT * FROM words WHERE dueDay IS NULL AND saved = 0 AND timesShown = 0 ORDER BY RANDOM() LIMIT :limit")
-    suspend fun unseen(limit: Int): List<WordEntity>
 
     @Query("SELECT * FROM words WHERE partOfSpeech = :pos AND id != :exclude ORDER BY RANDOM() LIMIT :limit")
     suspend fun distractors(pos: String, exclude: String, limit: Int): List<WordEntity>
@@ -57,9 +58,9 @@ interface WordDao {
 @Dao
 interface QuoteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(quotes: List<QuoteEntity>)
+    suspend fun insertAll(quotes: List<QuoteEntity>): List<Long>
 
-    @Query("SELECT * FROM quotes ORDER BY author COLLATE NOCASE")
+    @Query("SELECT * FROM quotes ORDER BY generatedAt DESC")
     fun observeAll(): Flow<List<QuoteEntity>>
 
     @Query("SELECT * FROM quotes")
@@ -71,11 +72,29 @@ interface QuoteDao {
     @Query("SELECT * FROM quotes WHERE id = :id")
     suspend fun get(id: String): QuoteEntity?
 
+    @Query("SELECT COUNT(*) FROM quotes WHERE timesShown = 0 AND taste >= 0")
+    suspend fun unseenCount(): Int
+
     @Update
     suspend fun update(quote: QuoteEntity)
+}
 
-    @Query("UPDATE quotes SET saved = :saved, savedAt = :at WHERE id = :id")
-    suspend fun setSaved(id: String, saved: Boolean, at: Long?)
+@Dao
+interface ExtraDao {
+    @Insert
+    suspend fun insertAll(items: List<ExtraEntity>)
+
+    @Query("SELECT * FROM extras WHERE kind = :kind AND usedDay IS NULL ORDER BY createdAt LIMIT 1")
+    suspend fun nextUnused(kind: String): ExtraEntity?
+
+    @Query("SELECT COUNT(*) FROM extras WHERE kind = :kind AND usedDay IS NULL")
+    suspend fun unusedCount(kind: String): Int
+
+    @Query("SELECT text FROM extras WHERE kind = :kind ORDER BY createdAt DESC LIMIT :limit")
+    suspend fun recentTexts(kind: String, limit: Int): List<String>
+
+    @Query("UPDATE extras SET usedDay = :day WHERE id = :id")
+    suspend fun markUsed(id: Long, day: Long)
 }
 
 @Dao
@@ -88,9 +107,6 @@ interface DayDao {
 
     @Upsert
     suspend fun upsert(day: DayEntity)
-
-    @Query("SELECT * FROM days WHERE epochDay BETWEEN :from AND :to")
-    fun observeRange(from: Long, to: Long): Flow<List<DayEntity>>
 }
 
 @Dao
@@ -106,6 +122,9 @@ interface MoodDao {
 
     @Query("SELECT * FROM moods WHERE epochDay BETWEEN :from AND :to ORDER BY createdAt")
     fun observeRange(from: Long, to: Long): Flow<List<MoodEntity>>
+
+    @Query("SELECT * FROM moods ORDER BY createdAt DESC LIMIT :limit")
+    suspend fun recent(limit: Int): List<MoodEntity>
 }
 
 @Dao
@@ -139,19 +158,16 @@ interface CapsuleDao {
 }
 
 @Dao
-interface JoyDao {
+interface MomentDao {
     @Insert
-    suspend fun insert(drop: JoyDropEntity)
+    suspend fun insert(m: MomentEntity)
 
-    @Query("SELECT * FROM joy_drops ORDER BY createdAt")
-    fun observeAll(): Flow<List<JoyDropEntity>>
+    @Query("SELECT * FROM moments ORDER BY createdAt DESC")
+    fun observeAll(): Flow<List<MomentEntity>>
 
-    @Query("SELECT COUNT(DISTINCT epochDay) FROM joy_drops")
-    fun observeDaysShownUp(): Flow<Int>
-
-    @Query("SELECT DISTINCT epochDay FROM joy_drops WHERE epochDay BETWEEN :from AND :to")
+    @Query("SELECT DISTINCT epochDay FROM moments WHERE epochDay BETWEEN :from AND :to")
     fun observeActiveDays(from: Long, to: Long): Flow<List<Long>>
 
-    @Query("SELECT COUNT(*) FROM joy_drops WHERE epochDay = :day AND source = :source")
-    suspend fun countFor(day: Long, source: String): Int
+    @Query("SELECT COUNT(*) FROM moments WHERE epochDay = :day AND kind = :kind")
+    suspend fun countFor(day: Long, kind: String): Int
 }

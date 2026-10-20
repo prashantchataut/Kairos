@@ -2,7 +2,10 @@ package com.kairos.app.work
 
 import android.content.Context
 import androidx.work.CoroutineWorker
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
 import androidx.work.Data
+import androidx.work.NetworkType
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -19,8 +22,9 @@ class DailyReminderWorker(context: Context, params: WorkerParameters) : Coroutin
         val container = (applicationContext as KairosApp).container
         val settings = container.prefs.current()
         if (!settings.remindersOn) return Result.success()
-        val day = container.kairos.ensureDay()
-        val word = container.db.words().get(day.wordId)
+        container.kairos.ensureDay()
+        val day = container.db.days().get(com.kairos.app.data.repo.today())
+        val word = day?.let { container.db.words().get(it.wordId) }
         val name = settings.name.ifBlank { "friend" }
         Notifier.show(
             applicationContext, 1001, Notifier.CHANNEL_DAILY,
@@ -80,4 +84,30 @@ object CapsuleScheduler {
     }
 
     fun cancel(context: Context, id: Long) = WorkManager.getInstance(context).cancelUniqueWork(name(id))
+}
+
+/** Keeps a few personal, unseen words and quotes ready so Today opens instantly, even offline. */
+class RefillWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+    override suspend fun doWork(): Result {
+        val repo = (applicationContext as KairosApp).container.kairos
+        return runCatching { repo.topUpPool() }.fold(
+            onSuccess = { Result.success() },
+            onFailure = { e ->
+                when (e) {
+                    is com.kairos.app.data.ai.AiError.NoKey, is com.kairos.app.data.ai.AiError.BadKey, is com.kairos.app.data.ai.AiError.NoCredits -> Result.success()
+                    else -> if (runAttemptCount < 3) Result.retry() else Result.success()
+                }
+            },
+        )
+    }
+
+    companion object {
+        fun enqueue(context: Context) {
+            val request = OneTimeWorkRequestBuilder<RefillWorker>()
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
+                .build()
+            WorkManager.getInstance(context).enqueueUniqueWork("refill", ExistingWorkPolicy.KEEP, request)
+        }
+    }
 }

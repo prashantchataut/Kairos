@@ -7,7 +7,6 @@ import com.kairos.app.data.db.AttachmentEntity
 import com.kairos.app.data.db.CapsuleEntity
 import com.kairos.app.data.db.KairosDatabase
 import com.kairos.app.work.CapsuleScheduler
-import com.kairos.app.ui.theme.Wash
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -34,7 +33,7 @@ data class CapsuleDraft(
     val letter: String,
     val opensAt: Long,
     val mood: String?,
-    val wash: Wash,
+    val tint: String,
     val attachments: List<DraftAttachment>,
 )
 
@@ -74,7 +73,7 @@ class CapsuleRepository(
                 createdAt = System.currentTimeMillis(),
                 opensAt = draft.opensAt,
                 moodAtSeal = draft.mood,
-                wash = draft.wash.name,
+                tint = draft.tint,
             )
         )
         val dir = File(root, id.toString()).apply { mkdirs() }
@@ -93,7 +92,7 @@ class CapsuleRepository(
         }
         if (stored.isNotEmpty()) db.capsules().insertAttachments(stored)
         CapsuleScheduler.schedule(context, id, draft.opensAt)
-        kairos.addJoy(JoySource.Capsule, draft.title.ifBlank { "A letter" }, oncePerDay = false)
+        kairos.addMoment(MomentKind.Letter, draft.title.ifBlank { "A letter" }, oncePerDay = false)
         id
     }
 
@@ -101,7 +100,7 @@ class CapsuleRepository(
         val c = db.capsules().get(id)?.capsule ?: return
         if (c.openedAt != null || c.opensAt > System.currentTimeMillis()) return
         db.capsules().update(c.copy(openedAt = System.currentTimeMillis()))
-        kairos.addJoy(JoySource.Opened, c.title.ifBlank { "A letter" }, oncePerDay = false)
+        kairos.addMoment(MomentKind.Opened, c.title.ifBlank { "A letter" }, oncePerDay = false)
     }
 
     suspend fun saveReply(id: Long, reply: String) {

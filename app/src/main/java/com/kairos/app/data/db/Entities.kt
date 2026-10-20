@@ -1,12 +1,17 @@
 package com.kairos.app.data.db
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 
-/** A vocabulary word plus the person's relationship with it (saved, spaced-repetition state). */
-@Entity(tableName = "words", indices = [Index("category"), Index("dueDay")])
+/**
+ * A word the AI curator generated for this person, plus everything we learn from how they
+ * react to it. Nothing here is bundled: every row was written for one person.
+ */
+@Entity(tableName = "words", indices = [Index("category"), Index("dueDay"), Index(value = ["word"], unique = true)])
 data class WordEntity(
     @PrimaryKey val id: String,
     val word: String,
@@ -17,12 +22,19 @@ data class WordEntity(
     val origin: String,
     val synonyms: String,
     val category: String,
+    /** 1 (everyday) … 5 (rare). */
     val level: Int,
+    /** One line from the curator about why this word suits the person. */
+    val hook: String = "",
+    val generatedAt: Long = System.currentTimeMillis(),
     val saved: Boolean = false,
     val savedAt: Long? = null,
     val timesShown: Int = 0,
     val lastShownDay: Long? = null,
-    /** SM-2 state. [dueDay] is null until the word enters practice. */
+    /** +1 "more like this", -1 "not for me". */
+    val taste: Int = 0,
+    /** -1 "too easy", +1 "too hard". */
+    val difficultyVote: Int = 0,
     val reps: Int = 0,
     val ease: Double = 2.5,
     val intervalDays: Int = 0,
@@ -40,10 +52,24 @@ data class QuoteEntity(
     val text: String,
     val author: String,
     val theme: String,
+    /** A sentence of context about the author or the line. */
+    val note: String = "",
+    val generatedAt: Long = System.currentTimeMillis(),
     val saved: Boolean = false,
     val savedAt: Long? = null,
     val timesShown: Int = 0,
     val lastShownDay: Long? = null,
+    val taste: Int = 0,
+)
+
+/** Small generated extras: daily "tiny good things" and capsule writing prompts. */
+@Entity(tableName = "extras", indices = [Index("kind")])
+data class ExtraEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val kind: String,
+    val text: String,
+    val createdAt: Long = System.currentTimeMillis(),
+    val usedDay: Long? = null,
 )
 
 /** What Kairos chose for one local date. Written once, so the day stays stable. */
@@ -52,7 +78,7 @@ data class DayEntity(
     @PrimaryKey val epochDay: Long,
     val wordId: String,
     val quoteId: String,
-    val sparkId: String,
+    val spark: String = "",
     val sparkDone: Boolean = false,
     val quoteShuffles: Int = 0,
     val wordReason: String = "",
@@ -77,18 +103,13 @@ data class CapsuleEntity(
     val opensAt: Long,
     val openedAt: Long? = null,
     val moodAtSeal: String? = null,
-    val wash: String,
+    val tint: String,
     val reply: String = "",
 )
 
 @Entity(
     tableName = "attachments",
-    foreignKeys = [ForeignKey(
-        entity = CapsuleEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["capsuleId"],
-        onDelete = ForeignKey.CASCADE,
-    )],
+    foreignKeys = [ForeignKey(entity = CapsuleEntity::class, parentColumns = ["id"], childColumns = ["capsuleId"], onDelete = ForeignKey.CASCADE)],
     indices = [Index("capsuleId")],
 )
 data class AttachmentEntity(
@@ -102,19 +123,17 @@ data class AttachmentEntity(
     val sizeBytes: Long,
 )
 
-/** One paint drop in the joy jar — a small record of something good the person did. */
-@Entity(tableName = "joy_drops")
-data class JoyDropEntity(
+/** A record of a good moment: check-ins, practice, saves, letters. Powers the activity view. */
+@Entity(tableName = "moments", indices = [Index("epochDay")])
+data class MomentEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val createdAt: Long,
     val epochDay: Long,
-    val source: String,
-    val wash: String,
+    val kind: String,
     val label: String,
 )
 
 data class CapsuleWithAttachments(
-    @androidx.room.Embedded val capsule: CapsuleEntity,
-    @androidx.room.Relation(parentColumn = "id", entityColumn = "capsuleId")
-    val attachments: List<AttachmentEntity>,
+    @Embedded val capsule: CapsuleEntity,
+    @Relation(parentColumn = "id", entityColumn = "capsuleId") val attachments: List<AttachmentEntity>,
 )

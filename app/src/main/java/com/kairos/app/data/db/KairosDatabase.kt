@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        WordEntity::class, QuoteEntity::class, DayEntity::class, MoodEntity::class,
-        CapsuleEntity::class, AttachmentEntity::class, JoyDropEntity::class,
+        WordEntity::class, QuoteEntity::class, ExtraEntity::class, DayEntity::class, MoodEntity::class,
+        CapsuleEntity::class, AttachmentEntity::class, MomentEntity::class,
     ],
     version = 1,
     exportSchema = true,
@@ -16,14 +16,17 @@ import androidx.room.RoomDatabase
 abstract class KairosDatabase : RoomDatabase() {
     abstract fun words(): WordDao
     abstract fun quotes(): QuoteDao
+    abstract fun extras(): ExtraDao
     abstract fun days(): DayDao
     abstract fun moods(): MoodDao
     abstract fun capsules(): CapsuleDao
-    abstract fun joy(): JoyDao
+    abstract fun moments(): MomentDao
 
     companion object {
         fun create(context: Context): KairosDatabase =
-            // A new file name: the rebuilt app starts clean instead of migrating the old schema.
-            Room.databaseBuilder(context, KairosDatabase::class.java, "kairos-v2.db").build()
+            Room.databaseBuilder(context, KairosDatabase::class.java, "kairos.db").build()
+
+        fun inMemory(context: Context): KairosDatabase =
+            Room.inMemoryDatabaseBuilder(context, KairosDatabase::class.java).allowMainThreadQueries().build()
     }
 }

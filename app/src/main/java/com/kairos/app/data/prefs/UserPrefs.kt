@@ -15,15 +15,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlin.random.Random
 
-enum class ThemeMode { System, Daybreak, Dusk }
+enum class ThemeMode { System, Light, Dark }
+
+const val DEFAULT_MODEL = "anthropic/claude-haiku-5.5"
 
 data class Settings(
     val onboarded: Boolean = false,
     val name: String = "",
     val wordInterests: Set<String> = emptySet(),
     val quoteThemes: Set<String> = emptySet(),
-    /** 1 = gentle, 2 = curious, 3 = ambitious. Biases word difficulty. */
-    val level: Int = 2,
+    /** 1 (everyday) … 5 (rare and literary). Steers generated words. */
+    val level: Int = 3,
     val remindersOn: Boolean = false,
     val reminderHour: Int = 8,
     val reminderMinute: Int = 30,
@@ -32,7 +34,8 @@ data class Settings(
     val haptics: Boolean = true,
     /** Random per install so two people never get the identical sequence. */
     val salt: Long = 0,
-    val contentVersion: Int = 0,
+    /** OpenRouter model id used for generation. */
+    val aiModel: String = DEFAULT_MODEL,
 )
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("kairos_settings")
@@ -51,7 +54,7 @@ class UserPrefs(private val context: Context) {
         val reducedMotion = booleanPreferencesKey("reduced_motion")
         val haptics = booleanPreferencesKey("haptics")
         val salt = longPreferencesKey("salt")
-        val contentVersion = intPreferencesKey("content_version")
+        val aiModel = stringPreferencesKey("ai_model")
     }
 
     val settings: Flow<Settings> = context.dataStore.data.map { p ->
@@ -60,7 +63,7 @@ class UserPrefs(private val context: Context) {
             name = p[K.name] ?: "",
             wordInterests = p[K.interests] ?: emptySet(),
             quoteThemes = p[K.themes] ?: emptySet(),
-            level = p[K.level] ?: 2,
+            level = p[K.level] ?: 3,
             remindersOn = p[K.remindersOn] ?: false,
             reminderHour = p[K.hour] ?: 8,
             reminderMinute = p[K.minute] ?: 30,
@@ -68,7 +71,7 @@ class UserPrefs(private val context: Context) {
             reducedMotion = p[K.reducedMotion] ?: false,
             haptics = p[K.haptics] ?: true,
             salt = p[K.salt] ?: 0,
-            contentVersion = p[K.contentVersion] ?: 0,
+            aiModel = p[K.aiModel] ?: DEFAULT_MODEL,
         )
     }
 
@@ -102,5 +105,5 @@ class UserPrefs(private val context: Context) {
     suspend fun setThemeMode(mode: ThemeMode) = context.dataStore.edit { it[K.theme] = mode.name }
     suspend fun setReducedMotion(on: Boolean) = context.dataStore.edit { it[K.reducedMotion] = on }
     suspend fun setHaptics(on: Boolean) = context.dataStore.edit { it[K.haptics] = on }
-    suspend fun setContentVersion(v: Int) = context.dataStore.edit { it[K.contentVersion] = v }
+    suspend fun setAiModel(model: String) = context.dataStore.edit { it[K.aiModel] = model.trim() }
 }

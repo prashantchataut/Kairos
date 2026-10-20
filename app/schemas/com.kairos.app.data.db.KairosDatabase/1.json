@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "18169272efa0a6ecf86da49596d0d1b1",
+    "identityHash": "f49f9b9b60162f712cfea907516c779e",
     "entities": [
       {
         "tableName": "words",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `word` TEXT NOT NULL, `partOfSpeech` TEXT NOT NULL, `pronunciation` TEXT NOT NULL, `definition` TEXT NOT NULL, `example` TEXT NOT NULL, `origin` TEXT NOT NULL, `synonyms` TEXT NOT NULL, `category` TEXT NOT NULL, `level` INTEGER NOT NULL, `saved` INTEGER NOT NULL, `savedAt` INTEGER, `timesShown` INTEGER NOT NULL, `lastShownDay` INTEGER, `reps` INTEGER NOT NULL, `ease` REAL NOT NULL, `intervalDays` INTEGER NOT NULL, `dueDay` INTEGER, `lapses` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `word` TEXT NOT NULL, `partOfSpeech` TEXT NOT NULL, `pronunciation` TEXT NOT NULL, `definition` TEXT NOT NULL, `example` TEXT NOT NULL, `origin` TEXT NOT NULL, `synonyms` TEXT NOT NULL, `category` TEXT NOT NULL, `level` INTEGER NOT NULL, `hook` TEXT NOT NULL, `generatedAt` INTEGER NOT NULL, `saved` INTEGER NOT NULL, `savedAt` INTEGER, `timesShown` INTEGER NOT NULL, `lastShownDay` INTEGER, `taste` INTEGER NOT NULL, `difficultyVote` INTEGER NOT NULL, `reps` INTEGER NOT NULL, `ease` REAL NOT NULL, `intervalDays` INTEGER NOT NULL, `dueDay` INTEGER, `lapses` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -69,6 +69,18 @@
             "notNull": true
           },
           {
+            "fieldPath": "hook",
+            "columnName": "hook",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "generatedAt",
+            "columnName": "generatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "saved",
             "columnName": "saved",
             "affinity": "INTEGER",
@@ -91,6 +103,18 @@
             "columnName": "lastShownDay",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "taste",
+            "columnName": "taste",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "difficultyVote",
+            "columnName": "difficultyVote",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "reps",
@@ -147,13 +171,22 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_words_dueDay` ON `${TABLE_NAME}` (`dueDay`)"
+          },
+          {
+            "name": "index_words_word",
+            "unique": true,
+            "columnNames": [
+              "word"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_words_word` ON `${TABLE_NAME}` (`word`)"
           }
         ],
         "foreignKeys": []
       },
       {
         "tableName": "quotes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `text` TEXT NOT NULL, `author` TEXT NOT NULL, `theme` TEXT NOT NULL, `saved` INTEGER NOT NULL, `savedAt` INTEGER, `timesShown` INTEGER NOT NULL, `lastShownDay` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `text` TEXT NOT NULL, `author` TEXT NOT NULL, `theme` TEXT NOT NULL, `note` TEXT NOT NULL, `generatedAt` INTEGER NOT NULL, `saved` INTEGER NOT NULL, `savedAt` INTEGER, `timesShown` INTEGER NOT NULL, `lastShownDay` INTEGER, `taste` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -180,6 +213,18 @@
             "notNull": true
           },
           {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "generatedAt",
+            "columnName": "generatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "saved",
             "columnName": "saved",
             "affinity": "INTEGER",
@@ -202,6 +247,12 @@
             "columnName": "lastShownDay",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "taste",
+            "columnName": "taste",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -224,8 +275,62 @@
         "foreignKeys": []
       },
       {
+        "tableName": "extras",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `kind` TEXT NOT NULL, `text` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `usedDay` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usedDay",
+            "columnName": "usedDay",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_extras_kind",
+            "unique": false,
+            "columnNames": [
+              "kind"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_extras_kind` ON `${TABLE_NAME}` (`kind`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
         "tableName": "days",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`epochDay` INTEGER NOT NULL, `wordId` TEXT NOT NULL, `quoteId` TEXT NOT NULL, `sparkId` TEXT NOT NULL, `sparkDone` INTEGER NOT NULL, `quoteShuffles` INTEGER NOT NULL, `wordReason` TEXT NOT NULL, `quoteReason` TEXT NOT NULL, PRIMARY KEY(`epochDay`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`epochDay` INTEGER NOT NULL, `wordId` TEXT NOT NULL, `quoteId` TEXT NOT NULL, `spark` TEXT NOT NULL, `sparkDone` INTEGER NOT NULL, `quoteShuffles` INTEGER NOT NULL, `wordReason` TEXT NOT NULL, `quoteReason` TEXT NOT NULL, PRIMARY KEY(`epochDay`))",
         "fields": [
           {
             "fieldPath": "epochDay",
@@ -246,8 +351,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "sparkId",
-            "columnName": "sparkId",
+            "fieldPath": "spark",
+            "columnName": "spark",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -341,7 +446,7 @@
       },
       {
         "tableName": "capsules",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `letter` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `opensAt` INTEGER NOT NULL, `openedAt` INTEGER, `moodAtSeal` TEXT, `wash` TEXT NOT NULL, `reply` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `letter` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `opensAt` INTEGER NOT NULL, `openedAt` INTEGER, `moodAtSeal` TEXT, `tint` TEXT NOT NULL, `reply` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -386,8 +491,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "wash",
-            "columnName": "wash",
+            "fieldPath": "tint",
+            "columnName": "tint",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -486,8 +591,8 @@
         ]
       },
       {
-        "tableName": "joy_drops",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createdAt` INTEGER NOT NULL, `epochDay` INTEGER NOT NULL, `source` TEXT NOT NULL, `wash` TEXT NOT NULL, `label` TEXT NOT NULL)",
+        "tableName": "moments",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createdAt` INTEGER NOT NULL, `epochDay` INTEGER NOT NULL, `kind` TEXT NOT NULL, `label` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -508,14 +613,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "source",
-            "columnName": "source",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "wash",
-            "columnName": "wash",
+            "fieldPath": "kind",
+            "columnName": "kind",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -532,14 +631,24 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_moments_epochDay",
+            "unique": false,
+            "columnNames": [
+              "epochDay"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_moments_epochDay` ON `${TABLE_NAME}` (`epochDay`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '18169272efa0a6ecf86da49596d0d1b1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f49f9b9b60162f712cfea907516c779e')"
     ]
   }
 }

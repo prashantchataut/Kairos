@@ -1,6 +1,5 @@
 package com.kairos.app.engine
 
-import com.kairos.app.data.content.Spark
 import com.kairos.app.data.db.QuoteEntity
 import com.kairos.app.data.db.WordEntity
 import kotlin.math.abs
@@ -47,24 +46,26 @@ object DailyEngine {
     fun pickWord(words: List<WordEntity>, taste: Taste, day: Long, exclude: Set<String> = emptySet()): Pick<WordEntity>? {
         if (words.isEmpty()) return null
         val random = rng(day, taste.salt, 1)
-        val pool = words.filter { it.id !in exclude && !it.mastered }
+        val pool = words.filter { it.id !in exclude && !it.mastered && it.taste >= 0 }
             .filter { w -> w.lastShownDay?.let { day - it >= WORD_COOLDOWN_DAYS } ?: true }
             .ifEmpty { words.filter { it.id !in exclude } }
             .ifEmpty { words }
         val scored = pool.map { w ->
             var score = 0.0
             val interested = w.category in taste.wordInterests
-            if (interested) score += 3.0
+            if (interested) score += 2.0
             val savedAffinity = min(3, taste.savedWordCategories[w.category] ?: 0)
             score += savedAffinity * 0.6
-            score -= abs(w.level - taste.level) * 1.1
-            if (w.timesShown == 0) score += 1.5
+            score -= abs(w.level - taste.level) * 0.9
+            if (w.timesShown == 0) score += 2.5
+            // Fresher curator output reflects the latest feedback, so it gets a gentle edge.
+            score += (w.generatedAt / 86_400_000L - day).coerceIn(-30, 0) * 0.03 + 0.9
             score += random.nextDouble() * 1.6
             val reason = when {
+                w.hook.isNotBlank() -> w.hook
                 savedAffinity >= 2 -> "Because you've been saving ${w.category} words"
                 interested -> "From your ${w.category} interests"
-                w.timesShown == 0 -> "Something new for you"
-                else -> "A good one to revisit"
+                else -> "Something new for you"
             }
             Triple(w, score, reason)
         }
@@ -83,7 +84,7 @@ object DailyEngine {
     ): Pick<QuoteEntity>? {
         if (quotes.isEmpty()) return null
         val random = rng(day, taste.salt, 2 + shuffle)
-        val pool = quotes.filter { it.id !in exclude }
+        val pool = quotes.filter { it.id !in exclude && it.taste >= 0 }
             .filter { q -> q.lastShownDay?.let { day - it >= QUOTE_COOLDOWN_DAYS } ?: true }
             .ifEmpty { quotes.filter { it.id !in exclude } }
             .ifEmpty { quotes }
@@ -116,11 +117,4 @@ object DailyEngine {
         return Pick(best.first, best.third)
     }
 
-    /** Sparks rotate without repeating until the whole set has been seen. */
-    fun pickSpark(sparks: List<Spark>, day: Long, salt: Long): Spark? {
-        if (sparks.isEmpty()) return null
-        val cycle = day / sparks.size
-        val order = sparks.shuffled(rng(cycle, salt, 3))
-        return order[(day % sparks.size).toInt()]
-    }
 }
