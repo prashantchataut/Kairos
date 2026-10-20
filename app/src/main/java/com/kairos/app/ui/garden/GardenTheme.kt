@@ -26,7 +26,7 @@ object GardenInk {
 
 @Composable
 fun GardenTheme(content: @Composable () -> Unit) {
-    val dark = isSystemInDarkTheme()
+    val dark = com.kairos.app.ui.theme.isDarkTheme()
     val colors = if (dark) darkColorScheme(
         primary = Color(0xFFACD5B7), onPrimary = GardenInk.night,
         primaryContainer = GardenInk.forest, onPrimaryContainer = Color(0xFFE7F1DF),

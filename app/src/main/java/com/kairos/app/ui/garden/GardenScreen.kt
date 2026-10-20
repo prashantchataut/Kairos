@@ -39,6 +39,7 @@ import com.kairos.app.domain.futuremessage.CapsulePolicy
 import com.kairos.app.ui.animation.rememberKairosReducedMotion
 import com.kairos.app.ui.theme.SerifFamily
 import com.kairos.app.util.ShareManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -54,6 +55,8 @@ private val DateLabel = DateTimeFormatter.ofPattern("d MMM yyyy")
 @Composable
 fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewModel()) {
     GardenTheme {
+        val setupComplete by vm.setupComplete.collectAsStateWithLifecycle()
+        val settingUp by vm.settingUp.collectAsStateWithLifecycle()
         val words by vm.words.collectAsStateWithLifecycle()
         val quotes by vm.thoughts.collectAsStateWithLifecycle()
         val letters by vm.letters.collectAsStateWithLifecycle()
@@ -64,6 +67,7 @@ fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewMode
         var composing by rememberSaveable { mutableStateOf(false) }
         var openedId by rememberSaveable { mutableStateOf<Long?>(null) }
         var printId by rememberSaveable { mutableStateOf<Long?>(null) }
+        var showThoughts by rememberSaveable { mutableStateOf(false) }
         var practice by rememberSaveable { mutableStateOf(false) }
         val context = LocalContext.current
         val lifecycle = LocalLifecycleOwner.current
@@ -72,17 +76,21 @@ fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewMode
             lifecycle.lifecycle.addObserver(observer)
             onDispose { lifecycle.lifecycle.removeObserver(observer) }
         }
+        var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+        LaunchedEffect(Unit) {
+            while (true) { delay(30_000); now = System.currentTimeMillis(); vm.refresh() }
+        }
         val reduced = rememberKairosReducedMotion()
         val snackbar = remember { SnackbarHostState() }
         LaunchedEffect(error) { error?.let { snackbar.showSnackbar(it); vm.clearError() } }
-        BackHandler(enabled = tab != 0 || composing || openedId != null || printId != null || practice) {
-            when { printId != null -> printId = null; openedId != null -> openedId = null; practice -> practice = false; !composing -> tab = 0 }
+        BackHandler(enabled = tab != 0 || composing || openedId != null || printId != null || practice || showThoughts) {
+            when { showThoughts -> showThoughts = false; printId != null -> printId = null; openedId != null -> openedId = null; practice -> practice = false; !composing -> tab = 0 }
         }
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
             snackbarHost = { SnackbarHost(snackbar) },
             bottomBar = {
-                if (!composing && openedId == null && printId == null && !practice) {
+                if (setupComplete == true && !composing && openedId == null && printId == null && !practice && !showThoughts) {
                     Surface(modifier = Modifier.navigationBarsPadding().padding(horizontal=24.dp, vertical=12.dp),
                         shape=RoundedCornerShape(32.dp), color=MaterialTheme.colorScheme.surface.copy(alpha=.94f), tonalElevation=3.dp, shadowElevation=8.dp) {
                         Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement=Arrangement.SpaceEvenly) {
@@ -99,9 +107,12 @@ fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewMode
                 val selectedWord = words.firstOrNull { it.id == printId }
                 val opened = letters.firstOrNull { it.id == openedId }
                 when {
+                    setupComplete == null -> CircularProgressIndicator(Modifier.padding(48.dp))
+                    setupComplete == false -> GardenSetup(settingUp, vm::finishSetup)
                     selectedWord != null -> WordPrintStudio(selectedWord, { printId=null })
                     composing -> CapsuleComposer(vm, { composing=false })
                     opened != null && CapsulePolicy.canOpen(opened.deliveryDate,System.currentTimeMillis()) -> CapsuleLetter(opened,{openedId=null})
+                    showThoughts -> ThoughtGarden(quotes, vm::saveThought, { showThoughts=false })
                     practice -> RecallGarden(words.filter { it.isFavorite || it.isLearned }.ifEmpty { words }.take(10), saving, vm::review, {practice=false})
                     else -> AnimatedContent(targetState=tab, transitionSpec={
                         (fadeIn(tween(if(reduced) 0 else 220)) togetherWith fadeOut(tween(if(reduced) 0 else 120))).using(SizeTransform(clip=false))
@@ -114,8 +125,8 @@ fun GardenExperience(onOpenTools: () -> Unit, vm: GardenViewModel = hiltViewMode
                                 onSaveWord=vm::saveWord,onSaveQuote=vm::saveThought,onRetry={vm.refresh()},saving=saving
                             )
                             1 -> WordGarden(words,saving,vm::saveWord,{printId=it.id},{practice=true})
-                            2 -> CapsuleGarden(letters,{composing=true}) { vm.open(it); openedId=it.id }
-                            else -> GardenSpace(onOpenTools,{composing=true},{tab=1})
+                            2 -> CapsuleGarden(letters,now,{composing=true}) { vm.open(it); openedId=it.id }
+                            else -> GardenSpace(onOpenTools,{composing=true},{tab=1},{showThoughts=true})
                         }
                     }
                 }
@@ -218,7 +229,7 @@ private fun WordGarden(words:List<VocabularyEntity>,saving:Boolean,onSave:(Vocab
 }
 
 @Composable
-private fun CapsuleGarden(letters:List<FutureMessageEntity>,onCompose:()->Unit,onOpen:(FutureMessageEntity)->Unit) {
+private fun CapsuleGarden(letters:List<FutureMessageEntity>,now:Long,onCompose:()->Unit,onOpen:(FutureMessageEntity)->Unit) {
     LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(20.dp)) {
         item { GardenHeader("THE TIME CAPSULE","A little now.\nA lovely later.","Letters and keepsakes for the person you're becoming.") }
         item { GardenPainting(Modifier.fillMaxWidth().height(180.dp),letter=true) }
@@ -226,7 +237,7 @@ private fun CapsuleGarden(letters:List<FutureMessageEntity>,onCompose:()->Unit,o
         item { Text("Kept privately on this device. Back up before uninstalling or switching phones.",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant) }
         if(letters.isEmpty()) item { Text("Your first letter starts with today.",fontFamily=SerifFamily,fontSize=24.sp,modifier=Modifier.padding(vertical=24.dp)) }
         items(letters,key={it.id}) { letter ->
-            val ready=CapsulePolicy.canOpen(letter.deliveryDate,System.currentTimeMillis())
+            val ready=CapsulePolicy.canOpen(letter.deliveryDate,now)
             Surface(onClick={if(ready)onOpen(letter)},enabled=ready,shape=Shape,color=if(ready)MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface) {
                 Row(Modifier.fillMaxWidth().padding(24.dp),verticalAlignment=Alignment.CenterVertically) {
                     Icon(if(ready) Icons.Outlined.MarkEmailRead else Icons.Outlined.Lock,null,modifier=Modifier.size(28.dp))
@@ -349,10 +360,11 @@ private fun RecallGarden(words:List<VocabularyEntity>,saving:Boolean,onGrade:(Vo
 }
 
 @Composable
-private fun GardenSpace(onTools:()->Unit,onCapsule:()->Unit,onWords:()->Unit) {
+private fun GardenSpace(onTools:()->Unit,onCapsule:()->Unit,onWords:()->Unit,onThoughts:()->Unit) {
     LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(24.dp)) {
         item { GardenHeader("YOUR OWN LITTLE SPACE","A softer kind\nof progress.","There is no perfect pace. Just a little more you.") }
         item { GardenPainting(Modifier.fillMaxWidth().height(220.dp)) }
+        item { SpaceLink("A thought to carry","Quotes, sources and your saved thoughts",Icons.Outlined.FormatQuote,onThoughts) }
         item { SpaceLink("Keep a thought","Journal, reflections and your existing tools",Icons.Outlined.EditNote,onTools) }
         item { SpaceLink("Send a little hope forward","Write a time capsule",Icons.Outlined.MailOutline,onCapsule) }
         item { SpaceLink("Grow your vocabulary","Explore words and practice recall",Icons.Outlined.LocalFlorist,onWords) }
@@ -365,6 +377,37 @@ private fun SpaceLink(title:String,body:String,icon:ImageVector,onClick:()->Unit
     Surface(onClick=onClick,shape=Shape,color=MaterialTheme.colorScheme.surface) {
         Row(Modifier.fillMaxWidth().padding(24.dp),verticalAlignment=Alignment.CenterVertically) {
             Icon(icon,null,modifier=Modifier.size(28.dp));Column(Modifier.weight(1f).padding(horizontal=16.dp)) { Text(title,style=MaterialTheme.typography.titleMedium);Text(body,style=MaterialTheme.typography.bodySmall,modifier=Modifier.padding(top=8.dp)) };Icon(Icons.Outlined.ChevronRight,null)
+        }
+    }
+}
+
+@Composable
+private fun ThoughtGarden(quotes: List<QuoteEntity>, onSave: (QuoteEntity) -> Unit, onBack: () -> Unit) {
+    var query by rememberSaveable { mutableStateOf("") }
+    var saved by rememberSaveable { mutableStateOf(false) }
+    var failed by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val visible = remember(quotes, query, saved) { quotes.filter { (!saved || it.isFavorite) && (it.content.contains(query,true) || it.author.contains(query,true)) } }
+    LazyColumn(Modifier.widthIn(max=720.dp).fillMaxSize(),contentPadding=PaddingValues(Page),verticalArrangement=Arrangement.spacedBy(24.dp)) {
+        item { GardenHeader("THE THOUGHT COLLECTION","A few words\nto come back to.","Keep the thoughts that meet you where you are.",onBack) }
+        item { OutlinedTextField(query,{query=it},label={Text("Search thoughts and authors")},modifier=Modifier.fillMaxWidth(),singleLine=true,shape=Shape) }
+        item { FilterChip(selected=saved,onClick={saved=!saved},label={Text("Saved thoughts")}) }
+        if(failed) item { Text("Could not open sharing. Please try again.",color=MaterialTheme.colorScheme.error) }
+        if(visible.isEmpty()) item { Text(if(saved) "A thought you save will be waiting here." else "No matching thoughts. Try another search.") }
+        items(visible,key={it.id}) { quote ->
+            Surface(shape=Shape,color=MaterialTheme.colorScheme.surface) {
+                Column(Modifier.fillMaxWidth().padding(24.dp)) {
+                    Text("“${quote.content}”",fontFamily=SerifFamily,fontSize=24.sp,lineHeight=34.sp)
+                    Text("— ${quote.author}",modifier=Modifier.padding(top=20.dp))
+                    if(quote.source.isNotBlank()) Text(quote.source,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant,modifier=Modifier.padding(top=8.dp))
+                    if(quote.reflectionPrompt.isNotBlank()) Text(quote.reflectionPrompt,fontStyle=FontStyle.Italic,modifier=Modifier.padding(top=16.dp))
+                    Row(Modifier.align(Alignment.End)) {
+                        IconButton(onClick={onSave(quote)}) { Icon(if(quote.isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,"Save or unsave thought") }
+                        IconButton(onClick={scope.launch { failed = !withContext(Dispatchers.IO) { ShareManager(context.applicationContext).shareQuote(quote.content,quote.author,false) } }}) { Icon(Icons.Outlined.IosShare,"Share thought") }
+                    }
+                }
+            }
         }
     }
 }

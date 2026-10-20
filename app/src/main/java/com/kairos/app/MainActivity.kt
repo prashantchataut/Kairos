@@ -105,14 +105,12 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             is AuthState.Unauthenticated, is AuthState.Error -> {
-                                AuthScreen(
-                                    onAuthSuccess = {
-                                        // Auth state change will trigger recomposition
-                                    }
-                                )
+                                com.kairos.app.ui.garden.GardenWelcome(onContinue = { authRepository.continueLocally() })
                             }
                             AuthState.Idle, AuthState.Loading -> {
-                                // Show nothing or a loading indicator while determining auth state
+                                androidx.compose.foundation.layout.Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                                    androidx.compose.material3.CircularProgressIndicator()
+                                }
                             }
                         }
                     }

@@ -29,8 +29,20 @@ class GardenViewModel @Inject constructor(
     private val daily: DailyPlanRepository,
     private val user: UserIdProvider,
     private val attachments: CapsuleAttachmentStore,
-    private val scheduler: NotificationScheduler
+    private val scheduler: NotificationScheduler,
+    private val preferences: com.kairos.app.data.local.preferences.PreferencesManager,
+    private val onboarding: com.kairos.app.domain.repository.OnboardingRepository
 ) : ViewModel() {
+    val setupComplete = preferences.onboardingCompleted.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    private val _settingUp = MutableStateFlow(false)
+    val settingUp = _settingUp.asStateFlow()
+    fun finishSetup(interests: Set<String>, difficulty: Int) = launchSafely {
+        _settingUp.value = true
+        try {
+            onboarding.completeSetup(com.kairos.app.domain.repository.OnboardingPreferences(difficulty, setOf("wisdom", "life", "motivation"), interests))
+                .onSuccess { _plan.value = null; refresh() }.onError { _error.value = it.userMessage }
+        } finally { _settingUp.value = false }
+    }
     val words = vocabulary.getAllWords().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val thoughts = quotes.getAllQuotes().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val letters = combine(capsules.observePendingMessages(), capsules.observeDeliveredMessages()) { a, b ->
@@ -55,7 +67,7 @@ class GardenViewModel @Inject constructor(
 
     fun refresh() = launchSafely {
         val today = LocalDate.now()
-        if (_plan.value?.localDate != today) _plan.value = daily.getOrCreateDailyPlan(user.getUserId(), today, System.currentTimeMillis())
+        if (_plan.value?.localDate != today || _plan.value?.word == null || _plan.value?.quote == null) _plan.value = daily.getOrCreateDailyPlan(user.getUserId(), today, System.currentTimeMillis())
         capsules.getMessagesReadyForDelivery(System.currentTimeMillis()).getOrDefault(emptyList()).forEach {
             capsules.markDelivered(it.id).onError { e -> _error.value = e.userMessage }
         }
@@ -73,7 +85,7 @@ class GardenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 require(uris.size + _draftFiles.value.size <= CapsulePolicy.MAX_ATTACHMENTS) { "Each capsule holds up to six attachments." }
-                uris.forEach { uri -> _draftFiles.update { it + attachments.keep(uri) } }
+                uris.forEach { uri -> val kept = attachments.keep(uri); _draftFiles.update { it + kept } }
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { _error.value = e.message ?: "Could not keep this attachment. Try a smaller file." }
             finally { _copying.value = false }

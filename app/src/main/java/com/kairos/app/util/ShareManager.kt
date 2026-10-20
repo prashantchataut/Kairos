@@ -292,7 +292,6 @@ class ShareManager @Inject constructor(
             textSize = 36f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             isAntiAlias = true
-            letterSpacing = 0.2f
         }
         canvas.drawText("TIME CAPSULE", CARD_PADDING.toFloat(), 200f, labelPaint)
 
@@ -345,58 +344,9 @@ class ShareManager @Inject constructor(
         author: String,
         isDarkTheme: Boolean
     ): Bitmap {
-        val bitmap = Bitmap.createBitmap(CARD_WIDTH, CARD_HEIGHT, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-
-        val bgColor = if (isDarkTheme) CARD_BG_DARK else CARD_BG_LIGHT
-        val primaryTextColor = if (isDarkTheme) TEXT_PRIMARY_DARK else TEXT_PRIMARY_LIGHT
-        val secondaryTextColor = if (isDarkTheme) TEXT_SECONDARY_DARK else TEXT_SECONDARY_LIGHT
-
-        canvas.drawColor(bgColor)
-
-        // Draw large quotation mark
-        val quotePaint = Paint().apply {
-            color = Kairos_GREEN
-            textSize = 200f
-            typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
-            isAntiAlias = true
-            alpha = 100
-        }
-        canvas.drawText("\u201C", CARD_PADDING.toFloat(), 350f, quotePaint)
-
-        // Draw "DAILY WISDOM" label
-        val labelPaint = Paint().apply {
-            color = Kairos_GREEN
-            textSize = 36f
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            isAntiAlias = true
-            letterSpacing = 0.2f
-        }
-        canvas.drawText("DAILY WISDOM", CARD_PADDING.toFloat(), 200f, labelPaint)
-
-        // Draw quote content
-        val contentPaint = Paint().apply {
-            color = primaryTextColor
-            textSize = 48f
-            typeface = Typeface.create(Typeface.SERIF, Typeface.ITALIC)
-            isAntiAlias = true
-        }
-        val yOffset = drawWrappedText(canvas, "\"$quote\"", CARD_PADDING.toFloat(), 500f,
-            CARD_WIDTH - CARD_PADDING * 2, contentPaint)
-
-        // Draw author
-        val authorPaint = Paint().apply {
-            color = secondaryTextColor
-            textSize = 36f
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-            isAntiAlias = true
-        }
-        canvas.drawText("— $author", CARD_PADDING.toFloat(), yOffset + 80f, authorPaint)
-
-        // Draw Kairos branding at bottom
-        drawKairosBranding(canvas, isDarkTheme)
-
-        return bitmap
+        return com.kairos.app.ui.garden.WordPrintRenderer.render(
+            "A thought to carry", "“$quote”\n— $author", "THE THOUGHT COLLECTION"
+        )
     }
 
     /**
@@ -437,7 +387,6 @@ class ShareManager @Inject constructor(
             textSize = 48f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             isAntiAlias = true
-            letterSpacing = 0.1f
         }
         canvas.drawText("Kairos", CARD_PADDING.toFloat(), CARD_HEIGHT - 120f, brandPaint)
 

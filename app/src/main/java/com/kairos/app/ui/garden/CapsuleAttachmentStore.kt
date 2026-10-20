@@ -21,12 +21,8 @@ class CapsuleAttachmentStore @Inject constructor(@ApplicationContext private val
         require(mime.startsWith("image/") || mime.startsWith("video/") || mime.startsWith("audio/") || mime == "application/pdf") {
             "Choose an image, video, audio recording or PDF."
         }
-        val extension = when {
-            mime.startsWith("image/") -> if (mime == "image/png") ".png" else ".jpg"
-            mime.startsWith("video/") -> ".mp4"
-            mime.startsWith("audio/") -> ".m4a"
-            else -> ".pdf"
-        }
+        val extension = "." + (android.webkit.MimeTypeMap.getSingleton().getExtensionFromMimeType(mime)
+            ?: error("This file format isn't supported. Choose another keepsake."))
         val file = File(directory, UUID.randomUUID().toString() + extension)
         try {
             context.contentResolver.openInputStream(uri)?.use { input ->
