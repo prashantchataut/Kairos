@@ -81,7 +81,11 @@ class FutureMessageReplyViewModel @Inject constructor(
 
             try {
                 val message = futureMessageRepository.getMessage(messageId).getOrNull()
-                if (message != null && message.deliveryDate <= System.currentTimeMillis()) {
+                if (message != null && !com.kairos.app.domain.capsule.CapsuleClock.canOpen(message.deliveryDate, System.currentTimeMillis())) {
+                    _uiState.update { it.copy(isLoading = false, errorMessage = "This capsule is still sealed.") }
+                    return@launch
+                }
+                if (message != null) {
                     val daysSince = calculateDaysSince(message.createdAt)
                     val (isAnniversary, anniversaryType) = checkAnniversary(message.createdAt)
 
