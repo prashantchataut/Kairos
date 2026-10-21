@@ -60,6 +60,42 @@
       "sourceType": "github",
       "skillPath": "skills/redesign-skill/SKILL.md",
       "computedHash": "98ad3e5b051bfb71b2795f7e8a6aa0d32b51ee095606c098a4b2822ac07926c9"
+    },
+    "animate": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/animate/SKILL.md",
+      "computedHash": "b8ede161270458e6ae2e45e8a1985373515d4c63de5568ddb0f9012d7634356c"
+    },
+    "find-animation-opportunities": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-animation-opportunities/SKILL.md",
+      "computedHash": "d52a377819b84a71930f0c822cfe2849f40301605a2d5c7eccbfa3b257700df2"
+    },
+    "compose-animations": {
+      "source": "chrisbanes/skills",
+      "sourceType": "github",
+      "skillPath": "skills/compose-animations/SKILL.md",
+      "computedHash": "eb94fc221017aad7c80b5414847379ac856b2f1c1363d1b67758701df2f5c217"
+    },
+    "compose-performance": {
+      "source": "chrisbanes/skills",
+      "sourceType": "github",
+      "skillPath": "skills/compose-performance/SKILL.md",
+      "computedHash": "716bc82c7c36b989f19be7868623da2ccd9fec97b35a803062036aa02adb6a7d"
+    },
+    "motion-design": {
+      "source": "lottiefiles/motion-design-skill",
+      "sourceType": "github",
+      "skillPath": "skills/motion-design/SKILL.md",
+      "computedHash": "8729ecbc7e5736c1295baaa8ba0384bb4b1aac9cf91b83fcdc64d9548a57bb19"
+    },
+    "design-motion-principles": {
+      "source": "kylezantos/design-motion-principles",
+      "sourceType": "github",
+      "skillPath": "skills/design-motion-principles/SKILL.md",
+      "computedHash": "599f42dbf011df38f3fcaf1497533af447d91cf97443b92439455af103c25b2e"
     }
   }
 }
