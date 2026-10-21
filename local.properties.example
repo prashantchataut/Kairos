@@ -1,5 +1,0 @@
-# Prody Local Configuration Template
-# Copy this file to local.properties and fill in your values.
-# NEVER commit the real local.properties file.
-
-sdk.dir=/path/to/android/sdk
