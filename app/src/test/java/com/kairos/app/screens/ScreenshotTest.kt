@@ -73,6 +73,9 @@ class ScreenshotTest {
         c.db.extras().insertAll(listOf(com.kairos.app.data.db.ExtraEntity(kind = "spark", text = "Step outside and find three different shades of green.")))
         c.kairos.ensureDay()
         val now = System.currentTimeMillis()
+        val moodRun = listOf("Good", "Okay", "Radiant", "Good", "Low", "Okay", "Good", "Radiant", "Rough", "Okay", "Good", "Good", "Radiant")
+        moodRun.forEachIndexed { i, m -> c.db.moods().insert(com.kairos.app.data.db.MoodEntity(epochDay = today() - (moodRun.size - i), mood = m, createdAt = now - 86_400_000L * (moodRun.size - i))) }
+        listOf("SavedWord" to 1, "Practice" to 2, "Letter" to 3, "Spark" to 5).forEach { (k, d) -> c.db.moments().insert(com.kairos.app.data.db.MomentEntity(createdAt = now - 86_400_000L * d, epochDay = today() - d, kind = k, label = k)) }
         c.db.capsules().insert(CapsuleEntity(title = "Before the move", letter = "Hi you.", createdAt = now - 86_400_000L * 40, opensAt = now + 86_400_000L * 160, tint = "Lavender", moodAtSeal = "Good"))
         c.db.capsules().insert(CapsuleEntity(title = "", letter = "Hello", createdAt = now - 86_400_000L * 10, opensAt = now + 86_400_000L * 400, tint = "Mint"))
         c.db.capsules().insert(CapsuleEntity(title = "New year, new desk", letter = "Hello", createdAt = now - 86_400_000L * 365, opensAt = now - 1000, tint = "Peach"))
@@ -105,7 +108,11 @@ class ScreenshotTest {
     @Test fun e2_compose() = shoot("05b_compose") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}) }
     @Test fun e3_sealed() = shoot("05c_letter_sealed") { com.kairos.app.ui.feature.capsule.LetterScreen(1, {}, {}) }
     @Test fun e4_ready() = shoot("05d_letter_ready") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
+    @Test fun k_practice() = shoot("11_practice") { com.kairos.app.ui.feature.practice.PracticeScreen {} }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
+    @Test fun f2_interests() = shoot("06b_interests") { com.kairos.app.ui.feature.you.InterestsScreen {} }
+    @Config(qualifiers = "w400dp-h1700dp-xxhdpi")
+    @Test fun f3_youFull() = shoot("06c_you_full", bar = 3) { YouScreen({}, {}) }
     @Test fun g_curator() = shoot("07_curator") { CuratorScreen {} }
     @Test fun g_curatorAwake() { app.container.keys.setApiKey("sk-or-test-key-for-screens"); try { shoot("07b_curator_awake") { CuratorScreen {} } } finally { app.container.keys.setApiKey(null) } }
     @Test fun h_onboarding() = shoot("08_onboarding", seeded = false) { OnboardingScreen({}) }
