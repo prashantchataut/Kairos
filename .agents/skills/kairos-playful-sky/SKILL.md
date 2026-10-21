@@ -301,7 +301,24 @@ Templates (each 360dp artboard, exported at 1080px):
 - **You**: Kai and name, garden of kept words, four weeks of mood shapes, settings in two calm groups.
 - **Curator**: Kai with a key on glass, the key ritual, model list as a word-wheel style picker.
 
-## 11. Verification loop
+## 11. Where things live
+
+| Thing | File |
+| --- | --- |
+| Palette, candy, tints, night | `ui/theme/Tokens.kt` |
+| Type (Bricolage, Fraunces) | `ui/theme/Type.kt` |
+| Motion tokens (bloom, soft, press, settle, curves) | `ui/theme/Theme.kt` |
+| Kai, looks, mood mapping, sleeping z's | `ui/art/Kai.kt` |
+| The moment bloom (mark, icon geometry) | `ui/art/Bloom.kt`, `scripts/generate_icons.py` |
+| Grain, bursts, flowers and gardens, paintings, clouds, aurora | `ui/art/*.kt` |
+| Adaptive slider | `ui/components/KairosSlider.kt` |
+| Giant dashed-to-solid pills | `ui/components/Pills.kt` |
+| Key ritual | `ui/feature/you/KeyRitual.kt` |
+| Glass folders, night sky, attachments | `ui/feature/capsule/CapsuleArt.kt` |
+| Share-card templates | `ui/feature/studio/Cards.kt` |
+| Screenshot tests (screens, onboarding frames, design sheet, icons) | `app/src/test/.../screens/` |
+
+## 12. Verification loop
 
 1. Build: `./gradlew :app:compileDebugKotlin`.
 2. Render: `./gradlew :app:recordRoborazziDebug` (screens over seeded curator output, light and dark).
