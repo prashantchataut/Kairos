@@ -12,6 +12,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -37,7 +38,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -62,13 +62,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -77,23 +84,28 @@ import com.kairos.app.AppContainer
 import com.kairos.app.data.repo.CapsuleDraft
 import com.kairos.app.data.repo.DraftAttachment
 import com.kairos.app.engine.Mood
-import com.kairos.app.ui.components.Card
-import com.kairos.app.ui.components.Chip
+import com.kairos.app.ui.art.Bit
+import com.kairos.app.ui.art.Kai
+import com.kairos.app.ui.art.burst
+import com.kairos.app.ui.art.look
+import com.kairos.app.ui.art.rememberBurst
 import com.kairos.app.ui.components.Icons
+import com.kairos.app.ui.components.KairosSlider
 import com.kairos.app.ui.components.PrimaryButton
+import com.kairos.app.ui.components.SliderBubble
+import com.kairos.app.ui.components.at
 import com.kairos.app.ui.components.pressable
-import com.kairos.app.ui.components.SkyTail
-import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.feature.detail.TopBar
 import com.kairos.app.ui.feature.today.tint
-import com.kairos.app.ui.nav.frosted
+import com.kairos.app.ui.theme.Candy
 import com.kairos.app.ui.theme.Gap
 import com.kairos.app.ui.theme.K
+import com.kairos.app.ui.theme.LightPalette
 import com.kairos.app.ui.theme.Motion
-import com.kairos.app.ui.theme.Serif
+import com.kairos.app.ui.theme.Radius
+import com.kairos.app.ui.theme.SerifText
 import com.kairos.app.ui.theme.Tint
-import com.kairos.app.ui.theme.tint
-import com.kairos.app.ui.theme.tintInk
+import com.kairos.app.ui.theme.candy
 import com.kairos.app.util.AudioRecorder
 import com.kairos.app.util.Fmt
 import com.kairos.app.util.appViewModel
@@ -107,8 +119,9 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import kotlin.math.roundToInt
 
-enum class OpenIn(val label: String, val months: Long) { Month("1 month", 1), Season("3 months", 3), Half("6 months", 6), Year("1 year", 12), Five("5 years", 60) }
+enum class OpenIn(val label: String, val months: Long) { Month("1 month", 1), Season("3 months", 3), Half("6 months", 6), Year("1 year", 12), Two("2 years", 24), Five("5 years", 60) }
 
 data class ComposeState(
     val title: String = "",
@@ -160,12 +173,14 @@ class ComposeViewModel(private val c: AppContainer) : ViewModel() {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+private val openColors = listOf(Candy.Sky, Candy.Mint, Candy.Lilac, Candy.Bubblegum, Candy.Coral, Candy.Sun)
+private val Paper = Color(0xFFFFF8EC)
+private val PaperInk = Color(0xFF2A2140)
+
 @Composable
 fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit) {
     val vm = appViewModel { ComposeViewModel(it) }
     val s by vm.state.collectAsStateWithLifecycle()
-    val p = K.colors
     val context = LocalContext.current
     var confirm by remember { mutableStateOf(false) }
     var pickDate by remember { mutableStateOf(false) }
@@ -183,46 +198,52 @@ fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit) {
     }
     val mic = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { if (it) toggleRec() }
 
-    Box(Modifier.fillMaxSize().background(p.canvas)) {
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding().padding(bottom = 120.dp)) {
-            Column(Modifier.fillMaxWidth().sky().padding(bottom = SkyTail)) {
-                TopBar({ if (s.dirty) confirm = true else onBack() }, onSky = true)
-                Column(Modifier.padding(horizontal = Gap.gutter)) {
-                    Spacer(Modifier.height(Gap.md))
-                    Text("This letter opens on", style = K.type.label, color = p.onSkySoft)
-                    AnimatedContent(s.date, transitionSpec = { (fadeIn() + slideInVertically { it / 4 }) togetherWith fadeOut() }, label = "date") { d ->
-                        Column {
-                            Text(Fmt.ordinalDate(d), style = K.type.hero.copy(fontSize = 56.sp, lineHeight = 58.sp), color = p.onSky)
-                            Text("${d.year}, ${Fmt.until(d.atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())}", style = K.type.label, color = p.onSkySoft)
-                        }
-                    }
+    Box(Modifier.fillMaxSize().nightSky()) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding().padding(bottom = 130.dp)) {
+            TopBar({ if (s.dirty) confirm = true else onBack() }, onSky = true)
+            Column(Modifier.padding(horizontal = Gap.gutter)) {
+                Spacer(Modifier.height(Gap.md))
+                Text("This letter opens on", style = K.type.label, color = Color.White.copy(alpha = 0.7f))
+                Spacer(Modifier.height(Gap.xs))
+                AnimatedContent(s.date, transitionSpec = { (fadeIn(Motion.fade(240)) + slideInVertically(Motion.offset) { it / 5 }) togetherWith fadeOut(Motion.fade(120)) }, label = "date") { d ->
+                    FadingTitle(Fmt.ordinalDate(d), "${d.year}", size = 54)
                 }
-                Spacer(Modifier.height(Gap.lg))
-                LazyRow(contentPadding = PaddingValues(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.sm)) {
-                    items(OpenIn.entries.toList()) { o -> SkyChip(o.label, s.preset == o) { vm.preset(o) } }
-                    item { SkyChip("Pick a day", s.preset == null, icon = Icons.Calendar) { pickDate = true } }
-                }
+                Text(Fmt.until(s.date.atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).replaceFirstChar { it.uppercase() }, style = K.type.label, color = Color.White.copy(alpha = 0.7f))
             }
-            Card(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter)) {
+            Spacer(Modifier.height(Gap.md))
+            val idx = s.preset?.ordinal ?: OpenIn.Year.ordinal
+            KairosSlider(
+                idx / 5f, { vm.preset(OpenIn.entries[(it * 5).roundToInt()]) }, "Open the letter in", { OpenIn.entries[(it * 5).roundToInt()].label },
+                Modifier.padding(horizontal = 4.dp), stops = 6, colors = openColors, onDark = true,
+                bubble = { f -> SliderBubble(if (s.preset == null) "Your day" else OpenIn.entries[(f * 5).roundToInt()].label, openColors.at(f).copy(alpha = 0.9f).let { androidx.compose.ui.graphics.lerp(it, Candy.Navy, 0.3f) }) },
+            )
+            Row(Modifier.padding(horizontal = Gap.gutter), verticalAlignment = Alignment.CenterVertically) {
+                NightChip("Pick a day", s.preset == null, Icons.Calendar) { pickDate = true }
+            }
+            Spacer(Modifier.height(Gap.xl))
+            // The letter: warm paper on the night sky.
+            Column(
+                Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).clip(Radius.deck).background(Paper).padding(Gap.xl),
+            ) {
                 Box {
-                    if (s.title.isEmpty()) Text("Give it a name (optional)", style = K.type.title, color = p.inkFaint)
-                    BasicTextField(s.title, vm::title, singleLine = true, textStyle = K.type.title.copy(color = p.ink), cursorBrush = SolidColor(p.accent), modifier = Modifier.fillMaxWidth())
+                    if (s.title.isEmpty()) Text("Give it a name (optional)", style = K.type.title, color = PaperInk.copy(alpha = 0.35f))
+                    BasicTextField(s.title, vm::title, singleLine = true, textStyle = K.type.title.copy(color = PaperInk), cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth())
                 }
                 Spacer(Modifier.height(Gap.lg))
-                Text("Dear future me,", style = K.type.serifLarge.copy(fontSize = 26.sp, lineHeight = 30.sp, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic), color = p.ink)
+                Text("Dear future me,", style = K.type.serifLarge.copy(fontSize = 28.sp, lineHeight = 32.sp, fontStyle = FontStyle.Italic), color = PaperInk)
                 Spacer(Modifier.height(Gap.sm))
                 Box(Modifier.fillMaxWidth().heightIn(min = 220.dp)) {
-                    val letterStyle = K.type.body.copy(fontFamily = Serif, fontSize = 21.sp, lineHeight = 31.sp, color = p.ink)
-                    if (s.letter.isEmpty()) Text(s.prompt, style = letterStyle.copy(color = p.inkFaint))
-                    BasicTextField(s.letter, vm::letter, textStyle = letterStyle, cursorBrush = SolidColor(p.accent), modifier = Modifier.fillMaxWidth().heightIn(min = 220.dp))
+                    val letterStyle = K.type.body.copy(fontFamily = SerifText, fontSize = 20.sp, lineHeight = 31.sp, color = PaperInk)
+                    if (s.letter.isEmpty()) Text(s.prompt, style = letterStyle.copy(color = PaperInk.copy(alpha = 0.35f)))
+                    BasicTextField(s.letter, vm::letter, textStyle = letterStyle, cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth().heightIn(min = 220.dp))
                 }
                 Spacer(Modifier.height(Gap.md))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Sparkle, null, tint = p.accent, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Sparkle, null, tint = Candy.Coral, modifier = Modifier.size(14.dp))
                     Spacer(Modifier.width(6.dp))
-                    Text("Use this prompt", style = K.type.label, color = p.accent, modifier = Modifier.pressable(onClick = vm::usePrompt))
+                    Text("Use this prompt", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Candy.Coral, modifier = Modifier.pressable(onClick = vm::usePrompt))
                     Spacer(Modifier.weight(1f))
-                    Text("Another", style = K.type.label, color = p.inkSoft, modifier = Modifier.pressable(onClick = vm::nextPrompt))
+                    Text("Another", style = K.type.label, color = PaperInk.copy(alpha = 0.6f), modifier = Modifier.pressable(onClick = vm::nextPrompt))
                 }
             }
             if (s.attachments.isNotEmpty()) {
@@ -231,49 +252,70 @@ fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit) {
                         AttachmentCard(a.kind, a.uri, a.name, tiltFor(i), onRemove = { vm.remove(a) }, modifier = Modifier.animateItem())
                     }
                 }
-            } else Spacer(Modifier.height(Gap.lg))
-            Card(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter)) {
-                Text("How are you right now?", style = K.type.title, color = p.ink)
-                Text("Future you will see it next to how they feel.", style = K.type.caption, color = p.inkSoft)
+            } else Spacer(Modifier.height(Gap.xl))
+            Column(Modifier.padding(horizontal = Gap.gutter)) {
+                Text("How are you right now?", style = K.type.title, color = Color.White)
+                Text("Future you will see it next to how they feel.", style = K.type.caption, color = Color.White.copy(alpha = 0.65f))
                 Spacer(Modifier.height(Gap.md))
-                androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(Gap.sm), verticalArrangement = Arrangement.spacedBy(Gap.sm)) {
-                    Mood.entries.forEach { m -> Chip(m.label, s.mood == m, { vm.mood(m) }) }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Mood.entries.forEach { m ->
+                        val on = s.mood == m
+                        val sc by animateFloatAsState(if (on) 1.15f else if (s.mood == null) 1f else 0.85f, Motion.bloom(), label = "mood")
+                        Column(Modifier.pressable(label = m.label) { vm.mood(m) }, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Kai(m.look(), size = 54.dp, shadow = false, modifier = Modifier.graphicsLayer { scaleX = sc; scaleY = sc; alpha = if (s.mood == null || on) 1f else 0.55f })
+                            Text(m.label, style = K.type.caption, color = Color.White.copy(alpha = if (on) 1f else 0.6f))
+                        }
+                    }
                 }
-                Spacer(Modifier.height(Gap.lg))
-                Text("Envelope", style = K.type.caption, color = p.inkFaint)
+                Spacer(Modifier.height(Gap.xl))
+                Text("Letter colour", style = K.type.caption, color = Color.White.copy(alpha = 0.65f))
                 Spacer(Modifier.height(Gap.sm))
                 Row(horizontalArrangement = Arrangement.spacedBy(Gap.md)) {
                     Tint.entries.forEach { t ->
-                        Box(Modifier.size(34.dp).pressable(label = t.name) { vm.tint(t) }.clip(CircleShape).background(p.tint(t)).border(if (t == s.tint) 2.dp else 1.dp, if (t == s.tint) p.tintInk(t) else p.line, CircleShape))
+                        val on = t == s.tint
+                        val sc by animateFloatAsState(if (on) 1.15f else 1f, Motion.bloom(), label = "tint")
+                        Box(
+                            Modifier.size(36.dp).graphicsLayer { scaleX = sc; scaleY = sc }.pressable(label = t.name) { vm.tint(t) }.clip(CircleShape)
+                                .background(LightPalette.candy(t)).border(if (on) 3.dp else 0.dp, Color.White, CircleShape),
+                        )
                     }
                 }
             }
         }
 
         Row(
-            Modifier.align(Alignment.BottomCenter).navigationBarsPadding().imePadding().padding(Gap.gutter).fillMaxWidth().frosted().padding(6.dp),
+            Modifier.align(Alignment.BottomCenter).navigationBarsPadding().imePadding().padding(Gap.gutter).fillMaxWidth()
+                .clip(CircleShape).background(Color(0xFF1A2668).copy(alpha = 0.92f)).border(1.dp, Color.White.copy(alpha = 0.18f), CircleShape).padding(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             BarIcon(Icons.Image, "Add photos") { photos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)) }
             BarIcon(Icons.Folder, "Attach files") { files.launch(arrayOf("*/*")) }
-            BarIcon(if (recording) Icons.Stop else Icons.Mic, if (recording) "Stop recording" else "Record a voice note", tint = if (recording) p.negative else p.ink) {
+            BarIcon(if (recording) Icons.Stop else Icons.Mic, if (recording) "Stop recording" else "Record a voice note", tint = if (recording) Candy.Coral else Color.White) {
                 if (recording || ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) toggleRec()
                 else mic.launch(Manifest.permission.RECORD_AUDIO)
             }
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { if (recording) RecTimer(recStart) }
-            PrimaryButton("Seal", vm::seal, icon = Icons.Lock, enabled = s.canSeal)
+            Row(
+                Modifier.height(48.dp).pressable(enabled = s.canSeal, label = "Seal the letter", onClick = vm::seal).clip(CircleShape)
+                    .background(if (s.canSeal) Candy.Sun else Color.White.copy(alpha = 0.15f)).padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(Icons.Lock, null, tint = if (s.canSeal) Candy.Navy else Color.White.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(Gap.sm))
+                Text("Seal", style = K.type.label.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold), color = if (s.canSeal) Candy.Navy else Color.White.copy(alpha = 0.6f))
+            }
         }
 
-        AnimatedVisibility(s.sealing, enter = fadeIn(), exit = fadeOut()) { Sealing(p.tint(s.tint), s.date, s.sealed, onSealed) }
+        AnimatedVisibility(s.sealing, enter = fadeIn(Motion.fade(220)), exit = fadeOut()) { Sealing(LightPalette.candy(s.tint), s.date, s.sealed, onSealed) }
     }
 
     if (confirm) AlertDialog(
         onDismissRequest = { confirm = false },
         title = { Text("Discard this letter?", style = K.type.title) },
         text = { Text("What you've written won't be saved.", style = K.type.body) },
-        confirmButton = { TextButton({ confirm = false; onBack() }) { Text("Discard", color = p.negative) } },
+        confirmButton = { TextButton({ confirm = false; onBack() }) { Text("Discard", color = K.colors.negative) } },
         dismissButton = { TextButton({ confirm = false }) { Text("Keep writing") } },
-        containerColor = p.surface,
+        containerColor = K.colors.surface,
     )
     if (pickDate) {
         val tomorrow = LocalDate.now().plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
@@ -293,19 +335,19 @@ fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit) {
 }
 
 @Composable
-private fun SkyChip(text: String, on: Boolean, icon: androidx.compose.ui.graphics.vector.ImageVector? = null, onClick: () -> Unit) {
-    val p = K.colors
+private fun NightChip(text: String, on: Boolean, icon: ImageVector? = null, onClick: () -> Unit) {
     Row(
-        Modifier.pressable(onClick = onClick).clip(CircleShape).background(if (on) p.surface else p.glassOnSky).border(1.dp, if (on) p.surface else p.glassOnSkyRim, CircleShape).padding(horizontal = 14.dp, vertical = 9.dp),
+        Modifier.pressable(scale = 0.94f, onClick = onClick).clip(CircleShape).background(if (on) Color.White else Color.White.copy(alpha = 0.12f))
+            .border(1.dp, Color.White.copy(alpha = if (on) 1f else 0.3f), CircleShape).padding(horizontal = 14.dp, vertical = 9.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (icon != null) { Icon(icon, null, tint = if (on) p.ink else p.onSky, modifier = Modifier.size(15.dp)); Spacer(Modifier.width(6.dp)) }
-        Text(text, style = K.type.label, color = if (on) p.ink else p.onSky)
+        if (icon != null) { Icon(icon, null, tint = if (on) Candy.Navy else Color.White, modifier = Modifier.size(15.dp)); Spacer(Modifier.width(6.dp)) }
+        Text(text, style = K.type.label, color = if (on) Candy.Navy else Color.White)
     }
 }
 
 @Composable
-private fun BarIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, tint: androidx.compose.ui.graphics.Color = K.colors.ink, onClick: () -> Unit) {
+private fun BarIcon(icon: ImageVector, label: String, tint: Color = Color.White, onClick: () -> Unit) {
     Box(Modifier.size(48.dp).pressable(label = label, onClick = onClick), contentAlignment = Alignment.Center) { Icon(icon, label, tint = tint, modifier = Modifier.size(23.dp)) }
 }
 
@@ -316,49 +358,62 @@ private fun RecTimer(start: Long) {
     val secs = (now - start) / 1000
     val pulse by rememberInfiniteTransition(label = "rec").animateFloat(0.35f, 1f, infiniteRepeatable(tween(600), RepeatMode.Reverse), label = "p")
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(9.dp).graphicsLayer { alpha = pulse }.clip(CircleShape).background(K.colors.negative))
+        Box(Modifier.size(9.dp).graphicsLayer { alpha = pulse }.clip(CircleShape).background(Candy.Coral))
         Spacer(Modifier.width(6.dp))
-        Text("${secs / 60}:${"%02d".format(secs % 60)}", style = K.type.label, color = K.colors.ink)
+        Text("${secs / 60}:${"%02d".format(secs % 60)}", style = K.type.label, color = Color.White)
     }
 }
 
-/** The letter slides into its envelope, the flap folds shut, the seal presses on, and it floats off. */
+/**
+ * The sealing ceremony: the letter slides down into its glass folder, a wax bloom stamps it shut,
+ * dandelion seeds drift up and away (r25), and the folder floats off into the night.
+ */
 @Composable
-private fun Sealing(lining: androidx.compose.ui.graphics.Color, date: LocalDate, done: Boolean, onFinished: () -> Unit) {
-    val p = K.colors
+private fun Sealing(paper: Color, date: LocalDate, done: Boolean, onFinished: () -> Unit) {
     val calm = K.calm
-    val letter = remember { Animatable(1f) }
-    val flap = remember { Animatable(1f) }
-    val seal = remember { Animatable(0f) }
+    val haptics = LocalHapticFeedback.current
+    val density = LocalDensity.current
+    val rise = remember { Animatable(if (calm) 0f else 1.7f) }
+    val seal = remember { Animatable(if (calm) 1f else 0f) }
     val lift = remember { Animatable(0f) }
-    var text by remember { mutableStateOf(false) }
+    val seeds = rememberBurst()
+    var text by remember { mutableStateOf(calm) }
     LaunchedEffect(Unit) {
-        if (calm) { letter.snapTo(0f); flap.snapTo(0f); seal.snapTo(1f); text = true; return@LaunchedEffect }
-        letter.animateTo(0f, tween(620, easing = Motion.Ease))
-        flap.animateTo(0f, tween(420, easing = Motion.Ease))
-        seal.animateTo(1f, Motion.soft())
+        if (calm) return@LaunchedEffect
+        delay(150)
+        rise.animateTo(0f, tween(760, easing = Motion.InOut))
+        seal.snapTo(1.6f)
+        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        launch { seal.animateTo(1f, Motion.bloom()) }
+        launch {
+            seeds.fire(
+                with(density) { Offset(130.dp.toPx(), 110.dp.toPx()) }, kinds = listOf(Bit.Seed), colors = listOf(Color.White, Color.White.copy(alpha = 0.7f)),
+                count = 16, spread = 140f, direction = -90f, power = 1.5f, gravity = -0.6f, durationMs = 1800,
+            )
+        }
+        delay(250)
         text = true
     }
     LaunchedEffect(done, text) {
         if (!done || !text) return@LaunchedEffect
-        delay(1000)
-        if (!calm) lift.animateTo(1f, tween(600, easing = Motion.Ease))
+        delay(1400)
+        if (!calm) lift.animateTo(1f, tween(650, easing = Motion.InOut))
         onFinished()
     }
-    Box(Modifier.fillMaxSize().background(p.canvas.copy(alpha = 0.94f)).pressable(scale = 1f, haptic = false) {}, contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().nightSky().pressable(scale = 1f, haptic = false) {}, contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Envelope(
-                lining, flap = flap.value, rise = letter.value, glow = seal.value * 0.6f,
-                modifier = Modifier.size(width = 220.dp, height = 152.dp).graphicsLayer {
-                    translationY = -lift.value * 800f; alpha = 1f - lift.value
-                    val sc = 0.9f + 0.1f * seal.value; scaleX = sc; scaleY = sc
+            Box(
+                Modifier.size(width = 260.dp, height = 220.dp).burst(seeds).graphicsLayer {
+                    translationY = -lift.value * 900f; alpha = 1f - lift.value
+                    rotationZ = lift.value * -8f
                 },
-            )
+            ) { GlassFolder(paper, Modifier.fillMaxSize(), rise = rise.value, seal = seal.value, papers = 1) }
             Spacer(Modifier.height(Gap.xxl))
-            AnimatedVisibility(text, enter = fadeIn() + slideInVertically { it / 2 }) {
+            AnimatedVisibility(text, enter = fadeIn(Motion.fade(400)) + slideInVertically(Motion.offset) { it / 2 }) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Sealed", style = K.type.serifLarge, color = p.ink)
-                    Text("See you on ${Fmt.ordinalDate(date)}, ${date.year}.", style = K.type.body, color = p.inkSoft, textAlign = TextAlign.Center)
+                    Text("Sealed.", style = K.type.shout, color = Color.White)
+                    Spacer(Modifier.height(Gap.xs))
+                    Text("See you on ${Fmt.ordinalDate(date)}, ${date.year}.", style = K.type.body, color = Color.White.copy(alpha = 0.75f), textAlign = TextAlign.Center)
                 }
             }
         }

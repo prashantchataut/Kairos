@@ -12,8 +12,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -49,12 +52,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,31 +76,34 @@ import com.kairos.app.data.db.AttachmentEntity
 import com.kairos.app.data.db.CapsuleWithAttachments
 import com.kairos.app.data.repo.AttachmentKind
 import com.kairos.app.engine.Mood
-import com.kairos.app.ui.components.Card
-import com.kairos.app.ui.components.GlassTile
+import com.kairos.app.ui.art.Bit
+import com.kairos.app.ui.art.Kai
+import com.kairos.app.ui.art.burst
+import com.kairos.app.ui.art.look
+import com.kairos.app.ui.art.rememberBurst
 import com.kairos.app.ui.components.Icons
 import com.kairos.app.ui.components.PrimaryButton
 import com.kairos.app.ui.components.RoundIcon
-import com.kairos.app.ui.components.SecondaryButton
-import com.kairos.app.ui.components.Status
 import com.kairos.app.ui.components.pressable
-import com.kairos.app.ui.components.SkyTail
-import com.kairos.app.ui.components.sky
 import com.kairos.app.ui.feature.detail.TopBar
-import com.kairos.app.ui.feature.today.tint
 import com.kairos.app.ui.nav.shared
+import com.kairos.app.ui.theme.Candy
 import com.kairos.app.ui.theme.Gap
 import com.kairos.app.ui.theme.K
+import com.kairos.app.ui.theme.LightPalette
 import com.kairos.app.ui.theme.Motion
-import com.kairos.app.ui.theme.Serif
-import com.kairos.app.ui.theme.tint
-import com.kairos.app.ui.theme.tintInk
+import com.kairos.app.ui.theme.Radius
+import com.kairos.app.ui.theme.SerifText
+import com.kairos.app.ui.theme.candy
 import com.kairos.app.util.AudioPlayer
 import com.kairos.app.util.Fmt
 import com.kairos.app.util.appContainer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+
+private val Paper = Color(0xFFFFF8EC)
+private val PaperInk = Color(0xFF2A2140)
 
 @Composable
 fun LetterScreen(id: Long, onBack: () -> Unit, onWriteAnother: () -> Unit) {
@@ -103,7 +115,7 @@ fun LetterScreen(id: Long, onBack: () -> Unit, onWriteAnother: () -> Unit) {
     LaunchedEffect(Unit) { while (true) { delay(1000); now = System.currentTimeMillis() } }
     val cap = item ?: return
     val phase = when { cap.capsule.openedAt != null -> 2; cap.capsule.opensAt <= now -> 1; else -> 0 }
-    Box(Modifier.fillMaxSize().background(K.colors.canvas)) {
+    Box(Modifier.fillMaxSize().nightSky()) {
         AnimatedContent(phase, transitionSpec = { (fadeIn(Motion.fade(420)) + scaleIn(Motion.settle(), initialScale = 0.97f)) togetherWith fadeOut() }, label = "phase") { ph ->
             when (ph) {
                 0 -> Sealed(cap, now)
@@ -123,95 +135,116 @@ fun LetterScreen(id: Long, onBack: () -> Unit, onWriteAnother: () -> Unit) {
     )
 }
 
-private val NotYet = listOf("Not yet.", "No peeking.", "Still brewing.", "Soon, promise.")
+private val NotYet = listOf("Not yet.", "No peeking.", "Still brewing.", "Soon, promise.", "Patience, you.")
+
+private fun CapsuleWithAttachments.paper() = LightPalette.candy(tintOf(capsule.tint))
 
 @Composable
 private fun Sealed(cap: CapsuleWithAttachments, now: Long) {
-    val p = K.colors
     val c = cap.capsule
     val wiggle = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
+    val haptics = LocalHapticFeedback.current
     var pokes by remember { mutableIntStateOf(0) }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding()) {
-        Column(Modifier.fillMaxWidth().sky().padding(top = 96.dp, bottom = SkyTail), horizontalAlignment = Alignment.CenterHorizontally) {
-            Envelope(
-                p.tint(tintOf(c.tint)),
-                modifier = Modifier.size(width = 230.dp, height = 158.dp).shared("capsule-${c.id}").graphicsLayer { rotationZ = wiggle.value }
-                    .pressable(label = "Try to open") {
-                        pokes++
-                        scope.launch { repeat(3) { wiggle.animateTo(4f, tween(50)); wiggle.animateTo(-4f, tween(50)) }; wiggle.animateTo(0f, tween(50)) }
-                    },
-            )
-            Spacer(Modifier.height(Gap.xl))
-            Text(if (pokes == 0) "Opens on" else NotYet[(pokes - 1) % NotYet.size], style = K.type.label, color = p.onSkySoft)
-            Text(Fmt.ordinalDate(Fmt.localDate(c.opensAt)) + ", " + Fmt.localDate(c.opensAt).year, style = K.type.serifLarge, color = p.onSky)
-            Spacer(Modifier.height(Gap.xl))
-            val secs = ((c.opensAt - now) / 1000).coerceAtLeast(0)
-            Row(Modifier.padding(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.sm)) {
-                listOf(secs / 86_400 to "days", (secs % 86_400) / 3600 to "hours", (secs % 3600) / 60 to "min", secs % 60 to "sec").forEach { (v, l) ->
-                    GlassTile(Modifier.weight(1f).height(76.dp)) {
-                        Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                            AnimatedContent(v, transitionSpec = { (fadeIn() + slideInVertically { -it / 2 }) togetherWith fadeOut() }, label = "n") { n ->
-                                Text("$n", style = K.type.title.copy(fontSize = 24.sp), color = p.onSky)
-                            }
-                            Text(l, style = K.type.caption, color = p.onSkySoft)
-                        }
+    val mood = Mood.of(c.moodAtSeal)
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).navigationBarsPadding().padding(top = 92.dp, bottom = Gap.huge), horizontalAlignment = Alignment.CenterHorizontally) {
+        GlassFolder(
+            cap.paper(),
+            Modifier.size(width = 250.dp, height = 210.dp).shared("capsule-${c.id}").graphicsLayer { rotationZ = wiggle.value }
+                .pressable(label = "Try to open", scale = 0.96f) {
+                    pokes++
+                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    scope.launch { repeat(3) { wiggle.animateTo(5f, tween(50)); wiggle.animateTo(-5f, tween(50)) }; wiggle.animateTo(0f, tween(60)) }
+                },
+            sticker = mood?.look(), papers = (1 + cap.attachments.size).coerceAtMost(3),
+        )
+        Spacer(Modifier.height(Gap.xl))
+        AnimatedContent(pokes, transitionSpec = { (fadeIn() + slideInVertically { it / 2 }) togetherWith fadeOut() }, label = "poke") { n ->
+            Text(if (n == 0) "Opens on" else NotYet[(n - 1) % NotYet.size], style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Color.White.copy(alpha = 0.75f))
+        }
+        val d = Fmt.localDate(c.opensAt)
+        FadingTitle(Fmt.ordinalDate(d), "${d.year}", size = 50, modifier = Modifier.padding(horizontal = Gap.gutter))
+        Spacer(Modifier.height(Gap.xl))
+        val secs = ((c.opensAt - now) / 1000).coerceAtLeast(0)
+        Row(Modifier.padding(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.sm)) {
+            listOf(secs / 86_400 to "days", (secs % 86_400) / 3600 to "hours", (secs % 3600) / 60 to "min", secs % 60 to "sec").forEach { (v, l) ->
+                Column(
+                    Modifier.weight(1f).height(80.dp).clip(Radius.tile).background(Color.White.copy(alpha = 0.1f)).border(1.dp, Color.White.copy(alpha = 0.2f), Radius.tile),
+                    verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    AnimatedContent(v, transitionSpec = { (slideInVertically(Motion.offset) { -it } + fadeIn()) togetherWith (slideOutVertically(Motion.offset) { it } + fadeOut()) }, label = "n") { n ->
+                        Text("$n", style = K.type.display.copy(fontSize = 26.sp), color = Color.White)
                     }
+                    Text(l, style = K.type.caption, color = Color.White.copy(alpha = 0.6f))
                 }
             }
         }
-        Card(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter)) {
-            Text(c.title.ifBlank { "A letter to future you" }, style = K.type.title, color = p.ink)
+        Spacer(Modifier.height(Gap.xl))
+        Column(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).clip(Radius.card).background(Color.White.copy(alpha = 0.08f)).padding(Gap.xl)) {
+            Text(c.title.ifBlank { "A letter to future you" }, style = K.type.title, color = Color.White)
             Spacer(Modifier.height(Gap.xs))
-            val mood = Mood.of(c.moodAtSeal)
-            Text(
-                "Written ${Fmt.date(c.createdAt)}" + (mood?.let { ", feeling ${it.label.lowercase()}" } ?: "") + ".",
-                style = K.type.body, color = p.inkSoft,
-            )
-            if (cap.attachments.isNotEmpty()) { Spacer(Modifier.height(Gap.md)); Status("${cap.attachments.size} ${if (cap.attachments.size == 1) "thing" else "things"} tucked inside", p.accent) }
+            Text("Written ${Fmt.date(c.createdAt)}" + (mood?.let { ", feeling ${it.label.lowercase()}" } ?: "") + ".", style = K.type.body, color = Color.White.copy(alpha = 0.7f))
+            if (cap.attachments.isNotEmpty()) {
+                Spacer(Modifier.height(Gap.sm))
+                Text("${cap.attachments.size} ${if (cap.attachments.size == 1) "thing" else "things"} tucked inside", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Candy.Sun)
+            }
         }
     }
 }
 
+/**
+ * Ready: the folder glows and bobs. Breaking the seal pops the wax, lifts the folder and tips it
+ * toward you in 3D (r31), then the letter slides out to a burst of confetti.
+ */
 @Composable
 private fun Ready(cap: CapsuleWithAttachments, onOpen: () -> Unit) {
-    val p = K.colors
     val calm = K.calm
     val c = cap.capsule
-    val crack = remember { Animatable(0f) }
-    val flap = remember { Animatable(0f) }
+    val density = LocalDensity.current
+    val haptics = LocalHapticFeedback.current
+    val seal = remember { Animatable(1f) }
+    val lift = remember { Animatable(0f) }
     val rise = remember { Animatable(0f) }
+    val burst = rememberBurst()
     var started by remember { mutableStateOf(false) }
-    val bob by rememberInfiniteTransition(label = "rb").animateFloat(-5f, 5f, infiniteRepeatable(tween(1700), RepeatMode.Reverse), label = "b")
+    val bob = if (!calm) rememberInfiniteTransition(label = "rb").animateFloat(-6f, 6f, infiniteRepeatable(tween(1700), RepeatMode.Reverse), label = "b") else null
+    val glow = if (!calm) rememberInfiniteTransition(label = "rg").animateFloat(0.6f, 1f, infiniteRepeatable(tween(1300), RepeatMode.Reverse), label = "g") else null
     LaunchedEffect(started) {
         if (!started) return@LaunchedEffect
+        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
         if (!calm) {
-            crack.animateTo(1f, tween(360))
-            flap.animateTo(1f, tween(460, easing = Motion.Ease))
-            rise.animateTo(1f, tween(620, easing = Motion.Ease))
-            delay(220)
+            seal.animateTo(1.35f, tween(140))
+            seal.animateTo(0f, tween(220))
+            lift.animateTo(1f, Motion.bloom())
+            launch { burst.fire(with(density) { Offset(130.dp.toPx(), 60.dp.toPx()) }, count = 28, power = 1.5f, kinds = listOf(Bit.Petal, Bit.Spark, Bit.Squiggle, Bit.Heart)) }
+            rise.animateTo(1.4f, tween(700, easing = Motion.Out))
+            delay(300)
         }
         onOpen()
     }
-    Column(Modifier.fillMaxSize().sky(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        Text("A letter from", style = K.type.label, color = p.onSkySoft)
-        Text(Fmt.ordinalDate(Fmt.localDate(c.createdAt)) + ", " + Fmt.localDate(c.createdAt).year, style = K.type.serifLarge, color = p.onSky, textAlign = TextAlign.Center)
+    Column(Modifier.fillMaxSize().padding(top = 80.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        Text("A letter from", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Color.White.copy(alpha = 0.75f))
+        val d = Fmt.localDate(c.createdAt)
+        FadingTitle(Fmt.ordinalDate(d), "${d.year}", size = 46)
+        Spacer(Modifier.height(Gap.xl))
+        Box(
+            Modifier.size(width = 260.dp, height = 220.dp).burst(burst).shared("capsule-${c.id}").graphicsLayer {
+                translationY = (if (started) 0f else (bob?.value ?: 0f)) * density.density - lift.value * 30f * density.density
+                rotationX = -lift.value * 22f
+                cameraDistance = 14f * density.density
+                val s = 1f + lift.value * 0.08f; scaleX = s; scaleY = s
+            },
+        ) { GlassFolder(Candy.Sun, Modifier.fillMaxSize(), rise = rise.value, glow = glow?.value ?: 1f, sticker = Mood.of(c.moodAtSeal)?.look(), seal = seal.value, sealed = seal.value > 0.01f, papers = 2) }
         Spacer(Modifier.height(Gap.huge))
-        Envelope(
-            p.tint(tintOf(c.tint)), flap = flap.value, crack = crack.value, rise = rise.value, glow = 1f,
-            modifier = Modifier.size(width = 250.dp, height = 172.dp).shared("capsule-${c.id}").graphicsLayer { translationY = if (started || calm) 0f else bob },
-        )
-        Spacer(Modifier.height(Gap.huge))
-        PrimaryButton("Break the seal", { started = true }, icon = Icons.Sparkle, enabled = !started, dark = true)
-        Spacer(Modifier.height(Gap.sm))
-        Text("Past you has been waiting ${Fmt.ago(c.createdAt).removeSuffix(" ago")}.", style = K.type.caption, color = p.inkSoft)
+        PrimaryButton("Break the seal", { started = true }, icon = Icons.Sparkle, enabled = !started, onSky = true)
+        Spacer(Modifier.height(Gap.md))
+        Text("Past you has been waiting ${Fmt.ago(c.createdAt).removeSuffix(" ago")}.", style = K.type.caption, color = Color.White.copy(alpha = 0.6f))
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Opened(cap: CapsuleWithAttachments, onReply: (String) -> Unit, onWriteAnother: () -> Unit) {
-    val p = K.colors
     val c = cap.capsule
     val context = LocalContext.current
     val player = remember { AudioPlayer() }
@@ -219,20 +252,22 @@ private fun Opened(cap: CapsuleWithAttachments, onReply: (String) -> Unit, onWri
     var viewing by remember { mutableStateOf<AttachmentEntity?>(null) }
     var reply by rememberSaveable(c.id) { mutableStateOf(c.reply) }
     DisposableEffect(Unit) { onDispose { player.stop() } }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding().navigationBarsPadding().padding(bottom = Gap.huge)) {
-        Column(Modifier.fillMaxWidth().sky().padding(top = 92.dp, bottom = SkyTail).padding(horizontal = Gap.gutter)) {
-            Text("From you, ${Fmt.ago(c.createdAt)}", style = K.type.label, color = p.onSkySoft)
-            Text(c.title.ifBlank { Fmt.ordinalDate(Fmt.localDate(c.createdAt)) }, style = K.type.serifLarge, color = p.onSky)
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding().navigationBarsPadding().padding(top = 92.dp, bottom = Gap.huge)) {
+        Column(Modifier.padding(horizontal = Gap.gutter)) {
+            Text("From you, ${Fmt.ago(c.createdAt)}", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Color.White.copy(alpha = 0.75f))
+            val d = Fmt.localDate(c.createdAt)
+            FadingTitle(c.title.ifBlank { Fmt.ordinalDate(d) }, "${d.year}", size = 44)
         }
-        Card(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter)) {
-            Text("Dear future me,", style = K.type.serifLarge.copy(fontSize = 26.sp, fontStyle = FontStyle.Italic), color = p.ink)
+        Spacer(Modifier.height(Gap.xl))
+        Column(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).clip(Radius.deck).background(Paper).padding(Gap.xl)) {
+            Text("Dear future me,", style = K.type.serifLarge.copy(fontSize = 28.sp, fontStyle = FontStyle.Italic), color = PaperInk)
             Spacer(Modifier.height(Gap.md))
-            if (c.letter.isNotBlank()) Text(c.letter, style = K.type.body.copy(fontFamily = Serif, fontSize = 21.sp, lineHeight = 31.sp), color = p.ink)
+            if (c.letter.isNotBlank()) Text(c.letter, style = K.type.body.copy(fontFamily = SerifText, fontSize = 20.sp, lineHeight = 31.sp), color = PaperInk)
             Spacer(Modifier.height(Gap.lg))
-            Text("Written ${Fmt.date(c.createdAt)}", style = K.type.caption, color = p.inkFaint)
+            Text("Written ${Fmt.date(c.createdAt)}", style = K.type.caption, color = PaperInk.copy(alpha = 0.5f))
         }
         if (cap.attachments.isNotEmpty()) {
-            Text("Tucked inside", style = K.type.title, color = p.ink, modifier = Modifier.padding(start = Gap.gutter, top = Gap.xl, bottom = Gap.md))
+            Text("Tucked inside", style = K.type.title, color = Color.White, modifier = Modifier.padding(start = Gap.gutter, top = Gap.xl, bottom = Gap.md))
             FlowRow(Modifier.padding(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.lg), verticalArrangement = Arrangement.spacedBy(Gap.lg)) {
                 cap.attachments.forEachIndexed { i, a ->
                     val kind = runCatching { AttachmentKind.valueOf(a.kind) }.getOrDefault(AttachmentKind.File)
@@ -247,22 +282,26 @@ private fun Opened(cap: CapsuleWithAttachments, onReply: (String) -> Unit, onWri
             }
         }
         Spacer(Modifier.height(Gap.xl))
-        Card(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter)) {
+        Column(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).clip(Radius.card).background(Color.White.copy(alpha = 0.1f)).border(1.dp, Color.White.copy(alpha = 0.18f), Radius.card).padding(Gap.xl)) {
             Mood.of(c.moodAtSeal)?.let { m ->
-                Status("Back then you felt ${m.label.lowercase()}", p.tintInk(m.tint()))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Kai(m.look(), size = 40.dp, shadow = false, alive = false, description = null)
+                    Spacer(Modifier.width(Gap.sm))
+                    Text("Back then you felt ${m.label.lowercase()}.", style = K.type.label, color = Color.White.copy(alpha = 0.85f))
+                }
                 Spacer(Modifier.height(Gap.lg))
             }
-            Text("Write back to past you", style = K.type.title, color = p.ink)
+            Text("Write back to past you", style = K.type.title, color = Color.White)
             Spacer(Modifier.height(Gap.sm))
             Box(Modifier.fillMaxWidth().heightIn(min = 90.dp)) {
-                val st = K.type.body.copy(fontFamily = Serif, fontSize = 20.sp, lineHeight = 29.sp)
-                if (reply.isEmpty()) Text("What would you tell them now?", style = st, color = p.inkFaint)
-                BasicTextField(reply, { reply = it }, textStyle = st.copy(color = p.ink), cursorBrush = SolidColor(p.accent), modifier = Modifier.fillMaxWidth().heightIn(min = 90.dp))
+                val st = K.type.body.copy(fontFamily = SerifText, fontSize = 19.sp, lineHeight = 28.sp)
+                if (reply.isEmpty()) Text("What would you tell them now?", style = st, color = Color.White.copy(alpha = 0.45f))
+                BasicTextField(reply, { reply = it }, textStyle = st.copy(color = Color.White), cursorBrush = SolidColor(Candy.Sun), modifier = Modifier.fillMaxWidth().heightIn(min = 90.dp))
             }
-            if (reply != c.reply) { Spacer(Modifier.height(Gap.sm)); SecondaryButton("Save reply", { onReply(reply) }, icon = Icons.Check) }
+            if (reply != c.reply) { Spacer(Modifier.height(Gap.sm)); PrimaryButton("Save reply", { onReply(reply) }, icon = Icons.Check, onSky = true) }
         }
         Spacer(Modifier.height(Gap.xl))
-        PrimaryButton("Write another letter", onWriteAnother, Modifier.fillMaxWidth().padding(horizontal = Gap.gutter), icon = Icons.Edit, dark = true)
+        PrimaryButton("Write another letter", onWriteAnother, Modifier.fillMaxWidth().padding(horizontal = Gap.gutter), icon = Icons.Edit, onSky = true)
     }
     viewing?.let { a ->
         Dialog({ viewing = null }, DialogProperties(usePlatformDefaultWidth = false)) {
@@ -277,4 +316,3 @@ private fun openExternally(context: android.content.Context, a: AttachmentEntity
     val uri = FileProvider.getUriForFile(context, context.packageName + ".files", File(a.path))
     runCatching { context.startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW).setDataAndType(uri, a.mime).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION), a.displayName)) }
 }
-

@@ -102,6 +102,9 @@ class ScreenshotTest {
     @Test fun d_word() = shoot("04_word") { WordScreen("sonder", {}, {}, {}) }
     @Test fun d2_quote() = shoot("04b_quote") { com.kairos.app.ui.feature.detail.QuoteScreen("q1", {}, {}) }
     @Test fun e_capsule() = shoot("05_capsule", bar = 2) { CapsuleHome({}, {}) }
+    @Test fun e2_compose() = shoot("05b_compose") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}) }
+    @Test fun e3_sealed() = shoot("05c_letter_sealed") { com.kairos.app.ui.feature.capsule.LetterScreen(1, {}, {}) }
+    @Test fun e4_ready() = shoot("05d_letter_ready") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
     @Test fun g_curator() = shoot("07_curator") { CuratorScreen {} }
     @Test fun g_curatorAwake() { app.container.keys.setApiKey("sk-or-test-key-for-screens"); try { shoot("07b_curator_awake") { CuratorScreen {} } } finally { app.container.keys.setApiKey(null) } }
