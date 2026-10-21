@@ -27,7 +27,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
@@ -142,3 +144,26 @@ fun AttachmentCard(kind: AttachmentKind, model: Any, name: String, tilt: Float, 
 }
 
 fun tiltFor(i: Int) = listOf(-4f, 3f, -2f, 5f, -3f, 2f)[i % 6]
+
+/**
+ * A small glass folder with a letter peeking out (r06, r11), for peeks and badges. [paper] is the
+ * colour of the letter inside.
+ */
+@Composable
+fun MiniFolder(paper: Color, modifier: Modifier = Modifier) {
+    Canvas(modifier) {
+        val w = size.width; val h = size.height
+        val back = FolderShape.createOutline(Size(w, h * 0.86f), layoutDirection, this)
+        translate(0f, h * 0.14f) { drawOutline(back, Color.White.copy(alpha = 0.22f)) }
+        rotate(-6f, Offset(w * 0.5f, h * 0.5f)) {
+            drawRoundRect(paper, Offset(w * 0.16f, h * 0.02f), Size(w * 0.62f, h * 0.7f), CornerRadius(w * 0.06f))
+            for (i in 1..3) drawLine(Color.White.copy(alpha = 0.7f), Offset(w * 0.24f, h * (0.1f + i * 0.11f)), Offset(w * (0.66f - (i % 2) * 0.12f), h * (0.1f + i * 0.11f)), strokeWidth = h * 0.035f)
+        }
+        val front = Path().apply {
+            moveTo(0f, h * 0.42f); lineTo(w, h * 0.38f); lineTo(w * 0.97f, h * 0.94f)
+            quadraticTo(w * 0.96f, h, w * 0.9f, h); lineTo(w * 0.08f, h); quadraticTo(w * 0.03f, h, w * 0.025f, h * 0.94f); close()
+        }
+        drawPath(front, Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.5f), Color.White.copy(alpha = 0.22f)), startY = h * 0.38f, endY = h))
+        drawPath(front, Color.White.copy(alpha = 0.55f), style = Stroke(h * 0.02f))
+    }
+}

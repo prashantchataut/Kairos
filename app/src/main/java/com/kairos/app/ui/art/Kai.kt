@@ -116,6 +116,7 @@ fun DrawScope.drawKai(
     breathe: Float = 0f,
     shadow: Boolean = true,
     ink: Color = Candy.Navy,
+    face: Boolean = true,
 ) {
     val body = lerp(a.body, b.body, t)
     val sx = 1f + breathe * 0.025f
@@ -152,6 +153,7 @@ fun DrawScope.drawKai(
         Offset(center.x - r * 0.7f, center.y - r * 0.74f), Size(r * 0.64f, r * 0.36f),
     )
 
+    if (!face) return
     val gaze = Offset(lerpF(a.gaze.x, b.gaze.x, t), lerpF(a.gaze.y, b.gaze.y, t))
     val eyes = lerpF(a.eyes, b.eyes, t)
     val lid = lerpF(a.lid, b.lid, t)

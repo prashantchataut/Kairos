@@ -26,6 +26,7 @@ data class TodayState(
     val nextCapsule: CapsuleEntity? = null,
     val readyCapsules: Int = 0,
     val due: Int = 0,
+    val weekMoods: Map<Long, Mood> = emptyMap(),
     val feedback: String? = null,
 )
 
@@ -54,6 +55,9 @@ class TodayViewModel(private val c: AppContainer) : ViewModel() {
     }.combine(capsules) { s, (next, ready) -> s.copy(nextCapsule = next, readyCapsules = ready) }
         .combine(c.kairos.observeDueCount()) { s, due -> s.copy(due = due) }
         .combine(feedback) { s, f -> s.copy(feedback = f) }
+        .combine(c.kairos.observeMoods(day - 7, day + 7)) { s, moods ->
+            s.copy(weekMoods = moods.groupBy { it.epochDay }.mapNotNull { (d, v) -> Mood.of(v.maxBy { it.createdAt }.mood)?.let { d to it } }.toMap())
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
 
     fun logMood(m: Mood) = viewModelScope.launch { c.kairos.logMood(m) }
@@ -82,9 +86,9 @@ class TodayViewModel(private val c: AppContainer) : ViewModel() {
     fun clearFeedback() { feedback.value = null }
 }
 
-enum class WordFeedback(val label: String, val reply: String) {
-    TooEasy("Too easy", "Noted. Your next words will reach a little further."),
-    TooHard("Too hard", "Noted. Your next words will be a touch friendlier."),
-    More("More like this", "Lovely. Kairos will write more words like this one."),
-    NotForMe("Not for me", "Swapped. Kairos won't suggest words like that again."),
+enum class WordFeedback(val label: String, val reply: String, val glyph: String) {
+    TooEasy("Too easy", "Noted. Next time I'll reach a little further.", "↑"),
+    TooHard("Too hard", "Noted. I'll pick something friendlier.", "↓"),
+    More("More like this", "Lovely. More words like this one, coming up.", "♥"),
+    NotForMe("Not for me", "Swapped. I won't suggest words like that again.", "✕"),
 }

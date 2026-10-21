@@ -95,6 +95,8 @@ class ScreenshotTest {
     }
 
     @Test fun a_today() = shoot("01_today", bar = 0) { TodayScreen({}, {}, { _, _ -> }, {}, {}, {}, {}) }
+    @Config(qualifiers = "w400dp-h1900dp-xxhdpi")
+    @Test fun a_todayFull() = shoot("01b_today_full", bar = 0) { TodayScreen({}, {}, { _, _ -> }, {}, {}, {}, {}) }
     @Test fun b_todayDark() = shoot("02_today_dark", dark = true, bar = 0) { TodayScreen({}, {}, { _, _ -> }, {}, {}, {}, {}) }
     @Test fun c_learn() = shoot("03_learn", bar = 1) { LearnScreen({}, {}, {}, {}) }
     @Test fun d_word() = shoot("04_word") { WordScreen("sonder", {}, {}, {}) }
