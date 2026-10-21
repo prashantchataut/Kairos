@@ -109,6 +109,7 @@ class ScreenshotTest {
     @Test fun e3_sealed() = shoot("05c_letter_sealed") { com.kairos.app.ui.feature.capsule.LetterScreen(1, {}, {}) }
     @Test fun e4_ready() = shoot("05d_letter_ready") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
     @Test fun k_practice() = shoot("11_practice") { com.kairos.app.ui.feature.practice.PracticeScreen {} }
+    @Test fun l_studio() = shoot("13_studio") { com.kairos.app.ui.feature.studio.StudioScreen("word", "apricity") {} }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
     @Test fun f2_interests() = shoot("06b_interests") { com.kairos.app.ui.feature.you.InterestsScreen {} }
     @Config(qualifiers = "w400dp-h1700dp-xxhdpi")

@@ -7,12 +7,23 @@ one thought worth keeping and one small good thing to do. All of it is written b
 that learns from what you save, skip and practise. There's also a time capsule for letters to
 future you.
 
+<p><img src="docs/screenshots/overview.jpg" /></p>
+
 <p>
-<img src="docs/screenshots/01_today.png" width="200" />
-<img src="docs/screenshots/03_learn.png" width="200" />
-<img src="docs/screenshots/05_capsule.png" width="200" />
-<img src="docs/screenshots/02_today_dark.png" width="200" />
+<img src="docs/screenshots/08_onboarding_2.jpg" width="160" />
+<img src="docs/screenshots/04_word.jpg" width="160" />
+<img src="docs/screenshots/05d_letter_ready.jpg" width="160" />
+<img src="docs/screenshots/07_curator.jpg" width="160" />
+<img src="docs/screenshots/02_today_dark.jpg" width="160" />
 </p>
+
+The onboarding wake-up, frame by frame: the bloom unfolds and becomes Kai.
+
+<p><img src="docs/screenshots/onboarding_wake_frames.jpg" /></p>
+
+Share cards, each drawn from one of the references in issue #606:
+
+<p><img src="docs/screenshots/10_cards_word.jpg" width="380" /> <img src="docs/screenshots/10b_cards_quote.jpg" width="380" /></p>
 
 ## Nothing is bundled: the curator writes everything
 
@@ -46,34 +57,48 @@ word enrols it in SM-2 spaced repetition.
 
 | | |
 |---|---|
-| **Today** | A sky hero with today's word or thought in large serif, glass actions (listen, save, share), an arched week strip, meaning / in use / origin, feedback for the curator, a mood check-in, a small good thing, a review nudge and your next capsule letter. |
-| **Learn** | "Ask for words about…", a review banner, and a two-column board of pastel word tiles (tinted by topic) and quote tiles. |
-| **Word / thought pages** | Everything about one item, with feedback controls. |
-| **Practice** | 3D flip cards and quick quizzes graded with SM-2. |
-| **Card studio** | Five editorial share-card templates (Sky, Paper, Note, Night, Glass), five hues and three formats, exported at 1080px. |
-| **Time capsule** | Letters with photos, videos, files and voice notes, sealed until a chosen day, with a live countdown, an unlock notification, a seal-breaking animation and a reply to past you. |
-| **You** | Stats, four weeks of moods, recent good moments, and settings: curator, interests and level, reminder, motion and appearance. |
+| **Onboarding** | The logo wakes up: the bloom's petals unfold and it becomes Kai, the curator, who opens their eyes. Kai and three friends stay on screen and move between steps while a white cloud field rises and falls. Giant dashed-to-solid pills for topics and themes, a word wheel and adaptive slider for level, a key ritual to wake Kai, and an aurora finale that says what Kai learned about you. |
+| **Today** | Greeting with Kai in today's mood, an arched week strip with a mood shape for each day, and a swipeable deck of tilted cards: the word, the thought and the small good thing. `←  Save  →` controls with a heart burst, Teach Kai reactions, a mood check-in through the adaptive slider (Kai changes shape as you slide), a review nudge and a peek at the capsule. |
+| **Learn** | "Ask Kai for words about…", a practice banner, and word tiles that each carry a little gouache painting seeded from the word. |
+| **Word / thought pages** | A full-bleed painting behind the word; a grainy glow with a smiling sun behind a thought. A flower grows as you remember a word. |
+| **Practice** | Grainy, deep-coloured flip cards fanned over each other with an orbit ring, petal progress, ✦ points, grade buttons with Kai's faces, and a garden at the end. |
+| **Card studio** | Seven share cards drawn from the references: Poster, Bold, Swiss, Glow, Bloom, Painted and Paper; five hues, three formats, exported at 1080px. |
+| **Time capsule** | A night sky with glass folders, letters peeking out and a mood sticker on each. Compose on cream paper with an "open in" slider; seal it and a wax bloom stamps it shut while dandelion seeds drift away; open it and the folder tips toward you and the letter slides out. |
+| **You** | Kai, stats, your garden (a flower for every word you kept), four weeks of mood shapes, and settings with face toggles. |
 
-## Design: airy sky glass
+## Design: playful sky
 
-- **Look:** a sky-blue hero that fades into a quiet white canvas, crisp frosted glass and one
-  cobalt accent. Pastels appear only as tile tints.
-- **Type:** Instrument Sans for the interface, Instrument Serif for words and quotes.
-- **Navigation:** a minimal bottom bar with a dark "+" for quick actions.
-- **Motion:** one spring family, shared-element word transitions, 3D card flips and envelope
-  animations. *Calmer motion* (or the system animator scale) turns them down.
-- **Logo:** an eight-ray mark, a moment opening up.
+The redesign follows the references in issue #606 and the house skill
+`.agents/skills/kairos-playful-sky`, which ranks those references above every external design skill.
+
+- **Look:** a bright sky that melts into a cool white canvas, crisp glass, one cobalt action colour,
+  and a candy set (sun, coral, bubblegum, mint, lilac, sky) for characters, tiles and celebrations.
+  Grain over illustration. The capsule lives under a night sky.
+- **Kai:** the curator has a face. Kai is a soft character whose outline is a polar function, so
+  every mood (radiant, good, okay, low, rough) is a shape it can morph into. Kai blinks, breathes,
+  sleeps without a key and reacts to what you do.
+- **Type:** Bricolage Grotesque for the interface and the big playful headlines, Fraunces (soft and a
+  little wonky) for words, quotes and letters.
+- **Motion:** one signature spring with a little overshoot for characters and pop-ins, quick and quiet
+  springs for navigation, and the celebrations saved for rare moments. *Calmer motion* (or the
+  system animator scale) keeps expressions and fades but drops travel, bounce and particles.
+- **Adaptive slider:** a row of bars that swell around a stretchy thumb and take the colour of the
+  value, with a bubble whose content adapts (a word for the level, Kai's face for a mood, a date for a
+  letter).
+- **Logo:** the moment bloom. The eight rays became eight petals around a golden centre; one coral
+  petal points just past twelve like a clock hand, because chronos is clock time and kairos is the one
+  moment that matters. On the icon it rises out of clouds like a sunrise.
 
 ## Building
 
 ```bash
 ./gradlew :app:assembleDebug                 # debug APK
-./gradlew :app:testDebugUnitTest             # 37 tests: curator, OpenRouter client, SM-2, picker, screenshots
+./gradlew :app:testDebugUnitTest             # curator, OpenRouter client, SM-2, picker, screenshots
 ./gradlew :app:recordRoborazziDebug          # re-render screenshots into app/screenshots
 ```
 
 Kotlin 2.0, Jetpack Compose, Room, DataStore, WorkManager, OkHttp, Haze, Coil and
-security-crypto. Min SDK 26, target 35. Dependencies are wired by hand in `KairosApp.kt`.
+security-crypto. All illustration (Kai, flowers, paintings, clouds, the bloom) is drawn in code. Min SDK 26, target 35. Dependencies are wired by hand in `KairosApp.kt`.
 
 ```
 app/src/main/java/com/kairos/app/
@@ -83,6 +108,7 @@ app/src/main/java/com/kairos/app/
   engine/      Curator (prompt, schema, validation), DailyEngine, Srs, Mood, Topics
   work/        refill, daily reminder, capsule unlock, notifications
   ui/theme     palette, type, motion
+  ui/art       Kai, the bloom, flowers, paintings, clouds, aurora, grain, bursts
   ui/components  design-system kit and icons
   ui/nav       shell, bottom bar, navigation
   ui/feature   today, learn, detail, practice, studio, capsule, you, onboarding
