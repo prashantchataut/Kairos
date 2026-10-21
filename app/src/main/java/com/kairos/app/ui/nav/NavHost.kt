@@ -139,15 +139,15 @@ private fun Home(
                     else -> YouScreen(openCurator, openInterests)
                 }
             }
-            BottomBar(tab, onTab, { sheet = true }, sheet, Modifier.align(Alignment.BottomCenter))
+            BottomBar(tab, onTab, { sheet = true }, sheet, Modifier.align(Alignment.BottomCenter), night = tab == 2)
         }
     }
     if (sheet) QuickSheet(
         listOf(
-            QuickAction(Icons.Edit, "Write to future you", "Seal a letter, photo or voice note", openCompose),
-            QuickAction(Icons.Cards, "Practise words", "A few minutes, spaced so they stick", openPractice),
-            QuickAction(Icons.Search, "Ask for new words", "Any topic, written for you", { onTab(1) }),
-            QuickAction(Icons.Smile, "Check in", "How are you feeling?", { onTab(0) }),
+            QuickAction(Icons.Edit, "Write to future you", "A letter, a photo or a voice note", com.kairos.app.ui.theme.Tint.Lavender, openCompose),
+            QuickAction(Icons.Cards, "Play with words", "Two minutes, spaced so they stick", com.kairos.app.ui.theme.Tint.Mint, openPractice),
+            QuickAction(Icons.Search, "Ask Kai for words", "About anything at all", com.kairos.app.ui.theme.Tint.Sky, { onTab(1) }),
+            QuickAction(Icons.Smile, "Check in", "How are you, really?", com.kairos.app.ui.theme.Tint.Butter, { onTab(0) }),
         ),
     ) { sheet = false }
 }

@@ -85,7 +85,7 @@ class ScreenshotTest {
                 SharedTransitionLayout {
                     Box(Modifier.fillMaxSize().background(com.kairos.app.ui.theme.K.colors.canvas)) {
                         content()
-                        if (bar != null) BottomBar(bar, {}, {}, false, Modifier.align(androidx.compose.ui.Alignment.BottomCenter))
+                        if (bar != null) BottomBar(bar, {}, {}, false, Modifier.align(androidx.compose.ui.Alignment.BottomCenter), night = bar == 2)
                     }
                 }
             }
@@ -111,19 +111,27 @@ class ScreenshotTest {
     @Test fun h_onboarding() = shoot("08_onboarding", seeded = false) { OnboardingScreen({}) }
     @Test fun i_needsKey() = shoot("09_today_no_key", seeded = false, bar = 0) { TodayScreen({}, {}, { _, _ -> }, {}, {}, {}, {}) }
 
-    @Test fun j_cards() {
-        val word = CardContent(true, "Apricity", "uh-PRIS-ih-tee", "noun", "The warmth of the sun on a cold winter day.", "We sat on the steps, soaking up the apricity.")
-        val quote = CardContent(false, "Nature does not hurry, yet everything is accomplished.", byline = "Lao Tzu")
+    private val cardWord = CardContent(true, "Apricity", "uh-PRIS-ih-tee", "noun", "The warmth of the sun on a cold winter day.", "We sat on the steps, soaking up the apricity.")
+    private val cardQuote = CardContent(false, "Nature does not hurry, yet everything is accomplished.", byline = "Lao Tzu")
+
+    private fun cards(name: String, card: CardContent) {
+        val hues = listOf(Hue.Sky, Hue.Sky, Hue.Sky, Hue.Lavender, Hue.Peach, Hue.Mint, Hue.Sky)
         compose.setContent {
             KairosTheme(ThemeMode.Light) {
-                Column(Modifier.background(Color(0xFFE9EDF3)).padding(8.dp)) {
-                    Row { CardThumbnail(word, Template.Sky, Hue.Sky, 190.dp, modifier = Modifier.padding(4.dp)); CardThumbnail(word, Template.Paper, Hue.Sky, 190.dp, modifier = Modifier.padding(4.dp)) }
-                    Row { CardThumbnail(word, Template.Note, Hue.Mint, 190.dp, modifier = Modifier.padding(4.dp)); CardThumbnail(quote, Template.Night, Hue.Lavender, 190.dp, modifier = Modifier.padding(4.dp)) }
-                    Row { CardThumbnail(quote, Template.Glass, Hue.Peach, 190.dp, modifier = Modifier.padding(4.dp)); CardThumbnail(quote, Template.Note, Hue.Lavender, 190.dp, modifier = Modifier.padding(4.dp)) }
+                Column(Modifier.background(Color(0xFFE9EDF3)).padding(4.dp)) {
+                    Template.entries.chunked(3).forEachIndexed { r, row ->
+                        Row { row.forEachIndexed { i, t -> CardThumbnail(card, t, hues[r * 3 + i], 126.dp, modifier = Modifier.padding(3.dp)) } }
+                    }
                 }
             }
         }
         compose.waitForIdle()
-        compose.onRoot().captureRoboImage("screenshots/10_cards.png")
+        compose.onRoot().captureRoboImage("screenshots/$name.png")
     }
+
+    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
+    @Test fun j_cardsWord() = cards("10_cards_word", cardWord)
+
+    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
+    @Test fun j_cardsQuote() = cards("10b_cards_quote", cardQuote)
 }

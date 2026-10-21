@@ -1,6 +1,28 @@
 package com.kairos.app.ui.nav
 
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.kairos.app.ui.art.Kai
+import com.kairos.app.ui.art.KaiLooks
+import com.kairos.app.ui.theme.Candy
+import com.kairos.app.ui.theme.Tint
+import com.kairos.app.ui.theme.candy
+import com.kairos.app.ui.theme.tint
+import com.kairos.app.ui.theme.tintInk
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -81,10 +103,17 @@ val Tabs = listOf(
     Tab("You", Icons.You, Icons.YouOn),
 )
 
-/** Icons on the left, one dark action on the right — straight from the reference's quiet bar. */
+/**
+ * Icons on the left, one round action on the right. The selected tab sits on a soft pill that
+ * stretches as it slides (its two edges spring at different speeds), and the icon gives a little
+ * hop. [night] is the capsule's version: a dark bar and a white action.
+ */
 @Composable
-fun BottomBar(selected: Int, onSelect: (Int) -> Unit, onAction: () -> Unit, actionOpen: Boolean, modifier: Modifier = Modifier) {
+fun BottomBar(selected: Int, onSelect: (Int) -> Unit, onAction: () -> Unit, actionOpen: Boolean, modifier: Modifier = Modifier, night: Boolean = false) {
     val p = K.colors
+    var last by remember { mutableIntStateOf(selected) }
+    val movingRight = selected >= last
+    LaunchedEffect(selected) { last = selected }
     Row(
         modifier
             .navigationBarsPadding()
@@ -92,52 +121,73 @@ fun BottomBar(selected: Int, onSelect: (Int) -> Unit, onAction: () -> Unit, acti
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
+        BoxWithConstraints(
             Modifier
                 .weight(1f)
-                .height(60.dp)
+                .height(62.dp)
                 .shadow(20.dp, CircleShape, ambientColor = p.shadow, spotColor = p.shadow)
-                .frosted()
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly,
+                .then(if (night) Modifier.clip(CircleShape).background(Color(0xFF16205A).copy(alpha = 0.94f)).border(1.dp, Color.White.copy(alpha = 0.16f), CircleShape) else Modifier.frosted())
+                .padding(horizontal = 6.dp),
         ) {
-            Tabs.forEachIndexed { i, t ->
-                val on = i == selected
-                val tint by animateColorAsState(if (on) p.ink else p.inkFaint, label = "tab")
-                val scale by animateFloatAsState(if (on) 1.08f else 1f, Motion.soft(), label = "tabS")
-                Column(
-                    Modifier
-                        .semantics { this.selected = on }
-                        .pressable(role = Role.Tab, label = t.label) { onSelect(i) }
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Icon(if (on) t.iconOn else t.icon, t.label, tint = tint, modifier = Modifier.size(24.dp).graphicsLayer { scaleX = scale; scaleY = scale })
-                    Spacer(Modifier.height(3.dp))
-                    Box(Modifier.size(4.dp).clip(CircleShape).background(if (on) p.ink else Color.Transparent))
+            val tabW = maxWidth / Tabs.size
+            val left by animateDpAsState(tabW * selected, spring(dampingRatio = 0.8f, stiffness = if (movingRight) 260f else 900f), label = "l")
+            val right by animateDpAsState(tabW * (selected + 1), spring(dampingRatio = 0.8f, stiffness = if (movingRight) 900f else 260f), label = "r")
+            Box(
+                Modifier
+                    .offset(x = left + 4.dp)
+                    .padding(vertical = 7.dp)
+                    .width((right - left - 8.dp).coerceAtLeast(8.dp))
+                    .fillMaxHeight()
+                    .clip(CircleShape)
+                    .background(if (night) Color.White.copy(alpha = 0.14f) else p.accentSoft)
+            )
+            Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                Tabs.forEachIndexed { i, t ->
+                    val on = i == selected
+                    val tint by animateColorAsState(
+                        when {
+                            night -> if (on) Color.White else Color.White.copy(alpha = 0.5f)
+                            on -> p.accent
+                            else -> p.inkFaint
+                        }, label = "tab",
+                    )
+                    val scale by animateFloatAsState(if (on) 1.12f else 1f, Motion.bloom(), label = "tabS")
+                    Box(
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .semantics { this.selected = on }
+                            .pressable(role = Role.Tab, label = t.label, scale = 0.88f) { onSelect(i) },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(if (on) t.iconOn else t.icon, t.label, tint = tint, modifier = Modifier.size(24.dp).graphicsLayer { scaleX = scale; scaleY = scale })
+                    }
                 }
             }
         }
         Spacer(Modifier.width(Gap.md))
-        val rot by animateFloatAsState(if (actionOpen) 45f else 0f, Motion.soft(), label = "fab")
+        val rot by animateFloatAsState(if (actionOpen) 45f else 0f, Motion.bloom(), label = "fab")
         Box(
             Modifier
-                .size(60.dp)
-                .pressable(label = "Quick actions", onClick = onAction)
+                .size(62.dp)
+                .pressable(label = "Quick actions", scale = 0.9f, onClick = onAction)
                 .shadow(20.dp, CircleShape, ambientColor = p.shadow, spotColor = p.shadow)
                 .clip(CircleShape)
-                .background(Brush.verticalGradient(listOf(p.ink.copy(alpha = 0.92f), p.ink))),
+                .background(if (night) Brush.verticalGradient(listOf(Color.White, Color(0xFFE6ECFF))) else Brush.verticalGradient(listOf(p.ink.copy(alpha = 0.92f), p.ink))),
             contentAlignment = Alignment.Center,
-        ) { Icon(Icons.Plus, null, tint = p.canvas, modifier = Modifier.size(26.dp).graphicsLayer { rotationZ = rot }) }
+        ) { Icon(Icons.Plus, null, tint = if (night) Candy.Navy else p.canvas, modifier = Modifier.size(26.dp).graphicsLayer { rotationZ = rot }) }
     }
 }
 
-data class QuickAction(val icon: ImageVector, val title: String, val body: String, val onClick: () -> Unit)
+data class QuickAction(val icon: ImageVector, val title: String, val body: String, val tint: Tint, val onClick: () -> Unit)
 
+/** The + sheet: Kai asks what would feel good, and four candy tiles pop in one after another. */
 @Composable
 fun QuickSheet(actions: List<QuickAction>, onDismiss: () -> Unit) {
     val p = K.colors
+    val calm = K.calm
+    val pops = remember { actions.map { Animatable(if (calm) 1f else 0f) } }
+    LaunchedEffect(Unit) { pops.forEachIndexed { i, a -> launch { delay(120L + i * 60L); a.animateTo(1f, Motion.bloom()) } } }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -145,27 +195,37 @@ fun QuickSheet(actions: List<QuickAction>, onDismiss: () -> Unit) {
         shape = Radius.sheet,
         dragHandle = { Box(Modifier.padding(top = 10.dp).size(width = 36.dp, height = 4.dp).clip(CircleShape).background(p.line)) },
     ) {
-        Column(Modifier.padding(horizontal = Gap.gutter).padding(bottom = Gap.xxl, top = Gap.md)) {
-            Text("What would feel good?", style = K.type.title, color = p.ink)
+        Column(Modifier.padding(horizontal = Gap.gutter).padding(bottom = Gap.xxl, top = Gap.sm)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Kai(KaiLooks.Curator.copy(smile = 0.7f, blush = 0.5f), size = 56.dp, shadow = false)
+                Spacer(Modifier.width(Gap.md))
+                Text("What would feel good?", style = K.type.display.copy(fontSize = 26.sp), color = p.ink)
+            }
             Spacer(Modifier.height(Gap.lg))
-            actions.forEach { a ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .pressable(scale = 0.98f) { onDismiss(); a.onClick() }
-                        .padding(vertical = Gap.md),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(Modifier.size(46.dp).clip(Radius.chip).background(p.accentSoft), contentAlignment = Alignment.Center) {
-                        Icon(a.icon, null, tint = p.accent, modifier = Modifier.size(22.dp))
+            actions.chunked(2).forEachIndexed { row, pair ->
+                Row(horizontalArrangement = Arrangement.spacedBy(Gap.md)) {
+                    pair.forEachIndexed { col, a ->
+                        val k = row * 2 + col
+                        Column(
+                            Modifier
+                                .weight(1f)
+                                .height(140.dp)
+                                .graphicsLayer { val s = 0.6f + 0.4f * pops[k].value; scaleX = s; scaleY = s; alpha = pops[k].value.coerceIn(0f, 1f) }
+                                .pressable(scale = 0.95f) { onDismiss(); a.onClick() }
+                                .clip(Radius.card)
+                                .background(p.tint(a.tint))
+                                .padding(Gap.lg),
+                        ) {
+                            Box(Modifier.size(44.dp).clip(CircleShape).background(p.candy(a.tint)), contentAlignment = Alignment.Center) {
+                                Icon(a.icon, null, tint = Color.White, modifier = Modifier.size(22.dp))
+                            }
+                            Spacer(Modifier.weight(1f))
+                            Text(a.title, style = K.type.label.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold), color = p.ink)
+                            Text(a.body, style = K.type.caption, color = p.tintInk(a.tint), maxLines = 2)
+                        }
                     }
-                    Spacer(Modifier.width(Gap.lg))
-                    Column(Modifier.weight(1f)) {
-                        Text(a.title, style = K.type.label.copy(fontSize = K.type.body.fontSize), color = p.ink)
-                        Text(a.body, style = K.type.caption, color = p.inkSoft)
-                    }
-                    Icon(Icons.Chevron, null, tint = p.inkFaint, modifier = Modifier.size(18.dp))
                 }
+                Spacer(Modifier.height(Gap.md))
             }
         }
     }
