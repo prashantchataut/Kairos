@@ -103,6 +103,7 @@ class ScreenshotTest {
     @Test fun e_capsule() = shoot("05_capsule", bar = 2) { CapsuleHome({}, {}) }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
     @Test fun g_curator() = shoot("07_curator") { CuratorScreen {} }
+    @Test fun g_curatorAwake() { app.container.keys.setApiKey("sk-or-test-key-for-screens"); try { shoot("07b_curator_awake") { CuratorScreen {} } } finally { app.container.keys.setApiKey(null) } }
     @Test fun h_onboarding() = shoot("08_onboarding", seeded = false) { OnboardingScreen({}) }
     @Test fun i_needsKey() = shoot("09_today_no_key", seeded = false, bar = 0) { TodayScreen({}, {}, { _, _ -> }, {}, {}, {}, {}) }
 

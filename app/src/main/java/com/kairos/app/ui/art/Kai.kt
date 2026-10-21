@@ -71,6 +71,8 @@ data class KaiLook(
     val blush: Float = 0f,
     /** 1 = a small round "o" mouth (surprise). */
     val wow: Float = 0f,
+    /** 1 = closed sleeping eyes (lids down) instead of happy arcs, with drifting z's. */
+    val asleep: Float = 0f,
 )
 
 object KaiLooks {
@@ -84,7 +86,7 @@ object KaiLooks {
     val Delighted = KaiLook(lobes = 8, depth = 0.075f, body = Candy.Cobalt, eyes = 0f, smile = 1f, blush = 0.8f)
     val Wow = KaiLook(lobes = 8, depth = 0.07f, body = Candy.Cobalt, smile = 0f, wow = 1f, blush = 0.4f)
     val Sad = KaiLook(lobes = 8, depth = 0.045f, flat = 0.5f, body = Candy.Cobalt, lid = 0.4f, gaze = Offset(0f, 0.9f), smile = -0.5f)
-    val Sleepy = KaiLook(lobes = 8, depth = 0.05f, flat = 0.3f, body = Candy.Cobalt, lid = 0.95f, smile = 0f, mouth = 0.6f, blush = 0.3f)
+    val Sleepy = KaiLook(lobes = 8, depth = 0.05f, flat = 0.3f, body = Candy.Cobalt, eyes = 0f, asleep = 1f, smile = 0.1f, mouth = 0.5f, blush = 0.35f)
 }
 
 fun Mood.look(): KaiLook = when (this) {
@@ -161,6 +163,7 @@ fun DrawScope.drawKai(
     val mouth = lerpF(a.mouth, b.mouth, t)
     val blush = lerpF(a.blush, b.blush, t)
     val wow = lerpF(a.wow, b.wow, t)
+    val asleep = lerpF(a.asleep, b.asleep, t)
     val faceY = center.y - r * 0.04f + gaze.y * r * 0.07f
     val faceX = center.x + gaze.x * r * 0.1f
 
@@ -182,8 +185,9 @@ fun DrawScope.drawKai(
         if (eyes < 0.98f) {
             val w = eyeW * 0.85f
             val arc = Path().apply {
-                moveTo(ex - w, ey + eyeH * 0.12f)
-                quadraticTo(ex, ey - eyeH * 0.42f, ex + w, ey + eyeH * 0.12f)
+                val bend = 1f - 2f * asleep
+                moveTo(ex - w, ey + eyeH * 0.1f * bend)
+                quadraticTo(ex, ey - eyeH * 0.42f * bend, ex + w, ey + eyeH * 0.1f * bend)
             }
             drawPath(arc, ink.copy(alpha = 1f - eyes), style = Stroke(r * 0.075f, cap = StrokeCap.Round))
         }
@@ -249,6 +253,7 @@ fun Kai(
         }
     }
     val breathe = if (alive && !calm) rememberInfiniteTransition(label = "kai").animateFloat(-1f, 1f, infiniteRepeatable(tween(1600), RepeatMode.Reverse), label = "breathe") else null
+    val zz = if (alive && !calm && to.asleep > 0.5f) rememberInfiniteTransition(label = "zz").animateFloat(0f, 1f, infiniteRepeatable(tween(2400, easing = LinearEasing)), label = "z") else null
     Canvas(modifier.size(size).then(if (description != null) Modifier.semantics { contentDescription = description } else Modifier)) {
         val h = hop.value
         val lift = sin(h * PI.toFloat()) * this.size.minDimension * 0.08f
@@ -258,6 +263,19 @@ fun Kai(
             scale(1f - squash, 1f + squash, Offset(this.size.width / 2, this.size.height * 0.9f))
         }) {
             drawKai(from, to, t.value.coerceIn(0f, 1.15f), blink = blink.value, breathe = breathe?.value ?: 0f, shadow = shadow)
+        }
+        val sleep = lerpF(from.asleep, to.asleep, t.value.coerceIn(0f, 1f))
+        if (sleep > 0.3f) {
+            val r = this.size.minDimension * 0.4f
+            val base = Offset(this.size.width / 2 + r * 0.75f, this.size.height / 2 - r * 0.7f)
+            listOf(0f, 0.5f).forEach { off ->
+                val ph = ((zz?.value ?: 0.35f) + off) % 1f
+                val zs = r * (0.16f + 0.1f * ph)
+                val o = Offset(base.x + r * 0.35f * ph, base.y - r * 0.55f * ph)
+                val a = (if (ph < 0.2f) ph / 0.2f else 1f - (ph - 0.2f) / 0.8f) * (sleep - 0.3f) / 0.7f
+                val z = Path().apply { moveTo(o.x, o.y); lineTo(o.x + zs, o.y); lineTo(o.x, o.y + zs); lineTo(o.x + zs, o.y + zs) }
+                drawPath(z, Color.White.copy(alpha = a.coerceIn(0f, 1f)), style = Stroke(zs * 0.22f, cap = StrokeCap.Round, join = androidx.compose.ui.graphics.StrokeJoin.Round))
+            }
         }
     }
 }
@@ -272,5 +290,6 @@ fun interpolate(a: KaiLook, b: KaiLook, t: Float): KaiLook {
         body = lerp(a.body, b.body, t), eyes = lerpF(a.eyes, b.eyes, t), lid = lerpF(a.lid, b.lid, t),
         gaze = Offset(lerpF(a.gaze.x, b.gaze.x, t), lerpF(a.gaze.y, b.gaze.y, t)), smile = lerpF(a.smile, b.smile, t),
         mouth = lerpF(a.mouth, b.mouth, t), blush = lerpF(a.blush, b.blush, t), wow = lerpF(a.wow, b.wow, t),
+        asleep = lerpF(a.asleep, b.asleep, t),
     )
 }
