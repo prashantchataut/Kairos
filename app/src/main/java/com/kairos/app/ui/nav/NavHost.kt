@@ -89,7 +89,7 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
     SharedTransitionLayout {
         CompositionLocalProvider(LocalShared provides this) {
             NavHost(nav, start, Modifier.fillMaxSize().background(K.colors.canvas)) {
-                screen<Route.Welcome> { OnboardingScreen { nav.navigate(Route.Home) { popUpTo(Route.Welcome) { inclusive = true } } } }
+                screen<Route.Welcome> { OnboardingScreen(onDone = { nav.navigate(Route.Home) { popUpTo(Route.Welcome) { inclusive = true } } }) }
                 screen<Route.Home> {
                     Home(
                         tab = tab, onTab = { tab = it },

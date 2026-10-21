@@ -154,20 +154,27 @@ fun GlassAction(icon: ImageVector, label: String, onClick: () -> Unit, modifier:
 }
 
 @Composable
-fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, icon: ImageVector? = null, enabled: Boolean = true, dark: Boolean = false) {
+fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, icon: ImageVector? = null, enabled: Boolean = true, dark: Boolean = false, onSky: Boolean = false) {
     val p = K.colors
     val bg by animateColorAsState(
         when {
+            !enabled && onSky -> Color.White.copy(alpha = 0.3f)
             !enabled -> p.inkFaint.copy(alpha = 0.35f)
+            onSky -> Color.White
             dark -> p.ink
             else -> p.accent
         }, label = "btn",
     )
-    val fg = if (dark) p.canvas else p.onAccent
+    val fg = when {
+        onSky -> if (enabled) p.skyTop.let { androidx.compose.ui.graphics.lerp(it, p.ink, 0.55f) } else Color.White.copy(alpha = 0.8f)
+        dark -> p.canvas
+        else -> p.onAccent
+    }
     Row(
         modifier
-            .pressable(enabled = enabled, onClick = onClick)
-            .defaultMinSize(minHeight = 52.dp)
+            .pressable(enabled = enabled, scale = 0.95f, onClick = onClick)
+            .defaultMinSize(minHeight = 54.dp)
+            .shadow(if (enabled && (dark || onSky)) 14.dp else 0.dp, CircleShape, ambientColor = p.shadow, spotColor = p.shadow)
             .clip(CircleShape)
             .background(bg)
             .padding(horizontal = 24.dp),
@@ -175,7 +182,7 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) { Icon(icon, null, tint = fg, modifier = Modifier.size(19.dp)); Spacer(Modifier.width(Gap.sm)) }
-        Text(text, style = K.type.label.copy(fontSize = K.type.body.fontSize), color = fg)
+        Text(text, style = K.type.label.copy(fontSize = K.type.body.fontSize, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold), color = fg)
     }
 }
 
