@@ -1,5 +1,6 @@
 package com.kairos.app.ui.feature.onboarding
 
+import com.kairos.app.ui.theme.canvas
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState

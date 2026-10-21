@@ -1,5 +1,7 @@
 package com.kairos.app.ui.nav
 
+import com.kairos.app.ui.theme.accentSoft
+import com.kairos.app.ui.theme.canvas
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState

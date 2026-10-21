@@ -1,5 +1,7 @@
 package com.kairos.app.ui.feature.learn
 
+import com.kairos.app.ui.theme.glassOnSkyRim
+import com.kairos.app.ui.theme.glassOnSky
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -79,13 +81,13 @@ import com.kairos.app.ui.theme.tintInk
 import com.kairos.app.util.appViewModel
 
 fun categoryTint(category: String) = when (category) {
-    "feelings" -> Tint.Rose; "mind" -> Tint.Lavender; "nature" -> Tint.Mint; "connection" -> Tint.Peach
-    "craft" -> Tint.Butter; "wonder" -> Tint.Sky; "courage" -> Tint.Mint; "science" -> Tint.Sky; else -> Tint.Lavender
+    "feelings" -> Tint.Blush; "mind" -> Tint.Lilac; "nature" -> Tint.Mint; "connection" -> Tint.Peach
+    "craft" -> Tint.Butter; "wonder" -> Tint.Sky; "courage" -> Tint.Mint; "science" -> Tint.Sky; else -> Tint.Lilac
 }
 
 fun themeTint(theme: String) = when (theme) {
-    "hope", "joy" -> Tint.Butter; "courage" -> Tint.Peach; "kindness" -> Tint.Rose; "growth" -> Tint.Mint
-    "calm" -> Tint.Sky; else -> Tint.Lavender
+    "hope", "joy" -> Tint.Butter; "courage" -> Tint.Peach; "kindness" -> Tint.Blush; "growth" -> Tint.Mint
+    "calm" -> Tint.Sky; else -> Tint.Lilac
 }
 
 private val Suggestions = listOf("the ocean", "kindness", "light and colour", "cosy evenings", "starting over", "music", "the night sky")

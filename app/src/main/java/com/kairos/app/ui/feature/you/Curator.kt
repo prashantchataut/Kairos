@@ -1,5 +1,6 @@
 package com.kairos.app.ui.feature.you
 
+import com.kairos.app.ui.theme.canvas
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedContent

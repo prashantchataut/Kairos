@@ -1,5 +1,6 @@
 package com.kairos.app.ui.feature.practice
 
+import com.kairos.app.ui.theme.canvas
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable

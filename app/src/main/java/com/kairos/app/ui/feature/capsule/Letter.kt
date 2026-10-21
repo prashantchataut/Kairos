@@ -1,5 +1,6 @@
 package com.kairos.app.ui.feature.capsule
 
+import com.kairos.app.ui.theme.canvas
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable

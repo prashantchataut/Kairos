@@ -7,96 +7,114 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 /**
- * "Airy sky glass": a sky-blue hero that fades into a quiet white canvas, crisp frosted glass,
- * and one cobalt accent. Pastels appear only as tile tints in the library, never as decoration.
+ * "Wish & bloom" (see .claude/skills/kairos-taste). Sky and aura for hero moments, warm paper
+ * for reading, ultramarine for action, pastels and saturated primaries as content colour.
  */
 @Immutable
 data class Palette(
     val isDark: Boolean,
-    // Sky (hero areas)
     val skyTop: Color,
     val skyMid: Color,
-    val skyFade: Color,
+    val skyLow: Color,
+    /** Slow-drifting aura blobs over the sky (#606-02/34). */
+    val auras: List<Color>,
     val onSky: Color,
     val onSkySoft: Color,
-    val glassOnSky: Color,
-    val glassOnSkyRim: Color,
-    // Canvas
-    val canvas: Color,
+    val paper: Color,
     val surface: Color,
     val surfaceSoft: Color,
     val line: Color,
     val ink: Color,
     val inkSoft: Color,
     val inkFaint: Color,
-    // Accent and feedback
     val accent: Color,
-    val accentSoft: Color,
     val onAccent: Color,
     val positive: Color,
     val warning: Color,
     val negative: Color,
     val shadow: Color,
-    /** Tile tints for the library board, in [Tint] order. */
+    val glass: Color,
+    val glassRim: Color,
+    /** Pastel tiles (#606-05), in [Tint] order, each with a deep ink for text. */
     val tints: List<Color>,
     val tintInk: List<Color>,
 )
 
-/** Named tints so content can choose a colour by meaning (category, theme, mood, envelope). */
-enum class Tint { Sky, Mint, Lavender, Peach, Butter, Rose }
+enum class Tint { Sky, Mint, Lilac, Peach, Butter, Blush }
+
+/** The cast's saturated primaries (#606-03). The same in light and dark. */
+object Cast {
+    val Blue = Color(0xFF2F6BFF)
+    val Coral = Color(0xFFFF5A4E)
+    val Pink = Color(0xFFFF4FD8)
+    val Green = Color(0xFF22C27A)
+    val Orange = Color(0xFFFFB020)
+    val Sun = Color(0xFFFFD84A)
+    val all = listOf(Blue, Coral, Pink, Green, Orange, Sun)
+}
+
+/** Petal glazes for blooms (#606-29). */
+object Glaze {
+    val Coral = Color(0xFFFF7A6B)
+    val Butter = Color(0xFFFFD66B)
+    val Cyan = Color(0xFF6FD3FF)
+    val Violet = Color(0xFF9B7BFF)
+    val Rose = Color(0xFFFF8FC8)
+    val Mint = Color(0xFF7FE3B8)
+}
 
 val LightPalette = Palette(
     isDark = false,
-    skyTop = Color(0xFF3B82F0),
-    skyMid = Color(0xFF86B6F6),
-    skyFade = Color(0xFFE7F0FC),
+    skyTop = Color(0xFF3E7BFA),
+    skyMid = Color(0xFF8DB9FF),
+    skyLow = Color(0xFFE6F0FF),
+    auras = listOf(Color(0xFFB9A4FF), Color(0xFFFFB8D9), Color(0xFF7FE0FF)),
     onSky = Color.White,
-    onSkySoft = Color.White.copy(alpha = 0.76f),
-    glassOnSky = Color.White.copy(alpha = 0.22f),
-    glassOnSkyRim = Color.White.copy(alpha = 0.45f),
-    canvas = Color(0xFFF6F8FB),
+    onSkySoft = Color.White.copy(alpha = 0.82f),
+    paper = Color(0xFFF7F5F0),
     surface = Color.White,
-    surfaceSoft = Color(0xFFEEF2F7),
-    line = Color(0xFFE4E9F0),
-    ink = Color(0xFF0E1726),
-    inkSoft = Color(0xFF5A6577),
-    inkFaint = Color(0xFF9AA3B2),
-    accent = Color(0xFF2D6BFF),
-    accentSoft = Color(0xFFE6EEFF),
+    surfaceSoft = Color(0xFFEFECE5),
+    line = Color(0xFFE5E1D8),
+    ink = Color(0xFF101828),
+    inkSoft = Color(0xFF4F5868),
+    inkFaint = Color(0xFF8C93A1),
+    accent = Color(0xFF2340E8),
     onAccent = Color.White,
-    positive = Color(0xFF12A877),
-    warning = Color(0xFFE39A2D),
+    positive = Color(0xFF14A06B),
+    warning = Color(0xFFD9861C),
     negative = Color(0xFFE5484D),
-    shadow = Color(0xFF1B2A4A).copy(alpha = 0.10f),
-    tints = listOf(Color(0xFFDCEAFD), Color(0xFFD5F0E6), Color(0xFFE7E0FB), Color(0xFFFCE5D8), Color(0xFFF8F0CC), Color(0xFFFADFE8)),
-    tintInk = listOf(Color(0xFF1E4FB8), Color(0xFF136B50), Color(0xFF5038A8), Color(0xFFA2481C), Color(0xFF7F6410), Color(0xFFA2305A)),
+    shadow = Color(0xFF1B2440).copy(alpha = 0.14f),
+    glass = Color.White.copy(alpha = 0.26f),
+    glassRim = Color.White.copy(alpha = 0.6f),
+    tints = listOf(Color(0xFFD6E7FF), Color(0xFFCDEFDF), Color(0xFFE4DAFF), Color(0xFFFFDCC7), Color(0xFFFFF0A6), Color(0xFFFFD5E4)),
+    tintInk = listOf(Color(0xFF1A3F9E), Color(0xFF0F5C40), Color(0xFF45309A), Color(0xFF8E3A12), Color(0xFF6B5300), Color(0xFF8E2252)),
 )
 
 val DarkPalette = Palette(
     isDark = true,
-    skyTop = Color(0xFF1F4FBF),
-    skyMid = Color(0xFF1A3478),
-    skyFade = Color(0xFF111A33),
+    skyTop = Color(0xFF2A3FD0),
+    skyMid = Color(0xFF1B2470),
+    skyLow = Color(0xFF111735),
+    auras = listOf(Color(0xFF6B4BFF), Color(0xFFB04BA8), Color(0xFF1FA8C9)),
     onSky = Color.White,
-    onSkySoft = Color.White.copy(alpha = 0.72f),
-    glassOnSky = Color.White.copy(alpha = 0.12f),
-    glassOnSkyRim = Color.White.copy(alpha = 0.25f),
-    canvas = Color(0xFF0B1120),
-    surface = Color(0xFF151D30),
-    surfaceSoft = Color(0xFF1C2539),
-    line = Color(0xFF243049),
-    ink = Color(0xFFEFF3FA),
-    inkSoft = Color(0xFFA7B1C4),
-    inkFaint = Color(0xFF6B7690),
-    accent = Color(0xFF6F9BFF),
-    accentSoft = Color(0xFF1E2C52),
-    onAccent = Color(0xFF07102A),
+    onSkySoft = Color.White.copy(alpha = 0.76f),
+    paper = Color(0xFF0B1026),
+    surface = Color(0xFF161C38),
+    surfaceSoft = Color(0xFF1E2546),
+    line = Color(0xFF283058),
+    ink = Color(0xFFF1F3FA),
+    inkSoft = Color(0xFFB0B7CF),
+    inkFaint = Color(0xFF737C9C),
+    accent = Color(0xFF8EA2FF),
+    onAccent = Color(0xFF0B1026),
     positive = Color(0xFF3CCB97),
     warning = Color(0xFFF0B45A),
     negative = Color(0xFFFF6B70),
-    shadow = Color.Black.copy(alpha = 0.4f),
-    tints = listOf(Color(0xFF1C2E52), Color(0xFF173A35), Color(0xFF2A2551), Color(0xFF3A2A25), Color(0xFF363020), Color(0xFF3A2433)),
-    tintInk = listOf(Color(0xFFA9C6FF), Color(0xFF8FE0C3), Color(0xFFC6B8FF), Color(0xFFFFC2A2), Color(0xFFF0DC8C), Color(0xFFFFB3CC)),
+    shadow = Color.Black.copy(alpha = 0.45f),
+    glass = Color.White.copy(alpha = 0.10f),
+    glassRim = Color.White.copy(alpha = 0.28f),
+    tints = listOf(Color(0xFF1C2D5C), Color(0xFF15403A), Color(0xFF2C2560), Color(0xFF45291F), Color(0xFF3C3417), Color(0xFF45213A)),
+    tintInk = listOf(Color(0xFFB3CBFF), Color(0xFF93E3C4), Color(0xFFCBBBFF), Color(0xFFFFC2A2), Color(0xFFF2DD86), Color(0xFFFFB7D3)),
 )
 
 val LocalPalette = staticCompositionLocalOf { LightPalette }
@@ -104,15 +122,13 @@ val LocalPalette = staticCompositionLocalOf { LightPalette }
 fun Palette.tint(t: Tint) = tints[t.ordinal]
 fun Palette.tintInk(t: Tint) = tintInk[t.ordinal]
 
-/** One radius family, sized by role. */
 object Radius {
-    val chip = RoundedCornerShape(14.dp)
-    val tile = RoundedCornerShape(22.dp)
-    val card = RoundedCornerShape(28.dp)
-    val sheet = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+    val chip = RoundedCornerShape(16.dp)
+    val tile = RoundedCornerShape(24.dp)
+    val card = RoundedCornerShape(30.dp)
+    val sheet = RoundedCornerShape(topStart = 34.dp, topEnd = 34.dp)
 }
 
-/** 4dp grid. */
 object Gap {
     val xs = 4.dp
     val sm = 8.dp

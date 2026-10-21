@@ -83,7 +83,7 @@ class ScreenshotTest {
         compose.setContent {
             KairosTheme(if (dark) ThemeMode.Dark else ThemeMode.Light, calmMotion = true) {
                 SharedTransitionLayout {
-                    Box(Modifier.fillMaxSize().background(com.kairos.app.ui.theme.K.colors.canvas)) {
+                    Box(Modifier.fillMaxSize().background(com.kairos.app.ui.theme.K.colors.paper)) {
                         content()
                         if (bar != null) BottomBar(bar, {}, {}, false, Modifier.align(androidx.compose.ui.Alignment.BottomCenter))
                     }

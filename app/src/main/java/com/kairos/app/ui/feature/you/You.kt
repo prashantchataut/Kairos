@@ -1,5 +1,8 @@
 package com.kairos.app.ui.feature.you
 
+import com.kairos.app.ui.theme.glassOnSkyRim
+import com.kairos.app.ui.theme.glassOnSky
+import com.kairos.app.ui.theme.canvas
 import android.Manifest
 import android.app.TimePickerDialog
 import android.os.Build

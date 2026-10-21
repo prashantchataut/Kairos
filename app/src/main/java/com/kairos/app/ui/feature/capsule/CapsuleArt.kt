@@ -1,5 +1,6 @@
 package com.kairos.app.ui.feature.capsule
 
+import com.kairos.app.ui.theme.canvas
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

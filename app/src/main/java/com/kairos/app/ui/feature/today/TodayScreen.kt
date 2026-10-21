@@ -1,5 +1,8 @@
 package com.kairos.app.ui.feature.today
 
+import com.kairos.app.ui.theme.accentSoft
+import com.kairos.app.ui.theme.glassOnSkyRim
+import com.kairos.app.ui.theme.glassOnSky
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -334,7 +337,7 @@ private fun QuoteDetailCard(t: Today, feedback: String?, onMore: () -> Unit, onL
     }
 }
 
-private val moodTints = mapOf(Mood.Radiant to Tint.Butter, Mood.Good to Tint.Mint, Mood.Okay to Tint.Sky, Mood.Low to Tint.Lavender, Mood.Rough to Tint.Rose)
+private val moodTints = mapOf(Mood.Radiant to Tint.Butter, Mood.Good to Tint.Mint, Mood.Okay to Tint.Sky, Mood.Low to Tint.Lilac, Mood.Rough to Tint.Blush)
 fun Mood.tint() = moodTints.getValue(this)
 
 @OptIn(ExperimentalLayoutApi::class)

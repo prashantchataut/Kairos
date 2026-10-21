@@ -1,5 +1,9 @@
 package com.kairos.app.ui.components
 
+import com.kairos.app.ui.theme.glassOnSkyRim
+import com.kairos.app.ui.theme.glassOnSky
+import com.kairos.app.ui.theme.skyFade
+import com.kairos.app.ui.theme.canvas
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode

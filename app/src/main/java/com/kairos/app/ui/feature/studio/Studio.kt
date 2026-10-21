@@ -1,5 +1,6 @@
 package com.kairos.app.ui.feature.studio
 
+import com.kairos.app.ui.theme.canvas
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
