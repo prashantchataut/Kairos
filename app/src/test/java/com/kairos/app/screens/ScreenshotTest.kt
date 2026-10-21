@@ -100,6 +100,7 @@ class ScreenshotTest {
     @Test fun b_todayDark() = shoot("02_today_dark", dark = true, bar = 0) { TodayScreen({}, {}, { _, _ -> }, {}, {}, {}, {}) }
     @Test fun c_learn() = shoot("03_learn", bar = 1) { LearnScreen({}, {}, {}, {}) }
     @Test fun d_word() = shoot("04_word") { WordScreen("sonder", {}, {}, {}) }
+    @Test fun d2_quote() = shoot("04b_quote") { com.kairos.app.ui.feature.detail.QuoteScreen("q1", {}, {}) }
     @Test fun e_capsule() = shoot("05_capsule", bar = 2) { CapsuleHome({}, {}) }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
     @Test fun g_curator() = shoot("07_curator") { CuratorScreen {} }
