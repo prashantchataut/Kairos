@@ -1,5 +1,7 @@
 <resources>
-    <color name="sky_paper">#F3F7FD</color>
-    <color name="night_paper">#0E1536</color>
-    <color name="cobalt">#3461E8</color>
+    <color name="sky_paper">#F6F8FE</color>
+    <color name="night_paper">#0A0F1F</color>
+    <color name="cobalt">#2F5BFF</color>
+    <color name="splash_sky">#3D7BFA</color>
+    <color name="splash_night">#2148C9</color>
 </resources>
