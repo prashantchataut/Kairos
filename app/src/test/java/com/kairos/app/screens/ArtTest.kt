@@ -75,4 +75,27 @@ class ArtTest {
             }
         }
     }
+
+    @Test fun cast() = shoot("cast") {
+        Column(Modifier.background(Color.White).padding(16.dp)) {
+            val bodies = com.kairos.app.ui.art.Body.entries
+            val colors = com.kairos.app.ui.theme.Cast.all + com.kairos.app.ui.theme.Cast.Blue
+            Row { bodies.take(4).forEachIndexed { i, b -> com.kairos.app.ui.art.Buddy(b, colors[i], 92.dp, interactive = false) } }
+            Row { bodies.drop(4).forEachIndexed { i, b -> com.kairos.app.ui.art.Buddy(b, colors[(i + 4) % colors.size], 92.dp, interactive = false) } }
+            Row { com.kairos.app.ui.art.Face.entries.forEach { f -> com.kairos.app.ui.art.Buddy(com.kairos.app.ui.art.Body.Hex, com.kairos.app.ui.theme.Cast.Coral, 60.dp, face = f, interactive = false) } }
+            Row { com.kairos.app.ui.art.Face.entries.forEach { f -> com.kairos.app.ui.art.Buddy(com.kairos.app.ui.art.Body.Cloud, com.kairos.app.ui.theme.Cast.Blue, 60.dp, face = f, interactive = false) } }
+        }
+    }
+
+    @Test fun blooms() = shoot("blooms") {
+        Column(Modifier.background(K.colors.paper).padding(12.dp)) {
+            Row { com.kairos.app.ui.art.BloomKind.entries.forEachIndexed { i, k -> com.kairos.app.ui.art.Bloom(k, 11 + i, Modifier.size(92.dp, 150.dp), grow = false) } }
+            Row { (0..3).forEach { i -> com.kairos.app.ui.art.Bloom(com.kairos.app.ui.art.BloomKind.Glaze, 40 + i, Modifier.size(92.dp, 150.dp), grow = false) } }
+            Row {
+                listOf(0.2f, 0.45f, 0.7f, 1f).forEach { pr ->
+                    androidx.compose.foundation.Canvas(Modifier.size(92.dp, 150.dp)) { com.kairos.app.ui.art.bloomPreview(this, pr) }
+                }
+            }
+        }
+    }
 }
