@@ -6,7 +6,10 @@ import com.kairos.app.AppContainer
 import com.kairos.app.data.ai.AiError
 import com.kairos.app.data.db.QuoteEntity
 import com.kairos.app.data.db.WordEntity
+import com.kairos.app.data.db.BookEntity
+import com.kairos.app.engine.Pick
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -27,6 +30,16 @@ data class LearnState(
     val due: Int = 0,
     val hasKey: Boolean = false,
     val explore: Explore = Explore(),
+    val books: List<BookEntity> = emptyList(),
+)
+
+/** The endless "fresh for you" strip: ranked, diversified unseen items, refilled as you go. */
+data class Discover(
+    val words: List<Pick<WordEntity>> = emptyList(),
+    val quotes: List<Pick<QuoteEntity>> = emptyList(),
+    val loading: Boolean = false,
+    val writingBooks: Boolean = false,
+    val bookMessage: String? = null,
 )
 
 class LearnViewModel(private val c: AppContainer) : ViewModel() {
@@ -52,6 +65,7 @@ class LearnViewModel(private val c: AppContainer) : ViewModel() {
         LearnState(shown, qs, words.size, words.count { it.mastered }, words.count { it.saved }, explore = ex)
     }.combine(c.kairos.observeDueCount()) { s, d -> s.copy(due = d) }
         .combine(c.keys.awake) { s, k -> s.copy(hasKey = k) }
+        .combine(c.kairos.observeBooks()) { s, b -> s.copy(books = b) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LearnState())
 
     fun explore(topic: String) {
@@ -66,6 +80,43 @@ class LearnViewModel(private val c: AppContainer) : ViewModel() {
             } catch (e: AiError) {
                 explore.update { it.copy(running = false, message = e.message) }
             }
+        }
+    }
+
+    private val _discover = MutableStateFlow(Discover())
+    val discover: StateFlow<Discover> = _discover.asStateFlow()
+
+    init { refreshDiscover() }
+
+    fun refreshDiscover() {
+        if (_discover.value.loading) return
+        _discover.update { it.copy(loading = true) }
+        viewModelScope.launch {
+            val w = runCatching { c.kairos.discoverWords() }.getOrDefault(emptyList())
+            val q = runCatching { c.kairos.discoverQuotes() }.getOrDefault(emptyList())
+            _discover.update { it.copy(words = w, quotes = q, loading = false) }
+        }
+    }
+
+    /** Opening a discovered item moves it into the library; when the strip runs low, write more. */
+    fun seenWord(id: String) = viewModelScope.launch {
+        c.kairos.markWordSeen(id)
+        _discover.update { d -> d.copy(words = d.words.filterNot { it.item.id == id }) }
+        if (_discover.value.words.size < 4) refreshDiscover()
+    }
+
+    fun seenQuote(id: String) = viewModelScope.launch {
+        c.kairos.markQuoteSeen(id)
+        _discover.update { d -> d.copy(quotes = d.quotes.filterNot { it.item.id == id }) }
+        if (_discover.value.quotes.size < 4) refreshDiscover()
+    }
+
+    fun moreBooks() {
+        if (_discover.value.writingBooks) return
+        _discover.update { it.copy(writingBooks = true, bookMessage = null) }
+        viewModelScope.launch {
+            val msg = runCatching { c.kairos.moreBooks(4) }.fold({ n -> if (n == 0) "No new books this time. Try again in a moment." else null }, { (it as? AiError)?.message ?: "Couldn't write books just now." })
+            _discover.update { it.copy(writingBooks = false, bookMessage = msg) }
         }
     }
 

@@ -74,11 +74,9 @@ import com.kairos.app.engine.Topics
 import com.kairos.app.ui.art.Bit
 import com.kairos.app.ui.art.Kai
 import com.kairos.app.ui.art.KaiLooks
-import com.kairos.app.ui.art.Paints
 import com.kairos.app.ui.art.burst
 import com.kairos.app.ui.art.drawKai
 import com.kairos.app.ui.art.look
-import com.kairos.app.ui.art.painted
 import com.kairos.app.ui.art.rememberBurst
 import com.kairos.app.ui.components.Card
 import com.kairos.app.ui.components.Icons
@@ -328,7 +326,7 @@ private fun WordCard(t: Today, onSpeak: () -> Unit, onOpen: () -> Unit, onShare:
             Text(w.definition, style = K.type.body.copy(fontSize = 19.sp, lineHeight = 27.sp), color = p.ink, maxLines = 4, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.weight(1f))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(28.dp).clip(CircleShape).painted(w.id.hashCode(), Paints.forCategory(w.category), detail = 0.4f))
+                Kai(KaiLooks.Curator.copy(gaze = Offset(0.6f, 0f)), size = 30.dp, shadow = false, alive = false, description = null)
                 Spacer(Modifier.width(Gap.sm))
                 Text(t.wordReason, style = K.type.caption, color = p.inkSoft, maxLines = 2, modifier = Modifier.weight(1f))
             }

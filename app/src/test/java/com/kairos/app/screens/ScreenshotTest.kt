@@ -63,12 +63,19 @@ class ScreenshotTest {
             w("Lucid", "adjective", "LOO-sid", "Clear and easy to understand.", "Her notes were lucid and calm.", "Latin lucidus, full of light.", "clear, coherent", "mind", 2, ""),
             w("Kindred", "adjective", "KIN-drid", "Alike in spirit; feeling like family.", "They knew at once they were kindred souls.", "Old English cynn, family.", "like-minded", "connection", 2, "", due = today()),
             w("Sprezzatura", "noun", "spret-suh-TOOR-uh", "Making something hard look effortless.", "The dancer's sprezzatura hid years of training.", "Italian, coined by Castiglione in 1528.", "ease, grace", "craft", 5, ""),
+            w("Akrasia", "noun", "uh-KRAY-zee-uh", "Acting against your own better judgement.", "Akrasia won again: one more episode at 2am.", "Greek a- (without) + kratos (power).", "weakness of will", "wisdom", 4, "", shown = 1).copy(language = "Greek"),
+            w("Saudade", "noun", "sow-DAH-djee", "A tender longing for something or someone you love and have lost.", "The old song filled her with saudade for summers at her grandmother's.", "Portuguese, from Latin solitas, solitude.", "longing, yearning", "feelings", 4, "", shown = 0).copy(language = "Portuguese"),
             w("Halcyon", "adjective", "HAL-see-un", "Calm, golden and peaceful, usually about the past.", "Those halcyon summers at the lake.", "Greek halkyon, a bird said to calm the sea.", "idyllic, serene", "wonder", 3, ""),
         ))
         c.db.quotes().insertAll(listOf(
             QuoteEntity("q1", "Nature does not hurry, yet everything is accomplished.", "Lao Tzu", "calm", "From the Taoist tradition of the Tao Te Ching.", generatedAt = 1),
             QuoteEntity("q2", "Hope is the thing with feathers that perches in the soul.", "Emily Dickinson", "hope", "Opening line of her 1861 poem.", generatedAt = 1, saved = true, timesShown = 1),
             QuoteEntity("q3", "Almost everything will work again if you unplug it for a few minutes, including you.", "Anne Lamott", "rest", "", generatedAt = 1, timesShown = 1),
+        ))
+        c.db.books().insertAll(listOf(
+            com.kairos.app.data.db.BookEntity("b1", "Four Thousand Weeks", "Oliver Burkeman", 2021, "A book about time that argues against productivity culture. The average life is about four thousand weeks, and you will never get everything done. Freedom starts when you choose what to neglect.", "You will never clear the list, and that's the point.\nChoose what to neglect on purpose.\nRest is not a reward for finishing.", "The day will never arrive when you finally have everything under control.", "You keep saving thoughts about rest and time.", "living", 3, generatedAt = 1),
+            com.kairos.app.data.db.BookEntity("b2", "Braiding Sweetgrass", "Robin Wall Kimmerer", 2013, "A botanist and member of the Potawatomi Nation braids science with Indigenous wisdom. Plants are teachers, and gratitude is a way of seeing.", "Reciprocity: the land gives, we give back.\nNaming things teaches you to love them.", "", "", "nature", 4, generatedAt = 1),
+            com.kairos.app.data.db.BookEntity("b3", "Stoner", "John Williams", 1965, "A quiet novel about an ordinary life: a farm boy who becomes a literature professor. Its tenderness is in its plainness.", "A small life can be a full one.\nLove of a subject can carry you.", "", "", "story", 3, generatedAt = 1),
         ))
         c.db.extras().insertAll(listOf(com.kairos.app.data.db.ExtraEntity(kind = "spark", text = "Step outside and find three different shades of green.")))
         c.kairos.ensureDay()
@@ -103,6 +110,12 @@ class ScreenshotTest {
     @Test fun b_todayDark() = shoot("02_today_dark", dark = true, bar = 0) { TodayScreen({}, {}, { _, _ -> }, {}, {}, {}, {}) }
     @Test fun c_learn() = shoot("03_learn", bar = 1) { LearnScreen({}, {}, {}, {}) }
     @Test fun d_word() = shoot("04_word") { WordScreen("sonder", {}, {}, {}) }
+    @Config(qualifiers = "w400dp-h1500dp-xxhdpi")
+    @Test fun c2_learnFull() = shoot("03b_learn_full", bar = 1) { LearnScreen({}, {}, {}, {}) }
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Test fun c3_books() = shoot("03c_books", bar = 1) { LearnScreen({}, {}, {}, {}, startSection = 2) }
+    @Test fun c4_book() = shoot("04c_book") { com.kairos.app.ui.feature.detail.BookScreen("b1") {} }
+    @Test fun d3_akrasia() = shoot("04d_akrasia") { WordScreen("akrasia", {}, {}, {}) }
     @Test fun d2_quote() = shoot("04b_quote") { com.kairos.app.ui.feature.detail.QuoteScreen("q1", {}, {}) }
     @Test fun e_capsule() = shoot("05_capsule", bar = 2) { CapsuleHome({}, {}) }
     @Test fun e2_compose() = shoot("05b_compose") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}) }

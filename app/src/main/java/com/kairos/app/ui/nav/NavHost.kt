@@ -58,6 +58,7 @@ object Route {
     @Serializable data object Home
     @Serializable data class Word(val id: String)
     @Serializable data class Quote(val id: String)
+    @Serializable data class Book(val id: String)
     @Serializable data object Practice
     @Serializable data class Studio(val kind: String, val id: String)
     @Serializable data object Compose
@@ -101,10 +102,12 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
                         openLetter = { nav.navigate(Route.Letter(it)) },
                         openCurator = { nav.navigate(Route.Curator) },
                         openInterests = { nav.navigate(Route.Interests) },
+                        openBook = { nav.navigate(Route.Book(it)) },
                     )
                 }
                 screen<Route.Word> { e -> val id = e.toRoute<Route.Word>().id; WordScreen(id, { nav.popBackStack() }, { nav.navigate(Route.Studio("word", id)) }, { nav.navigate(Route.Practice) }) }
                 screen<Route.Quote> { e -> val id = e.toRoute<Route.Quote>().id; QuoteScreen(id, { nav.popBackStack() }) { nav.navigate(Route.Studio("quote", id)) } }
+                screen<Route.Book> { e -> com.kairos.app.ui.feature.detail.BookScreen(e.toRoute<Route.Book>().id) { nav.popBackStack() } }
                 screen<Route.Practice> { PracticeScreen { nav.popBackStack() } }
                 screen<Route.Studio> { e -> val r = e.toRoute<Route.Studio>(); StudioScreen(r.kind, r.id) { nav.popBackStack() } }
                 screen<Route.Compose> { ComposeLetter({ nav.popBackStack() }, { nav.popBackStack() }) }
@@ -120,7 +123,7 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
 private fun Home(
     tab: Int, onTab: (Int) -> Unit,
     openWord: (String) -> Unit, openQuote: (String) -> Unit, openStudio: (String, String) -> Unit, openPractice: () -> Unit,
-    openCompose: () -> Unit, openLetter: (Long) -> Unit, openCurator: () -> Unit, openInterests: () -> Unit,
+    openCompose: () -> Unit, openLetter: (Long) -> Unit, openCurator: () -> Unit, openInterests: () -> Unit, openBook: (String) -> Unit,
 ) {
     val haze = remember { HazeState() }
     var sheet by remember { mutableStateOf(false) }
@@ -134,7 +137,7 @@ private fun Home(
             ) { t ->
                 when (t) {
                     0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator) { onTab(3) }
-                    1 -> LearnScreen(openWord, openQuote, openPractice, openCurator)
+                    1 -> LearnScreen(openWord, openQuote, openPractice, openCurator, openBook)
                     2 -> CapsuleHome(openCompose, openLetter)
                     else -> YouScreen(openCurator, openInterests)
                 }

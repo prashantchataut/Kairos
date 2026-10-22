@@ -58,12 +58,10 @@ import com.kairos.app.engine.Topics
 import com.kairos.app.ui.art.Bit
 import com.kairos.app.ui.art.Kai
 import com.kairos.app.ui.art.KaiLooks
-import com.kairos.app.ui.art.Paints
 import com.kairos.app.ui.art.burst
 import com.kairos.app.ui.art.drawFlower
 import com.kairos.app.ui.art.drawGrain
 import com.kairos.app.ui.art.flowerSpec
-import com.kairos.app.ui.art.painted
 import com.kairos.app.ui.art.rememberBurst
 import com.kairos.app.ui.components.Card
 import com.kairos.app.ui.components.Icons
@@ -77,6 +75,7 @@ import com.kairos.app.ui.theme.Candy
 import com.kairos.app.ui.theme.Gap
 import com.kairos.app.ui.theme.K
 import com.kairos.app.ui.theme.Motion
+import com.kairos.app.ui.theme.candy
 import com.kairos.app.ui.theme.tint
 import com.kairos.app.ui.theme.tintInk
 import com.kairos.app.util.appContainer
@@ -147,55 +146,64 @@ fun WordScreen(id: String, onBack: () -> Unit, onShare: () -> Unit, onPractice: 
     var told by remember { mutableStateOf<String?>(null) }
     val w = word ?: return
     val p = K.colors
-    val pal = Paints.forCategory(w.category)
+    val t = com.kairos.app.ui.feature.learn.categoryTint(w.category)
+    val deep = androidx.compose.ui.graphics.lerp(p.candy(t), Candy.Navy, 0.3f)
+    val mid = androidx.compose.ui.graphics.lerp(p.candy(t), Candy.Navy, 0.12f)
     Column(Modifier.fillMaxSize().background(p.canvas).verticalScroll(rememberScrollState()).navigationBarsPadding().padding(bottom = Gap.huge)) {
-        // The painted hero (r19): this word's own little painting.
-        Box(Modifier.fillMaxWidth().painted(w.id.hashCode(), pal, detail = 1.6f)) {
-            Box(Modifier.matchParentSize().background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = 0.18f), Color.Transparent, Color.Black.copy(alpha = 0.35f)))))
+        // A typographic specimen: the word large over a ghost of itself (layered type, r09).
+        Box(Modifier.fillMaxWidth().background(Brush.verticalGradient(0f to deep, 0.86f to mid, 1f to p.canvas))) {
+            Canvas(Modifier.matchParentSize()) { drawGrain(0.07f) }
+            Text(
+                w.word.lowercase(), style = K.type.hero.copy(fontSize = 190.sp, lineHeight = 180.sp, fontStyle = FontStyle.Italic), color = Color.White.copy(alpha = 0.1f), maxLines = 1, softWrap = false,
+                modifier = Modifier.align(Alignment.Center).graphicsLayer { rotationZ = -8f; translationY = -20f * density },
+            )
             Column {
                 TopBar(onBack, onSky = true)
-                Spacer(Modifier.height(Gap.xxl))
-                Text(
-                    "${Topics.wordLabel(w.category)} · ${Topics.levels[(w.level - 1).coerceIn(0, 4)]}", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Color.White,
-                    modifier = Modifier.align(Alignment.CenterHorizontally).clip(CircleShape).background(Color.Black.copy(alpha = 0.2f)).padding(horizontal = 12.dp, vertical = 5.dp),
-                )
+                Spacer(Modifier.height(Gap.xl))
+                Row(Modifier.align(Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "${Topics.wordLabel(w.category)} · ${Topics.levels[(w.level - 1).coerceIn(0, 4)]}", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Color.White,
+                        modifier = Modifier.clip(CircleShape).background(Color.White.copy(alpha = 0.2f)).padding(horizontal = 12.dp, vertical = 5.dp),
+                    )
+                    if (w.language.isNotBlank()) { Spacer(Modifier.width(Gap.sm)); com.kairos.app.ui.components.LanguageStamp(w.language, Color.White) }
+                }
                 Spacer(Modifier.height(Gap.md))
-                val size = when { w.word.length <= 8 -> 80.sp; w.word.length <= 12 -> 60.sp; else -> 44.sp }
-                Text(
-                    w.word, style = K.type.hero.copy(fontSize = size, lineHeight = size * 1.02f, shadow = Shadow(Color.Black.copy(alpha = 0.25f), Offset(0f, 4f), 18f)), color = Color.White,
-                    textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).shared("word-${w.id}"),
+                com.kairos.app.ui.components.FitText(
+                    w.word, K.type.hero.copy(fontWeight = FontWeight.SemiBold, letterSpacing = (-0.03).sp), Color.White,
+                    Modifier.fillMaxWidth().height(110.dp).padding(horizontal = Gap.gutter).shared("word-${w.id}"), max = 88.sp, min = 36.sp, lineHeight = 1f,
+                    align = TextAlign.Center, contentAlignment = Alignment.Center,
                 )
-                Spacer(Modifier.height(Gap.md))
+                Spacer(Modifier.height(Gap.sm))
                 Row(
-                    Modifier.align(Alignment.CenterHorizontally).clip(CircleShape).background(Color.White.copy(alpha = 0.92f)).pressable(label = "Listen") { speaker.say(w.word) }.padding(start = 14.dp, end = 12.dp, top = 7.dp, bottom = 7.dp),
+                    Modifier.align(Alignment.CenterHorizontally).clip(CircleShape).background(Color.White).pressable(label = "Listen") { speaker.say(w.word) }.padding(start = 14.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(w.pronunciation, style = K.type.label, color = Candy.Navy)
                     Spacer(Modifier.width(8.dp))
-                    Icon(Icons.Speaker, null, tint = Candy.Cobalt, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Speaker, null, tint = deep, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(10.dp))
                     Text(w.partOfSpeech, style = K.type.label.copy(fontFamily = com.kairos.app.ui.theme.Serif, fontStyle = FontStyle.Italic), color = Candy.Navy.copy(alpha = 0.7f))
                 }
-                Spacer(Modifier.height(Gap.xxl))
+                Spacer(Modifier.height(Gap.lg))
+                Text(w.definition, style = K.type.body.copy(fontSize = 20.sp, lineHeight = 28.sp, fontWeight = FontWeight.Medium), color = Color.White, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(horizontal = Gap.xl))
+                Spacer(Modifier.height(Gap.xl))
                 Row(Modifier.padding(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.md)) {
                     GlassAction(Icons.Speaker, "Listen", { speaker.say(w.word) }, Modifier.weight(1f))
                     GlassAction(if (w.saved) Icons.HeartOn else Icons.Heart, if (w.saved) "Saved" else "Save", { scope.launch { c.kairos.toggleWordSaved(w.id) } }, Modifier.weight(1f), active = w.saved, celebrate = true)
                     GlassAction(Icons.Share, "Card", onShare, Modifier.weight(1f))
                 }
-                Spacer(Modifier.height(Gap.xl))
+                Spacer(Modifier.height(Gap.xxl))
             }
         }
         Spacer(Modifier.height(Gap.lg))
-        InfoCard("Meaning") {
-            Text(w.definition, style = K.type.body.copy(fontSize = 20.sp, lineHeight = 29.sp), color = p.ink)
-            if (w.synonymList.isNotEmpty()) {
-                Spacer(Modifier.height(Gap.md))
+        if (w.synonymList.isNotEmpty()) {
+            InfoCard("Close to") {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(Gap.sm), verticalArrangement = Arrangement.spacedBy(Gap.sm)) {
                     w.synonymList.forEach { Text(it, style = K.type.label, color = p.ink, modifier = Modifier.clip(CircleShape).background(p.surfaceSoft).padding(horizontal = 12.dp, vertical = 6.dp)) }
                 }
             }
+            Spacer(Modifier.height(Gap.md))
         }
-        Spacer(Modifier.height(Gap.md))
         InfoCard("In a sentence") { Text("“${w.example}”", style = K.type.quote.copy(fontSize = 24.sp, lineHeight = 31.sp), color = p.ink) }
         if (w.origin.isNotBlank()) {
             Spacer(Modifier.height(Gap.md))

@@ -33,11 +33,9 @@ import com.kairos.app.ui.art.CloudBank
 import com.kairos.app.ui.art.Garden
 import com.kairos.app.ui.art.Kai
 import com.kairos.app.ui.art.KaiLooks
-import com.kairos.app.ui.art.Paints
 import com.kairos.app.ui.art.drawBloom
 import com.kairos.app.ui.art.drawCloud
 import com.kairos.app.ui.art.grain
-import com.kairos.app.ui.art.painted
 import com.kairos.app.ui.components.KairosMark
 import com.kairos.app.ui.components.KairosSlider
 import com.kairos.app.ui.components.SliderBubble
@@ -106,10 +104,8 @@ class DesignSystemTest {
                     }
                     Spacer(Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf(Paints.Garden, Paints.Blush, Paints.Dusk, Paints.Honey).forEachIndexed { i, pal ->
-                            Box(Modifier.size(width = 86.dp, height = 110.dp).clip(RoundedCornerShape(20.dp)).painted(100 + i, pal), contentAlignment = Alignment.Center) {
-                                Text("sonder", style = K.type.serifLarge.copy(fontSize = 22.sp), color = Color.White)
-                            }
+                        listOf("Four Thousand Weeks" to "Oliver Burkeman", "Braiding Sweetgrass" to "Robin Wall Kimmerer", "Stoner" to "John Williams", "The Overstory" to "Richard Powers").forEach { (t, a) ->
+                            com.kairos.app.ui.components.BookCover(t, a, t + a, Modifier.size(width = 86.dp, height = 124.dp))
                         }
                     }
                     Spacer(Modifier.height(8.dp))
