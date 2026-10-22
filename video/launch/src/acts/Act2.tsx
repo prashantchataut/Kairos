@@ -1,106 +1,112 @@
+// cinetic:brand-supplied coral, serif, gradient: the flood, Fraunces and the sky fill are Kairos' own (BRIEF.md).
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { MARK, Mark, placeMark } from '../brand/Mark';
-import { C, SAFE, TYPE, U, typeStyle } from '../brand/tokens';
-import { camera } from '../lib/camera';
-import { E, hitPulse, lmix, mix, prog, spr, SPR, squash } from '../lib/anim';
-import { baselineOf, inkBox, measureTracked } from '../lib/measure';
-import { delayTo } from '../lib/sync';
+import { petalPath, Petal, placePetal } from '../brand/Mark';
+import { C, TYPE, U, WORD_FACE, typeStyle } from '../brand/tokens';
+import { Words } from '../fx/Words';
+import { arrive, blurIn, clamp, depart, E, lmix, mix, pace, prog } from '../lib/anim';
+import { FALL } from '../kit/device';
+import { Grain } from '../kit/Kit';
+import { useLetters } from '../kit/useLetters';
 import { ACT, copy, CUE, f60, H, W } from '../timeline';
+import { DIAL, HAND } from './Act1';
 
-// ACT 2 - the dot becomes the mark. It opens on the dot at rest in its slot (Act 1 hands it over
-// on exactly this pose). The dome drops in and the block slides in, each landing ON its beat;
-// then the mark settles into the lockup while the name slides out from behind its live edge and
-// locks on the downbeat. The lockup keeps building to the end on a slow 15% dolly alone: a hold
-// that keeps moving needs no tick planted in it.
+// ACT 2 - THE NAME. The camera dives into the coral hand until it floods the frame (the film's one
+// accent flood). The flood shrinks back into a small petal that lands as the dot of the i in a
+// giant "Kairos", whose letters rise around it; "the right moment." answers below. Then the name
+// lifts away and the petal falls toward the phone that is about to rise (Act 3).
 
-const L = (abs: number) => abs - ACT.mark.from; // absolute cue -> act-local frame
+const NAME = copy('name.1');
+const MEANS = copy('name.2');
+// The word is set with a dotless i: the coral petal is its dot.
+const SPELL = 'Kaıros';
+const SIZE = 300 * U;
+const BASE = H * 0.56; // baseline of the name
+const STYLE: React.CSSProperties = { ...WORD_FACE, fontSize: SIZE, fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1 };
+const DOT = { size: 0.6 * SIZE, lift: 0.7 }; // the petal dot, and its centre height above the baseline in em
 
-/** The hero mark: box size and top-left at the start of the act (Act 1's dot flies to its slot). */
-export const HERO = { size: 300 * U, x: W / 2 - 150 * U, y: H / 2 - 150 * U };
-
-// Landings: start each spring early by exactly the frames it needs to reach its slot, so the
-// contact frame IS the cue (the sound goes there too). A stiff spring arrives with velocity.
-const LAND = SPR.snap;
-const CONTACT = { a: L(CUE.pieceA), b: L(CUE.pieceB) };
-const START = { a: CONTACT.a - delayTo(LAND), b: CONTACT.b - delayTo(LAND) };
-
-const NAME = copy('wordmark');
-/** The lockup move (absolute frames) and its curve, exported for src/sync.ts (whoosh on its peak). */
-export const LOCKUP_MOVE = { from: NAME.in, to: NAME.resolved, ease: E.inOut };
-const DOLLY = { from: L(CUE.lockup) - f60(20), to: ACT.mark.dur, k: 1.15 }; // a 15% push: a lockup hold keeps building
+/** Where the hand's fat part sits in Act 1's frame: the camera dives at it. */
+const HAND_PT = (() => {
+  const a = (HAND.angle * Math.PI) / 180;
+  const d = DIAL.r * (0.24 * HAND.len + (HAND.len - 0.24 * HAND.len) * 0.55);
+  return { x: DIAL.cx + Math.sin(a) * d, y: DIAL.cy - Math.cos(a) * d };
+})();
 
 export const Act2: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useCurrentFrame() + ACT.name.from;
+  const [boxes, probe] = useLetters(SPELL, STYLE);
 
-  // --- the pieces land -------------------------------------------------------------------
-  // After contact the pose is exactly the rest pose: no overshoot into the neighbours, no rebound.
-  const sa = f >= CONTACT.a ? 1 : spr(f, START.a, LAND);
-  const sb = f >= CONTACT.b ? 1 : spr(f, START.b, LAND);
-  const qa = squash(f - CONTACT.a); // squash against the contact edge for ~8 frames
-  const qb = squash(f - CONTACT.b);
-  // Travel is kept short enough that the fastest frame stays under ~80 px/f (the dome peaks near
-  // 58, the block near 70): faster than that, blur cannot make a move read as motion. Each piece
-  // is born on its first frames of travel instead of flying in from off-frame.
-  const born = (s: number) => prog(f, s, s + f60(6), E.smooth);
-  const a = { y: (1 - sa) * -120, rot: (1 - sa) * 9, sx: qa.across, sy: qa.along, origin: [50, 50] as [number, number], o: born(START.a) };
-  const b = { x: (1 - sb) * -150, rot: (1 - sb) * -12, sx: qb.along, sy: qb.across, origin: [46, 79] as [number, number], o: born(START.b) };
+  // --- the dive into the hand (Act 1's last pose, then accelerating in) ---------------------
+  const dive = prog(f, ACT.name.from - 1, CUE.flood, E.in);
+  const k = lmix(1.04, 16, dive);
+  const flooded = f >= CUE.flood;
 
-  // --- the lockup ------------------------------------------------------------------------
-  // The name is the display token at 1.5x, shrunk only if the lockup would leave the safe width.
-  // The mark stands from the name's baseline to its ascender line; the gap is 0.3 of its height.
-  const disp = TYPE.display;
-  const per100 = { w: measureTracked(NAME.text, 100, disp.weight, disp.track) / 100, asc: inkBox(NAME.text, 100, disp.weight).ascent / 100 };
-  const nameSize = Math.min(disp.size * 1.5 * U, (W - 2 * SAFE.x) / (per100.w + 1.3 * per100.asc));
-  const nameW = per100.w * nameSize;
-  const M1 = per100.asc * nameSize;
-  const gap = 0.3 * M1;
-  const lockW = M1 + gap + nameW;
-  const base = H / 2 + M1 / 2; // baseline: the lockup's visual centre sits on frame centre
-  const end = { x: (W - lockW) / 2, y: base - M1 };
+  // --- the name ---------------------------------------------------------------------------
+  const total = boxes ? boxes[boxes.length - 1].x + boxes[boxes.length - 1].w : 0;
+  const left = (W - total) / 2;
+  const iBox = boxes?.[2];
+  const dotAt = iBox ? { x: left + iBox.x + iBox.w / 2 + 0.01 * SIZE, y: BASE - DOT.lift * SIZE } : { x: W / 2, y: H / 2 };
+  // The name lifts away word-by-word style (whole word) once read, making room for the phone.
+  const lift = depart(prog(f, MEANS.out, MEANS.out + f60(28), E.exit));
 
-  const lk = prog(f, L(LOCKUP_MOVE.from), L(LOCKUP_MOVE.to), LOCKUP_MOVE.ease);
-  const k = lmix(1, M1 / HERO.size, lk); // mark scale relative to the hero size, in log space
-  const mx = mix(HERO.x, end.x, lk);
-  const my = mix(HERO.y, end.y, lk);
-  const markRight = mx + HERO.size * k;
-  // The name rides out from behind the mark's moving edge and is clipped by it, never by a fixed box.
-  const nameX = markRight + gap - (1 - lk) * (nameW + gap);
-  const maskX = markRight + gap * 0.5; // the mask's left edge follows the mark
-  const nameTop = base - baselineOf(nameSize, disp.weight, 1);
-
-  // --- camera: punches on the landings and the lock, a slow dolly through the hold ---------
-  // The hero mark and the finished lockup are both centred, so everything pushes about frame centre.
-  const punch = 1 + 0.025 * hitPulse(f - CONTACT.a) + 0.03 * hitPulse(f - CONTACT.b) + 0.015 * hitPulse(f - L(CUE.lockup));
-  const dolly = lmix(1, DOLLY.k, prog(f, DOLLY.from, DOLLY.to, E.dolly));
-  const cam = camera({ ax: W / 2, ay: H / 2, sx: W / 2, sy: H / 2, k: punch * dolly });
-
-  // The dot lifts a little as each piece lands beside it. A small amplitude: at +5% its gaps to
-  // the dome and block stay above 6 units.
-  const d = { s: 1 + 0.05 * (hitPulse(f - CONTACT.a) + hitPulse(f - CONTACT.b)) };
+  // --- the shrinking flood: a petal from frame-filling to the dot --------------------------
+  const sh = prog(f, CUE.flood + f60(6), CUE.dot, E.glide);
+  const petal = { x: mix(W / 2, dotAt.x, sh), y: mix(H / 2, dotAt.y, sh), size: lmix(16 * W, DOT.size, sh) };
+  // ...then it falls toward the phone (FALL), accelerating, from the dot.
+  const fall = prog(f, FALL.from, FALL.at, E.contact);
+  if (f >= CUE.dot) Object.assign(petal, { x: mix(dotAt.x, FALL.x, fall), y: mix(dotAt.y, FALL.y, fall), size: mix(DOT.size, FALL.size, fall) });
 
   return (
-    <AbsoluteFill style={{ background: C.paper, overflow: 'hidden' }}>
-      <div style={cam}>
-        <Mark size={HERO.size} a={a} b={b} d={d} style={placeMark(mx, my, k)} />
-        {lk > 0 && (
-          <div style={{ position: 'absolute', left: 0, top: 0, width: W, height: H, overflow: 'hidden', transform: `translateX(${maskX}px)` }}>
-            <span
-              data-text="wordmark"
-              style={{ ...typeStyle('display', nameSize), lineHeight: 1, color: C.ink, position: 'absolute', left: 0, top: 0, transform: `translate(${nameX - maskX}px, ${nameTop}px)` }}
-            >
-              {NAME.text}
-            </span>
+    <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
+      {probe}
+      {!flooded && (
+        // Act 1's dial, frozen in its last pose, pushed into
+        <div style={{ position: 'absolute', inset: 0, transformOrigin: `${HAND_PT.x}px ${HAND_PT.y}px`, transform: `scale(${k})` }}>
+          <svg width={W} height={H} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
+            <circle cx={DIAL.cx} cy={DIAL.cy} r={DIAL.r} fill={C.cobalt} />
+            <path d={petalPath(DIAL.r * HAND.len, 1)} fill={C.coral} transform={`translate(${DIAL.cx} ${DIAL.cy}) rotate(${HAND.angle})`} />
+            <circle cx={DIAL.cx} cy={DIAL.cy} r={DIAL.r * 0.05} fill={C.white} />
+          </svg>
+        </div>
+      )}
+      {flooded && boxes && (
+        <>
+          <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${left}px, ${BASE - 0.86 * SIZE - lift * 140 * U}px)`, opacity: 1 - lift }}>
+            {Array.from(SPELL).map((ch, i) => {
+              // the one hero word: letter by letter // lint-ok: hero word
+              const s = NAME.in + f60(i * 4);
+              const p = prog(f, s, s + f60(pace.wordDur), E.out);
+              const b = blurIn(p, 6);
+              return (
+                <span
+                  key={i}
+                  style={{
+                    ...STYLE,
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    whiteSpace: 'pre',
+                    transform: `translate(${boxes[i].x}px, ${((1 - arrive(p)) * 0.32 * SIZE).toFixed(2)}px)`,
+                    opacity: p,
+                    filter: b > 0.05 ? `blur(${b.toFixed(2)}px)` : undefined,
+                    backgroundImage: `linear-gradient(180deg, ${C.skyTop} 10%, ${C.cobalt} 70%)`,
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: 'transparent',
+                  }}
+                >
+                  {ch}
+                </span>
+              );
+            })}
           </div>
-        )}
-      </div>
+          <div style={{ position: 'absolute', left: 0, top: 0, width: W, display: 'flex', justifyContent: 'center', transform: `translateY(${BASE + 70 * U - lift * 100 * U}px)` }}>
+            <Words text={MEANS.text} id={MEANS.id} frame={f} start={MEANS.in} out={MEANS.out} size={TYPE.line.size * 0.76 * U} style={{ ...typeStyle('line', TYPE.line.size * 0.76 * U), fontWeight: 600, color: C.ink }} />
+          </div>
+        </>
+      )}
+      {flooded && <Petal size={petal.size} color={C.coral} style={placePetal(petal.x, petal.y, petal.size, HAND.angle)} />}
+      <Grain frame={f} opacity={0.04 * clamp(1)} />
     </AbsoluteFill>
   );
-};
-
-/** Where the dot sits at the start of this act (screen px): Act 1 flies the device here. */
-export const DOT_SLOT = {
-  x: HERO.x + (MARK.D.cx / 100) * HERO.size,
-  y: HERO.y + (MARK.D.cy / 100) * HERO.size,
-  d: ((2 * MARK.D.r) / 100) * HERO.size,
 };

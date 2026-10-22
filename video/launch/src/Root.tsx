@@ -1,7 +1,6 @@
 import React from 'react';
 import { Composition, Folder, Still } from 'remotion';
-import { Act1 } from './acts/Act1';
-import { Act2 } from './acts/Act2';
+import { ACTS } from './acts';
 import { C, U } from './brand/tokens';
 import { Film, FilmProps } from './Film';
 import { FilmSub, subMetadata } from './FilmSub';
@@ -15,7 +14,7 @@ import { ACT, FPS, H, TOTAL, W } from './timeline';
 const solo = (Act: React.FC) => {
   const Solo: React.FC<FilmProps> = ({ audit = false, safe }) => (
     <FontGate>
-      <div style={{ position: 'absolute', inset: 0, background: C.paper }}>
+      <div style={{ position: 'absolute', inset: 0, background: C.canvas }}>
         <Act />
         {audit && <Audit safe={safe} />}
       </div>
@@ -23,8 +22,7 @@ const solo = (Act: React.FC) => {
   );
   return Solo;
 };
-const Act1Solo = solo(Act1);
-const Act2Solo = solo(Act2);
+const SOLOS = ACTS.map((a) => ({ ...a, Solo: solo(a.C) }));
 
 export const RemotionRoot: React.FC = () => (
   <>
@@ -43,8 +41,9 @@ export const RemotionRoot: React.FC = () => (
     />
 
     <Folder name="Acts">
-      <Composition id="Act1" component={Act1Solo} durationInFrames={ACT.statement.dur} fps={FPS} width={W} height={H} defaultProps={{ audit: false } as FilmProps} />
-      <Composition id="Act2" component={Act2Solo} durationInFrames={ACT.mark.dur} fps={FPS} width={W} height={H} defaultProps={{ audit: false } as FilmProps} />
+      {SOLOS.map(({ key, Solo }, i) => (
+        <Composition key={key} id={`Act${i + 1}`} component={Solo} durationInFrames={ACT[key].dur} fps={FPS} width={W} height={H} defaultProps={{ audit: false } as FilmProps} />
+      ))}
     </Folder>
 
     <Folder name="Stills">

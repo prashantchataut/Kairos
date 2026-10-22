@@ -7,7 +7,7 @@ import { holdFor, PACE, readingWindows, revealFor, wordCount, type PaceName } fr
 export { PACE } from './lib/pace'; // grid-check checks COPY against the film's own pace numbers
 
 export const FPS = 60;
-export const BPM = 100;
+export const BPM = 120;
 export const W = 1920;
 export const H = 1080;
 /**
@@ -15,7 +15,7 @@ export const H = 1080;
  * the picture, held about 1-1.5 s (the default for text-led films, at 90-100 BPM). crisp: the
  * denser launch-film tempo, for briefs that ask for energy (at 120 BPM).
  */
-export const PACE_NAME: PaceName = 'calm';
+export const PACE_NAME: PaceName = 'crisp';
 
 /** Frames per beat. Must be a whole number (grid-check fails otherwise): 60 fps -> 90, 100, 120, 144, 150 BPM. */
 export const BEAT = (60 / BPM) * FPS;
@@ -37,29 +37,63 @@ export const f60 = (frames: number) => Math.round((frames * FPS) / 60);
 export const TAIL = FPS;
 
 // Acts: contiguous, bar-aligned, [from, from + dur). Each act is its own composition in Root.tsx.
+// The story device (the coral moment petal) crosses every seam: TREATMENT.md "Device path".
 export const ACT = {
-  statement: { from: b(1), dur: b(4) - b(1) }, // the line builds in two fragments around a picture beat
-  mark: { from: b(4), dur: b(6) + TAIL - b(4) }, // the dot becomes the mark; lockup builds to the end
+  chronos: { from: b(1), dur: b(4) - b(1) }, // a clock of days whirs; one hand stops and turns coral
+  name: { from: b(4), dur: b(6) - b(4) }, // the coral hand floods the frame, then becomes the dot of the i in "Kairos"
+  word: { from: b(6), dur: b(9) - b(6) }, // the phone rises; the word of the day rewrites in place; dive in
+  feed: { from: b(9), dur: b(11) - b(9) }, // the reel: a card is kept, the next ones follow it
+  play: { from: b(11), dur: b(13) - b(11) }, // flashcards of your own words fan out and turn
+  letter: { from: b(13), dur: b(16) - b(13) }, // night rises; a letter to future you is folded and sealed
+  share: { from: b(16), dur: b(18) - b(16) }, // the envelope becomes a share card: pin, story, square
+  lockup: { from: b(18), dur: b(20) + TAIL - b(18) }, // the cards scatter; the bloom unfolds around the petal
 };
 
-export const TOTAL = b(6) + TAIL;
+export const TOTAL = b(20) + TAIL;
 
-// Named sync points (absolute frames), all on the 16th grid. A cue that must sit off the grid
-// carries a trailing `// offgrid: <reason>` comment, which grid-check accepts.
-// Picture code reads these; src/sync.ts turns them into sound events.
+// Named sync points (absolute frames), all on the 16th grid. Picture code reads these; src/sync.ts
+// turns them into sound events.
 export const CUE = {
-  fragA: b(1), // "Built on" rises into the frame (the camera is already creeping in); then it is read, alone
-  drop: b(1, 3), // picture beat, once "Built on" has been read: the dot is born above the line and falls...
-  land: b(2), // ...and lands where the line will end: contact, on the downbeat. The line is opening to make room
-  fragB: b(2, 0, 2), // "the beat" answers on the off-beat, rising into the opening; the dot is its period
-  exit: b(3), // the whole line leaves together, the dot staying behind
-  depart: b(3, 1), // the dot sets off for its slot (E.smooth, so its speed peaks half-way)...
-  fly: b(3, 2, 2), // ...top speed half-way there, on the grid (the whoosh apex)...
-  handoff: b(4), // ...and it arrives at rest in its slot; act 2 opens on exactly this pose
-  pieceA: b(4, 1), // the dome lands (contact frame)
-  pieceB: b(4, 2), // the block lands (contact frame)
-  lockup: b(5), // the mark settles into the lockup and the name locks beside it: the payoff
-  end: b(6), // last bar line; TAIL follows
+  // 1 chronos
+  whir: b(1, 1, 2), // the hands speed up between the first two fragments
+  blurUp: b(2), // a turn of the dial past full speed
+  stop: b(3, 0, 3), // one hand stops dead at one o'clock and turns coral (contact)
+  pushIn: b(4), // the camera starts into the coral hand
+  // 2 name
+  flood: b(4, 0, 3), // the coral petal fills the frame (the film's one accent flood)
+  letters: b(4, 1, 2), // the flood shrinks back as "Kairos" rises letter by letter (the one hero word)
+  dot: b(4, 2, 1), // the petal lands as the dot of the i
+  // 3 word
+  rise: b(6), // the phone rises already moving
+  heart: b(6, 0, 2), // the petal lands on the card as its Save heart
+  rewrite1: b(7), // Saudade -> Apricity, rewritten in place
+  rewrite2: b(8, 0, 2), // Apricity -> Hiraeth
+  dive: b(8, 2), // isolating push into the card
+  through: b(8, 3, 1), // the card fills the frame and becomes the Feed
+  // 4 feed
+  flick1: b(9), // the reel flicks to a new card
+  keep: b(9, 3, 1), // the Keep heart fills coral
+  flick2: b(10, 3, 1), // the next card matches what was kept
+  // 5 play
+  fan: b(11), // the phone falls away, flashcards fan out
+  turn1: b(11, 3, 2), // one card turns over
+  turn2: b(12, 3, 1), // another card turns over
+  // 6 letter
+  night: b(13), // night columns rise behind
+  paper: b(13, 0, 2), // the letter slides in, already being written
+  fold: b(14, 0, 3), // the letter folds into its envelope
+  seal: b(14, 1, 2), // the coral seal lands (landing 1)
+  opens: b(15, 1), // "Opens in 6 months" rolls in
+  flip: b(15, 3, 2), // the envelope flips and becomes a share card
+  // 7 share
+  story: b(16, 3, 2), // pin -> story
+  square: b(17, 3, 1), // story -> square, the three shapes side by side
+  scatter: b(18), // the cards fly off, leaving the petal at the centre
+  // 8 lockup
+  unfold: b(18, 0, 2), // seven petals unfold around the coral one
+  core: b(18, 2), // the core lands (landing 2)
+  lockup: b(19), // the wordmark is readable: the payoff
+  end: b(20), // last bar line; TAIL follows
 };
 
 export type Copy = {
@@ -115,10 +149,24 @@ export const chain = (id: string, mode: 'build' | 'replace', fragments: [text: s
 // Every on-screen word: the word budget (kind: 'ui' entries are counted apart), the hold check,
 // and the text-flow checks (fragments, words on screen at once, copy rate, text share) read this.
 export const COPY: Copy[] = [
-  // "Built on" (read alone) -> the dot falls and lands where the line will end -> "the beat". The dot is the period.
-  ...chain('statement', 'build', [['Built on', CUE.fragA], ['the beat', CUE.fragB]], { out: CUE.exit }),
-  // cinetic:placeholder - the demo's invented name: use the product's, then delete this line.
-  { id: 'wordmark', text: 'plinth', in: CUE.lockup - f60(34), resolved: CUE.lockup, out: TOTAL },
+  // "Days" "just pass." builds; then "Some moments" -> (a hand stops dead) -> "stay." replaces it.
+  ...chain('days', 'build', [['Days', b(1, 0, 1)], ['just pass.', b(1, 2, 3)]]),
+  ...chain('stay', 'replace', [['Some moments', b(2, 2)], ['stay.', b(3, 1, 2)]]),
+  // The hero word, then what it means.
+  ...chain('name', 'build', [['Kairos', CUE.letters], ['the right moment.', b(5)]]),
+  // "A word" [the phone, the word rewrites] "for every feeling."
+  ...chain('word', 'build', [['A word', b(6, 1)], ['for every feeling.', b(7, 1)]]),
+  // "It learns" [a card is kept] "what you keep."
+  ...chain('learns', 'build', [['It learns', b(9, 0, 2)], ['what you keep.', b(10)]]),
+  ...chain('play', 'build', [['Play', b(11, 1)], ['your words.', b(12)]]),
+  // "Write to" [the letter folds, the seal lands] "future you."
+  ...chain('write', 'build', [['Write to', b(13, 2)], ['future you.', b(14, 2)]]),
+  ...chain('share', 'build', [['Share', b(16, 1)], ['what stays.', b(17)]]),
+  { id: 'wordmark', text: 'Kairos', in: b(18, 3), resolved: CUE.lockup, out: TOTAL },
+  { ...line('android', 'Now on Android', b(19, 2)), out: TOTAL },
+  // Product strings (kind 'ui'): the app's own content, not film copy.
+  { id: 'ui.dear', text: 'Dear future me,', in: CUE.paper, resolved: CUE.paper + 32, out: CUE.fold, kind: 'ui' },
+  { id: 'ui.opens', text: 'Opens in 6 months', in: CUE.opens, resolved: CUE.opens + 26, out: CUE.flip, kind: 'ui' },
 ];
 
 /**

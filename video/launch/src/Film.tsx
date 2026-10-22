@@ -1,7 +1,6 @@
 import React from 'react';
 import { AbsoluteFill, getStaticFiles, Html5Audio, Sequence, staticFile } from 'remotion';
-import { Act1 } from './acts/Act1';
-import { Act2 } from './acts/Act2';
+import { ACTS } from './acts';
 import { C } from './brand/tokens';
 import { Audit } from './lib/Audit';
 import { FontGate } from './lib/FontGate';
@@ -20,13 +19,12 @@ export const Film: React.FC<FilmProps> = ({ audit = false, safe }) => {
   const hasScore = getStaticFiles().some((s) => s.name === SOUNDTRACK);
   return (
     <FontGate>
-      <AbsoluteFill style={{ background: C.paper }}>
-        <Sequence from={ACT.statement.from} durationInFrames={ACT.statement.dur} name="1 Statement">
-          <Act1 />
-        </Sequence>
-        <Sequence from={ACT.mark.from} durationInFrames={ACT.mark.dur} name="2 Mark">
-          <Act2 />
-        </Sequence>
+      <AbsoluteFill style={{ background: C.canvas }}>
+        {ACTS.map(({ key, name, C: Act }) => (
+          <Sequence key={key} from={ACT[key].from} durationInFrames={ACT[key].dur} name={name}>
+            <Act />
+          </Sequence>
+        ))}
         {hasScore && <Html5Audio src={staticFile(SOUNDTRACK)} />}
         {audit && <Audit safe={safe} />}
       </AbsoluteFill>
