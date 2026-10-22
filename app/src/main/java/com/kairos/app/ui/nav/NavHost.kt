@@ -11,6 +11,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
@@ -71,10 +73,56 @@ object Route {
     @Serializable data object Interests
 }
 
-private val enter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = { fadeIn(Motion.fade(300)) + slideInVertically(Motion.offset) { it / 14 } }
-private val exit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = { fadeOut(Motion.fade(220)) + scaleOut(targetScale = 0.98f) }
-private val popEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = { fadeIn(Motion.fade(300)) + scaleIn(initialScale = 0.98f) }
-private val popExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = { fadeOut(Motion.fade(200)) + slideOutVertically(Motion.offset) { it / 14 } }
+/**
+ * Navigation motion, in three families:
+ * - push (detail pages): the new page slides in from the right over the old one, which drifts left,
+ *   dims and shrinks a touch, like a card laid on a card; back reverses it exactly.
+ * - sheet (compose, play, practice, studio): rises from the bottom with the soft spring and the page
+ *   behind recedes; it drops back down when dismissed.
+ * - fade-through (everything else).
+ */
+private enum class Kind { Push, Sheet, Fade }
+
+private fun NavBackStackEntry.kind(): Kind {
+    val r = destination.route.orEmpty()
+    return when {
+        listOf("Compose", "Play", "Practice", "Studio").any { r.contains(it) } -> Kind.Sheet
+        listOf("Word", "Quote", "Book", "Letter", "Curator", "Interests", "Library").any { r.contains(it) } -> Kind.Push
+        else -> Kind.Fade
+    }
+}
+
+private val springOffset = androidx.compose.animation.core.spring(dampingRatio = 0.92f, stiffness = 420f, visibilityThreshold = androidx.compose.ui.unit.IntOffset(1, 1))
+private val springScale = androidx.compose.animation.core.spring<Float>(dampingRatio = 0.92f, stiffness = 420f)
+
+private val enter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+    when (targetState.kind()) {
+        Kind.Push -> slideInHorizontally(springOffset) { it } + fadeIn(Motion.fade(180))
+        Kind.Sheet -> slideInVertically(springOffset) { it } + fadeIn(Motion.fade(160))
+        Kind.Fade -> fadeIn(Motion.fade(320)) + scaleIn(springScale, initialScale = 0.96f)
+    }
+}
+private val exit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+    when (targetState.kind()) {
+        Kind.Push -> slideOutHorizontally(springOffset) { -it / 4 } + fadeOut(Motion.fade(260), targetAlpha = 0.4f) + scaleOut(springScale, targetScale = 0.94f)
+        Kind.Sheet -> scaleOut(springScale, targetScale = 0.92f) + fadeOut(Motion.fade(260), targetAlpha = 0.5f)
+        Kind.Fade -> fadeOut(Motion.fade(200)) + scaleOut(springScale, targetScale = 1.04f)
+    }
+}
+private val popEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+    when (initialState.kind()) {
+        Kind.Push -> slideInHorizontally(springOffset) { -it / 4 } + fadeIn(Motion.fade(260), initialAlpha = 0.4f) + scaleIn(springScale, initialScale = 0.94f)
+        Kind.Sheet -> scaleIn(springScale, initialScale = 0.92f) + fadeIn(Motion.fade(260), initialAlpha = 0.5f)
+        Kind.Fade -> fadeIn(Motion.fade(320)) + scaleIn(springScale, initialScale = 1.04f)
+    }
+}
+private val popExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+    when (initialState.kind()) {
+        Kind.Push -> slideOutHorizontally(springOffset) { it } + fadeOut(Motion.fade(240))
+        Kind.Sheet -> slideOutVertically(springOffset) { it } + fadeOut(Motion.fade(240))
+        Kind.Fade -> fadeOut(Motion.fade(200)) + scaleOut(springScale, targetScale = 0.96f)
+    }
+}
 
 private inline fun <reified T : Any> NavGraphBuilder.screen(noinline content: @Composable (NavBackStackEntry) -> Unit) =
     composable<T>(enterTransition = enter, exitTransition = exit, popEnterTransition = popEnter, popExitTransition = popExit) { e ->
@@ -146,7 +194,11 @@ private fun Home(
         CompositionLocalProvider(LocalHaze provides haze) {
             AnimatedContent(
                 tab, Modifier.fillMaxSize().haze(haze),
-                transitionSpec = { (fadeIn(Motion.fade(260)) + scaleIn(initialScale = 0.99f)) togetherWith fadeOut(Motion.fade(160)) },
+                // Tabs slide a short way in the direction of travel and cross-fade.
+                transitionSpec = {
+                    val dir = if (targetState > initialState) 1 else -1
+                    (slideInHorizontally(springOffset) { it / 6 * dir } + fadeIn(Motion.fade(260))) togetherWith (slideOutHorizontally(springOffset) { -it / 6 * dir } + fadeOut(Motion.fade(160)))
+                },
                 label = "tabs",
             ) { t ->
                 when (t) {
