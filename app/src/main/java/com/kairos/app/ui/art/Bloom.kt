@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.lerp
 import com.kairos.app.ui.theme.Candy
 
 /**
- * The moment bloom, Kairos' mark. The eight rays of the original logo became eight soft petals
- * around a golden centre: a sun that is also a flower, hope and growth in one shape. One petal is
- * coral and points just past twelve like the hand of a clock: chronos is clock time, kairos is the
- * one moment that matters. That petal is "your moment today".
+ * The moment bloom, Kairos' mark: eight soft petals around a round centre, drawn in one colour. A
+ * sun that is also a flower; the eight rays of the original logo grown into petals. The petal at
+ * one o'clock is a full-length petal where the others alternate long and short, like the hand of a
+ * clock: chronos is clock time, kairos is the one moment that matters.
  */
 object Bloom {
     const val PETALS = 8
@@ -49,8 +49,8 @@ fun DrawScope.drawBloom(
     center: Offset = Offset(size.width / 2, size.height / 2),
     radius: Float = size.minDimension / 2,
     petal: Color = Color.White,
-    moment: Color? = Candy.Coral,
-    core: Color? = Candy.Sun,
+    moment: Color? = null,
+    core: Color? = petal,
     unfold: (Int) -> Float = { 1f },
     core01: Float = 1f,
     shaded: Boolean = false,
@@ -72,6 +72,7 @@ fun DrawScope.drawBloom(
     }
     if (core != null && core01 > 0.001f) {
         val cr = radius * 0.26f * core01
-        drawCircle(Brush.radialGradient(listOf(lerp(core, Color.White, 0.35f), core, lerp(core, Candy.Coral, 0.35f)), Offset(center.x - cr * 0.3f, center.y - cr * 0.3f), cr * 1.6f), cr, center)
+        if (shaded) drawCircle(Brush.radialGradient(listOf(lerp(core, Color.White, 0.35f), core, lerp(core, Candy.Navy, 0.08f)), Offset(center.x - cr * 0.3f, center.y - cr * 0.3f), cr * 1.6f), cr, center)
+        else drawCircle(core, cr, center)
     }
 }

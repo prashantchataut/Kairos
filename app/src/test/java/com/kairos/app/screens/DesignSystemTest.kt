@@ -82,7 +82,7 @@ class DesignSystemTest {
                         Canvas(Modifier.size(108.dp).clip(RoundedCornerShape(28.dp))) {
                             drawRect(Brush.verticalGradient(listOf(Color(0xFF2F5BFF), Color(0xFF5E9BFF), Color(0xFFBFDBFF))))
                             drawCircle(Brush.radialGradient(listOf(Color.White.copy(alpha = 0.45f), Color.Transparent), center = androidx.compose.ui.geometry.Offset(size.width / 2, size.height * 0.52f), radius = size.width * 0.5f))
-                            drawBloom(androidx.compose.ui.geometry.Offset(size.width / 2, size.height * 0.5f), size.width * 0.33f, shaded = true)
+                            drawBloom(androidx.compose.ui.geometry.Offset(size.width / 2, size.height * 0.5f), size.width * 0.33f)
                             drawCloud(size.width * 0.02f, size.height * 1.02f, size.width * 0.62f, Color.White, Color(0xFFE3EEFF))
                             drawCloud(size.width * 0.42f, size.height * 1.05f, size.width * 0.66f, Color.White, Color(0xFFE3EEFF))
                         }

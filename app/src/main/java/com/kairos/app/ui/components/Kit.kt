@@ -318,30 +318,28 @@ fun Empty(title: String, body: String, modifier: Modifier = Modifier, action: (@
 }
 
 /**
- * The Kairos mark: the moment bloom (see ui/art/Bloom.kt). On the sky it is white petals with the
- * coral moment petal and a golden centre; [tinted] puts it on a cobalt badge; [mono] draws it in
- * [color] alone.
+ * The Kairos mark: the moment bloom (see ui/art/Bloom.kt), always in a single colour. [tinted] puts a
+ * white mark on a cobalt badge; otherwise it is drawn in [color].
  */
 @Composable
 fun KairosMark(size: Dp, modifier: Modifier = Modifier, color: Color = Color.White, tinted: Boolean = false, mono: Boolean = false) {
     Canvas(modifier.size(size)) {
         if (tinted) {
             drawCircle(Brush.linearGradient(listOf(Color(0xFF5B95FF), Color(0xFF2F5BFF), Color(0xFF5A4BFF)), Offset.Zero, Offset(this.size.width, this.size.height)))
-            drawBloom(radius = this.size.minDimension * 0.36f)
-        } else if (mono) drawMark(color, 0f)
-        else drawBloom(petal = color)
+            drawBloom(radius = this.size.minDimension * 0.34f)
+        } else drawMark(color, 0f)
     }
 }
 
 /** Single-colour bloom, for share cards and seals. */
 fun DrawScope.drawMark(color: Color, inset: Float) {
-    drawBloom(radius = size.minDimension / 2f * (1f - inset), petal = color, moment = null, core = color)
+    drawBloom(radius = size.minDimension / 2f * (1f - inset), petal = color)
 }
 
 @Composable
 fun Wordmark(modifier: Modifier = Modifier, color: Color = K.colors.ink, markColor: Color = color) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-        KairosMark(20.dp, color = markColor, mono = markColor != Color.White)
+        KairosMark(20.dp, color = markColor)
         Spacer(Modifier.width(7.dp))
         Text("Kairos", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Serif, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = K.type.title.fontSize * 1.3f), color = color, maxLines = 1, softWrap = false)
     }

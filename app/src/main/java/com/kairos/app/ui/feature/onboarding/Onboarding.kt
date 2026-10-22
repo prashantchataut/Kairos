@@ -308,7 +308,7 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
             val bs = kaiSpot(HELLO)
             Canvas(Modifier.size(bs.size * 1.2f).offset { IntOffset((bs.x * W - with(density) { (bs.size * 0.6f).toPx() }).roundToInt(), (bs.y * H - with(density) { (bs.size * 0.6f).toPx() }).roundToInt()) }.graphicsLayer {
                 alpha = 1f - kaiIn.value; scaleX = 1f + kaiIn.value * 0.35f; scaleY = scaleX
-            }) { drawBloom(unfold = { petals[it].value }, core01 = core.value, shaded = true) }
+            }) { drawBloom(unfold = { petals[it].value }, core01 = core.value) }
         }
         Box(Modifier.fillMaxSize().burst(burst))
 

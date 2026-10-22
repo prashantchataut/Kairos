@@ -4,8 +4,8 @@
 import os, sys
 
 RES = sys.argv[1]
-CX, CY = 54.0, 50.0
-R = 23.0
+CX, CY = 54.0, 54.0
+R = 24.0
 MOMENT = 1
 
 
@@ -66,11 +66,7 @@ def petals(shaded=True, mono=None, named=False):
             fill = f'android:fillColor="{mono}"'
             inner = f'<path android:pathData="{path}" {fill}/>'
         else:
-            if i == MOMENT:
-                g = grad_linear(CX, CY - R, CX, CY - R * 0.2, [(0, "#FFFF9C80"), (1, "#FFFF6A4D")])
-            else:
-                g = grad_linear(CX, CY - R, CX, CY - R * 0.2, [(0, "#FFFFFFFF"), (0.7, "#FFF4F7FF"), (1, "#FFDCE7FF")])
-            inner = f'<path android:pathData="{path}">{g}</path>'
+            inner = f'<path android:pathData="{path}" android:fillColor="#FFFFFFFF"/>'
         if named:
             out.append(
                 f'<group android:name="petal{i}" android:pivotX="{CX}" android:pivotY="{CY}" android:rotation="{i * 45}">'
@@ -86,7 +82,7 @@ def core(named=False, mono=None):
     if mono:
         body = f'<path android:pathData="{circle(CX, CY, cr)}" android:fillColor="{mono}"/>'
     else:
-        body = f'<path android:pathData="{circle(CX, CY, cr)}">{grad_radial(CX - cr * 0.3, CY - cr * 0.3, cr * 1.6, [(0, "#FFFFE9A0"), (0.55, "#FFFFC83D"), (1, "#FFFF9A4A")])}</path>'
+        body = f'<path android:pathData="{circle(CX, CY, cr)}" android:fillColor="#FFFFFFFF"/>'
     if named:
         return f'<group android:name="core" android:pivotX="{CX}" android:pivotY="{CY}" android:scaleX="0" android:scaleY="0">{body}</group>'
     return body
@@ -99,17 +95,13 @@ def write(name, text, folder="drawable"):
         f.write(text)
 
 
-# Background: cobalt into sky, with a soft glow where the bloom rises.
+# Background: deep cobalt with a soft light from the top. Foreground: the white mark, nothing else.
 write("ic_launcher_background.xml", HEAD +
-      f'    <path android:pathData="M0,0h108v108h-108z">{grad_linear(54, 0, 54, 108, [(0, "#FF2F5BFF"), (0.55, "#FF5E9BFF"), (1, "#FFBFDBFF")])}</path>\n'
-      f'    <path android:pathData="{circle(CX, CY + 4, 34)}">{grad_radial(CX, CY + 4, 34, [(0, "#73FFFFFF"), (1, "#00FFFFFF")])}</path>\n'
+      f'    <path android:pathData="M0,0h108v108h-108z">{grad_linear(54, 0, 54, 108, [(0, "#FF4A7DFF"), (1, "#FF2346D8")])}</path>\n'
+      f'    <path android:pathData="{circle(54, 20, 52)}">{grad_radial(54, 20, 52, [(0, "#40FFFFFF"), (1, "#00FFFFFF")])}</path>\n'
       '</vector>\n')
 
-# Foreground: the bloom rising from a cloud (a sunrise: the right moment).
-write("ic_launcher_foreground.xml", HEAD +
-      "    " + petals() + "\n    " + core() + "\n"
-      + "".join(f'    <path android:pathData="{part}">{grad_linear(54, 68, 54, 90, [(0, "#FFFFFFFF"), (1, "#FFE6EFFF")])}</path>\n' for part in cloud(22, 88, 38) + cloud(46, 90, 40))
-      + '</vector>\n')
+write("ic_launcher_foreground.xml", HEAD + "    " + petals() + "\n    " + core() + "\n</vector>\n")
 
 write("ic_launcher_monochrome.xml", HEAD + "    " + petals(mono="#FF000000") + "\n    " + core(mono="#FF000000") + "\n</vector>\n")
 
