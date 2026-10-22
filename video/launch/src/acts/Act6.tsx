@@ -78,6 +78,8 @@ export const Act6: React.FC = () => {
       )}
       <div style={{ position: 'absolute', inset: 0, background: nightGradient, clipPath: closed ? undefined : clip }} />
 
+      {/* until the night has closed, the letter only exists inside it */}
+      <div style={{ position: 'absolute', inset: 0, clipPath: closed ? undefined : clip }}>
       <div style={{ position: 'absolute', inset: 0, transformOrigin: `${ENV.x}px ${ENV.y}px`, transform: `scale(${push})` }}>
         {/* the envelope, behind the letter until the letter is in */}
         <div style={{ position: 'absolute', left: 0, top: 0, perspective: 1600 * U, transform: `translate(${ENV.x - env.w / 2}px, ${ENV.y - env.h / 2 + (1 - envIn) * 1150 * U}px)` }}>
@@ -112,6 +114,7 @@ export const Act6: React.FC = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
 
       <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${ENV.x - env.w / 2 - 64 * U}px, ${lineY}px) translateX(-100%)` }}>

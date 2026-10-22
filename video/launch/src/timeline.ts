@@ -80,7 +80,7 @@ export const CUE = {
   turn2: b(12, 3, 1), // another card turns over
   // 6 letter
   night: b(13), // night columns rise behind
-  paper: b(13, 0, 2), // the letter slides in, already being written
+  paper: b(13, 1), // the letter slides in, already being written
   fold: b(14, 0, 3), // the letter folds into its envelope
   seal: b(14, 1, 2), // the coral seal lands (landing 1)
   opens: b(15, 1), // "Opens in 6 months" rolls in

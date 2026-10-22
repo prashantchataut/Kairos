@@ -58,7 +58,7 @@
   "turn1": 1305,
   "turn2": 1418,
   "night": 1440,
-  "paper": 1455,
+  "paper": 1470,
   "fold": 1583,
   "seal": 1605,
   "opens": 1710,
@@ -405,14 +405,14 @@
   {
    "id": "ui.dear",
    "text": "Dear future me,",
-   "in": 1455,
-   "resolved": 1487,
+   "in": 1470,
+   "resolved": 1502,
    "out": 1583,
    "words": 3,
    "kind": "ui",
    "read": [
     [
-     1487,
+     1502,
      1583
     ]
    ]
@@ -597,91 +597,91 @@
    "id": "play:turn2"
   },
   {
-   "f": 1455,
+   "f": 1470,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear0"
   },
   {
-   "f": 1457,
+   "f": 1472,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear1"
   },
   {
-   "f": 1459,
+   "f": 1474,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear2"
   },
   {
-   "f": 1461,
+   "f": 1476,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear3"
   },
   {
-   "f": 1465,
+   "f": 1480,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear5"
   },
   {
-   "f": 1467,
+   "f": 1482,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear6"
   },
   {
-   "f": 1469,
+   "f": 1484,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear7"
   },
   {
-   "f": 1471,
+   "f": 1486,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear8"
   },
   {
-   "f": 1473,
+   "f": 1488,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear9"
   },
   {
-   "f": 1475,
+   "f": 1490,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear10"
   },
   {
-   "f": 1479,
+   "f": 1494,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear12"
   },
   {
-   "f": 1481,
+   "f": 1496,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear13"
   },
   {
-   "f": 1483,
+   "f": 1498,
    "kind": "key",
    "weight": 0.6,
    "pan": -0.1,
