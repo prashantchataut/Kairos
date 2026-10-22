@@ -433,7 +433,7 @@ private fun QuoteTile(q: QuoteEntity, index: Int, onClick: () -> Unit, modifier:
 private fun Books(books: List<BookEntity>, d: Discover, more: () -> Unit, open: (String) -> Unit) {
     val p = K.colors
     Column {
-        Text(if (books.isEmpty()) "Your shelf is waiting" else "${books.size} books worth knowing", style = K.type.shout.copy(fontSize = 34.sp, lineHeight = 36.sp), color = p.ink)
+        Text(if (books.isEmpty()) "Your shelf is waiting" else if (books.size == 1) "1 book worth knowing" else "${books.size} books worth knowing", style = K.type.shout.copy(fontSize = 34.sp, lineHeight = 36.sp), color = p.ink)
         Spacer(Modifier.height(Gap.lg))
         Box(Modifier.fillMaxWidth().height(200.dp)) {
             // The glass shelf the covers stand on.

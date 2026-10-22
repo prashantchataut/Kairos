@@ -140,7 +140,7 @@ fun CuratorScreen(onBack: () -> Unit) {
             AnimatedContent(message, transitionSpec = { fadeIn() togetherWith fadeOut() }, label = "msg") { m ->
                 if (m != null) Text(m, style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = p.onSky, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = Gap.md, start = Gap.gutter, end = Gap.gutter))
             }
-            if (awake) Text("$pool unseen words waiting for you", style = K.type.caption, color = p.onSkySoft, modifier = Modifier.padding(top = Gap.sm))
+            if (awake) Text(if (pool == 1) "1 unseen word waiting for you" else "$pool unseen words waiting for you", style = K.type.caption, color = p.onSkySoft, modifier = Modifier.padding(top = Gap.sm))
         }
 
         Column(Modifier.padding(horizontal = Gap.gutter)) {
