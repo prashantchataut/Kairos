@@ -143,8 +143,8 @@ class ScreenshotTest {
         compose.setContent {
             KairosTheme(ThemeMode.Light) {
                 Column(Modifier.background(Color(0xFFE9EDF3)).padding(3.dp)) {
-                    Template.entries.chunked(4).forEachIndexed { r, row ->
-                        Row { row.forEachIndexed { i, t -> CardThumbnail(card, t, hues[(r * 4 + i) % hues.size], width.dp, ratio = ratio, modifier = Modifier.padding(2.dp)) } }
+                    Template.entries.chunked(if (width < 80) 5 else 4).forEachIndexed { r, row ->
+                        Row { row.forEachIndexed { i, t -> CardThumbnail(card, t, hues[(r * 5 + i) % hues.size], width.dp, ratio = ratio, modifier = Modifier.padding(2.dp)) } }
                     }
                 }
             }
@@ -153,17 +153,23 @@ class ScreenshotTest {
         compose.onRoot().captureRoboImage("screenshots/$name.png")
     }
 
-    private val longQuote = CardContent(false, "Maybe it will all work out so well that you'll laugh at how much you worried that it wouldn't.", byline = "written for you")
+    private val longQuote = CardContent(false, "Maybe it will all work out so well that you'll laugh at how much you worried that it wouldn't.", byline = "")
 
-    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
     @Test fun j_cardsWord() = cards("10_cards_word", cardWord, 2f / 3f, 94)
 
-    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
     @Test fun j_cardsQuote() = cards("10b_cards_quote", cardQuote, 2f / 3f, 94)
 
-    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
-    @Test fun j_cardsStory() = cards("10c_cards_story", longQuote, 9f / 16f, 94)
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Test fun j_cardsStory() = cards("10c_cards_story", longQuote, 9f / 16f, 74)
 
-    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
     @Test fun j_cardsSquare() = cards("10d_cards_square", cardWord, 1f, 94)
+
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Test fun j_cardsStoryWord() = cards("10e_cards_story_word", cardWord, 9f / 16f, 74)
+
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Test fun j_cardsSquareQuote() = cards("10f_cards_square_quote", longQuote, 1f, 94)
 }

@@ -12,7 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         WordEntity::class, QuoteEntity::class, ExtraEntity::class, DayEntity::class, MoodEntity::class,
         CapsuleEntity::class, AttachmentEntity::class, MomentEntity::class, BookEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class KairosDatabase : RoomDatabase() {
@@ -27,7 +27,7 @@ abstract class KairosDatabase : RoomDatabase() {
 
     companion object {
         fun create(context: Context): KairosDatabase =
-            Room.databaseBuilder(context, KairosDatabase::class.java, "kairos.db").addMigrations(MIGRATION_1_2).build()
+            Room.databaseBuilder(context, KairosDatabase::class.java, "kairos.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
 
         fun inMemory(context: Context): KairosDatabase =
             Room.inMemoryDatabaseBuilder(context, KairosDatabase::class.java).allowMainThreadQueries().build()
@@ -42,5 +42,16 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         db.execSQL("ALTER TABLE `quotes` ADD COLUMN `source` TEXT NOT NULL DEFAULT ''")
         db.execSQL("CREATE TABLE IF NOT EXISTS `books` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `author` TEXT NOT NULL, `year` INTEGER NOT NULL, `summary` TEXT NOT NULL, `ideas` TEXT NOT NULL, `line` TEXT NOT NULL, `hook` TEXT NOT NULL, `category` TEXT NOT NULL, `minutes` INTEGER NOT NULL, `generatedAt` INTEGER NOT NULL, `saved` INTEGER NOT NULL, `savedAt` INTEGER, `timesShown` INTEGER NOT NULL, `lastShownDay` INTEGER, `taste` INTEGER NOT NULL, PRIMARY KEY(`id`))")
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_books_category` ON `books` (`category`)")
+    }
+}
+
+/** v3: dwell time and shares, the Feed's quiet signals. */
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `words` ADD COLUMN `dwellMs` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `words` ADD COLUMN `shares` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `quotes` ADD COLUMN `dwellMs` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `quotes` ADD COLUMN `shares` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `books` ADD COLUMN `dwellMs` INTEGER NOT NULL DEFAULT 0")
     }
 }

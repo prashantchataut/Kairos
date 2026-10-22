@@ -70,6 +70,12 @@ interface WordDao {
 
     @Query("SELECT * FROM words WHERE timesShown = 0 AND taste >= 0 ORDER BY generatedAt DESC")
     suspend fun unseen(): List<WordEntity>
+
+    @Query("UPDATE words SET dwellMs = dwellMs + :ms, timesShown = CASE WHEN timesShown = 0 THEN 1 ELSE timesShown END, lastShownDay = :day WHERE id = :id")
+    suspend fun addDwell(id: String, ms: Long, day: Long)
+
+    @Query("UPDATE words SET shares = shares + 1 WHERE id = :id")
+    suspend fun addShare(id: String)
 }
 
 @Dao
@@ -101,6 +107,12 @@ interface QuoteDao {
 
     @Query("SELECT * FROM quotes WHERE timesShown = 0 AND taste >= 0 ORDER BY generatedAt DESC")
     suspend fun unseen(): List<QuoteEntity>
+
+    @Query("UPDATE quotes SET dwellMs = dwellMs + :ms, timesShown = CASE WHEN timesShown = 0 THEN 1 ELSE timesShown END, lastShownDay = :day WHERE id = :id")
+    suspend fun addDwell(id: String, ms: Long, day: Long)
+
+    @Query("UPDATE quotes SET shares = shares + 1 WHERE id = :id")
+    suspend fun addShare(id: String)
 }
 
 @Dao
@@ -125,6 +137,9 @@ interface BookDao {
 
     @Update
     suspend fun update(book: BookEntity)
+
+    @Query("UPDATE books SET dwellMs = dwellMs + :ms WHERE id = :id")
+    suspend fun addDwell(id: String, ms: Long)
 }
 
 @Dao
