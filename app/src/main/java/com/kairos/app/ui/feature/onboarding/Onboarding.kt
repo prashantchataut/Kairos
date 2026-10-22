@@ -65,6 +65,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -90,6 +91,8 @@ import com.kairos.app.ui.art.rememberBurst
 import com.kairos.app.ui.components.BigPill
 import com.kairos.app.ui.components.Icons
 import com.kairos.app.ui.components.KairosSlider
+import com.kairos.app.ui.components.KineticText
+import com.kairos.app.ui.components.SparkleField
 import com.kairos.app.ui.components.PrimaryButton
 import com.kairos.app.ui.components.SliderBubble
 import com.kairos.app.ui.components.at
@@ -199,7 +202,8 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
     val kaiIn = remember { Animatable(if (calm) 1f else 0f) }
     val friendsIn = remember { List(3) { Animatable(if (calm) 1f else 0f) } }
     val textIn = remember { Animatable(if (calm) 1f else 0f) }
-    var awake by remember { mutableStateOf(calm) }
+    val wave = remember { Animatable(0f) }
+    var awake by remember { mutableStateOf(calm || startStep != HELLO) }
     val burst = rememberBurst()
     val density = LocalDensity.current
 
@@ -226,6 +230,7 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
             core.animateTo(1f, Motion.bloom())
             delay(260)
             launch { kaiIn.animateTo(1f, Motion.bloom()) }
+            launch { delay(120); wave.animateTo(1f, tween(900, easing = Motion.Out)) }
             delay(380)
             awake = true
             val ks = kaiSpot(HELLO)
@@ -252,6 +257,9 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
 
         // Sky.
         Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(p.skyTop, p.skyMid, androidx.compose.ui.graphics.lerp(p.skyMid, p.skyFade, 0.5f)))))
+        // A slow field of sparkles in the sky.
+        val drift = if (!calm) rememberInfiniteTransition(label = "drift").animateFloat(0f, 1f, infiniteRepeatable(tween(24000, easing = androidx.compose.animation.core.LinearEasing)), label = "d") else null
+        SparkleField({ drift?.value ?: 0.3f }, Modifier.fillMaxSize().graphicsLayer { alpha = (1f - aurora.value).coerceIn(0f, 1f) })
         // The cloud field.
         val top by animateFloatAsState(fieldTop(step), Motion.soft(), label = "field")
         Box(Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top, unbounded = true).height(with(density) { (H * 1.4f).toDp() }).offset { IntOffset(0, (top * H).roundToInt()) }) {
@@ -267,7 +275,15 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
             val fx by animateFloatAsState(sp.x, Motion.soft(), label = "fx$i")
             val fy by animateFloatAsState(sp.y, Motion.soft(), label = "fy$i")
             val fs by animateDpAsState(sp.size, Motion.bloom(), label = "fs$i")
-            Hero(fx, fy, fs, W, H, bobPhase = { (bob?.value ?: 0f) + i * 2.1f }, scale = { friendsIn[i].value }) {
+            // In the finale the friends circle Kai.
+            val ks0 = kaiSpot(FINALE)
+            val orbit = finaleKai.value.coerceIn(0f, 1f)
+            val ang = (bob?.value ?: 0f) * 0.6f + i * 2.094f
+            val ox = ks0.x + kotlin.math.cos(ang) * 0.36f
+            val oy = ks0.y + kotlin.math.sin(ang) * 0.36f * (W / H)
+            val hx = if (step == FINALE) fx + (ox - fx) * orbit else fx
+            val hy = if (step == FINALE) fy + (oy - fy) * orbit else fy
+            Hero(hx, hy, fs, W, H, bobPhase = { (bob?.value ?: 0f) + i * 2.1f }, scale = { friendsIn[i].value }) {
                 Kai(if (step == FINALE || (step == GIFTS && cheering)) look.copy(eyes = 0f, smile = 1f, blush = 0.8f) else look, size = fs, shadow = true, description = null)
             }
             val labelAlpha by animateFloatAsState(if (step == GIFTS) 1f else 0f, Motion.fade(), label = "fl$i")
@@ -303,12 +319,27 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
         Hero(kx, ky, kSize, W, H, bobPhase = { (bob?.value ?: 0f) * 0.5f }, scale = { if (step == FINALE) finaleKai.value else kaiIn.value }) {
             Kai(look, size = kSize)
         }
-        // The bloom that becomes Kai.
+        // The mark becomes Kai: the petals fold into the centre, which swells into Kai's body, and a
+        // ring of light rolls outward.
         if (kaiIn.value < 1f) {
             val bs = kaiSpot(HELLO)
+            val k = kaiIn.value.coerceIn(0f, 1f)
             Canvas(Modifier.size(bs.size * 1.2f).offset { IntOffset((bs.x * W - with(density) { (bs.size * 0.6f).toPx() }).roundToInt(), (bs.y * H - with(density) { (bs.size * 0.6f).toPx() }).roundToInt()) }.graphicsLayer {
-                alpha = 1f - kaiIn.value; scaleX = 1f + kaiIn.value * 0.35f; scaleY = scaleX
-            }) { drawBloom(unfold = { petals[it].value }, core01 = core.value) }
+                alpha = (1f - k * 1.4f).coerceIn(0f, 1f)
+            }) {
+                rotate(k * 70f) {
+                    drawBloom(unfold = { petals[it].value * (1f - k) }, core01 = core.value * (1f + k * 2.2f))
+                }
+            }
+        }
+        if (wave.value in 0.001f..0.999f) {
+            val bs = kaiSpot(HELLO)
+            Canvas(Modifier.fillMaxSize()) {
+                val c = Offset(bs.x * size.width, bs.y * size.height)
+                val r = size.width * 0.75f * wave.value
+                drawCircle(Color.White.copy(alpha = 0.55f * (1f - wave.value)), r, c, style = androidx.compose.ui.graphics.drawscope.Stroke(10f * density.density * (1f - wave.value) + 1f))
+                drawCircle(Color.White.copy(alpha = 0.18f * (1f - wave.value)), r * 0.82f, c)
+            }
         }
         Box(Modifier.fillMaxSize().burst(burst))
 
@@ -394,15 +425,31 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
     }
 }
 
+/**
+ * A character on the hero layer. It squashes and stretches along the way it is travelling and leans
+ * into the move (the old animation principle), then settles back to round when it stops.
+ */
 @Composable
 private fun Hero(x: Float, y: Float, size: Dp, W: Float, H: Float, bobPhase: () -> Float, scale: () -> Float, content: @Composable () -> Unit) {
     val density = LocalDensity.current
+    val calm = K.calm
+    val last = remember { floatArrayOf(x, y) }
+    val vx = (x - last[0]) * W
+    val vy = (y - last[1]) * H
+    last[0] = x; last[1] = y
+    val speed = kotlin.math.sqrt(vx * vx + vy * vy)
+    val st = if (calm) 0f else (speed / (40f * density.density)).coerceIn(0f, 0.22f)
+    val nx = if (speed > 0.01f) kotlin.math.abs(vx) / speed else 0f
+    val ny = if (speed > 0.01f) kotlin.math.abs(vy) / speed else 0f
     Box(
         Modifier
             .offset { IntOffset((x * W - with(density) { size.toPx() } / 2).roundToInt(), (y * H - with(density) { size.toPx() } / 2).roundToInt()) }
             .graphicsLayer {
                 translationY = sin(bobPhase()) * 4f * density.density
-                val s = scale(); scaleX = s; scaleY = s
+                val s = scale()
+                scaleX = s * (1f + nx * st - ny * st * 0.5f)
+                scaleY = s * (1f + ny * st - nx * st * 0.5f)
+                rotationZ = if (speed > 0.01f) (vx / speed) * st * 40f else 0f
             },
     ) { content() }
 }
@@ -434,9 +481,10 @@ private fun Bottom(H: Float, modifier: Modifier = Modifier, content: @Composable
     ) { content() }
 }
 
+/** Headlines arrive word by word (kinetic type). */
 @Composable
 private fun Shout(text: String, color: Color, modifier: Modifier = Modifier, align: TextAlign = TextAlign.Center, size: Int = 40) =
-    Text(text, style = K.type.shout.copy(fontSize = size.sp, lineHeight = (size + 2).sp), color = color, textAlign = align, modifier = modifier)
+    KineticText(text, K.type.shout.copy(fontSize = size.sp, lineHeight = (size + 2).sp, textAlign = align), color, modifier.fillMaxWidth(), align = align, delayMs = 140)
 
 @Composable
 private fun Sub(text: String, color: Color, align: TextAlign = TextAlign.Center) =

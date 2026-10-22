@@ -39,9 +39,19 @@ class OnboardingTest {
         compose.mainClock.autoAdvance = false
         compose.setContent { KairosTheme(ThemeMode.Light, calmMotion = false) { OnboardingScreen({}) } }
         var t = 0L
-        listOf(0L, 450, 700, 950, 1250, 1500, 1750, 2100, 2600, 3400).forEach { at ->
+        listOf(0L, 450, 800, 1150, 1320, 1420, 1560, 1750, 2000, 2400).forEach { at ->
             compose.mainClock.advanceTimeBy(at - t); t = at
             compose.onRoot().captureRoboImage("screenshots/onboarding/wake_%04d.png".format(at))
+        }
+    }
+
+    @Test fun giftsFrames() {
+        compose.mainClock.autoAdvance = false
+        compose.setContent { KairosTheme(ThemeMode.Light, calmMotion = false) { OnboardingScreen({}, startStep = 1) } }
+        var t = 0L
+        listOf(60L, 180, 300, 450, 700, 1200).forEach { at ->
+            compose.mainClock.advanceTimeBy(at - t); t = at
+            compose.onRoot().captureRoboImage("screenshots/onboarding/gifts_%04d.png".format(at))
         }
     }
 
