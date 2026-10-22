@@ -51,7 +51,7 @@ class LearnViewModel(private val c: AppContainer) : ViewModel() {
         val qs = quotes.filter { it.taste >= 0 && (needle.isEmpty() || it.text.lowercase().contains(needle) || it.author.lowercase().contains(needle)) && (f != Filter.Saved || it.saved) }
         LearnState(shown, qs, words.size, words.count { it.mastered }, words.count { it.saved }, explore = ex)
     }.combine(c.kairos.observeDueCount()) { s, d -> s.copy(due = d) }
-        .combine(c.keys.hasKey) { s, k -> s.copy(hasKey = k) }
+        .combine(c.keys.awake) { s, k -> s.copy(hasKey = k) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LearnState())
 
     fun explore(topic: String) {

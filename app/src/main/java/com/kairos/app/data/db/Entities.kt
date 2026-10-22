@@ -1,6 +1,7 @@
 package com.kairos.app.data.db
 
 import androidx.room.Embedded
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -40,6 +41,8 @@ data class WordEntity(
     val intervalDays: Int = 0,
     val dueDay: Long? = null,
     val lapses: Int = 0,
+    /** The language the word comes from when it's a borrowed concept word (Greek, Japanese…), else blank. */
+    @ColumnInfo(defaultValue = "") val language: String = "",
 ) {
     val inPractice get() = dueDay != null
     val mastered get() = intervalDays >= 21
@@ -60,7 +63,40 @@ data class QuoteEntity(
     val timesShown: Int = 0,
     val lastShownDay: Long? = null,
     val taste: Int = 0,
-)
+    /** "quote" (a real person's words), "line" (written for this person by Kai) or "proverb". */
+    @ColumnInfo(defaultValue = "quote") val kind: String = "quote",
+    /** Where a quote comes from (a book, song or film), when known. */
+    @ColumnInfo(defaultValue = "") val source: String = "",
+) {
+    val isLine get() = kind == "line"
+}
+
+/** A micro-summary of a book worth knowing, written for one person. */
+@Entity(tableName = "books", indices = [Index("category")])
+data class BookEntity(
+    @PrimaryKey val id: String,
+    val title: String,
+    val author: String,
+    val year: Int = 0,
+    /** Three or four sentences: what the book is and why it matters. */
+    val summary: String,
+    /** Key ideas, one per line. */
+    val ideas: String,
+    /** One short, memorable line from or about the book. */
+    val line: String = "",
+    /** Why it suits this person, addressed as "you". */
+    val hook: String = "",
+    val category: String = "",
+    val minutes: Int = 3,
+    val generatedAt: Long = System.currentTimeMillis(),
+    val saved: Boolean = false,
+    val savedAt: Long? = null,
+    val timesShown: Int = 0,
+    val lastShownDay: Long? = null,
+    val taste: Int = 0,
+) {
+    val ideaList get() = ideas.split('\n').map { it.trim().trimStart('-', '•', ' ') }.filter { it.isNotEmpty() }
+}
 
 /** Small generated extras: daily "tiny good things" and capsule writing prompts. */
 @Entity(tableName = "extras", indices = [Index("kind")])

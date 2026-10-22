@@ -62,4 +62,16 @@ class DailyEngineTest {
         assertTrue(pick.reason.isNotBlank())
     }
 
+
+    @Test fun `the feed never shows the same category three times in a row when it can avoid it`() {
+        val ranked = listOf("a", "b", "c", "d", "e").map { word(it, if (it in setOf("a", "b", "c")) "nature" else "mind") }
+        val feed = DailyEngine.diversify(ranked) { it.category }
+        assertEquals(listOf("nature", "mind", "nature", "mind", "nature"), feed.map { it.category })
+    }
+
+    @Test fun `scoring returns every candidate, ranked`() {
+        val all = DailyEngine.scoreWords(words, taste, 20_000)
+        assertEquals(words.size, all.size)
+        assertEquals(DailyEngine.pickWord(words, taste, 20_000)!!.item.id, all.first().item.id)
+    }
 }

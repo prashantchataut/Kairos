@@ -84,6 +84,7 @@ fun CuratorScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
     val hasKey by c.keys.hasKey.collectAsStateWithLifecycle()
+    val awake by c.keys.awake.collectAsStateWithLifecycle()
     val settings by c.prefs.settings.collectAsStateWithLifecycle(initialValue = null)
     val pool by c.kairos.observeUnseenWords().collectAsStateWithLifecycle(initialValue = 0)
     val generating by c.kairos.generating.collectAsStateWithLifecycle()
@@ -94,8 +95,8 @@ fun CuratorScreen(onBack: () -> Unit) {
     val s = settings ?: return
     val look = when {
         generating -> KaiLooks.Thinking
-        hasKey && message != null -> KaiLooks.Delighted
-        hasKey -> KaiLooks.Curator
+        awake && message != null -> KaiLooks.Delighted
+        awake -> KaiLooks.Curator
         phase == KeyPhase.Checking -> KaiLooks.Thinking
         phase == KeyPhase.Failed -> KaiLooks.Sad
         phase == KeyPhase.Done -> KaiLooks.Delighted
@@ -107,7 +108,7 @@ fun CuratorScreen(onBack: () -> Unit) {
             TopBar(onBack, onSky = true)
             Box(Modifier.size(150.dp).burst(burst), contentAlignment = Alignment.Center) { Kai(look, size = 150.dp) }
             Spacer(Modifier.height(Gap.md))
-            AnimatedContent(hasKey, transitionSpec = { (fadeIn(Motion.fade(300)) + scaleIn(Motion.bloom(), initialScale = 0.9f)) togetherWith fadeOut(Motion.fade(150)) }, label = "title") { awake ->
+            AnimatedContent(awake, transitionSpec = { (fadeIn(Motion.fade(300)) + scaleIn(Motion.bloom(), initialScale = 0.9f)) togetherWith fadeOut(Motion.fade(150)) }, label = "title") { awake ->
                 Column(Modifier.padding(horizontal = Gap.xl), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(if (awake) "Kai is awake" else "Kai is asleep", style = K.type.shout.copy(fontSize = 38.sp), color = p.onSky, textAlign = TextAlign.Center)
                     Spacer(Modifier.height(Gap.sm))
@@ -119,7 +120,7 @@ fun CuratorScreen(onBack: () -> Unit) {
                 }
             }
             Spacer(Modifier.height(Gap.xl))
-            if (!hasKey) {
+            if (!awake) {
                 KeyRitual({ phase = it }, { message = "Hello! Your first words are on their way." }, Modifier.padding(horizontal = Gap.gutter), onSky = true)
             } else {
                 Row(Modifier.padding(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.sm), verticalAlignment = Alignment.CenterVertically) {
@@ -139,13 +140,27 @@ fun CuratorScreen(onBack: () -> Unit) {
             AnimatedContent(message, transitionSpec = { fadeIn() togetherWith fadeOut() }, label = "msg") { m ->
                 if (m != null) Text(m, style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = p.onSky, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = Gap.md, start = Gap.gutter, end = Gap.gutter))
             }
-            if (hasKey) Text("$pool unseen words waiting for you", style = K.type.caption, color = p.onSkySoft, modifier = Modifier.padding(top = Gap.sm))
+            if (awake) Text("$pool unseen words waiting for you", style = K.type.caption, color = p.onSkySoft, modifier = Modifier.padding(top = Gap.sm))
         }
 
         Column(Modifier.padding(horizontal = Gap.gutter)) {
+            if (c.keys.builtIn) {
+                Card(Modifier.fillMaxWidth()) {
+                    Text("Kai writes for free", style = K.type.title, color = p.ink)
+                    Spacer(Modifier.height(Gap.xs))
+                    Text("Kairos comes with its own AI: Mercury 3 for words, because it's very fast, and Gemini for thoughts and books, because it's careful with real quotes and real books. You don't need a key.", style = K.type.body, color = p.inkSoft)
+                    if (!hasKey) {
+                        Spacer(Modifier.height(Gap.lg))
+                        Text("Prefer your own model? Add an OpenRouter key and Kai will use it first.", style = K.type.label, color = p.ink)
+                        Spacer(Modifier.height(Gap.md))
+                        KeyRitual({ phase = it }, { message = "Using your key from now on." }, showGetKey = true)
+                    }
+                }
+                Spacer(Modifier.height(Gap.xl))
+            }
             Text("Which mind should Kai write with?", style = K.type.title, color = p.ink)
             Spacer(Modifier.height(Gap.xs))
-            Text("All of them go through your OpenRouter key.", style = K.type.caption, color = p.inkSoft)
+            Text(if (c.keys.builtIn) "Only used with your own OpenRouter key." else "All of them go through your OpenRouter key.", style = K.type.caption, color = p.inkSoft)
             Spacer(Modifier.height(Gap.md))
             Models.forEach { m -> ModelRow(m, s.aiModel == m.id) { scope.launch { c.prefs.setAiModel(m.id) } } }
             Spacer(Modifier.height(Gap.sm))

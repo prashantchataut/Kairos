@@ -1,7 +1,8 @@
 package com.kairos.app.data.repo
 
 import com.kairos.app.data.ai.AiError
-import com.kairos.app.data.ai.OpenRouter
+import com.kairos.app.data.ai.Task
+import com.kairos.app.data.ai.Writer
 import com.kairos.app.data.ai.SecureKeyStore
 import com.kairos.app.data.db.DayEntity
 import com.kairos.app.data.db.ExtraEntity
@@ -21,7 +22,10 @@ import com.kairos.app.engine.Recall
 import com.kairos.app.engine.Srs
 import com.kairos.app.engine.SrsState
 import com.kairos.app.engine.Taste
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -63,7 +67,7 @@ class KairosRepository(
     private val db: KairosDatabase,
     private val prefs: UserPrefs,
     private val keys: SecureKeyStore,
-    private val ai: OpenRouter,
+    private val writer: Writer,
 ) {
     private val dayLock = Mutex()
     private val genLock = Mutex()
@@ -73,6 +77,7 @@ class KairosRepository(
     val generating: StateFlow<Boolean> = _generating.asStateFlow()
 
     val hasKey get() = keys.hasKey
+    val awake get() = keys.awake
 
     // --- The curator loop -----------------------------------------------------------------------
 
@@ -93,37 +98,44 @@ class KairosRepository(
             tooHard = words.filter { it.difficultyVote > 0 }.takeLast(10).map { it.word },
             struggling = words.filter { it.lapses >= 2 }.take(6).map { it.word },
             mastered = words.count { it.mastered },
-            lovedAuthors = quotes.filter { it.saved || it.taste > 0 }.map { it.author }.distinct().take(8),
+            lovedAuthors = quotes.filter { (it.saved || it.taste > 0) && it.author.isNotBlank() }.map { it.author }.distinct().take(8),
             lovedThemes = quotes.filter { it.saved || it.taste > 0 }.groupingBy { it.theme }.eachCount().entries.sortedByDescending { it.value }.take(3).map { it.key },
-            avoidWords = words.map { it.word }.takeLast(300),
+            // The newest words are what the model is most likely to repeat; older ones are caught locally.
+            avoidWords = words.sortedByDescending { it.generatedAt }.take(120).map { it.word },
             avoidQuotes = quotes.sortedByDescending { it.generatedAt }.take(60).map { it.text.take(60) },
             avoidSparks = db.extras().recentTexts("spark", 30),
             focus = focus,
         )
     }
 
-    /** Asks the curator for a fresh batch and stores whatever survives validation. */
-    suspend fun generate(words: Int = 8, quotes: Int = 6, sparks: Int = 4, prompts: Int = 3, focus: String? = null): Batch = genLock.withLock {
-        if (!keys.hasKey.value) throw AiError.NoKey()
+    /**
+     * Asks the curator for fresh words, thoughts and books, as separate small tasks that run in
+     * parallel, and stores whatever survives validation. One failing task doesn't sink the others.
+     */
+    suspend fun generate(words: Int = 6, quotes: Int = 6, sparks: Int = 4, prompts: Int = 3, books: Int = 0, focus: String? = null): Batch = genLock.withLock {
+        if (!keys.awake.value) throw AiError.NoKey()
         _generating.value = true
         try {
             val profile = profile(focus)
-            val model = prefs.current().aiModel
-            val raw = ai.completeJson(
-                model = model,
-                system = Curator.system,
-                user = Curator.userMessage(profile, words, quotes, sparks, prompts),
-                schemaName = "kairos_batch",
-                schema = Curator.schema,
-            )
-            val batch = Curator.parse(
-                raw,
-                knownWords = db.words().allWords().map { it.lowercase() }.toSet(),
-                knownQuoteIds = db.quotes().all().map { it.id }.toSet(),
-            )
-            if (batch.words.isEmpty() && batch.quotes.isEmpty() && words + quotes > 0) throw AiError.Malformed()
+            val knownWords = db.words().allWords().map { it.lowercase() }.toSet()
+            val knownQuotes = db.quotes().all().map { it.id }.toSet()
+            val parts = coroutineScope {
+                val w = if (words > 0) async { runCatching { writer.completeJson(Task.Words, Curator.wordsSystem, Curator.wordsMessage(profile, words), "kairos_words", Curator.wordsSchema, 400 + words * 260) } } else null
+                val t = if (quotes + sparks + prompts > 0) async { runCatching { writer.completeJson(Task.Thoughts, Curator.thoughtsSystem, Curator.thoughtsMessage(profile, quotes, sparks, prompts), "kairos_thoughts", Curator.thoughtsSchema, 400 + quotes * 160 + (sparks + prompts) * 60) } } else null
+                val b = if (books > 0) async {
+                    val avoid = db.books().all().map { "${it.title} (${it.author})" }.takeLast(60)
+                    runCatching { writer.completeJson(Task.Books, Curator.booksSystem, Curator.booksMessage(profile, books, avoid), "kairos_books", Curator.booksSchema, 400 + books * 380) }
+                } else null
+                listOfNotNull(w, t, b).map { it.await() }
+            }
+            val ok = parts.mapNotNull { it.getOrNull() }
+            if (ok.isEmpty()) throw (parts.firstNotNullOfOrNull { it.exceptionOrNull() } as? AiError ?: AiError.Malformed())
+            val merged = buildJsonObject { ok.forEach { o -> o.forEach { (k, v) -> put(k, v) } } }
+            val batch = Curator.parse(merged, knownWords, knownQuotes)
+            if (batch.words.isEmpty() && batch.quotes.isEmpty() && batch.books.isEmpty()) throw AiError.Malformed()
             db.words().insertAll(batch.words)
             db.quotes().insertAll(batch.quotes)
+            db.books().insertAll(batch.books)
             db.extras().insertAll(batch.sparks.map { ExtraEntity(kind = "spark", text = it) } + batch.prompts.map { ExtraEntity(kind = "prompt", text = it) })
             batch
         } finally {
@@ -131,26 +143,74 @@ class KairosRepository(
         }
     }
 
-    /** Keeps a few unseen items ready so Today opens instantly. Returns true if it generated. */
-    suspend fun topUpPool(): Boolean {
-        if (!keys.hasKey.value) return false
-        val needWords = db.words().unseenCount() < 4
-        val needQuotes = db.quotes().unseenCount() < 3
-        val needSparks = db.extras().unusedCount("spark") < 2
-        if (!needWords && !needQuotes && !needSparks) return false
-        generate(words = if (needWords) 8 else 2, quotes = if (needQuotes) 6 else 1, sparks = 4, prompts = 3)
+    /**
+     * Keeps the pool full and fresh. There is no cap on how much someone can read: whenever unseen
+     * words, thoughts or books run low, another small batch is written. Unseen items older than two
+     * weeks are retired, so what waits for you always reflects your latest taste.
+     */
+    suspend fun topUpPool(refresh: Boolean = false): Boolean {
+        if (!keys.awake.value) return false
+        if (refresh) {
+            val before = System.currentTimeMillis() - 14L * 86_400_000L
+            db.words().retireStale(before)
+            db.quotes().retireStale(before)
+        }
+        val needWords = db.words().unseenCount() < 8
+        val needQuotes = db.quotes().unseenCount() < 8
+        val needSparks = db.extras().unusedCount("spark") < 3
+        val needBooks = db.books().unseenCount() < 4
+        if (!needWords && !needQuotes && !needSparks && !needBooks) return false
+        generate(
+            words = if (needWords) 8 else 0, quotes = if (needQuotes) 8 else if (needSparks) 2 else 0,
+            sparks = if (needSparks) 4 else 0, prompts = if (needSparks) 3 else 0, books = if (needBooks) 4 else 0,
+        )
         return true
     }
 
     /** "Show me words about…": a focused batch that lands straight in the library. */
     suspend fun explore(topic: String): List<WordEntity> {
-        val batch = generate(words = 6, quotes = 1, sparks = 0, prompts = 0, focus = topic.trim().take(80))
+        val batch = generate(words = 6, quotes = 0, sparks = 0, prompts = 0, focus = topic.trim().take(80))
         // The person has seen these now: they live in the library, not in Today's surprise pool.
         val day = today()
         batch.words.forEach { w -> db.words().get(w.id)?.let { db.words().update(it.copy(timesShown = 1, lastShownDay = day)) } }
         addMoment(MomentKind.Explored, topic, oncePerDay = false)
         return batch.words
     }
+
+    /** Endless discovery: unseen words ranked by the recommender and diversified, generating more as it runs low. */
+    suspend fun discoverWords(): List<com.kairos.app.engine.Pick<WordEntity>> {
+        if (db.words().unseenCount() < 6 && keys.awake.value) runCatching { generate(words = 8, quotes = 0, sparks = 0, prompts = 0) }
+        val ranked = DailyEngine.scoreWords(db.words().unseen(), taste(), today(), stream = 11)
+        return DailyEngine.diversify(ranked) { it.item.category }
+    }
+
+    suspend fun discoverQuotes(): List<com.kairos.app.engine.Pick<QuoteEntity>> {
+        if (db.quotes().unseenCount() < 6 && keys.awake.value) runCatching { generate(words = 0, quotes = 8, sparks = 0, prompts = 0) }
+        val mood = Mood.of(db.moods().latestFor(today())?.mood)
+        val ranked = DailyEngine.scoreQuotes(db.quotes().unseen(), taste(), today(), mood, DayPart.of(LocalTime.now().hour), shuffle = 9)
+        return DailyEngine.diversify(ranked) { it.item.theme }
+    }
+
+    /** Marks a discovered word or thought as seen, so it moves from the pool into the library. */
+    suspend fun markWordSeen(id: String) { db.words().get(id)?.takeIf { it.timesShown == 0 }?.let { db.words().update(it.copy(timesShown = 1, lastShownDay = today())) } }
+    suspend fun markQuoteSeen(id: String) { db.quotes().get(id)?.takeIf { it.timesShown == 0 }?.let { db.quotes().update(it.copy(timesShown = 1, lastShownDay = today())) } }
+
+    // --- Books ----------------------------------------------------------------------------------
+
+    fun observeBooks() = db.books().observeAll()
+    fun observeBook(id: String) = db.books().observe(id)
+
+    suspend fun moreBooks(n: Int = 4): Int = generate(words = 0, quotes = 0, sparks = 0, prompts = 0, books = n).books.size
+
+    suspend fun toggleBookSaved(id: String): Boolean {
+        val b = db.books().get(id) ?: return false
+        val saved = !b.saved
+        db.books().update(b.copy(saved = saved, savedAt = if (saved) System.currentTimeMillis() else null))
+        return saved
+    }
+
+    suspend fun markBookRead(id: String) { db.books().get(id)?.let { db.books().update(it.copy(timesShown = it.timesShown + 1, lastShownDay = today())) } }
+    suspend fun setBookTaste(id: String, value: Int) { db.books().get(id)?.let { db.books().update(it.copy(taste = value)) } }
 
     // --- Today ----------------------------------------------------------------------------------
 
@@ -163,6 +223,11 @@ class KairosRepository(
             wordInterests = s.wordInterests, quoteThemes = s.quoteThemes, level = s.level, salt = salt,
             savedWordCategories = words.filter { it.saved || it.taste > 0 }.groupingBy { it.category }.eachCount(),
             savedQuoteThemes = quotes.filter { it.saved || it.taste > 0 }.groupingBy { it.theme }.eachCount(),
+            savedLanguages = words.filter { (it.saved || it.taste > 0) && it.language.isNotBlank() }.groupingBy { it.language }.eachCount(),
+            lovedAuthors = quotes.filter { (it.saved || it.taste > 0) && it.author.isNotBlank() }.map { it.author }.toSet(),
+            recentCategories = words.filter { it.lastShownDay != null }.sortedByDescending { it.lastShownDay }.take(5).map { it.category },
+            recentThemes = quotes.filter { it.lastShownDay != null }.sortedByDescending { it.lastShownDay }.take(5).map { it.theme },
+            recentKinds = quotes.filter { it.lastShownDay != null }.sortedByDescending { it.lastShownDay }.take(3).map { it.kind },
         )
     }
 
@@ -172,8 +237,9 @@ class KairosRepository(
         _status.value = DayStatus.Working
         try {
             if (db.words().unseenCount() == 0 || db.quotes().unseenCount() == 0) {
-                if (!keys.hasKey.value && db.words().all().isEmpty()) return@withLock DayStatus.NeedsKey.also { _status.value = it }
-                if (keys.hasKey.value) runCatching { generate() }.onFailure { if (db.words().all().isEmpty()) throw it }
+                if (!keys.awake.value && db.words().all().isEmpty()) return@withLock DayStatus.NeedsKey.also { _status.value = it }
+                // A small first batch opens Today fast; the refill worker writes the rest in the background.
+                if (keys.awake.value) runCatching { generate(words = 3, quotes = 3, sparks = 2, prompts = 1) }.onFailure { if (db.words().all().isEmpty()) throw it }
             }
             val words = db.words().all()
             val quotes = db.quotes().all()
@@ -206,7 +272,7 @@ class KairosRepository(
 
     suspend fun shuffleQuote(day: Long = today()) = dayLock.withLock {
         val d = db.days().get(day) ?: return@withLock
-        if (db.quotes().unseenCount() == 0) runCatching { generate(words = 0, quotes = 5, sparks = 0, prompts = 0) }
+        if (db.quotes().unseenCount() == 0) runCatching { generate(words = 0, quotes = 6, sparks = 0, prompts = 0) }
         val mood = Mood.of(db.moods().latestFor(day)?.mood)
         val pick = DailyEngine.pickQuote(db.quotes().all(), taste(), day, mood, DayPart.of(LocalTime.now().hour), setOf(d.quoteId), d.quoteShuffles + 1) ?: return@withLock
         db.quotes().update(pick.item.copy(timesShown = pick.item.timesShown + 1, lastShownDay = day))
@@ -273,12 +339,22 @@ class KairosRepository(
 
     // --- Practice -------------------------------------------------------------------------------
 
+    /**
+     * Due words first, then words met but never practised. If nothing qualifies (everything is
+     * scheduled for later), it still offers a free round from the soonest-due words, so practice is
+     * never a dead end once you have words.
+     */
     suspend fun practiceDeck(size: Int = 10): List<WordEntity> {
         val dao = db.words()
         val deck = dao.due(today()).take(size).toMutableList()
         if (deck.size < size) deck += dao.freshForPractice(size - deck.size)
-        return deck.distinctBy { it.id }.shuffled()
+        if (deck.size < 4) deck += dao.upcoming(size - deck.size)
+        if (deck.isEmpty()) deck += dao.met(size)
+        return deck.distinctBy { it.id }.take(size).shuffled()
     }
+
+    /** True when this round is extra practice (nothing was actually due). */
+    suspend fun nothingDue() = db.words().due(today()).isEmpty() && db.words().freshForPractice(1).isEmpty()
 
     suspend fun quizOptions(word: WordEntity): List<WordEntity> {
         val sameKind = db.words().distractors(word.partOfSpeech, word.id, 3)

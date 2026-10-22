@@ -111,7 +111,7 @@ fun YouScreen(openCurator: () -> Unit, openInterests: () -> Unit) {
     val c = appContainer()
     val from = today() - 27
     val flow = remember {
-        combine(c.prefs.settings, c.kairos.observeMoments(), c.kairos.observeMoods(from, today()), c.kairos.observeWords(), c.keys.hasKey) { s, m, md, w, k ->
+        combine(c.prefs.settings, c.kairos.observeMoments(), c.kairos.observeMoods(from, today()), c.kairos.observeWords(), c.keys.awake) { s, m, md, w, k ->
             YouState(s, m, md, w.count { it.saved }, w.count { it.mastered }, w.count { it.timesShown > 0 || it.saved }, k, w.filter { it.saved }.sortedBy { it.savedAt ?: 0 }.map { it.id.hashCode() })
         }
     }
@@ -150,7 +150,7 @@ fun YouScreen(openCurator: () -> Unit, openInterests: () -> Unit) {
         item { Text("Settings", style = K.type.display.copy(fontSize = 24.sp), color = p.ink, modifier = Modifier.padding(start = Gap.gutter, top = Gap.xl, bottom = Gap.md)) }
         item {
             Card(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter), padding = Gap.sm) {
-                SettingRow(Icons.Sparkle, "Kai, your curator", if (y.hasKey) "Awake, writing with ${y.s.aiModel.substringAfter('/')}" else "Asleep. Add a key to wake Kai", openCurator)
+                SettingRow(Icons.Sparkle, "Kai, your curator", if (y.hasKey) "Awake and writing for you" else "Asleep. Add a key to wake Kai", openCurator)
                 SettingRow(Icons.Sliders, "Interests and level", "${y.s.wordInterests.size} topics, ${Topics.levels[(y.s.level - 1).coerceIn(0, 4)].lowercase()}", openInterests)
             }
         }

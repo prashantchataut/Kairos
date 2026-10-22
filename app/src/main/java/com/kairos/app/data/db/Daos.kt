@@ -53,6 +53,23 @@ interface WordDao {
 
     @Query("SELECT * FROM words WHERE id != :exclude ORDER BY RANDOM() LIMIT :limit")
     suspend fun anyDistractors(exclude: String, limit: Int): List<WordEntity>
+
+    /** Words already in practice, soonest due first: a free round when nothing is due yet. */
+    @Query("SELECT * FROM words WHERE dueDay IS NOT NULL AND taste >= 0 ORDER BY dueDay, intervalDays LIMIT :limit")
+    suspend fun upcoming(limit: Int): List<WordEntity>
+
+    /** Anything the person has met, for a practice round when nothing else qualifies. */
+    @Query("SELECT * FROM words WHERE taste >= 0 AND (saved = 1 OR timesShown > 0 OR dueDay IS NOT NULL) ORDER BY RANDOM() LIMIT :limit")
+    suspend fun met(limit: Int): List<WordEntity>
+
+    @Query("SELECT MIN(dueDay) FROM words WHERE dueDay IS NOT NULL AND dueDay > :today")
+    suspend fun nextDue(today: Long): Long?
+
+    @Query("DELETE FROM words WHERE timesShown = 0 AND saved = 0 AND dueDay IS NULL AND generatedAt < :before")
+    suspend fun retireStale(before: Long): Int
+
+    @Query("SELECT * FROM words WHERE timesShown = 0 AND taste >= 0 ORDER BY generatedAt DESC")
+    suspend fun unseen(): List<WordEntity>
 }
 
 @Dao
@@ -77,6 +94,37 @@ interface QuoteDao {
 
     @Update
     suspend fun update(quote: QuoteEntity)
+
+    /** Unseen, unsaved quotes older than [before]: retired so the pool keeps feeling fresh. */
+    @Query("DELETE FROM quotes WHERE timesShown = 0 AND saved = 0 AND generatedAt < :before")
+    suspend fun retireStale(before: Long): Int
+
+    @Query("SELECT * FROM quotes WHERE timesShown = 0 AND taste >= 0 ORDER BY generatedAt DESC")
+    suspend fun unseen(): List<QuoteEntity>
+}
+
+@Dao
+interface BookDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(books: List<BookEntity>): List<Long>
+
+    @Query("SELECT * FROM books WHERE taste >= 0 ORDER BY saved DESC, generatedAt DESC")
+    fun observeAll(): Flow<List<BookEntity>>
+
+    @Query("SELECT * FROM books")
+    suspend fun all(): List<BookEntity>
+
+    @Query("SELECT * FROM books WHERE id = :id")
+    fun observe(id: String): Flow<BookEntity?>
+
+    @Query("SELECT * FROM books WHERE id = :id")
+    suspend fun get(id: String): BookEntity?
+
+    @Query("SELECT COUNT(*) FROM books WHERE timesShown = 0 AND taste >= 0")
+    suspend fun unseenCount(): Int
+
+    @Update
+    suspend fun update(book: BookEntity)
 }
 
 @Dao

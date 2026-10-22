@@ -180,7 +180,7 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
     val calm = K.calm
     val scope = rememberCoroutineScope()
     val focus = LocalFocusManager.current
-    val hasKey by c.keys.hasKey.collectAsStateWithLifecycle()
+    val hasKey by c.keys.awake.collectAsStateWithLifecycle()
     var step by rememberSaveable { mutableIntStateOf(startStep) }
     var name by rememberSaveable { mutableStateOf("") }
     var interests by rememberSaveable { mutableStateOf(if (startStep > TOPICS) setOf("nature", "wonder") else setOf()) }
@@ -191,6 +191,7 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
     var cheering by remember { mutableStateOf(false) }
     LaunchedEffect(cheerAt) { if (cheerAt > 0) { cheering = true; delay(700); cheering = false } }
     BackHandler(step in GIFTS..KEY) { focus.clearFocus(); step-- }
+    BackHandler(step == FINALE) { step = NAME }
 
     // The wake-up: petals unfold, the bloom becomes Kai, friends pop in.
     val petals = remember { List(8) { Animatable(if (calm) 1f else 0f) } }
@@ -348,7 +349,7 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
                         onAll = { themes = if (themes.size == Topics.themes.size) emptySet() else Topics.themes.map { it.key }.toSet(); cheerAt = System.nanoTime() },
                     )
                     LEVEL -> LevelStep(level) { level = it }
-                    NAME -> NameStep(name, { name = it.take(24) }) { focus.clearFocus(); step = KEY }
+                    NAME -> NameStep(name, { name = it.take(24) }) { focus.clearFocus(); step = if (hasKey) FINALE else KEY }
                     KEY -> KeyStep(hasKey, { keyPhase = it }) { scope.launch { delay(250); step = FINALE } }
                     else -> Finale(name, interests, themes, level, hasKey, { i -> lines[i].value }, { finaleKai.value })
                 }
@@ -382,7 +383,7 @@ fun OnboardingScreen(onDone: () -> Unit, startStep: Int = HELLO) {
                     PrimaryButton(
                         label, {
                             focus.clearFocus()
-                            if (step == FINALE) onDone() else step++
+                            if (step == FINALE) onDone() else if (step == NAME && hasKey) step = FINALE else step++
                         },
                         Modifier.weight(1f).graphicsLayer { this.alpha = alpha },
                         enabled = enabled && alpha > 0.5f, dark = !onSky, onSky = onSky,
