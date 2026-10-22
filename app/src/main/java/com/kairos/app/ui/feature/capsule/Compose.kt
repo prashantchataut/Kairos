@@ -1,6 +1,14 @@
 package com.kairos.app.ui.feature.capsule
 
 import android.Manifest
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.runtime.mutableIntStateOf
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -178,7 +186,7 @@ private val Paper = Color(0xFFFFF8EC)
 private val PaperInk = Color(0xFF2A2140)
 
 @Composable
-fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit) {
+fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit, startStep: Int = 0) {
     val vm = appViewModel { ComposeViewModel(it) }
     val s by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -198,114 +206,52 @@ fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit) {
     }
     val mic = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { if (it) toggleRec() }
 
+    // Three steps: write, tuck things in, choose when it opens. Then seal.
+    var step by remember { mutableIntStateOf(startStep) }
+    BackHandler(step > 0 && !s.sealing) { step-- }
     Box(Modifier.fillMaxSize().nightSky()) {
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding().padding(bottom = 130.dp)) {
-            TopBar({ if (s.dirty) confirm = true else onBack() }, onSky = true)
-            Column(Modifier.padding(horizontal = Gap.gutter)) {
-                Spacer(Modifier.height(Gap.md))
-                Text("This letter opens on", style = K.type.label, color = Color.White.copy(alpha = 0.7f))
-                Spacer(Modifier.height(Gap.xs))
-                AnimatedContent(s.date, transitionSpec = { (fadeIn(Motion.fade(240)) + slideInVertically(Motion.offset) { it / 5 }) togetherWith fadeOut(Motion.fade(120)) }, label = "date") { d ->
-                    FadingTitle(Fmt.ordinalDate(d), "${d.year}", size = 54)
-                }
-                Text(Fmt.until(s.date.atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).replaceFirstChar { it.uppercase() }, style = K.type.label, color = Color.White.copy(alpha = 0.7f))
-            }
-            Spacer(Modifier.height(Gap.md))
-            val idx = s.preset?.ordinal ?: OpenIn.Year.ordinal
-            KairosSlider(
-                idx / 5f, { vm.preset(OpenIn.entries[(it * 5).roundToInt()]) }, "Open the letter in", { OpenIn.entries[(it * 5).roundToInt()].label },
-                Modifier.padding(horizontal = 4.dp), stops = 6, colors = openColors, onDark = true,
-                bubble = { f -> SliderBubble(if (s.preset == null) "Your day" else OpenIn.entries[(f * 5).roundToInt()].label, openColors.at(f).copy(alpha = 0.9f).let { androidx.compose.ui.graphics.lerp(it, Candy.Navy, 0.3f) }) },
-            )
-            Row(Modifier.padding(horizontal = Gap.gutter), verticalAlignment = Alignment.CenterVertically) {
-                NightChip("Pick a day", s.preset == null, Icons.Calendar) { pickDate = true }
-            }
-            Spacer(Modifier.height(Gap.xl))
-            // The letter: real writing paper on the night sky, stamped and postmarked with today.
-            LetterPaper(LightPalette.candy(s.tint), "SEALED\n" + Fmt.shortDate(System.currentTimeMillis()).uppercase(), Modifier.fillMaxWidth().padding(horizontal = Gap.gutter), firstLine = 136.dp) {
-                Column(Modifier.padding(start = 52.dp, end = 20.dp, top = 22.dp, bottom = 26.dp)) {
-                    Box(Modifier.padding(end = 112.dp)) {
-                        if (s.title.isEmpty()) Text("Give it a name (optional)", style = K.type.title, color = PaperInk.copy(alpha = 0.35f))
-                        BasicTextField(s.title, vm::title, singleLine = true, textStyle = K.type.title.copy(color = PaperInk), cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth())
-                    }
-                    Spacer(Modifier.height(18.dp))
-                    Text("Dear future me,", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 36.sp), color = PaperInk)
-                    Spacer(Modifier.height(4.dp))
-                    Box(Modifier.fillMaxWidth().heightIn(min = 248.dp)) {
-                        val letterStyle = K.type.body.copy(fontFamily = SerifText, fontSize = 19.sp, lineHeight = 31.sp, color = PaperInk)
-                        if (s.letter.isEmpty()) Text(s.prompt, style = letterStyle.copy(color = PaperInk.copy(alpha = 0.38f)))
-                        BasicTextField(s.letter, vm::letter, textStyle = letterStyle, cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth().heightIn(min = 248.dp))
-                    }
-                    Spacer(Modifier.height(Gap.md))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Sparkle, null, tint = Candy.Coral, modifier = Modifier.size(14.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text("Use this prompt", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Candy.Coral, modifier = Modifier.pressable(onClick = vm::usePrompt))
-                        Spacer(Modifier.weight(1f))
-                        Text("Another", style = K.type.label, color = PaperInk.copy(alpha = 0.6f), modifier = Modifier.pressable(onClick = vm::nextPrompt))
-                    }
+        Column(Modifier.fillMaxSize().imePadding()) {
+            TopBar({ if (step > 0) step-- else if (s.dirty) confirm = true else onBack() }, onSky = true) { StepDots(step) }
+            AnimatedContent(
+                step, Modifier.weight(1f),
+                transitionSpec = {
+                    val dir = if (targetState > initialState) 1 else -1
+                    (slideInHorizontally(Motion.offset) { it / 3 * dir } + fadeIn(Motion.fade(280)) + scaleIn(Motion.bloom(), initialScale = 0.96f)) togetherWith
+                        (slideOutHorizontally(Motion.offset) { -it / 3 * dir } + fadeOut(Motion.fade(160)) + scaleOut(targetScale = 0.96f))
+                },
+                label = "step",
+            ) { st ->
+                when (st) {
+                    0 -> WriteStep(s, vm)
+                    1 -> TuckStep(s, vm, recording, recStart,
+                        onPhotos = { photos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)) },
+                        onFiles = { files.launch(arrayOf("*/*")) },
+                        onMic = {
+                            if (recording || ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) toggleRec()
+                            else mic.launch(Manifest.permission.RECORD_AUDIO)
+                        })
+                    else -> WhenStep(s, vm) { pickDate = true }
                 }
             }
-            if (s.attachments.isNotEmpty()) {
-                LazyRow(contentPadding = PaddingValues(Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.lg)) {
-                    itemsIndexed(s.attachments, key = { _, a -> a.uri.toString() }) { i, a ->
-                        AttachmentCard(a.kind, a.uri, a.name, tiltFor(i), onRemove = { vm.remove(a) }, modifier = Modifier.animateItem())
-                    }
-                }
-            } else Spacer(Modifier.height(Gap.xl))
-            Column(Modifier.padding(horizontal = Gap.gutter)) {
-                Text("How are you right now?", style = K.type.title, color = Color.White)
-                Text("Future you will see it next to how they feel.", style = K.type.caption, color = Color.White.copy(alpha = 0.65f))
-                Spacer(Modifier.height(Gap.md))
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Mood.entries.forEach { m ->
-                        val on = s.mood == m
-                        val sc by animateFloatAsState(if (on) 1.15f else if (s.mood == null) 1f else 0.85f, Motion.bloom(), label = "mood")
-                        Column(Modifier.pressable(label = m.label) { vm.mood(m) }, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Kai(m.look(), size = 54.dp, shadow = false, modifier = Modifier.graphicsLayer { scaleX = sc; scaleY = sc; alpha = if (s.mood == null || on) 1f else 0.55f })
-                            Text(m.label, style = K.type.caption, color = Color.White.copy(alpha = if (on) 1f else 0.6f))
-                        }
-                    }
-                }
-                Spacer(Modifier.height(Gap.xl))
-                Text("Letter colour", style = K.type.caption, color = Color.White.copy(alpha = 0.65f))
-                Spacer(Modifier.height(Gap.sm))
-                Row(horizontalArrangement = Arrangement.spacedBy(Gap.md)) {
-                    Tint.entries.forEach { t ->
-                        val on = t == s.tint
-                        val sc by animateFloatAsState(if (on) 1.15f else 1f, Motion.bloom(), label = "tint")
-                        Box(
-                            Modifier.size(36.dp).graphicsLayer { scaleX = sc; scaleY = sc }.pressable(label = t.name) { vm.tint(t) }.clip(CircleShape)
-                                .background(LightPalette.candy(t)).border(if (on) 3.dp else 0.dp, Color.White, CircleShape),
-                        )
+            Row(Modifier.navigationBarsPadding().padding(Gap.gutter).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Gap.md), verticalAlignment = Alignment.CenterVertically) {
+                if (step < 2) {
+                    PrimaryButton(
+                        if (step == 0) (if (s.letter.isBlank()) "Write a little first" else "Next: tuck things in") else "Next: choose when",
+                        { step++ }, Modifier.weight(1f), icon = Icons.Arrow, enabled = step == 1 || s.letter.isNotBlank() || s.attachments.isNotEmpty(), onSky = true,
+                    )
+                } else {
+                    Row(
+                        Modifier.weight(1f).height(56.dp).pressable(enabled = s.canSeal, label = "Seal the letter", onClick = vm::seal).clip(CircleShape)
+                            .background(if (s.canSeal) Candy.Sun else Color.White.copy(alpha = 0.15f)),
+                        horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(Icons.Lock, null, tint = Candy.Navy, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(Gap.sm))
+                        Text("Seal it until ${Fmt.ordinalDate(s.date)}", style = K.type.label.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold), color = Candy.Navy)
                     }
                 }
             }
         }
-
-        Row(
-            Modifier.align(Alignment.BottomCenter).navigationBarsPadding().imePadding().padding(Gap.gutter).fillMaxWidth()
-                .clip(CircleShape).background(Color(0xFF1A2668).copy(alpha = 0.92f)).border(1.dp, Color.White.copy(alpha = 0.18f), CircleShape).padding(6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            BarIcon(Icons.Image, "Add photos") { photos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)) }
-            BarIcon(Icons.Folder, "Attach files") { files.launch(arrayOf("*/*")) }
-            BarIcon(if (recording) Icons.Stop else Icons.Mic, if (recording) "Stop recording" else "Record a voice note", tint = if (recording) Candy.Coral else Color.White) {
-                if (recording || ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) toggleRec()
-                else mic.launch(Manifest.permission.RECORD_AUDIO)
-            }
-            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { if (recording) RecTimer(recStart) }
-            Row(
-                Modifier.height(48.dp).pressable(enabled = s.canSeal, label = "Seal the letter", onClick = vm::seal).clip(CircleShape)
-                    .background(if (s.canSeal) Candy.Sun else Color.White.copy(alpha = 0.15f)).padding(horizontal = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(Icons.Lock, null, tint = if (s.canSeal) Candy.Navy else Color.White.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(Gap.sm))
-                Text("Seal", style = K.type.label.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold), color = if (s.canSeal) Candy.Navy else Color.White.copy(alpha = 0.6f))
-            }
-        }
-
         AnimatedVisibility(s.sealing, enter = fadeIn(Motion.fade(220)), exit = fadeOut()) { Sealing(LightPalette.candy(s.tint), s.date, s.sealed, onSealed) }
     }
 
@@ -417,5 +363,154 @@ private fun Sealing(paper: Color, date: LocalDate, done: Boolean, onFinished: ()
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun StepDots(step: Int) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        listOf("Write", "Tuck in", "When").forEachIndexed { i, label ->
+            val on = i == step
+            val w by androidx.compose.animation.core.animateDpAsState(if (on) 64.dp else 8.dp, Motion.soft(), label = "dot")
+            Box(Modifier.padding(horizontal = 3.dp).height(26.dp).width(w).clip(CircleShape).background(if (i <= step) Color.White else Color.White.copy(alpha = 0.3f)), contentAlignment = Alignment.Center) {
+                if (on) Text(label, style = K.type.caption.copy(fontWeight = FontWeight.Bold), color = Candy.Navy, maxLines = 1)
+            }
+        }
+    }
+}
+
+/** Step 1: just you and the paper. Prompts sit above as chips you can tap to borrow. */
+@Composable
+private fun WriteStep(s: ComposeState, vm: ComposeViewModel) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        Text("Dear future me…", style = K.type.shout.copy(fontSize = 34.sp), color = Color.White, modifier = Modifier.padding(horizontal = Gap.gutter))
+        Spacer(Modifier.height(Gap.sm))
+        Row(Modifier.padding(horizontal = Gap.gutter), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Sparkle, null, tint = Candy.Sun, modifier = Modifier.size(14.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(s.prompt, style = K.type.label, color = Color.White.copy(alpha = 0.85f), modifier = Modifier.weight(1f).pressable(onClick = vm::usePrompt), maxLines = 2)
+            Spacer(Modifier.width(Gap.sm))
+            Text("Another", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Candy.Sun, modifier = Modifier.pressable(onClick = vm::nextPrompt).padding(Gap.xs))
+        }
+        Spacer(Modifier.height(Gap.lg))
+        LetterPaper(LightPalette.candy(s.tint), "TODAY\n" + Fmt.shortDate(System.currentTimeMillis()).uppercase(), Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).heightIn(min = 460.dp), firstLine = 112.dp) {
+            Column(Modifier.padding(start = 52.dp, end = 20.dp, top = 22.dp, bottom = 26.dp)) {
+                Box(Modifier.padding(end = 112.dp)) {
+                    if (s.title.isEmpty()) Text("A name for it, if you like", style = K.type.title, color = PaperInk.copy(alpha = 0.35f))
+                    BasicTextField(s.title, vm::title, singleLine = true, textStyle = K.type.title.copy(color = PaperInk), cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth())
+                }
+                Spacer(Modifier.height(34.dp))
+                Box(Modifier.fillMaxWidth().heightIn(min = 340.dp)) {
+                    val letterStyle = K.type.body.copy(fontFamily = SerifText, fontSize = 19.sp, lineHeight = 31.sp, color = PaperInk)
+                    if (s.letter.isEmpty()) Text("Start anywhere. What's on your mind today? What do you hope is true when you read this?", style = letterStyle.copy(color = PaperInk.copy(alpha = 0.35f)))
+                    BasicTextField(s.letter, vm::letter, textStyle = letterStyle, cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth().heightIn(min = 340.dp))
+                }
+                Text("${s.letter.split(Regex("\\s+")).count { it.isNotBlank() }} words", style = K.type.caption, color = PaperInk.copy(alpha = 0.4f))
+            }
+        }
+        Spacer(Modifier.height(Gap.xl))
+    }
+}
+
+/** Step 2: things slipped into the envelope (n02, n03): photos, files, a voice note, how you feel, a colour. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun TuckStep(s: ComposeState, vm: ComposeViewModel, recording: Boolean, recStart: Long, onPhotos: () -> Unit, onFiles: () -> Unit, onMic: () -> Unit) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = Gap.gutter)) {
+        Text("Tuck something in", style = K.type.shout.copy(fontSize = 34.sp), color = Color.White)
+        Text("A photo of today, a voice note, a ticket stub. Future you will love the details.", style = K.type.body, color = Color.White.copy(alpha = 0.8f))
+        Spacer(Modifier.height(Gap.lg))
+        // The open folder with everything tucked in rising out of it.
+        Box(Modifier.fillMaxWidth().height(220.dp), contentAlignment = Alignment.BottomCenter) {
+            GlassFolder(LightPalette.candy(s.tint), Modifier.size(width = 250.dp, height = 190.dp), rise = 0.25f + 0.08f * s.attachments.size.coerceAtMost(4), sealed = false, papers = (1 + s.attachments.size).coerceAtMost(3))
+        }
+        if (s.attachments.isNotEmpty()) {
+            LazyRow(contentPadding = PaddingValues(vertical = Gap.lg), horizontalArrangement = Arrangement.spacedBy(Gap.lg)) {
+                itemsIndexed(s.attachments, key = { _, a -> a.uri.toString() }) { i, a ->
+                    AttachmentCard(a.kind, a.uri, a.name, tiltFor(i), onRemove = { vm.remove(a) }, modifier = Modifier.animateItem())
+                }
+            }
+        } else Spacer(Modifier.height(Gap.lg))
+        Row(horizontalArrangement = Arrangement.spacedBy(Gap.md)) {
+            TuckButton(Icons.Image, "Photos", Modifier.weight(1f), onClick = onPhotos)
+            TuckButton(if (recording) Icons.Stop else Icons.Mic, if (recording) "Stop" else "Voice note", Modifier.weight(1f), active = recording, onClick = onMic)
+            TuckButton(Icons.Folder, "A file", Modifier.weight(1f), onClick = onFiles)
+        }
+        if (recording) { Spacer(Modifier.height(Gap.sm)); RecTimer(recStart) }
+        Spacer(Modifier.height(Gap.xl))
+        Text("How are you right now?", style = K.type.title, color = Color.White)
+        Text("Future you will see it next to how they feel.", style = K.type.caption, color = Color.White.copy(alpha = 0.65f))
+        Spacer(Modifier.height(Gap.md))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Mood.entries.forEach { m ->
+                val on = s.mood == m
+                val sc by animateFloatAsState(if (on) 1.15f else if (s.mood == null) 1f else 0.85f, Motion.bloom(), label = "mood")
+                Column(Modifier.pressable(label = m.label) { vm.mood(m) }, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Kai(m.look(), size = 54.dp, shadow = false, modifier = Modifier.graphicsLayer { scaleX = sc; scaleY = sc; alpha = if (s.mood == null || on) 1f else 0.55f })
+                    Text(m.label, style = K.type.caption, color = Color.White.copy(alpha = if (on) 1f else 0.6f))
+                }
+            }
+        }
+        Spacer(Modifier.height(Gap.xl))
+        Text("Envelope colour", style = K.type.title, color = Color.White)
+        Spacer(Modifier.height(Gap.sm))
+        Row(horizontalArrangement = Arrangement.spacedBy(Gap.md)) {
+            Tint.entries.forEach { t ->
+                val on = t == s.tint
+                val sc by animateFloatAsState(if (on) 1.15f else 1f, Motion.bloom(), label = "tint")
+                Box(Modifier.size(38.dp).graphicsLayer { scaleX = sc; scaleY = sc }.pressable(label = t.name) { vm.tint(t) }.clip(CircleShape).background(LightPalette.candy(t)).border(if (on) 3.dp else 0.dp, Color.White, CircleShape))
+            }
+        }
+        Spacer(Modifier.height(Gap.xl))
+    }
+}
+
+@Composable
+private fun TuckButton(icon: ImageVector, label: String, modifier: Modifier, active: Boolean = false, onClick: () -> Unit) {
+    Column(
+        modifier.height(84.dp).pressable(scale = 0.93f, label = label, onClick = onClick).clip(RoundedCornerShape(20.dp))
+            .background(if (active) Candy.Coral.copy(alpha = 0.3f) else Color.White.copy(alpha = 0.12f)).border(1.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(20.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(icon, null, tint = if (active) Candy.Coral else Color.White, modifier = Modifier.size(24.dp))
+        Spacer(Modifier.height(6.dp))
+        Text(label, style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Color.White)
+    }
+}
+
+/** Step 3: when it opens. A huge date on the night sky; slide through the presets, or pick a day. */
+@Composable
+private fun WhenStep(s: ComposeState, vm: ComposeViewModel, pickDay: () -> Unit) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        Column(Modifier.padding(horizontal = Gap.gutter)) {
+            Text("When should it open?", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Color.White.copy(alpha = 0.75f))
+            Spacer(Modifier.height(Gap.sm))
+            AnimatedContent(s.date, transitionSpec = { (fadeIn(Motion.fade(240)) + slideInVertically(Motion.offset) { it / 4 }) togetherWith (fadeOut(Motion.fade(120)) + slideOutVertically(Motion.offset) { -it / 4 }) }, label = "date") { d ->
+                FadingTitle(Fmt.ordinalDate(d), "${d.year}", size = 62)
+            }
+            Text(Fmt.until(s.date.atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).replaceFirstChar { it.uppercase() } + ", at nine in the morning.", style = K.type.body, color = Color.White.copy(alpha = 0.75f))
+        }
+        Spacer(Modifier.height(Gap.xl))
+        val idx = s.preset?.ordinal ?: OpenIn.Year.ordinal
+        KairosSlider(
+            idx / 5f, { vm.preset(OpenIn.entries[(it * 5).roundToInt()]) }, "Open the letter in", { OpenIn.entries[(it * 5).roundToInt()].label },
+            Modifier.padding(horizontal = 4.dp), stops = 6, colors = openColors, onDark = true,
+            bubble = { f -> SliderBubble(if (s.preset == null) "Your day" else OpenIn.entries[(f * 5).roundToInt()].label, openColors.at(f).let { androidx.compose.ui.graphics.lerp(it, Candy.Navy, 0.3f) }) },
+        )
+        Row(Modifier.padding(horizontal = Gap.gutter), verticalAlignment = Alignment.CenterVertically) {
+            NightChip("Pick a day", s.preset == null, Icons.Calendar, pickDay)
+        }
+        Spacer(Modifier.height(Gap.xl))
+        // A preview of the sealed letter as it will wait in the capsule.
+        Row(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).clip(RoundedCornerShape(22.dp)).background(Color.White.copy(alpha = 0.08f)).padding(Gap.lg), verticalAlignment = Alignment.CenterVertically) {
+            GlassFolder(LightPalette.candy(s.tint), Modifier.size(width = 96.dp, height = 80.dp), sticker = s.mood?.look(), papers = (1 + s.attachments.size).coerceAtMost(3))
+            Spacer(Modifier.width(Gap.lg))
+            Column(Modifier.weight(1f)) {
+                Text(s.title.ifBlank { "A letter to future you" }, style = K.type.title, color = Color.White, maxLines = 2)
+                Text("${s.letter.split(Regex("\\s+")).count { it.isNotBlank() }} words" + if (s.attachments.isNotEmpty()) ", ${s.attachments.size} tucked in" else "", style = K.type.caption, color = Color.White.copy(alpha = 0.65f))
+                Text("Stays on this phone. Nobody else can read it.", style = K.type.caption, color = Color.White.copy(alpha = 0.65f))
+            }
+        }
+        Spacer(Modifier.height(Gap.xl))
     }
 }

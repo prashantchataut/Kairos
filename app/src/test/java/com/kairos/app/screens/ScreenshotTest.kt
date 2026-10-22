@@ -122,11 +122,13 @@ class ScreenshotTest {
     @Test fun d2_quote() = shoot("04b_quote") { com.kairos.app.ui.feature.detail.QuoteScreen("q1", {}, {}) }
     @Test fun e_capsule() = shoot("05_capsule", bar = 2) { CapsuleHome({}, {}) }
     @Test fun e2_compose() = shoot("05b_compose") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}) }
+    @Test fun e2b_tuck() = shoot("05b2_compose_tuck") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}, startStep = 1) }
+    @Test fun e2c_when() = shoot("05b3_compose_when") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}, startStep = 2) }
     @Test fun e3_sealed() = shoot("05c_letter_sealed") { com.kairos.app.ui.feature.capsule.LetterScreen(1, {}, {}) }
     @Test fun e4_ready() = shoot("05d_letter_ready") { com.kairos.app.ui.feature.capsule.LetterScreen(4, {}, {}) }
     @Test fun k_practice() = shoot("11_practice") { com.kairos.app.ui.feature.practice.PracticeScreen {} }
     @Test fun l_studio() = shoot("13_studio") { com.kairos.app.ui.feature.studio.StudioScreen("word", "apricity") {} }
-    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Config(qualifiers = "w400dp-h1700dp-xxhdpi")
     @Test fun e5_opened() = shoot("05e_letter_opened") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
     @Test fun b1_feedEngine() { seed(); val items = runBlocking { app.container.kairos.feedBatch(emptySet()) }; println("FEED " + items.map { it.key }); org.junit.Assert.assertTrue(items.isNotEmpty()) }
     @Test fun b2_feed() = shoot("02b_feed", bar = 1, waits = 30) { com.kairos.app.ui.feature.feed.FeedScreen({ _, _ -> }, {}, {}, {}) }
