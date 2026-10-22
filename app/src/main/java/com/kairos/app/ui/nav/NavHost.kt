@@ -119,6 +119,7 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
                         com.kairos.app.ui.feature.detail.TopBar({ nav.popBackStack() }, onSky = true, modifier = Modifier.align(Alignment.TopEnd).width(80.dp))
                     }
                 }
+                screen<Route.Play> { com.kairos.app.ui.feature.play.PlayScreen { nav.popBackStack() } }
                 screen<Route.Book> { e -> com.kairos.app.ui.feature.detail.BookScreen(e.toRoute<Route.Book>().id) { nav.popBackStack() } }
                 screen<Route.Practice> { PracticeScreen { nav.popBackStack() } }
                 screen<Route.Studio> { e -> val r = e.toRoute<Route.Studio>(); StudioScreen(r.kind, r.id) { nav.popBackStack() } }
@@ -149,7 +150,7 @@ private fun Home(
                 label = "tabs",
             ) { t ->
                 when (t) {
-                    0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator, { onTab(3) }, openBook)
+                    0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator, { onTab(3) }, openBook, openPlay)
                     1 -> com.kairos.app.ui.feature.feed.FeedScreen(openStudio, openBook, openLibrary, openWord)
                     2 -> CapsuleHome(openCompose, openLetter)
                     else -> YouScreen(openCurator, openInterests)
@@ -161,8 +162,8 @@ private fun Home(
     if (sheet) QuickSheet(
         listOf(
             QuickAction(Icons.Edit, "Write to future you", "A letter, a photo or a voice note", com.kairos.app.ui.theme.Tint.Lavender, openCompose),
-            QuickAction(Icons.Cards, "Play with words", "Two minutes, spaced so they stick", com.kairos.app.ui.theme.Tint.Mint, openPractice),
-            QuickAction(Icons.Search, "Ask Kai for words", "About anything at all", com.kairos.app.ui.theme.Tint.Sky, { onTab(1) }),
+            QuickAction(Icons.Cards, "Play", "Random cards from your words and thoughts", com.kairos.app.ui.theme.Tint.Mint, openPlay),
+            QuickAction(Icons.Search, "Your library", "Words, thoughts and books you've met", com.kairos.app.ui.theme.Tint.Sky, openLibrary),
             QuickAction(Icons.Smile, "Check in", "How are you, really?", com.kairos.app.ui.theme.Tint.Butter, { onTab(0) }),
         ),
     ) { sheet = false }

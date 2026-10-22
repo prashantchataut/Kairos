@@ -130,6 +130,7 @@ class ScreenshotTest {
     @Test fun e5_opened() = shoot("05e_letter_opened") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
     @Test fun b1_feedEngine() { seed(); val items = runBlocking { app.container.kairos.feedBatch(emptySet()) }; println("FEED " + items.map { it.key }); org.junit.Assert.assertTrue(items.isNotEmpty()) }
     @Test fun b2_feed() = shoot("02b_feed", bar = 1, waits = 30) { com.kairos.app.ui.feature.feed.FeedScreen({ _, _ -> }, {}, {}, {}) }
+    @Test fun k2_play() = shoot("11b_play") { com.kairos.app.ui.feature.play.PlayScreen {} }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
     @Test fun f2_interests() = shoot("06b_interests") { com.kairos.app.ui.feature.you.InterestsScreen {} }
     @Config(qualifiers = "w400dp-h1700dp-xxhdpi")
