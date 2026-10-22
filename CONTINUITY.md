@@ -33,7 +33,7 @@ and treatment: `video/launch/BRIEF.md`, `video/launch/TREATMENT.md`.
 | 3 Word (phone rises, Saudade → Apricity → Hiraeth rewrite) | 6–8 | built, reviewed on stills |
 | 4 Feed (reel, Keep fills coral, "It learns / what you keep.") | 9–10 | built, reviewed on stills |
 | 5 Play (flashcards fan and turn) | 11–12 | built, reviewed on stills |
-| 6 Letter (night columns, letter folds, coral seal lands) | 13–15 | todo |
+| 6 Letter (night columns, letter folds, coral seal lands) | 13–15 | built, reviewed on stills |
 | 7 Share (pin → story → square, scatter) | 16–17 | todo |
 | 8 Lockup (bloom unfolds around the coral petal, wordmark, "Now on Android") | 18–19 + tail | todo |
 
@@ -41,10 +41,11 @@ Then: `src/sync.ts` (sound events), earshot kit + score, 9:16 and 1:1 re-layouts
 
 ## Exact next step
 
-Write `video/launch/src/acts/Act6.tsx` (night columns rise at CUE.night over the Play deck, the
-letter slides in writing "Dear future me," at CUE.paper, folds into its envelope at CUE.fold, the
-coral petal seal lands at CUE.seal with a squash, "Opens in 6 months" at CUE.opens, the envelope
-flips at CUE.flip), add it to `src/acts/index.ts`, peek, commit, push. Then Act 7 and Act 8.
+Write `video/launch/src/acts/Act7.tsx` (the envelope, edge-on at the end of Act 6, turns into a
+pin share card; "Share" at copy share.1; pin -> story at CUE.story, story -> square at CUE.square
+with the three shapes side by side; the cards scatter at CUE.scatter leaving the coral petal at the
+centre), then Act 8 (bloom unfolds around the petal, core lands at CUE.core, wordmark at
+CUE.lockup, "Now on Android"), peek, commit, push. Then sync.ts and sound.
 
 ## Commands
 

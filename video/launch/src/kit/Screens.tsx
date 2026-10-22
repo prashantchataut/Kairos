@@ -305,20 +305,25 @@ export const Envelope: React.FC<{ flap: number; color?: string; children?: React
   const { w, h } = ENVELOPE;
   // the flap is a triangle hinged at the top edge; rotateX from -180 (open, pointing up) to 0 (shut)
   const rot = -180 * (1 - flap);
+  const flapEl = (
+      <div style={{ position: 'absolute', left: 0, top: 0, width: w, height: h * 0.62, transformOrigin: '50% 0', transform: `rotateX(${rot}deg)`, backfaceVisibility: 'visible' }}>
+        <svg width={w} height={h * 0.62} style={{ overflow: 'visible', display: 'block' }}>
+          <path d={`M14 0 L${w - 14} 0 L${w / 2} ${h * 0.6} Z`} fill={color} stroke={C.white} strokeOpacity={0.3} strokeWidth={2} strokeLinejoin="round" style={{ filter: 'brightness(0.94)' }} />
+        </svg>
+      </div>
+  );
   return (
     <div style={{ position: 'relative', width: w, height: h, perspective: 1600 }}>
       <div style={{ position: 'absolute', inset: 0, borderRadius: 26, background: color, boxShadow: SHADOW }} />
+      {/* open, the flap stands up behind the letter; once it passes upright it closes over the pocket */}
+      {flap < 0.5 && flapEl}
       {children}
       {/* the front pocket */}
       <svg width={w} height={h} style={{ position: 'absolute', inset: 0, overflow: 'visible' }}>
         <path d={`M0 ${h * 0.34} L${w / 2} ${h * 0.72} L${w} ${h * 0.34} L${w} ${h - 26} Q${w} ${h} ${w - 26} ${h} L26 ${h} Q0 ${h} 0 ${h - 26} Z`} fill={color} />
         <path d={`M0 ${h * 0.34} L${w / 2} ${h * 0.72} L${w} ${h * 0.34}`} stroke={C.white} strokeOpacity={0.35} strokeWidth={2} fill="none" />
       </svg>
-      <div style={{ position: 'absolute', left: 0, top: 0, width: w, height: h * 0.62, transformOrigin: '50% 0', transform: `rotateX(${rot}deg)`, backfaceVisibility: 'visible' }}>
-        <svg width={w} height={h * 0.62} style={{ overflow: 'visible', display: 'block' }}>
-          <path d={`M14 0 L${w - 14} 0 L${w / 2} ${h * 0.6} Z`} fill={color} stroke={C.white} strokeOpacity={0.3} strokeWidth={2} strokeLinejoin="round" style={{ filter: 'brightness(0.94)' }} />
-        </svg>
-      </div>
+      {flap >= 0.5 && flapEl}
     </div>
   );
 };
