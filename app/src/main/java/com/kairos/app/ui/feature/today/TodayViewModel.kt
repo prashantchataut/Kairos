@@ -27,6 +27,7 @@ data class TodayState(
     val readyCapsules: Int = 0,
     val due: Int = 0,
     val weekMoods: Map<Long, Mood> = emptyMap(),
+    val book: com.kairos.app.data.db.BookEntity? = null,
     val feedback: String? = null,
 )
 
@@ -58,12 +59,17 @@ class TodayViewModel(private val c: AppContainer) : ViewModel() {
         .combine(c.kairos.observeMoods(day - 7, day + 7)) { s, moods ->
             s.copy(weekMoods = moods.groupBy { it.epochDay }.mapNotNull { (d, v) -> Mood.of(v.maxBy { it.createdAt }.mood)?.let { d to it } }.toMap())
         }
+        .combine(c.kairos.observeBooks()) { s, books ->
+            // A book of the day: the same one all day, chosen from the shelf, unread first.
+            s.copy(book = books.sortedBy { it.id }.let { if (it.isEmpty()) null else it[day.mod(it.size)] })
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayState())
 
     fun logMood(m: Mood) = viewModelScope.launch { c.kairos.logMood(m) }
     fun toggleWord(id: String) = viewModelScope.launch { c.kairos.toggleWordSaved(id) }
     fun toggleQuote(id: String) = viewModelScope.launch { c.kairos.toggleQuoteSaved(id) }
     fun anotherQuote() = viewModelScope.launch { c.kairos.shuffleQuote(day) }
+    fun anotherWord() = viewModelScope.launch { c.kairos.swapWord(day) }
     fun completeSpark() = viewModelScope.launch { c.kairos.completeSpark(day) }
 
     fun wordFeedback(id: String, kind: WordFeedback) = viewModelScope.launch {

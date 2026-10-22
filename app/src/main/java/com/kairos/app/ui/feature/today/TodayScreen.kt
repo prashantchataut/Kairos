@@ -119,6 +119,7 @@ fun TodayScreen(
     openCapsule: () -> Unit,
     openAiSettings: () -> Unit,
     openYou: () -> Unit,
+    openBook: (String) -> Unit = {},
 ) {
     val vm = appViewModel { TodayViewModel(it) }
     val s by vm.state.collectAsStateWithLifecycle()
@@ -148,11 +149,12 @@ fun TodayScreen(
         }
         s.today?.let { t ->
             if (front != GOOD) item {
-                TeachKai(t, front, s.feedback, { vm.wordFeedback(t.word.id, it) }, { more -> vm.quoteFeedback(t.quote.id, more) }, vm::anotherQuote, Modifier.padding(horizontal = Gap.gutter))
+                TeachKai(t, front, s.feedback, { vm.wordFeedback(t.word.id, it) }, { more -> vm.quoteFeedback(t.quote.id, more) }, { if (front == WORD) vm.anotherWord() else vm.anotherQuote() }, Modifier.padding(horizontal = Gap.gutter))
             }
         }
         item { MoodCheckIn(s.mood, vm::logMood, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) }
         if (s.due > 0) item { ReviewNudge(s.due, openPractice, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) }
+        s.book?.let { b -> item { BookPeek(b, { openBook(b.id) }, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) } }
         item { CapsulePeek(s, openCapsule, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) }
     }
 }
@@ -504,6 +506,7 @@ private fun TeachKai(t: Today, front: Int, feedback: String?, onWord: (WordFeedb
         FlowRow(horizontalArrangement = Arrangement.spacedBy(Gap.sm), verticalArrangement = Arrangement.spacedBy(Gap.sm)) {
             if (front == WORD) {
                 WordFeedback.entries.forEach { fb -> React(fb.label, fb.glyph) { onWord(fb) } }
+                React("Another word", "↻", another)
             } else {
                 React("More like this", "♥") { onQuote(true) }
                 React("Not for me", "✕") { onQuote(false) }
@@ -615,3 +618,22 @@ private val moodTints = mapOf(Mood.Radiant to Tint.Butter, Mood.Good to Tint.Min
 
 /** The tint that goes with a mood, matching Kai's colour for it. */
 fun Mood.tint() = moodTints.getValue(this)
+
+/** A book of the day from the shelf: its cover, title and the first line of its summary. */
+@Composable
+private fun BookPeek(b: com.kairos.app.data.db.BookEntity, open: () -> Unit, modifier: Modifier = Modifier) {
+    val p = K.colors
+    Card(modifier.fillMaxWidth(), onClick = open) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            com.kairos.app.ui.components.BookCover(b.title, b.author, b.id, Modifier.size(width = 64.dp, height = 94.dp).graphicsLayer { rotationZ = -4f })
+            Spacer(Modifier.width(Gap.lg))
+            Column(Modifier.weight(1f)) {
+                Text("A book worth knowing", style = K.type.caption.copy(fontWeight = FontWeight.SemiBold), color = p.accent)
+                Text(b.title, style = K.type.title, color = p.ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text("${b.author} · ${b.minutes} min", style = K.type.caption, color = p.inkSoft)
+                Spacer(Modifier.height(Gap.xs))
+                Text(b.summary, style = K.type.label.copy(fontWeight = FontWeight.Normal), color = p.ink.copy(alpha = 0.8f), maxLines = 2, overflow = TextOverflow.Ellipsis)
+            }
+        }
+    }
+}

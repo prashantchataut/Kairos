@@ -136,7 +136,7 @@ private fun Home(
                 label = "tabs",
             ) { t ->
                 when (t) {
-                    0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator) { onTab(3) }
+                    0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator, { onTab(3) }, openBook)
                     1 -> LearnScreen(openWord, openQuote, openPractice, openCurator, openBook)
                     2 -> CapsuleHome(openCompose, openLetter)
                     else -> YouScreen(openCurator, openInterests)

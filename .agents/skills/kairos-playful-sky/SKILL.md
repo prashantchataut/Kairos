@@ -329,3 +329,17 @@ Templates (each 360dp artboard, exported at 1080px):
 5. Tests: `./gradlew :app:testDebugUnitTest`.
 
 Nothing ships that has not been looked at.
+
+## 13. Round two (owner feedback, October 2026)
+
+- The painted gouache look is banned: the owner found it AI-made. Use typography as the picture
+  (specimen heroes, ghost words, mixed type tiles) and flat drawn art.
+- The logo is always the single-colour bloom (no coral petal, no gold centre).
+- Share cards: 16 templates from the references; every text block lives in its own zone and uses
+  `FitText`. Never place text over art unless the template is built for it (Leaf, Ring, Envelope),
+  and then only inside the shape's clear area. Check Pin, Story and Square.
+- Writing voice: modern, specific, warm; comfort, rest, love, grief, humour and quiet hope, not only
+  motivation. Mix real quotes (with sources), original lines and proverbs. Words include borrowed
+  concept words (Greek and Latin first, e.g. akrasia). See `engine/Curator.kt` and its `Slop` list.
+- Motion signatures added: kinetic headlines (`KineticText`), the mark-to-Kai morph with a light
+  ring, squash and stretch on moving characters, a drifting sparkle field.

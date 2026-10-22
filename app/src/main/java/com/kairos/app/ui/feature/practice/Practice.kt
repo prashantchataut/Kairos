@@ -110,6 +110,8 @@ data class PracticeState(
     val picked: String? = null,
     val remembered: Int = 0,
     val rememberedIds: List<String> = emptyList(),
+    /** Nothing was due: this is a bonus round from words scheduled for later. */
+    val bonus: Boolean = false,
 ) {
     val current get() = cards.getOrNull(index)
     val done get() = !loading && cards.isNotEmpty() && index >= cards.size
@@ -122,9 +124,10 @@ class PracticeViewModel(private val c: AppContainer) : ViewModel() {
 
     fun load() = viewModelScope.launch {
         _s.value = PracticeState()
+        val bonus = c.kairos.nothingDue()
         val deck = c.kairos.practiceDeck(10)
         val cards = deck.mapIndexed { i, w -> if (w.reps >= 1 && i % 3 == 1) PracticeCard(w, CardMode.Quiz, c.kairos.quizOptions(w)) else PracticeCard(w, CardMode.Flip) }
-        _s.value = PracticeState(loading = false, cards = cards)
+        _s.value = PracticeState(loading = false, cards = cards, bonus = bonus && cards.isNotEmpty())
     }
 
     fun reveal() = _s.update { it.copy(revealed = true) }
@@ -171,6 +174,12 @@ fun PracticeScreen(onBack: () -> Unit) {
             PetalProgress(if (s.cards.isEmpty()) 0 else s.index.coerceAtMost(s.cards.size), s.cards.size, Modifier.weight(1f))
             Spacer(Modifier.width(Gap.md))
             Points(s.remembered * 10)
+        }
+        if (s.bonus && s.index == 0 && !s.done) {
+            Text(
+                "Nothing is due today, so here's a bonus round from words coming up soon.", style = K.type.label, color = p.inkSoft,
+                modifier = Modifier.fillMaxWidth().clip(Radius.tile).background(p.accentSoft).padding(Gap.md),
+            )
         }
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             when {
