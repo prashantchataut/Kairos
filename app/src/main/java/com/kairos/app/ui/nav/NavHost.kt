@@ -16,6 +16,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -59,6 +61,8 @@ object Route {
     @Serializable data class Word(val id: String)
     @Serializable data class Quote(val id: String)
     @Serializable data class Book(val id: String)
+    @Serializable data object Library
+    @Serializable data object Play
     @Serializable data object Practice
     @Serializable data class Studio(val kind: String, val id: String)
     @Serializable data object Compose
@@ -103,10 +107,18 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
                         openCurator = { nav.navigate(Route.Curator) },
                         openInterests = { nav.navigate(Route.Interests) },
                         openBook = { nav.navigate(Route.Book(it)) },
+                        openLibrary = { nav.navigate(Route.Library) },
+                        openPlay = { nav.navigate(Route.Play) },
                     )
                 }
                 screen<Route.Word> { e -> val id = e.toRoute<Route.Word>().id; WordScreen(id, { nav.popBackStack() }, { nav.navigate(Route.Studio("word", id)) }, { nav.navigate(Route.Practice) }) }
                 screen<Route.Quote> { e -> val id = e.toRoute<Route.Quote>().id; QuoteScreen(id, { nav.popBackStack() }) { nav.navigate(Route.Studio("quote", id)) } }
+                screen<Route.Library> {
+                    Box(Modifier.fillMaxSize()) {
+                        LearnScreen({ nav.navigate(Route.Word(it)) }, { nav.navigate(Route.Quote(it)) }, { nav.navigate(Route.Practice) }, { nav.navigate(Route.Curator) }, { nav.navigate(Route.Book(it)) })
+                        com.kairos.app.ui.feature.detail.TopBar({ nav.popBackStack() }, onSky = true, modifier = Modifier.align(Alignment.TopEnd).width(80.dp))
+                    }
+                }
                 screen<Route.Book> { e -> com.kairos.app.ui.feature.detail.BookScreen(e.toRoute<Route.Book>().id) { nav.popBackStack() } }
                 screen<Route.Practice> { PracticeScreen { nav.popBackStack() } }
                 screen<Route.Studio> { e -> val r = e.toRoute<Route.Studio>(); StudioScreen(r.kind, r.id) { nav.popBackStack() } }
@@ -124,6 +136,7 @@ private fun Home(
     tab: Int, onTab: (Int) -> Unit,
     openWord: (String) -> Unit, openQuote: (String) -> Unit, openStudio: (String, String) -> Unit, openPractice: () -> Unit,
     openCompose: () -> Unit, openLetter: (Long) -> Unit, openCurator: () -> Unit, openInterests: () -> Unit, openBook: (String) -> Unit,
+    openLibrary: () -> Unit, openPlay: () -> Unit,
 ) {
     val haze = remember { HazeState() }
     var sheet by remember { mutableStateOf(false) }
@@ -137,12 +150,12 @@ private fun Home(
             ) { t ->
                 when (t) {
                     0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator, { onTab(3) }, openBook)
-                    1 -> LearnScreen(openWord, openQuote, openPractice, openCurator, openBook)
+                    1 -> com.kairos.app.ui.feature.feed.FeedScreen(openStudio, openBook, openLibrary, openWord)
                     2 -> CapsuleHome(openCompose, openLetter)
                     else -> YouScreen(openCurator, openInterests)
                 }
             }
-            BottomBar(tab, onTab, { sheet = true }, sheet, Modifier.align(Alignment.BottomCenter), night = tab == 2)
+            BottomBar(tab, onTab, { sheet = true }, sheet, Modifier.align(Alignment.BottomCenter), night = tab == 2 || tab == 1)
         }
     }
     if (sheet) QuickSheet(

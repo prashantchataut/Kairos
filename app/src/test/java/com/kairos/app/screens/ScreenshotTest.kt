@@ -70,6 +70,8 @@ class ScreenshotTest {
         c.db.quotes().insertAll(listOf(
             QuoteEntity("q1", "Nature does not hurry, yet everything is accomplished.", "Lao Tzu", "calm", "From the Taoist tradition of the Tao Te Ching.", generatedAt = 1),
             QuoteEntity("q2", "Hope is the thing with feathers that perches in the soul.", "Emily Dickinson", "hope", "Opening line of her 1861 poem.", generatedAt = 1, saved = true, timesShown = 1),
+            QuoteEntity("q4", "I'm allowed to go slowly and still get somewhere.", "", "comfort", "", generatedAt = 1, kind = "affirmation"),
+            QuoteEntity("q5", "you don't have to finish the whole map to be on the way.", "", "hope", "", generatedAt = 1, kind = "line"),
             QuoteEntity("q3", "Almost everything will work again if you unplug it for a few minutes, including you.", "Anne Lamott", "rest", "", generatedAt = 1, timesShown = 1),
         ))
         c.db.books().insertAll(listOf(
@@ -89,7 +91,7 @@ class ScreenshotTest {
         c.db.capsules().insert(CapsuleEntity(title = "New year, new desk", letter = "Hello", createdAt = now - 86_400_000L * 365, opensAt = now - 1000, tint = "Peach"))
     }
 
-    private fun shoot(name: String, dark: Boolean = false, seeded: Boolean = true, bar: Int? = null, content: @Composable () -> Unit) {
+    private fun shoot(name: String, dark: Boolean = false, seeded: Boolean = true, bar: Int? = null, waits: Int = 12, content: @Composable () -> Unit) {
         if (seeded) seed()
         compose.setContent {
             KairosTheme(if (dark) ThemeMode.Dark else ThemeMode.Light, calmMotion = true) {
@@ -101,7 +103,7 @@ class ScreenshotTest {
                 }
             }
         }
-        repeat(12) { Thread.sleep(250); compose.mainClock.advanceTimeBy(500); compose.waitForIdle() }
+        repeat(waits) { Thread.sleep(250); compose.mainClock.advanceTimeBy(500); compose.waitForIdle() }
         compose.onRoot().captureRoboImage("screenshots/$name.png")
     }
 
@@ -126,6 +128,8 @@ class ScreenshotTest {
     @Test fun l_studio() = shoot("13_studio") { com.kairos.app.ui.feature.studio.StudioScreen("word", "apricity") {} }
     @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
     @Test fun e5_opened() = shoot("05e_letter_opened") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
+    @Test fun b1_feedEngine() { seed(); val items = runBlocking { app.container.kairos.feedBatch(emptySet()) }; println("FEED " + items.map { it.key }); org.junit.Assert.assertTrue(items.isNotEmpty()) }
+    @Test fun b2_feed() = shoot("02b_feed", bar = 1, waits = 30) { com.kairos.app.ui.feature.feed.FeedScreen({ _, _ -> }, {}, {}, {}) }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
     @Test fun f2_interests() = shoot("06b_interests") { com.kairos.app.ui.feature.you.InterestsScreen {} }
     @Config(qualifiers = "w400dp-h1700dp-xxhdpi")

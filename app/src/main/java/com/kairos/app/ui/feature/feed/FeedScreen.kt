@@ -111,7 +111,8 @@ fun FeedScreen(openStudio: (String, String) -> Unit, openBook: (String) -> Unit,
     val pager = rememberPagerState(pageCount = { s.items.size + 1 })
     LaunchedEffect(pager) { snapshotFlow { pager.settledPage }.distinctUntilChanged().collect { vm.settle(it) } }
     Box(Modifier.fillMaxSize().background(Candy.Navy)) {
-        VerticalPager(pager, Modifier.fillMaxSize(), beyondViewportPageCount = 1, key = { if (it < s.items.size) s.items[it].key else "end" }) { page ->
+        // No keys: new items arriving at the end must never move the page you are on.
+        VerticalPager(pager, Modifier.fillMaxSize(), beyondViewportPageCount = 1) { page ->
             // Pages scale down and dim as they leave, and rise into place as they arrive.
             val off = (pager.currentPage - page) + pager.currentPageOffsetFraction
             Box(
@@ -190,11 +191,21 @@ private fun FeedPage(item: FeedItem, onLike: () -> Unit, onLess: () -> Unit, onS
         val card = item.card()
         when {
             card != null -> {
-                // The card design, laid out on a 360dp artboard the height of this screen.
-                val ratio = maxWidth / maxHeight
-                val outer = LocalDensity.current
-                androidx.compose.runtime.CompositionLocalProvider(LocalDensity provides Density(outer.density * maxWidth.value / 360f, 1f)) {
-                    ShareCard(card, item.template(), item.hue(), Modifier.size(360.dp, (360f / ratio).dp))
+                // The card sits in a safe frame, clear of the header above and the rail and bar below,
+                // on a blurred wash of its own colours so the page still feels full-bleed.
+                val bg = item.hue().let { listOf(androidx.compose.ui.graphics.lerp(it.bold, Color.Black, 0.35f), androidx.compose.ui.graphics.lerp(it.a, Color.Black, 0.55f)) }
+                Box(Modifier.fillMaxSize().background(Brush.verticalGradient(bg)))
+                BoxWithConstraints(Modifier.fillMaxSize().padding(start = 16.dp, end = 74.dp, top = 132.dp, bottom = 150.dp), contentAlignment = Alignment.Center) {
+                    // The best of the three designs for this frame: story if it's tall, pin, else square.
+                    val frameRatio = maxHeight / maxWidth
+                    val ratio = when { frameRatio >= 1.7f -> 9f / 16f; frameRatio >= 1.4f -> 2f / 3f; else -> 1f }
+                    val w = minOf(maxWidth, maxHeight * ratio)
+                    Box(Modifier.size(w, w / ratio).graphicsLayer { shadowElevation = 24.dp.toPx(); shape = RoundedCornerShape(22.dp); clip = true }) {
+                        val outer = LocalDensity.current
+                        androidx.compose.runtime.CompositionLocalProvider(LocalDensity provides Density(outer.density * w.value / 360f, 1f)) {
+                            ShareCard(card, item.template(), item.hue(), Modifier.size(360.dp, (360f / ratio).dp))
+                        }
+                    }
                 }
             }
             item is FeedItem.Book -> BookPage(item)
@@ -214,7 +225,7 @@ private fun FeedPage(item: FeedItem, onLike: () -> Unit, onLess: () -> Unit, onS
         }
         if (item !is FeedItem.Pause) {
             // Right rail: like, share, less like this.
-            Column(Modifier.align(Alignment.BottomEnd).padding(end = Gap.md, bottom = 150.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Gap.lg)) {
+            Column(Modifier.align(Alignment.BottomEnd).padding(end = Gap.sm, bottom = 150.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Gap.lg)) {
                 Rail(if (liked) Icons.HeartOn else Icons.Heart, if (liked) "Kept" else "Keep", if (liked) Candy.Coral else Color.White) { onLike() }
                 if (item !is FeedItem.Book) Rail(Icons.Share, "Share", Color.White, onShare)
                 Rail(Icons.ThumbDown, if (told) "Noted" else "Less", Color.White) { told = true; onLess() }
@@ -222,7 +233,7 @@ private fun FeedPage(item: FeedItem, onLike: () -> Unit, onLess: () -> Unit, onS
             val reason = when (item) { is FeedItem.Word -> item.reason; is FeedItem.Thought -> item.reason; is FeedItem.Book -> item.book.hook; else -> "" }
             if (reason.isNotBlank()) {
                 Row(
-                    Modifier.align(Alignment.BottomStart).padding(start = Gap.gutter, end = 90.dp, bottom = 108.dp).clip(CircleShape).background(Color.Black.copy(alpha = 0.32f)).padding(horizontal = 12.dp, vertical = 6.dp),
+                    Modifier.align(Alignment.BottomStart).padding(start = Gap.gutter, end = 90.dp, bottom = 104.dp).clip(CircleShape).background(Color.Black.copy(alpha = 0.32f)).padding(horizontal = 12.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Kai(KaiLooks.Curator, size = 20.dp, shadow = false, alive = false, description = null)

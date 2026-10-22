@@ -211,10 +211,15 @@ class KairosRepository(
         val mood = Mood.of(db.moods().latestFor(day)?.mood)
         val part = DayPart.of(LocalTime.now().hour)
         // Unseen first; when they run out, things met long enough ago come back.
-        val words = (db.words().unseen().ifEmpty { db.words().all().filter { it.taste >= 0 } })
-            .let { DailyEngine.scoreWords(it, t, day, stream = 21 + exclude.size) }.filter { "w:${it.item.id}" !in exclude }
-        val allQuotes = (db.quotes().unseen().ifEmpty { db.quotes().all().filter { it.taste >= 0 } })
-            .let { DailyEngine.scoreQuotes(it, t, day, mood, part, shuffle = 31 + exclude.size) }.filter { "q:${it.item.id}" !in exclude }
+        // Unseen first, then everything met before (least recently shown first), so the Feed never runs dry.
+        val unseenWords = db.words().unseen()
+        val metWords = db.words().all().filter { it.taste >= 0 && it.timesShown > 0 }.sortedBy { it.lastShownDay ?: 0 }
+        val words = DailyEngine.scoreWords(unseenWords, t, day, stream = 21 + exclude.size).plus(metWords.map { com.kairos.app.engine.Pick(it, it.hook.ifBlank { "One to remember" }) })
+            .filter { "w:${it.item.id}" !in exclude }.distinctBy { it.item.id }
+        val unseenQuotes = db.quotes().unseen()
+        val metQuotes = db.quotes().all().filter { it.taste >= 0 && it.timesShown > 0 }.sortedBy { it.lastShownDay ?: 0 }
+        val allQuotes = DailyEngine.scoreQuotes(unseenQuotes, t, day, mood, part, shuffle = 31 + exclude.size).plus(metQuotes.map { com.kairos.app.engine.Pick(it, "Worth another read") })
+            .filter { "q:${it.item.id}" !in exclude }.distinctBy { it.item.id }
         val affirmations = allQuotes.filter { it.item.kind == "affirmation" }.toMutableList()
         val thoughts = allQuotes.filter { it.item.kind != "affirmation" }.toMutableList()
         val books = db.books().all().filter { it.taste >= 0 && "b:${it.id}" !in exclude }.sortedBy { it.dwellMs }.toMutableList()
@@ -230,7 +235,8 @@ class KairosRepository(
                 "q" -> thoughts.removeFirstOrNull()?.let { FeedItem.Thought(it.item, it.reason) }
                 "a" -> (affirmations.removeFirstOrNull() ?: thoughts.removeFirstOrNull())?.let { FeedItem.Thought(it.item, it.reason) }
                 "b" -> books.removeFirstOrNull()?.let { FeedItem.Book(it) }
-                else -> FeedItem.Pause("p:${exclude.size + out.size}")
+                // A pause only after a good run of reading, never twice close together.
+                else -> if (out.size >= 5 && out.takeLast(6).none { it is FeedItem.Pause }) FeedItem.Pause("p:${exclude.size + out.size}") else null
             }
             if (item != null) out += item
             if (wq.isEmpty() && thoughts.isEmpty() && affirmations.isEmpty() && books.isEmpty()) break
