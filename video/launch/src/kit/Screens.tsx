@@ -201,7 +201,7 @@ export const FeedScreen: React.FC<{ scroll: number; keep: number; chip: number; 
         </div>
       ))}
       <div style={{ ...at(22, 560, `translateY(${(1 - chip) * 14}px)`), opacity: chip }}>
-        <Chip bg="rgba(255,255,255,0.16)" color={C.white} size={13}>
+        <Chip bg={C.navy} color={C.white} size={13} style={{ boxShadow: SHADOW_SOFT }}>
           <Kai size={18} />
           {FEED_CHIP}
         </Chip>

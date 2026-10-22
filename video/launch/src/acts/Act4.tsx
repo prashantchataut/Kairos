@@ -40,7 +40,7 @@ export const LearnsCopy: React.FC<{ f: number }> = ({ f }) => {
       <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${PH.x + PH.w + 56 * U}px, ${lineY}px)` }}>
         <div style={{ position: 'relative' }}>
           <Words text={B.text} id={B.id} frame={f} start={B.in} out={B.out} size={size} style={{ ...typeStyle('line', size), color: C.ink }} />
-          <svg width={size * 3.2} height={size * 1.7} viewBox="0 0 320 170" style={{ position: 'absolute', left: size * 3.78, top: -size * 0.34, overflow: 'visible', opacity: 1 - prog(f, B.out, B.out + f60(16), E.smooth) }}>
+          <svg width={size * 3.5} height={size * 1.75} viewBox="0 0 320 170" preserveAspectRatio="none" style={{ position: 'absolute', left: size * 3.62, top: -size * 0.36, overflow: 'visible', opacity: 1 - prog(f, B.out, B.out + f60(16), E.smooth) }}>
             <path
               d="M40 92 C 30 40, 150 18, 240 34 C 300 46, 312 104, 250 130 C 180 158, 60 150, 30 112 C 18 96, 40 70, 70 62"
               fill="none"
