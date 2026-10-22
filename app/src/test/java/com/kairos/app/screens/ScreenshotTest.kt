@@ -85,6 +85,7 @@ class ScreenshotTest {
         listOf("SavedWord" to 1, "Practice" to 2, "Letter" to 3, "Spark" to 5).forEach { (k, d) -> c.db.moments().insert(com.kairos.app.data.db.MomentEntity(createdAt = now - 86_400_000L * d, epochDay = today() - d, kind = k, label = k)) }
         c.db.capsules().insert(CapsuleEntity(title = "Before the move", letter = "Hi you.", createdAt = now - 86_400_000L * 40, opensAt = now + 86_400_000L * 160, tint = "Lavender", moodAtSeal = "Good"))
         c.db.capsules().insert(CapsuleEntity(title = "", letter = "Hello", createdAt = now - 86_400_000L * 10, opensAt = now + 86_400_000L * 400, tint = "Mint"))
+        c.db.capsules().insert(CapsuleEntity(title = "The first spring here", letter = "Hi you. I'm writing this on the balcony, the radio is on and the neighbours are arguing about tomatoes. I hope the new job turned out kinder than you feared. I hope you still walk the long way home.\n\nWhatever happened, I'm proud of you for trying.", createdAt = now - 86_400_000L * 200, opensAt = now - 86_400_000L * 3, openedAt = now - 86_400_000L, tint = "Rose", moodAtSeal = "Okay"))
         c.db.capsules().insert(CapsuleEntity(title = "New year, new desk", letter = "Hello", createdAt = now - 86_400_000L * 365, opensAt = now - 1000, tint = "Peach"))
     }
 
@@ -120,9 +121,11 @@ class ScreenshotTest {
     @Test fun e_capsule() = shoot("05_capsule", bar = 2) { CapsuleHome({}, {}) }
     @Test fun e2_compose() = shoot("05b_compose") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}) }
     @Test fun e3_sealed() = shoot("05c_letter_sealed") { com.kairos.app.ui.feature.capsule.LetterScreen(1, {}, {}) }
-    @Test fun e4_ready() = shoot("05d_letter_ready") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
+    @Test fun e4_ready() = shoot("05d_letter_ready") { com.kairos.app.ui.feature.capsule.LetterScreen(4, {}, {}) }
     @Test fun k_practice() = shoot("11_practice") { com.kairos.app.ui.feature.practice.PracticeScreen {} }
     @Test fun l_studio() = shoot("13_studio") { com.kairos.app.ui.feature.studio.StudioScreen("word", "apricity") {} }
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Test fun e5_opened() = shoot("05e_letter_opened") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
     @Test fun f2_interests() = shoot("06b_interests") { com.kairos.app.ui.feature.you.InterestsScreen {} }
     @Config(qualifiers = "w400dp-h1700dp-xxhdpi")

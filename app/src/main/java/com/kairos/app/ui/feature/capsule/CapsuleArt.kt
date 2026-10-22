@@ -40,6 +40,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kairos.app.ui.components.drawMark
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.kairos.app.data.repo.AttachmentKind
 import com.kairos.app.ui.art.KaiLook
@@ -186,3 +188,68 @@ fun AttachmentCard(kind: AttachmentKind, model: Any, name: String, tilt: Float, 
 }
 
 fun tiltFor(i: Int) = listOf(-4f, 3f, -2f, 5f, -3f, 2f)[i % 6]
+
+/**
+ * Writing paper (n12): warm cream, faint ruled lines spaced to the letter's line height, a soft margin
+ * line, a postage stamp with the Kairos mark in the letter's colour, and a postmark with the date.
+ */
+@Composable
+fun LetterPaper(stampColor: Color, postmark: String, modifier: Modifier = Modifier, lineHeight: androidx.compose.ui.unit.Dp = 31.dp, firstLine: androidx.compose.ui.unit.Dp = 118.dp, content: @Composable () -> Unit) {
+    Box(
+        modifier
+            .shadow(20.dp, RoundedCornerShape(10.dp), ambientColor = Color(0x33000000), spotColor = Color(0x33000000))
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFFFFF8EC))
+            .drawBehind {
+                val step = lineHeight.toPx()
+                var y = firstLine.toPx()
+                while (y < size.height - 12.dp.toPx()) {
+                    drawLine(Color(0xFFB9CDE8).copy(alpha = 0.55f), Offset(18.dp.toPx(), y), Offset(size.width - 18.dp.toPx(), y), strokeWidth = 1.dp.toPx())
+                    y += step
+                }
+                drawLine(Color(0xFFF2A5A5).copy(alpha = 0.6f), Offset(40.dp.toPx(), 0f), Offset(40.dp.toPx(), size.height), strokeWidth = 1.dp.toPx())
+                drawGrain(0.05f)
+                // Postage stamp: a perforated square with the mark.
+                val s = 54.dp.toPx()
+                val left = size.width - s - 16.dp.toPx()
+                val top = 16.dp.toPx()
+                drawRect(Color.White, Offset(left - 3.dp.toPx(), top - 3.dp.toPx()), Size(s + 6.dp.toPx(), s * 1.18f + 6.dp.toPx()))
+                val holes = 7
+                for (i in 0..holes) {
+                    val fx = left - 3.dp.toPx() + i * (s + 6.dp.toPx()) / holes
+                    drawCircle(Color(0xFFFFF8EC), 2.2.dp.toPx(), Offset(fx, top - 3.dp.toPx()))
+                    drawCircle(Color(0xFFFFF8EC), 2.2.dp.toPx(), Offset(fx, top + s * 1.18f + 3.dp.toPx()))
+                }
+                drawRect(stampColor, Offset(left, top), Size(s, s * 1.18f))
+                translate(left + s * 0.2f, top + s * 0.25f) {
+                    val old = drawContext.size
+                    drawContext.size = Size(s * 0.6f, s * 0.6f)
+                    drawMark(Color.White, 0f)
+                    drawContext.size = old
+                }
+                // Postmark: two rings and wavy cancellation lines across the stamp.
+                val pc = Offset(left - 6.dp.toPx(), top + s * 0.75f)
+                val pr = 26.dp.toPx()
+                val ink = Color(0xFF3B4A7A).copy(alpha = 0.55f)
+                drawCircle(ink, pr, pc, style = Stroke(1.4.dp.toPx()))
+                drawCircle(ink, pr * 0.78f, pc, style = Stroke(1.dp.toPx()))
+                for (k in 0..2) {
+                    val y0 = pc.y - pr * 0.4f + k * pr * 0.4f
+                    val wave = Path().apply {
+                        moveTo(pc.x + pr * 1.05f, y0)
+                        var x = pc.x + pr * 1.05f
+                        var up = true
+                        while (x < pc.x + pr * 3.2f) { quadraticTo(x + 6.dp.toPx(), y0 + if (up) -4.dp.toPx() else 4.dp.toPx(), x + 12.dp.toPx(), y0); x += 12.dp.toPx(); up = !up }
+                    }
+                    drawPath(wave, ink, style = Stroke(1.2.dp.toPx()))
+                }
+            },
+    ) {
+        Text(
+            postmark, style = K.type.caption.copy(fontSize = 8.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, letterSpacing = 0.5.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center),
+            color = Color(0xFF3B4A7A).copy(alpha = 0.7f),
+            modifier = Modifier.align(Alignment.TopEnd).padding(top = 47.dp, end = 70.dp).width(40.dp).rotate(-12f),
+        )
+        content()
+    }
+}

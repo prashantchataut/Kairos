@@ -221,29 +221,29 @@ fun ComposeLetter(onBack: () -> Unit, onSealed: () -> Unit) {
                 NightChip("Pick a day", s.preset == null, Icons.Calendar) { pickDate = true }
             }
             Spacer(Modifier.height(Gap.xl))
-            // The letter: warm paper on the night sky.
-            Column(
-                Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).clip(Radius.deck).background(Paper).padding(Gap.xl),
-            ) {
-                Box {
-                    if (s.title.isEmpty()) Text("Give it a name (optional)", style = K.type.title, color = PaperInk.copy(alpha = 0.35f))
-                    BasicTextField(s.title, vm::title, singleLine = true, textStyle = K.type.title.copy(color = PaperInk), cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth())
-                }
-                Spacer(Modifier.height(Gap.lg))
-                Text("Dear future me,", style = K.type.serifLarge.copy(fontSize = 28.sp, lineHeight = 32.sp, fontStyle = FontStyle.Italic), color = PaperInk)
-                Spacer(Modifier.height(Gap.sm))
-                Box(Modifier.fillMaxWidth().heightIn(min = 220.dp)) {
-                    val letterStyle = K.type.body.copy(fontFamily = SerifText, fontSize = 20.sp, lineHeight = 31.sp, color = PaperInk)
-                    if (s.letter.isEmpty()) Text(s.prompt, style = letterStyle.copy(color = PaperInk.copy(alpha = 0.35f)))
-                    BasicTextField(s.letter, vm::letter, textStyle = letterStyle, cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth().heightIn(min = 220.dp))
-                }
-                Spacer(Modifier.height(Gap.md))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Sparkle, null, tint = Candy.Coral, modifier = Modifier.size(14.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text("Use this prompt", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Candy.Coral, modifier = Modifier.pressable(onClick = vm::usePrompt))
-                    Spacer(Modifier.weight(1f))
-                    Text("Another", style = K.type.label, color = PaperInk.copy(alpha = 0.6f), modifier = Modifier.pressable(onClick = vm::nextPrompt))
+            // The letter: real writing paper on the night sky, stamped and postmarked with today.
+            LetterPaper(LightPalette.candy(s.tint), "SEALED\n" + Fmt.shortDate(System.currentTimeMillis()).uppercase(), Modifier.fillMaxWidth().padding(horizontal = Gap.gutter), firstLine = 136.dp) {
+                Column(Modifier.padding(start = 52.dp, end = 20.dp, top = 22.dp, bottom = 26.dp)) {
+                    Box(Modifier.padding(end = 112.dp)) {
+                        if (s.title.isEmpty()) Text("Give it a name (optional)", style = K.type.title, color = PaperInk.copy(alpha = 0.35f))
+                        BasicTextField(s.title, vm::title, singleLine = true, textStyle = K.type.title.copy(color = PaperInk), cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth())
+                    }
+                    Spacer(Modifier.height(18.dp))
+                    Text("Dear future me,", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 36.sp), color = PaperInk)
+                    Spacer(Modifier.height(4.dp))
+                    Box(Modifier.fillMaxWidth().heightIn(min = 248.dp)) {
+                        val letterStyle = K.type.body.copy(fontFamily = SerifText, fontSize = 19.sp, lineHeight = 31.sp, color = PaperInk)
+                        if (s.letter.isEmpty()) Text(s.prompt, style = letterStyle.copy(color = PaperInk.copy(alpha = 0.38f)))
+                        BasicTextField(s.letter, vm::letter, textStyle = letterStyle, cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth().heightIn(min = 248.dp))
+                    }
+                    Spacer(Modifier.height(Gap.md))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Sparkle, null, tint = Candy.Coral, modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Use this prompt", style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = Candy.Coral, modifier = Modifier.pressable(onClick = vm::usePrompt))
+                        Spacer(Modifier.weight(1f))
+                        Text("Another", style = K.type.label, color = PaperInk.copy(alpha = 0.6f), modifier = Modifier.pressable(onClick = vm::nextPrompt))
+                    }
                 }
             }
             if (s.attachments.isNotEmpty()) {

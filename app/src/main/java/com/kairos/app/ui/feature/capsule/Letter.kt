@@ -259,12 +259,14 @@ private fun Opened(cap: CapsuleWithAttachments, onReply: (String) -> Unit, onWri
             FadingTitle(c.title.ifBlank { Fmt.ordinalDate(d) }, "${d.year}", size = 44)
         }
         Spacer(Modifier.height(Gap.xl))
-        Column(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).clip(Radius.deck).background(Paper).padding(Gap.xl)) {
-            Text("Dear future me,", style = K.type.serifLarge.copy(fontSize = 28.sp, fontStyle = FontStyle.Italic), color = PaperInk)
-            Spacer(Modifier.height(Gap.md))
-            if (c.letter.isNotBlank()) Text(c.letter, style = K.type.body.copy(fontFamily = SerifText, fontSize = 20.sp, lineHeight = 31.sp), color = PaperInk)
-            Spacer(Modifier.height(Gap.lg))
-            Text("Written ${Fmt.date(c.createdAt)}", style = K.type.caption, color = PaperInk.copy(alpha = 0.5f))
+        LetterPaper(cap.paper(), "SEALED\n" + Fmt.shortDate(c.createdAt).uppercase(), Modifier.fillMaxWidth().padding(horizontal = Gap.gutter), firstLine = 104.dp) {
+            Column(Modifier.padding(start = 52.dp, end = 20.dp, top = 22.dp, bottom = 26.dp)) {
+                Text("Dear future me,", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 36.sp), color = PaperInk, modifier = Modifier.padding(end = 112.dp, top = 18.dp))
+                Spacer(Modifier.height(4.dp))
+                if (c.letter.isNotBlank()) Text(c.letter, style = K.type.body.copy(fontFamily = SerifText, fontSize = 19.sp, lineHeight = 31.sp), color = PaperInk)
+                Spacer(Modifier.height(Gap.lg))
+                Text("— you, ${Fmt.date(c.createdAt)}", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontSize = 22.sp), color = PaperInk.copy(alpha = 0.7f))
+            }
         }
         if (cap.attachments.isNotEmpty()) {
             Text("Tucked inside", style = K.type.title, color = Color.White, modifier = Modifier.padding(start = Gap.gutter, top = Gap.xl, bottom = Gap.md))
