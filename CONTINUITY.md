@@ -37,13 +37,15 @@ and treatment: `video/launch/BRIEF.md`, `video/launch/TREATMENT.md`.
 | 7 Share (pin → story → square, scatter) | 16–17 | built, reviewed on stills |
 | 8 Lockup (bloom unfolds around the coral petal, wordmark, "Now on Android") | 18–19 + tail | built, reviewed on stills |
 
-Then: `src/sync.ts` (sound events), earshot kit + score, 9:16 and 1:1 re-layouts.
+Sound: `src/sync.ts` + `audio/score.json` + the crisp earshot kit; `npm run audio` PASS (−14 LUFS, TP −2.3 dBTP, LRA 8 LU).
+How to render (owner's machine): `video/launch/README.md`.
 
 ## Exact next step
 
-All eight acts are built; `npm run check` (tsc + lint-film + grid-check) passes. Next: write
-`video/launch/src/sync.ts` (sound events from the picture code), render the earshot kit and the
-score (`npm run cues && npm run kit && npm run audio`), then the 9:16 and 1:1 re-layouts.
+The 16:9 film is complete in code with its soundtrack; it has not been rendered to MP4 in the
+sandbox (owner renders: `video/launch/README.md`). Next: the 9:16 and 1:1 re-layouts (`Film9x16`,
+`Film1x1` compositions reusing `timeline.ts`; per-act layout from `W`/`H`), then
+`bash scripts/deliver.sh out/film.mp4 --variants Film9x16,Film1x1`.
 
 ## Commands
 
@@ -56,4 +58,6 @@ npm run studio                                # scrub it live
 # Heavy renders are the owner's (local machine or CI), not the agent's:
 npm run render:preview                        # sharp preview with audio
 npm run render                                # the motion-blurred master (render.sh --blur)
+# Sound (needs earshot: see video/launch/README.md, no PyTorch needed)
+npm run kit && npm run cues && npm run audio
 ```

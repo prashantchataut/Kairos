@@ -5,3 +5,4 @@ public/audio/*.wav
 .DS_Store
 *.log
 __pycache__/
+audio/kit/*.wav
