@@ -43,13 +43,15 @@ export type BloomProps = {
   unfold?: (i: number) => number; // each petal's growth 0..1 (rotates in 28° as it grows, like the app)
   core01?: number; // core scale
   only?: 'moment'; // draw the moment petal alone: the story device before the mark exists
+  skipMoment?: boolean; // leave the moment petal out (the device is still travelling to its slot)
   style?: React.CSSProperties;
 };
 
-export const Bloom: React.FC<BloomProps> = ({ size, petal = C.white, moment = C.coral, core, unfold = () => 1, core01 = 1, only, style }) => (
+export const Bloom: React.FC<BloomProps> = ({ size, petal = C.white, moment = C.coral, core, unfold = () => 1, core01 = 1, only, skipMoment, style }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" style={{ overflow: 'visible', display: 'block', ...style }}>
     {Array.from({ length: BLOOM.PETALS }, (_, i) => {
       if (only === 'moment' && i !== BLOOM.MOMENT) return null;
+      if (skipMoment && i === BLOOM.MOMENT) return null;
       const u = Math.min(1.2, Math.max(0, unfold(i)));
       if (u <= 0.001) return null;
       const rot = i * 45 - (1 - Math.min(1, u)) * 28;

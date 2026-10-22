@@ -34,18 +34,16 @@ and treatment: `video/launch/BRIEF.md`, `video/launch/TREATMENT.md`.
 | 4 Feed (reel, Keep fills coral, "It learns / what you keep.") | 9–10 | built, reviewed on stills |
 | 5 Play (flashcards fan and turn) | 11–12 | built, reviewed on stills |
 | 6 Letter (night columns, letter folds, coral seal lands) | 13–15 | built, reviewed on stills |
-| 7 Share (pin → story → square, scatter) | 16–17 | todo |
-| 8 Lockup (bloom unfolds around the coral petal, wordmark, "Now on Android") | 18–19 + tail | todo |
+| 7 Share (pin → story → square, scatter) | 16–17 | built, reviewed on stills |
+| 8 Lockup (bloom unfolds around the coral petal, wordmark, "Now on Android") | 18–19 + tail | built, reviewed on stills |
 
 Then: `src/sync.ts` (sound events), earshot kit + score, 9:16 and 1:1 re-layouts.
 
 ## Exact next step
 
-Write `video/launch/src/acts/Act7.tsx` (the envelope, edge-on at the end of Act 6, turns into a
-pin share card; "Share" at copy share.1; pin -> story at CUE.story, story -> square at CUE.square
-with the three shapes side by side; the cards scatter at CUE.scatter leaving the coral petal at the
-centre), then Act 8 (bloom unfolds around the petal, core lands at CUE.core, wordmark at
-CUE.lockup, "Now on Android"), peek, commit, push. Then sync.ts and sound.
+All eight acts are built; `npm run check` (tsc + lint-film + grid-check) passes. Next: write
+`video/launch/src/sync.ts` (sound events from the picture code), render the earshot kit and the
+score (`npm run cues && npm run kit && npm run audio`), then the 9:16 and 1:1 re-layouts.
 
 ## Commands
 

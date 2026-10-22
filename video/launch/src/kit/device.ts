@@ -4,4 +4,4 @@ import { U } from '../brand/tokens';
 import { CUE, W } from '../timeline';
 
 /** Act 2 -> 3: the petal has left the dot of the i and is falling toward the rising phone. */
-export const FALL = { from: CUE.rise - 22, at: CUE.rise, x: W / 2 + 40 * U, y: 360 * U, size: 46 * U, rot: 45 };
+export const FALL = { from: CUE.rise - 22, at: CUE.rise, x: W / 2 + 40 * U, y: 360 * U, size: 180 * U, rot: 45 }; // size matches the dot of the i (0.6 x the 300 px name)

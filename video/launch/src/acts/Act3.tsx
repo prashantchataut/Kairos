@@ -78,7 +78,7 @@ export const Act3: React.FC = () => {
   const petal = {
     x: mix(FALL.x, heart.x, t),
     y: mix(FALL.y, heart.y, t),
-    size: mix(FALL.size, TODAY_HEART.size * S.k * 1.25, t),
+    size: mix(FALL.size, TODAY_HEART.size * S.k * 4.6, t), // a petal 4.6x the heart's box is as wide as the heart
     rot: mix(FALL.rot, 0, t),
   };
   const pop = hitPulse(f - CUE.heart, 2, 6);

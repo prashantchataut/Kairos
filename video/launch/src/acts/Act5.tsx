@@ -4,11 +4,12 @@ import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { C, TYPE, U } from '../brand/tokens';
 import { Chain } from '../fx/Chain';
 import { clamp, E, hitPulse, mix, prog, stagger } from '../lib/anim';
-import { FLASH } from '../kit/data';
+import { FEED_KEPT, FLASH } from '../kit/data';
 import { Grain, Kai, Phone } from '../kit/Kit';
 import { Flashcard, FeedScreen } from '../kit/Screens';
 import { ACT, CUE, f60, H, W } from '../timeline';
 import { PH } from './Act3';
+import { flick2, LearnsCopy, PITCH } from './Act4';
 
 // ACT 5 - PLAY. The phone drops away and the words this person kept fan out across the frame as
 // flashcards, in a cool duotone until one is played (cl-duotone-until-featured): Apricity turns
@@ -38,7 +39,7 @@ export const Act5: React.FC = () => {
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
       {drop < 1 && (
         <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y + drop * H * 1.1}px)` }}>
-          <FeedScreen scroll={2 * 620} keep={0} chip={0} />
+          <FeedScreen scroll={(FEED_KEPT + flick2(f)) * PITCH} keep={1 - flick2(f)} chip={1} />
         </Phone>
       )}
       {/* Kai peeks over the middle card once the second card has turned */}
@@ -78,6 +79,7 @@ export const Act5: React.FC = () => {
           );
         })}
       </div>
+      <LearnsCopy f={f} />
       <Chain chain="play" frame={f} top={120 * U} accent="recency" color={C.ink} accentColor={C.cobalt} size={TYPE.line.size * U} />
       <Grain frame={f} opacity={0.035} />
     </AbsoluteFill>

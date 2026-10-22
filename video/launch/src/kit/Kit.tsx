@@ -5,6 +5,7 @@
 // the phone, and a few pieces of UI chrome. All geometry is a function of props: no state, no CSS
 // animation, so every frame renders the same way twice.
 import React from 'react';
+import { staticFile } from 'remotion';
 import { C, FONT, WORD_FACE } from '../brand/tokens';
 import { H, W } from '../timeline';
 
@@ -15,7 +16,12 @@ export const SHADOW_SOFT = '0 18px 50px rgba(0,0,0,0.12)';
 /** The app's hero sky, top to bottom, one hue family. `shift` 0..1 slides the light band. */
 export const skyGradient = (shift = 0) =>
   `linear-gradient(180deg, ${C.skyTop} ${(-20 + shift * 20).toFixed(1)}%, ${C.skyMid} ${(42 + shift * 10).toFixed(1)}%, ${C.skyFade} ${(88 + shift * 8).toFixed(1)}%)`;
-export const nightGradient = `linear-gradient(180deg, ${C.night1} 0%, ${C.night2} 58%, ${C.night3} 100%)`;
+/**
+ * The time capsule's night and the icon's dawn, as dithered PNGs (backdrops.json, baked with
+ * scripts/dither-gradient.py): a CSS gradient over the whole frame would band in 8 bits.
+ */
+export const nightGradient = `url(${staticFile('fx/night.png')}) center / 100% 100% no-repeat, ${C.night2}`;
+export const dawnGradient = `url(${staticFile('fx/dawn.png')}) center / 100% 100% no-repeat, ${C.cobalt}`;
 
 /**
  * Film grain at ~2%, keyed to the frame (the seed changes every 2 frames), which also hides 8-bit
