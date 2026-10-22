@@ -200,7 +200,7 @@ export const FeedScreen: React.FC<{ scroll: number; keep: number; chip: number; 
           <div style={ui(11, 500, C.white, { marginTop: 4 })}>{label}</div>
         </div>
       ))}
-      <div style={{ ...at(22, 800, `translateY(${(1 - chip) * 14}px)`), opacity: chip }}>
+      <div style={{ ...at(22, 560, `translateY(${(1 - chip) * 14}px)`), opacity: chip }}>
         <Chip bg="rgba(255,255,255,0.16)" color={C.white} size={13}>
           <Kai size={18} />
           {FEED_CHIP}
@@ -230,7 +230,6 @@ export const Flashcard: React.FC<{ w: Word; hue: CardHue; turned?: number; scale
           borderRadius: 34,
           background: bg,
           boxShadow: SHADOW,
-          filter: mono > 0.01 ? `saturate(${(1 - 0.75 * mono).toFixed(3)}) brightness(${(1 - 0.08 * mono).toFixed(3)})` : undefined,
           transform: back ? 'rotateY(180deg)' : undefined,
           overflow: 'hidden',
         }}
@@ -259,6 +258,8 @@ export const Flashcard: React.FC<{ w: Word; hue: CardHue; turned?: number; scale
             <div style={{ ...at(30, 104), ...ui(22, 500, ink), whiteSpace: 'normal', width: 240, lineHeight: 1.3 }}>{w.means}</div>
           </>
         )}
+        {/* duotone until played: a light wash over the candy colour, never a muddy desaturation */}
+        {mono > 0.01 && <div style={{ position: 'absolute', inset: 0, background: C.skyFade, opacity: 0.62 * mono }} />}
         {/* the corner pip: the moment petal on every card */}
         <div style={at(246, back ? 360 : 30)}>
           <Bloom size={26} petal={ink} moment={hue === 'coral' ? C.white : C.coral} />

@@ -30,9 +30,9 @@ and treatment: `video/launch/BRIEF.md`, `video/launch/TREATMENT.md`.
 |---|---|---|
 | 1 Chronos (clock of days, the hand stops and turns coral) | 1–3 | built, reviewed on stills |
 | 2 Name (coral flood → dot of the ı in "Kairos", "the right moment.") | 4–5 | built, reviewed on stills |
-| 3 Word (phone rises, Saudade → Apricity → Hiraeth rewrite) | 6–8 | next |
-| 4 Feed (reel, Keep fills coral, "It learns / what you keep.") | 9–10 | todo |
-| 5 Play (flashcards fan and turn) | 11–12 | todo |
+| 3 Word (phone rises, Saudade → Apricity → Hiraeth rewrite) | 6–8 | built, reviewed on stills |
+| 4 Feed (reel, Keep fills coral, "It learns / what you keep.") | 9–10 | built, reviewed on stills |
+| 5 Play (flashcards fan and turn) | 11–12 | built, reviewed on stills |
 | 6 Letter (night columns, letter folds, coral seal lands) | 13–15 | todo |
 | 7 Share (pin → story → square, scatter) | 16–17 | todo |
 | 8 Lockup (bloom unfolds around the coral petal, wordmark, "Now on Android") | 18–19 + tail | todo |
@@ -41,9 +41,10 @@ Then: `src/sync.ts` (sound events), earshot kit + score, 9:16 and 1:1 re-layouts
 
 ## Exact next step
 
-Write `video/launch/src/acts/Act3.tsx` (the phone rises already moving on CUE.rise; the petal falls
-from `kit/device.ts` FALL into the Save heart at CUE.heart; the word rewrites in place at
-CUE.rewrite1 / rewrite2; dive at CUE.dive), add it to `src/acts/index.ts`, peek, commit, push.
+Write `video/launch/src/acts/Act6.tsx` (night columns rise at CUE.night over the Play deck, the
+letter slides in writing "Dear future me," at CUE.paper, folds into its envelope at CUE.fold, the
+coral petal seal lands at CUE.seal with a squash, "Opens in 6 months" at CUE.opens, the envelope
+flips at CUE.flip), add it to `src/acts/index.ts`, peek, commit, push. Then Act 7 and Act 8.
 
 ## Commands
 
