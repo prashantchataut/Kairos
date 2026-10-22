@@ -15,7 +15,7 @@ class Provider(val id: String, val label: String, val model: String, val client:
  * diffusion model, very fast) for words, and Gemini Flash for thoughts and books, where getting a
  * real quote or a real book exactly right matters more than speed. Each falls back to the other.
  */
-class Writer(private val keys: SecureKeyStore, private val model: suspend () -> String) {
+class Writer(private val keys: SecureKeyStore, val local: LocalModel? = null, private val model: suspend () -> String) {
     private val mercury = BuiltInKeys.mercury.takeIf { it.isNotBlank() }?.let {
         Provider("mercury", "Mercury 3", "mercury-3", OpenRouter(null, "https://api.inceptionlabs.ai/v1", it, openRouter = false, reasoningEffort = "low", maxTokensField = "max_completion_tokens"))
     }
@@ -35,10 +35,15 @@ class Writer(private val keys: SecureKeyStore, private val model: suspend () -> 
         return listOfNotNull(own) + builtIn
     }
 
-    /** Writes with the first provider that answers; remembers the last error if all of them fail. */
-    suspend fun completeJson(task: Task, system: String, user: String, schemaName: String, schema: JsonObject, maxTokens: Int): JsonObject {
+    /**
+     * Writes with the first provider that answers; remembers the last error if all of them fail.
+     * For thoughts, the on-device model is the last resort (and the only one when offline): given
+     * [localUser], it writes original lines and affirmations, never attributed quotes.
+     */
+    suspend fun completeJson(task: Task, system: String, user: String, schemaName: String, schema: JsonObject, maxTokens: Int, localUser: String? = null): JsonObject {
         val providers = chain(task)
-        if (providers.isEmpty()) throw AiError.NoKey()
+        val canLocal = task == Task.Thoughts && localUser != null && local != null && local.status.value == LocalStatus.Ready
+        if (providers.isEmpty() && !canLocal) throw AiError.NoKey()
         var last: AiError = AiError.Malformed()
         for (p in providers) {
             try {
@@ -46,9 +51,10 @@ class Writer(private val keys: SecureKeyStore, private val model: suspend () -> 
             } catch (e: AiError) {
                 last = e
                 // The person's own key failing for account reasons should be shown, not hidden.
-                if (p.id == "openrouter" && (e is AiError.BadKey || e is AiError.NoCredits) && !hasBuiltIn) throw e
+                if (p.id == "openrouter" && (e is AiError.BadKey || e is AiError.NoCredits) && !hasBuiltIn && !canLocal) throw e
             }
         }
+        if (canLocal) return local!!.completeJson(LocalModel.system, localUser!!)
         throw last
     }
 }

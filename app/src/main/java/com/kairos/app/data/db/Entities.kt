@@ -63,12 +63,13 @@ data class QuoteEntity(
     val timesShown: Int = 0,
     val lastShownDay: Long? = null,
     val taste: Int = 0,
-    /** "quote" (a real person's words), "line" (written for this person by Kai) or "proverb". */
+    /** "quote" (a real person's words), "line" (written by Kai), "affirmation" (first person) or "proverb". */
     @ColumnInfo(defaultValue = "quote") val kind: String = "quote",
     /** Where a quote comes from (a book, song or film), when known. */
     @ColumnInfo(defaultValue = "") val source: String = "",
 ) {
-    val isLine get() = kind == "line"
+    /** Kai's own writing: no author to show. */
+    val isLine get() = kind == "line" || kind == "affirmation"
 }
 
 /** A micro-summary of a book worth knowing, written for one person. */

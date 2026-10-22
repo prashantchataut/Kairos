@@ -132,6 +132,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.haze)
     implementation(libs.okhttp)
+    implementation(libs.mlkit.genai.prompt)
     implementation(libs.androidx.security.crypto)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)

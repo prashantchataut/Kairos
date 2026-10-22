@@ -139,7 +139,7 @@ object DailyEngine {
             if (q.author in taste.lovedAuthors) s.add(1.4, "More from ${q.author}, whom you kept before")
             if (q.theme in partThemes) s.add(1.0, "A ${dayPart.name.lowercase()} thought")
             if (lastKind != null && q.kind != lastKind) s.add(0.6)
-            if (q.isLine) s.add(0.2, "Written just for you")
+            if (q.isLine) s.add(0.2)
             s.add(-taste.recentThemes.take(3).count { it == q.theme } * 0.9)
             if (q.timesShown == 0) s.add(0.8)
             s.add(random.nextDouble() * 2.0)

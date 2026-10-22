@@ -338,7 +338,7 @@ private fun FreshThoughtCard(q: QuoteEntity, modifier: Modifier = Modifier, onCl
         Spacer(Modifier.height(Gap.sm))
         com.kairos.app.ui.components.FitText(q.text, K.type.quote, p.ink, Modifier.fillMaxWidth().weight(1f), max = 22.sp, min = 12.sp, lineHeight = 1.2f)
         Spacer(Modifier.height(Gap.sm))
-        Text(if (q.isLine) "written for you" else q.author, style = K.type.caption.copy(fontWeight = FontWeight.SemiBold), color = p.tintInk(t), maxLines = 1)
+        Text(if (q.isLine) Topics.themeLabel(q.theme) else q.author, style = K.type.caption.copy(fontWeight = FontWeight.SemiBold), color = p.tintInk(t), maxLines = 1)
     }
 }
 
@@ -420,7 +420,7 @@ private fun QuoteTile(q: QuoteEntity, index: Int, onClick: () -> Unit, modifier:
         Text(q.text, style = (if (q.isLine) K.type.body.copy(fontWeight = FontWeight.Medium, fontSize = 17.sp, lineHeight = 23.sp) else K.type.quote.copy(fontSize = 19.sp, lineHeight = 25.sp)), color = ink)
         Spacer(Modifier.height(Gap.md))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(if (q.isLine) "written for you" else q.author, style = K.type.caption.copy(fontWeight = FontWeight.SemiBold), color = if (dark) Color.White.copy(alpha = 0.7f) else p.tintInk(t), modifier = Modifier.weight(1f), maxLines = 2)
+            Text(if (q.isLine) Topics.themeLabel(q.theme) else q.author, style = K.type.caption.copy(fontWeight = FontWeight.SemiBold), color = if (dark) Color.White.copy(alpha = 0.7f) else p.tintInk(t), modifier = Modifier.weight(1f), maxLines = 2)
             if (q.saved) Icon(Icons.HeartOn, null, tint = Candy.Coral, modifier = Modifier.size(14.dp))
         }
     }

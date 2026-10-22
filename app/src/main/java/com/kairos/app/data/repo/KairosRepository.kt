@@ -121,7 +121,7 @@ class KairosRepository(
             val knownQuotes = db.quotes().all().map { it.id }.toSet()
             val parts = coroutineScope {
                 val w = if (words > 0) async { runCatching { writer.completeJson(Task.Words, Curator.wordsSystem, Curator.wordsMessage(profile, words), "kairos_words", Curator.wordsSchema, 400 + words * 260) } } else null
-                val t = if (quotes + sparks + prompts > 0) async { runCatching { writer.completeJson(Task.Thoughts, Curator.thoughtsSystem, Curator.thoughtsMessage(profile, quotes, sparks, prompts), "kairos_thoughts", Curator.thoughtsSchema, 400 + quotes * 160 + (sparks + prompts) * 60) } } else null
+                val t = if (quotes + sparks + prompts > 0) async { runCatching { writer.completeJson(Task.Thoughts, Curator.thoughtsSystem, Curator.thoughtsMessage(profile, quotes, sparks, prompts), "kairos_thoughts", Curator.thoughtsSchema, 400 + quotes * 160 + (sparks + prompts) * 60, localUser = Curator.localThoughtsMessage(profile, quotes, sparks, prompts)) } } else null
                 val b = if (books > 0) async {
                     val avoid = db.books().all().map { "${it.title} (${it.author})" }.takeLast(60)
                     runCatching { writer.completeJson(Task.Books, Curator.booksSystem, Curator.booksMessage(profile, books, avoid), "kairos_books", Curator.booksSchema, 400 + books * 380) }
