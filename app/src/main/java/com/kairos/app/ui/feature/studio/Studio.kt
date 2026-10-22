@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -83,7 +84,7 @@ fun StudioScreen(kind: String, id: String, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val flow = remember(kind, id) {
         if (kind == "word") c.kairos.observeWord(id).map { w -> w?.let { CardContent(true, it.word, it.pronunciation, it.partOfSpeech, it.definition, it.example) } }
-        else c.kairos.observeQuote(id).map { q -> q?.let { CardContent(false, it.text, byline = it.author) } }
+        else c.kairos.observeQuote(id).map { q -> q?.let { CardContent(false, it.text, byline = it.author.ifBlank { "written for you" }) } }
     }
     val content by flow.collectAsStateWithLifecycle(initialValue = null)
     var hue by rememberSaveable { mutableIntStateOf(0) }
@@ -145,9 +146,20 @@ fun StudioScreen(kind: String, id: String, onBack: () -> Unit) {
                 }
             }
         }
+        // Template picker: a live thumbnail of every style, the current one lifted and outlined.
+        val thumb = content
         LazyRow(contentPadding = PaddingValues(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.sm), modifier = Modifier.padding(vertical = Gap.sm)) {
             items(Template.entries.size) { i ->
-                Chip(Template.entries[i].label, i == pager.currentPage, { scope.launch { pager.animateScrollToPage(i) } })
+                val on = i == pager.currentPage
+                val lift by androidx.compose.animation.core.animateFloatAsState(if (on) 1f else 0f, com.kairos.app.ui.theme.Motion.bloom(), label = "thumb")
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.pressable(label = Template.entries[i].label) { scope.launch { pager.animateScrollToPage(i) } }) {
+                    Box(
+                        Modifier.graphicsLayer { translationY = -lift * 6f * density; val s = 1f + lift * 0.06f; scaleX = s; scaleY = s }
+                            .border(if (on) 2.dp else 0.dp, if (on) p.ink else Color.Transparent, RoundedCornerShape(12.dp)).padding(3.dp).clip(RoundedCornerShape(9.dp)),
+                    ) { if (thumb != null) CardThumbnail(thumb, Template.entries[i], Hue.entries[hue], 52.dp, ratio = fmt.ratio) }
+                    Spacer(Modifier.height(4.dp))
+                    Text(Template.entries[i].label, style = K.type.caption, color = if (on) p.ink else p.inkFaint)
+                }
             }
         }
         Row(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter, vertical = Gap.sm), horizontalArrangement = Arrangement.spacedBy(Gap.md), verticalAlignment = Alignment.CenterVertically) {

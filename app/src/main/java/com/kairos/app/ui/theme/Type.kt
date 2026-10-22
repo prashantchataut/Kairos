@@ -46,6 +46,15 @@ val SerifText = FontFamily(
     fraunces(400, 24f, italic = true, soft = 50f, wonk = 0f),
 )
 
+/** Handwriting for warm cards and letters (n11, n12). */
+val Hand = FontFamily(
+    Font(R.font.caveat, FontWeight(500), variationSettings = FontVariation.Settings(FontVariation.weight(500))),
+    Font(R.font.caveat, FontWeight(700), variationSettings = FontVariation.Settings(FontVariation.weight(700))),
+)
+
+/** A chunky, soft storybook serif (n08, n16): Fraunces at its heaviest and softest. */
+val Chunky = FontFamily(fraunces(900, 144f, soft = 100f, wonk = 1f))
+
 @Immutable
 data class Typography(
     /** 76 Fraunces: the word of the day. */
