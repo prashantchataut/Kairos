@@ -1,30 +1,39 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="108dp" android:height="108dp"
-    android:viewportWidth="108" android:viewportHeight="108">
-    <group android:translateX="29" android:translateY="27" android:scaleX="0.5" android:scaleY="0.5">
-        <path android:pathData="M18,92a32,6 0 1,0 64,0a32,6 0 1,0 -64,0" android:strokeWidth="3" android:strokeColor="#998EC5FF" android:fillColor="#00000000"/>
-        <path android:pathData="M52,4C62,20 80,38 80,58C80,76 67,88 50,88C33,88 20,76 20,58C20,38 40,22 52,4Z">
-            <aapt:attr name="android:fillColor">
-                <gradient android:type="linear" android:startX="30" android:startY="10" android:endX="72" android:endY="90">
-                    <item android:offset="0" android:color="#FF8EC5FF"/>
-                    <item android:offset="0.5" android:color="#FF3461E8"/>
-                    <item android:offset="1" android:color="#FF7A5CE0"/>
-                </gradient>
-            </aapt:attr>
-        </path>
-        <path android:pathData="M52,4C62,20 80,38 80,58C80,76 67,88 50,88C33,88 20,76 20,58C20,38 40,22 52,4Z">
-            <aapt:attr name="android:fillColor">
-                <gradient android:type="radial" android:centerX="38" android:centerY="46" android:gradientRadius="30">
-                    <item android:offset="0" android:color="#73FFFFFF"/>
-                    <item android:offset="1" android:color="#00FFFFFF"/>
-                </gradient>
-            </aapt:attr>
-        </path>
-        <group android:rotation="-26" android:pivotX="36" android:pivotY="52">
-            <path android:pathData="M31,49a4,9 0 1,0 8,0a4,9 0 1,0 -8,0" android:fillColor="#D9FFFFFF"/>
-        </group>
-        <path android:pathData="M80,5Q82.1,15.9 93,18Q82.1,20.1 80,31Q77.9,20.1 67,18Q77.9,15.9 80,5Z" android:fillColor="#FFFFE59C"/>
-        <path android:pathData="M90,30Q91,35 96,36Q91,37 90,42Q89,37 84,36Q89,35 90,30Z" android:fillColor="#FFFFFFFF"/>
-    </group>
-</vector>
+            xmlns:aapt="http://schemas.android.com/aapt"
+            android:width="108dp" android:height="108dp"
+            android:viewportWidth="108" android:viewportHeight="108">
+            <group android:name="all" android:translateY="0.0">
+            <group android:name="petal0" android:pivotX="54.0" android:pivotY="54.0" android:rotation="0"><group android:name="grow0" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M54.00,48.24C56.07,44.96 58.92,39.35 58.92,34.92C58.92,32.21 56.71,30.00 54.00,30.00C51.29,30.00 49.08,32.21 49.08,34.92C49.08,39.35 51.93,44.96 54.00,48.24Z" android:fillColor="#FFFFFFFF"/></group></group>
+            <group android:name="petal1" android:pivotX="54.0" android:pivotY="54.0" android:rotation="45"><group android:name="grow1" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M54.00,48.24C56.07,44.96 58.92,39.35 58.92,34.92C58.92,32.21 56.71,30.00 54.00,30.00C51.29,30.00 49.08,32.21 49.08,34.92C49.08,39.35 51.93,44.96 54.00,48.24Z" android:fillColor="#FFFFFFFF"/></group></group>
+            <group android:name="petal2" android:pivotX="54.0" android:pivotY="54.0" android:rotation="90"><group android:name="grow2" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M54.00,48.24C56.07,44.96 58.92,39.35 58.92,34.92C58.92,32.21 56.71,30.00 54.00,30.00C51.29,30.00 49.08,32.21 49.08,34.92C49.08,39.35 51.93,44.96 54.00,48.24Z" android:fillColor="#FFFFFFFF"/></group></group>
+            <group android:name="petal3" android:pivotX="54.0" android:pivotY="54.0" android:rotation="135"><group android:name="grow3" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M54.00,48.24C56.07,45.61 58.92,43.00 58.92,38.57C58.92,35.86 56.71,33.65 54.00,33.65C51.29,33.65 49.08,35.86 49.08,38.57C49.08,43.00 51.93,45.61 54.00,48.24Z" android:fillColor="#FFFFFFFF"/></group></group>
+            <group android:name="petal4" android:pivotX="54.0" android:pivotY="54.0" android:rotation="180"><group android:name="grow4" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M54.00,48.24C56.07,44.96 58.92,39.35 58.92,34.92C58.92,32.21 56.71,30.00 54.00,30.00C51.29,30.00 49.08,32.21 49.08,34.92C49.08,39.35 51.93,44.96 54.00,48.24Z" android:fillColor="#FFFFFFFF"/></group></group>
+            <group android:name="petal5" android:pivotX="54.0" android:pivotY="54.0" android:rotation="225"><group android:name="grow5" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M54.00,48.24C56.07,45.61 58.92,43.00 58.92,38.57C58.92,35.86 56.71,33.65 54.00,33.65C51.29,33.65 49.08,35.86 49.08,38.57C49.08,43.00 51.93,45.61 54.00,48.24Z" android:fillColor="#FFFFFFFF"/></group></group>
+            <group android:name="petal6" android:pivotX="54.0" android:pivotY="54.0" android:rotation="270"><group android:name="grow6" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M54.00,48.24C56.07,44.96 58.92,39.35 58.92,34.92C58.92,32.21 56.71,30.00 54.00,30.00C51.29,30.00 49.08,32.21 49.08,34.92C49.08,39.35 51.93,44.96 54.00,48.24Z" android:fillColor="#FFFFFFFF"/></group></group>
+            <group android:name="petal7" android:pivotX="54.0" android:pivotY="54.0" android:rotation="315"><group android:name="grow7" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M54.00,48.24C56.07,45.61 58.92,43.00 58.92,38.57C58.92,35.86 56.71,33.65 54.00,33.65C51.29,33.65 49.08,35.86 49.08,38.57C49.08,43.00 51.93,45.61 54.00,48.24Z" android:fillColor="#FFFFFFFF"/></group></group>
+            <group android:name="core" android:pivotX="54.0" android:pivotY="54.0" android:scaleX="0" android:scaleY="0"><path android:pathData="M47.76,54.00a6.24,6.24 0 1,0 12.48,0a6.24,6.24 0 1,0 -12.48,0" android:fillColor="#FFFFFFFF"/></group>
+            </group>
+        </vector>
+        
+    </aapt:attr>
+    <target android:name="grow0"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="60" android:duration="420" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="60" android:duration="420" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+    <target android:name="petal0"><aapt:attr name="android:animation"><objectAnimator android:propertyName="rotation" android:valueFrom="-28" android:valueTo="0" android:startOffset="60" android:duration="480" android:interpolator="@android:interpolator/decelerate_cubic"/></aapt:attr></target>
+    <target android:name="grow1"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="115" android:duration="420" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="115" android:duration="420" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+    <target android:name="petal1"><aapt:attr name="android:animation"><objectAnimator android:propertyName="rotation" android:valueFrom="17" android:valueTo="45" android:startOffset="115" android:duration="480" android:interpolator="@android:interpolator/decelerate_cubic"/></aapt:attr></target>
+    <target android:name="grow2"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="170" android:duration="420" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="170" android:duration="420" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+    <target android:name="petal2"><aapt:attr name="android:animation"><objectAnimator android:propertyName="rotation" android:valueFrom="62" android:valueTo="90" android:startOffset="170" android:duration="480" android:interpolator="@android:interpolator/decelerate_cubic"/></aapt:attr></target>
+    <target android:name="grow3"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="225" android:duration="420" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="225" android:duration="420" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+    <target android:name="petal3"><aapt:attr name="android:animation"><objectAnimator android:propertyName="rotation" android:valueFrom="107" android:valueTo="135" android:startOffset="225" android:duration="480" android:interpolator="@android:interpolator/decelerate_cubic"/></aapt:attr></target>
+    <target android:name="grow4"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="280" android:duration="420" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="280" android:duration="420" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+    <target android:name="petal4"><aapt:attr name="android:animation"><objectAnimator android:propertyName="rotation" android:valueFrom="152" android:valueTo="180" android:startOffset="280" android:duration="480" android:interpolator="@android:interpolator/decelerate_cubic"/></aapt:attr></target>
+    <target android:name="grow5"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="335" android:duration="420" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="335" android:duration="420" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+    <target android:name="petal5"><aapt:attr name="android:animation"><objectAnimator android:propertyName="rotation" android:valueFrom="197" android:valueTo="225" android:startOffset="335" android:duration="480" android:interpolator="@android:interpolator/decelerate_cubic"/></aapt:attr></target>
+    <target android:name="grow6"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="390" android:duration="420" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="390" android:duration="420" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+    <target android:name="petal6"><aapt:attr name="android:animation"><objectAnimator android:propertyName="rotation" android:valueFrom="242" android:valueTo="270" android:startOffset="390" android:duration="480" android:interpolator="@android:interpolator/decelerate_cubic"/></aapt:attr></target>
+    <target android:name="grow7"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="445" android:duration="420" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="445" android:duration="420" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+    <target android:name="petal7"><aapt:attr name="android:animation"><objectAnimator android:propertyName="rotation" android:valueFrom="287" android:valueTo="315" android:startOffset="445" android:duration="480" android:interpolator="@android:interpolator/decelerate_cubic"/></aapt:attr></target>
+    <target android:name="core"><aapt:attr name="android:animation"><set><objectAnimator android:propertyName="scaleX" android:valueFrom="0" android:valueTo="1" android:startOffset="560" android:duration="380" android:interpolator="@android:interpolator/overshoot"/><objectAnimator android:propertyName="scaleY" android:valueFrom="0" android:valueTo="1" android:startOffset="560" android:duration="380" android:interpolator="@android:interpolator/overshoot"/></set></aapt:attr></target>
+</animated-vector>

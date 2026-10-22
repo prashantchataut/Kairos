@@ -1,3 +1,13 @@
+import java.util.Properties
+
+/** Built-in AI keys come from local.properties or the environment (CI secrets) and are XOR-masked. */
+fun secret(name: String): String {
+    val local = Properties().apply { rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) } }
+    val raw = (local.getProperty(name) ?: System.getenv(name) ?: "").trim()
+    val mask = "kairos-the-right-moment".toByteArray()
+    return raw.toByteArray().mapIndexed { i, b -> "%02x".format((b.toInt() xor mask[i % mask.size].toInt()) and 0xff) }.joinToString("")
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,10 +26,12 @@ android {
         applicationId = "com.kairos.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 200
-        versionName = "2.0.0"
+        versionCode = 210
+        versionName = "2.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
+        buildConfigField("String", "MERCURY_KEY_MASKED", "\"${secret("INCEPTION_API_KEY")}\"")
+        buildConfigField("String", "GEMINI_KEY_MASKED", "\"${secret("GEMINI_API_KEY")}\"")
     }
 
     ksp {

@@ -12,41 +12,77 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.kairos.app.R
 
-/* Two families: Instrument Sans carries the interface; Instrument Serif carries the words and quotes. */
+/*
+ * Two families. Bricolage Grotesque carries the interface and the big playful headlines (its
+ * ExtraBold at a large optical size is the r03 "Abode" energy). Fraunces carries the words, quotes
+ * and letters, with its SOFT and WONK axes turned up so the serif feels warm rather than solemn.
+ */
 
-private fun sans(w: Int) = Font(R.font.instrument_sans, FontWeight(w), variationSettings = FontVariation.Settings(FontVariation.weight(w)))
-
-val Sans = FontFamily(sans(400), sans(500), sans(600), sans(700))
-val Serif = FontFamily(
-    Font(R.font.instrument_serif, FontWeight.Normal, FontStyle.Normal),
-    Font(R.font.instrument_serif_italic, FontWeight.Normal, FontStyle.Italic),
+private fun brico(w: Int, opsz: Float = 16f, wdth: Float = 100f) = Font(
+    R.font.bricolage, FontWeight(w),
+    variationSettings = FontVariation.Settings(FontVariation.weight(w), FontVariation.Setting("opsz", opsz), FontVariation.Setting("wdth", wdth)),
 )
+
+private fun fraunces(w: Int, opsz: Float, italic: Boolean = false, soft: Float = 100f, wonk: Float = 1f) = Font(
+    if (italic) R.font.fraunces_italic else R.font.fraunces, FontWeight(w), if (italic) FontStyle.Italic else FontStyle.Normal,
+    variationSettings = FontVariation.Settings(FontVariation.weight(w), FontVariation.Setting("opsz", opsz), FontVariation.Setting("SOFT", soft), FontVariation.Setting("WONK", wonk)),
+)
+
+/** Interface text. */
+val Sans = FontFamily(brico(400), brico(500), brico(600), brico(700))
+
+/** Big headlines: ExtraBold, display optical size, a touch condensed. */
+val Display = FontFamily(brico(800, opsz = 96f, wdth = 88f), brico(700, opsz = 72f, wdth = 92f))
+
+/** The word of the day, at display optical size. */
+val Serif = FontFamily(
+    fraunces(400, 144f), fraunces(600, 144f),
+    fraunces(400, 72f, italic = true), fraunces(600, 72f, italic = true),
+)
+
+/** Reading serif for quotes in cards and letters: text optical size so it stays sturdy small. */
+val SerifText = FontFamily(
+    fraunces(400, 24f, soft = 50f, wonk = 0f), fraunces(600, 24f, soft = 50f, wonk = 0f),
+    fraunces(400, 24f, italic = true, soft = 50f, wonk = 0f),
+)
+
+/** Handwriting for warm cards and letters (n11, n12). */
+val Hand = FontFamily(
+    Font(R.font.caveat, FontWeight(500), variationSettings = FontVariation.Settings(FontVariation.weight(500))),
+    Font(R.font.caveat, FontWeight(700), variationSettings = FontVariation.Settings(FontVariation.weight(700))),
+)
+
+/** A chunky, soft storybook serif (n08, n16): Fraunces at its heaviest and softest. */
+val Chunky = FontFamily(fraunces(900, 144f, soft = 100f, wonk = 1f))
 
 @Immutable
 data class Typography(
-    /** 72 serif — the word of the day on the sky. */
+    /** 76 Fraunces: the word of the day. */
     val hero: TextStyle,
-    /** 40 serif — word titles, big dates. */
+    /** 40 Fraunces: word titles, big dates. */
     val serifLarge: TextStyle,
-    /** 26 serif italic — quotes. */
+    /** 26 Fraunces italic: quotes. */
     val quote: TextStyle,
-    /** 30 sans — screen titles. */
+    /** 44 Bricolage ExtraBold: playful headlines (onboarding, big moments). */
+    val shout: TextStyle,
+    /** 30 Bricolage Bold: screen titles. */
     val display: TextStyle,
-    /** 19 sans — card titles. */
+    /** 19 sans: card titles. */
     val title: TextStyle,
-    /** 16 sans — body. */
+    /** 16 sans: body. */
     val body: TextStyle,
-    /** 14 sans — labels, buttons. */
+    /** 14 sans: labels, buttons. */
     val label: TextStyle,
-    /** 12 sans — captions. */
+    /** 12 sans: captions. */
     val caption: TextStyle,
 )
 
 val DefaultTypography = Typography(
-    hero = TextStyle(fontFamily = Serif, fontSize = 72.sp, lineHeight = 74.sp, letterSpacing = (-0.02).em),
-    serifLarge = TextStyle(fontFamily = Serif, fontSize = 40.sp, lineHeight = 44.sp, letterSpacing = (-0.01).em),
-    quote = TextStyle(fontFamily = Serif, fontStyle = FontStyle.Italic, fontSize = 26.sp, lineHeight = 33.sp),
-    display = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontSize = 30.sp, lineHeight = 36.sp, letterSpacing = (-0.02).em),
+    hero = TextStyle(fontFamily = Serif, fontSize = 76.sp, lineHeight = 78.sp, letterSpacing = (-0.03).em),
+    serifLarge = TextStyle(fontFamily = Serif, fontSize = 40.sp, lineHeight = 44.sp, letterSpacing = (-0.02).em),
+    quote = TextStyle(fontFamily = Serif, fontStyle = FontStyle.Italic, fontSize = 26.sp, lineHeight = 33.sp, letterSpacing = (-0.01).em),
+    shout = TextStyle(fontFamily = Display, fontWeight = FontWeight.ExtraBold, fontSize = 44.sp, lineHeight = 44.sp, letterSpacing = (-0.03).em),
+    display = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 34.sp, letterSpacing = (-0.025).em),
     title = TextStyle(fontFamily = Sans, fontWeight = FontWeight.SemiBold, fontSize = 19.sp, lineHeight = 25.sp, letterSpacing = (-0.01).em),
     body = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp),
     label = TextStyle(fontFamily = Sans, fontWeight = FontWeight.Medium, fontSize = 14.sp, lineHeight = 20.sp),

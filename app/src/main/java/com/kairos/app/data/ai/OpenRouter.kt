@@ -30,15 +30,23 @@ sealed class AiError(message: String) : Exception(message) {
     class Malformed : AiError("The model's answer didn't make sense. Trying again usually helps.")
 }
 
-/** Minimal OpenRouter chat-completions client with structured (JSON schema) output. */
+/**
+ * A small OpenAI-style chat-completions client with structured (JSON schema) output. It talks to
+ * OpenRouter by default; [Writer] also points it at Inception (Mercury) and Gemini, which speak the
+ * same protocol. [openRouter] adds the OpenRouter-only headers and plugins; [reasoningEffort] is
+ * sent when a provider supports it.
+ */
 class OpenRouter(
     private val keys: SecureKeyStore?,
     private val baseUrl: String = "https://openrouter.ai/api/v1",
     private val keyOverride: String? = null,
+    private val openRouter: Boolean = true,
+    private val reasoningEffort: String? = null,
+    private val maxTokensField: String = "max_tokens",
 ) {
     private val http = OkHttpClient.Builder()
         .connectTimeout(20, TimeUnit.SECONDS)
-        .readTimeout(90, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
         .build()
     private val json = Json { ignoreUnknownKeys = true }
     private val mediaJson = "application/json".toMediaType()
@@ -47,8 +55,7 @@ class OpenRouter(
 
     private fun Request.Builder.common(key: String) = this
         .header("Authorization", "Bearer $key")
-        .header("HTTP-Referer", "https://github.com/prashantchataut/Kairos")
-        .header("X-Title", "Kairos")
+        .apply { if (openRouter) header("HTTP-Referer", "https://github.com/prashantchataut/Kairos").header("X-Title", "Kairos") }
 
     /** Checks a key without spending credits. Returns null when valid, or the reason it isn't. */
     suspend fun validate(candidate: String): AiError? = withContext(Dispatchers.IO) {
@@ -79,11 +86,13 @@ class OpenRouter(
         schemaName: String,
         schema: JsonObject,
         temperature: Double = 0.9,
+        maxTokens: Int = 3000,
     ): JsonObject = withContext(Dispatchers.IO) {
         val body = buildJsonObject {
             put("model", model)
             put("temperature", temperature)
-            put("max_tokens", 6000)
+            put(maxTokensField, maxTokens)
+            if (reasoningEffort != null) put("reasoning_effort", reasoningEffort)
             put("messages", buildJsonArray {
                 add(buildJsonObject { put("role", "system"); put("content", system) })
                 add(buildJsonObject { put("role", "user"); put("content", user) })
@@ -96,7 +105,7 @@ class OpenRouter(
                     put("schema", schema)
                 })
             })
-            put("plugins", buildJsonArray { add(buildJsonObject { put("id", "response-healing") }) })
+            if (openRouter) put("plugins", buildJsonArray { add(buildJsonObject { put("id", "response-healing") }) })
         }
         val req = Request.Builder()
             .url("$baseUrl/chat/completions")

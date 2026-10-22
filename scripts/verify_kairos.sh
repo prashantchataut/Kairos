@@ -10,7 +10,7 @@ if [ -d app/src/main/assets/content ]; then
   fail "bundled content found in assets/content; words and quotes must come from the curator"
 fi
 
-for f in instrument_sans instrument_serif instrument_serif_italic; do
+for f in bricolage fraunces fraunces_italic; do
   [ -s "app/src/main/res/font/$f.ttf" ] || fail "missing font $f.ttf"
 done
 

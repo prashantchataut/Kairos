@@ -57,6 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
+import com.kairos.app.ui.art.drawBloom
 import com.kairos.app.ui.theme.Gap
 import com.kairos.app.ui.theme.K
 import com.kairos.app.ui.theme.Motion
@@ -153,20 +154,27 @@ fun GlassAction(icon: ImageVector, label: String, onClick: () -> Unit, modifier:
 }
 
 @Composable
-fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, icon: ImageVector? = null, enabled: Boolean = true, dark: Boolean = false) {
+fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, icon: ImageVector? = null, enabled: Boolean = true, dark: Boolean = false, onSky: Boolean = false) {
     val p = K.colors
     val bg by animateColorAsState(
         when {
+            !enabled && onSky -> Color.White.copy(alpha = 0.3f)
             !enabled -> p.inkFaint.copy(alpha = 0.35f)
+            onSky -> Color.White
             dark -> p.ink
             else -> p.accent
         }, label = "btn",
     )
-    val fg = if (dark) p.canvas else p.onAccent
+    val fg = when {
+        onSky -> if (enabled) p.skyTop.let { androidx.compose.ui.graphics.lerp(it, p.ink, 0.55f) } else Color.White.copy(alpha = 0.8f)
+        dark -> p.canvas
+        else -> p.onAccent
+    }
     Row(
         modifier
-            .pressable(enabled = enabled, onClick = onClick)
-            .defaultMinSize(minHeight = 52.dp)
+            .pressable(enabled = enabled, scale = 0.95f, onClick = onClick)
+            .defaultMinSize(minHeight = 54.dp)
+            .shadow(if (enabled && (dark || onSky)) 14.dp else 0.dp, CircleShape, ambientColor = p.shadow, spotColor = p.shadow)
             .clip(CircleShape)
             .background(bg)
             .padding(horizontal = 24.dp),
@@ -174,7 +182,7 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) { Icon(icon, null, tint = fg, modifier = Modifier.size(19.dp)); Spacer(Modifier.width(Gap.sm)) }
-        Text(text, style = K.type.label.copy(fontSize = K.type.body.fontSize), color = fg)
+        Text(text, style = K.type.label.copy(fontSize = K.type.body.fontSize, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold), color = fg)
     }
 }
 
@@ -310,39 +318,30 @@ fun Empty(title: String, body: String, modifier: Modifier = Modifier, action: (@
 }
 
 /**
- * The Kairos mark: eight rounded rays — a moment opening up. [tinted] paints it cobalt on a soft
- * badge; otherwise it is drawn in [color] alone (for use on the sky).
+ * The Kairos mark: the moment bloom (see ui/art/Bloom.kt), always in a single colour. [tinted] puts a
+ * white mark on a cobalt badge; otherwise it is drawn in [color].
  */
 @Composable
-fun KairosMark(size: Dp, modifier: Modifier = Modifier, color: Color = Color.White, tinted: Boolean = false) {
-    val p = K.colors
+fun KairosMark(size: Dp, modifier: Modifier = Modifier, color: Color = Color.White, tinted: Boolean = false, mono: Boolean = false) {
     Canvas(modifier.size(size)) {
         if (tinted) {
-            drawCircle(Brush.linearGradient(listOf(Color(0xFF5B9BFF), Color(0xFF2D6BFF), Color(0xFF6A5CFF)), Offset.Zero, Offset(this.size.width, this.size.height)))
-            drawMark(Color.White, inset = 0.24f)
-        } else drawMark(color, inset = 0f)
+            drawCircle(Brush.linearGradient(listOf(Color(0xFF5B95FF), Color(0xFF2F5BFF), Color(0xFF5A4BFF)), Offset.Zero, Offset(this.size.width, this.size.height)))
+            drawBloom(radius = this.size.minDimension * 0.34f)
+        } else drawMark(color, 0f)
     }
 }
 
+/** Single-colour bloom, for share cards and seals. */
 fun DrawScope.drawMark(color: Color, inset: Float) {
-    val r = size.minDimension / 2f
-    val c = Offset(size.width / 2, size.height / 2)
-    val outer = r * (1f - inset)
-    val inner = outer * 0.18f
-    val w = outer * 0.2f
-    for (i in 0 until 8) {
-        val a = (i * 45f - 90f) * (PI / 180f).toFloat()
-        val len = if (i % 2 == 0) outer - w / 2 else (outer - w / 2) * 0.78f
-        drawLine(color, Offset(c.x + cos(a) * inner, c.y + sin(a) * inner), Offset(c.x + cos(a) * len, c.y + sin(a) * len), strokeWidth = w, cap = StrokeCap.Round)
-    }
+    drawBloom(radius = size.minDimension / 2f * (1f - inset), petal = color)
 }
 
 @Composable
 fun Wordmark(modifier: Modifier = Modifier, color: Color = K.colors.ink, markColor: Color = color) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-        KairosMark(18.dp, color = markColor)
+        KairosMark(20.dp, color = markColor)
         Spacer(Modifier.width(7.dp))
-        Text("Kairos", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Serif, fontWeight = androidx.compose.ui.text.font.FontWeight.Normal, fontSize = K.type.title.fontSize * 1.25f), color = color)
+        Text("Kairos", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Serif, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = K.type.title.fontSize * 1.3f), color = color, maxLines = 1, softWrap = false)
     }
 }
 

@@ -90,7 +90,7 @@ object CapsuleScheduler {
 class RefillWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         val repo = (applicationContext as KairosApp).container.kairos
-        return runCatching { repo.topUpPool() }.fold(
+        return runCatching { repo.topUpPool(refresh = inputData.getBoolean(KEY_REFRESH, false)) }.fold(
             onSuccess = { Result.success() },
             onFailure = { e ->
                 when (e) {
@@ -102,6 +102,17 @@ class RefillWorker(context: Context, params: WorkerParameters) : CoroutineWorker
     }
 
     companion object {
+        private const val KEY_REFRESH = "refresh"
+
+        /** Every eight hours: retire stale unseen items and write fresh ones, so the pool keeps changing. */
+        fun schedulePeriodic(context: Context) {
+            val request = androidx.work.PeriodicWorkRequestBuilder<RefillWorker>(8, TimeUnit.HOURS)
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).setRequiresBatteryNotLow(true).build())
+                .setInputData(androidx.work.workDataOf(KEY_REFRESH to true))
+                .build()
+            runCatching { WorkManager.getInstance(context).enqueueUniquePeriodicWork("refresh", androidx.work.ExistingPeriodicWorkPolicy.KEEP, request) }
+        }
+
         fun enqueue(context: Context) {
             val request = OneTimeWorkRequestBuilder<RefillWorker>()
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())

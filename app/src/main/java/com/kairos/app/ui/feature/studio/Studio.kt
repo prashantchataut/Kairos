@@ -1,5 +1,9 @@
 package com.kairos.app.ui.feature.studio
 
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import com.kairos.app.ui.components.Chip
+import androidx.compose.ui.unit.sp
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -40,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -79,7 +84,7 @@ fun StudioScreen(kind: String, id: String, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val flow = remember(kind, id) {
         if (kind == "word") c.kairos.observeWord(id).map { w -> w?.let { CardContent(true, it.word, it.pronunciation, it.partOfSpeech, it.definition, it.example) } }
-        else c.kairos.observeQuote(id).map { q -> q?.let { CardContent(false, it.text, byline = it.author) } }
+        else c.kairos.observeQuote(id).map { q -> q?.let { CardContent(false, it.text, byline = it.author.ifBlank { "written for you" }) } }
     }
     val content by flow.collectAsStateWithLifecycle(initialValue = null)
     var hue by rememberSaveable { mutableIntStateOf(0) }
@@ -116,8 +121,8 @@ fun StudioScreen(kind: String, id: String, onBack: () -> Unit) {
             RoundIcon(Icons.Back, "Back", onBack)
             Spacer(Modifier.width(Gap.md))
             Column(Modifier.weight(1f)) {
-                Text("Make a card", style = K.type.title, color = p.ink)
-                Text("Swipe for styles", style = K.type.caption, color = p.inkSoft)
+                Text("Make a card", style = K.type.display.copy(fontSize = 24.sp), color = p.ink)
+                Text("Swipe or pick a style below", style = K.type.caption, color = p.inkSoft)
             }
         }
         val card = content
@@ -130,7 +135,8 @@ fun StudioScreen(kind: String, id: String, onBack: () -> Unit) {
                     val layer = rememberGraphicsLayer()
                     layers[page] = layer
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Box(Modifier.graphicsLayer { val s = lerp(1f, 0.88f, off); scaleX = scale * s; scaleY = scale * s; alpha = lerp(1f, 0.55f, off) }) {
+                        val side = if (page < pager.currentPage + pager.currentPageOffsetFraction) 1f else -1f
+                        Box(Modifier.graphicsLayer { val s = lerp(1f, 0.88f, off); scaleX = scale * s; scaleY = scale * s; alpha = lerp(1f, 0.55f, off); rotationY = side * off * 16f; cameraDistance = 12f * density }) {
                             Artboard(ART_DP / fmt.ratio, Modifier.shadow(30.dp, RoundedCornerShape(36.dp), ambientColor = p.shadow, spotColor = p.shadow).clip(RoundedCornerShape(36.dp)).drawWithContent {
                                 layer.record { this@drawWithContent.drawContent() }
                                 drawLayer(layer)
@@ -140,20 +146,28 @@ fun StudioScreen(kind: String, id: String, onBack: () -> Unit) {
                 }
             }
         }
-        Row(Modifier.fillMaxWidth().padding(vertical = Gap.sm), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-            Template.entries.forEachIndexed { i, _ ->
-                val w by animateDpAsState(if (i == pager.currentPage) 20.dp else 6.dp, label = "dot")
-                val col by animateColorAsState(if (i == pager.currentPage) p.ink else p.inkFaint.copy(alpha = 0.4f), label = "dotc")
-                Box(Modifier.padding(3.dp).height(6.dp).width(w).clip(CircleShape).background(col))
+        // Template picker: a live thumbnail of every style, the current one lifted and outlined.
+        val thumb = content
+        LazyRow(contentPadding = PaddingValues(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.sm), modifier = Modifier.padding(vertical = Gap.sm)) {
+            items(Template.entries.size) { i ->
+                val on = i == pager.currentPage
+                val lift by androidx.compose.animation.core.animateFloatAsState(if (on) 1f else 0f, com.kairos.app.ui.theme.Motion.bloom(), label = "thumb")
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.pressable(label = Template.entries[i].label) { scope.launch { pager.animateScrollToPage(i) } }) {
+                    Box(
+                        Modifier.graphicsLayer { translationY = -lift * 6f * density; val s = 1f + lift * 0.06f; scaleX = s; scaleY = s }
+                            .border(if (on) 2.dp else 0.dp, if (on) p.ink else Color.Transparent, RoundedCornerShape(12.dp)).padding(3.dp).clip(RoundedCornerShape(9.dp)),
+                    ) { if (thumb != null) CardThumbnail(thumb, Template.entries[i], Hue.entries[hue], 52.dp, ratio = fmt.ratio) }
+                    Spacer(Modifier.height(4.dp))
+                    Text(Template.entries[i].label, style = K.type.caption, color = if (on) p.ink else p.inkFaint)
+                }
             }
-            Spacer(Modifier.width(Gap.md))
-            Text(Template.entries[pager.currentPage].label, style = K.type.label, color = p.ink)
         }
         Row(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter, vertical = Gap.sm), horizontalArrangement = Arrangement.spacedBy(Gap.md), verticalAlignment = Alignment.CenterVertically) {
             Hue.entries.forEach { h ->
                 val on = h.ordinal == hue
+                val pop by androidx.compose.animation.core.animateFloatAsState(if (on) 1.15f else 1f, com.kairos.app.ui.theme.Motion.bloom(), label = "hue")
                 Box(
-                    Modifier.size(36.dp).pressable(label = h.label) { hue = h.ordinal }
+                    Modifier.size(36.dp).graphicsLayer { scaleX = pop; scaleY = pop }.pressable(label = h.label) { hue = h.ordinal }
                         .border(if (on) 2.dp else 1.dp, if (on) p.ink else p.line, CircleShape).padding(4.dp).clip(CircleShape)
                         .background(Brush.linearGradient(listOf(h.a, h.b)))
                 )

@@ -7,8 +7,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 /**
- * "Airy sky glass": a sky-blue hero that fades into a quiet white canvas, crisp frosted glass,
- * and one cobalt accent. Pastels appear only as tile tints in the library, never as decoration.
+ * "Playful sky": a bright sky that melts into a cool white canvas, crisp glass, one cobalt action
+ * colour, and a candy set (sun, coral, bubblegum, mint, lilac, sky) for characters, tiles, petals
+ * and celebrations. Candy never carries body text.
  */
 @Immutable
 data class Palette(
@@ -37,78 +38,104 @@ data class Palette(
     val warning: Color,
     val negative: Color,
     val shadow: Color,
-    /** Tile tints for the library board, in [Tint] order. */
+    /** Pale tile tints, in [Tint] order. */
     val tints: List<Color>,
+    /** Deep text colour for each tint. */
     val tintInk: List<Color>,
+    /** The vivid candy colour behind each tint: characters, petals, stickers. */
+    val candy: List<Color>,
+    /** Night sky for the time capsule, top to bottom. */
+    val night: List<Color>,
 )
 
-/** Named tints so content can choose a colour by meaning (category, theme, mood, envelope). */
+/**
+ * Named colours so content can choose by meaning (category, theme, mood, envelope). The names are
+ * stored with capsules, so they stay stable even though the colours are now candy.
+ */
 enum class Tint { Sky, Mint, Lavender, Peach, Butter, Rose }
+
+object Candy {
+    val Sun = Color(0xFFFFC83D)
+    val Coral = Color(0xFFFF6A4D)
+    val Bubblegum = Color(0xFFFF79B5)
+    val Mint = Color(0xFF2ECF8B)
+    val Lilac = Color(0xFFA98CFF)
+    val Sky = Color(0xFF4DA3FF)
+    val Cobalt = Color(0xFF2F5BFF)
+    val Navy = Color(0xFF0F1A3A)
+    val Cream = Color(0xFFFFF6E6)
+}
 
 val LightPalette = Palette(
     isDark = false,
-    skyTop = Color(0xFF3B82F0),
-    skyMid = Color(0xFF86B6F6),
-    skyFade = Color(0xFFE7F0FC),
+    skyTop = Color(0xFF3D7BFA),
+    skyMid = Color(0xFF8EB9FF),
+    skyFade = Color(0xFFE9F2FF),
     onSky = Color.White,
-    onSkySoft = Color.White.copy(alpha = 0.76f),
-    glassOnSky = Color.White.copy(alpha = 0.22f),
-    glassOnSkyRim = Color.White.copy(alpha = 0.45f),
-    canvas = Color(0xFFF6F8FB),
+    onSkySoft = Color.White.copy(alpha = 0.8f),
+    glassOnSky = Color.White.copy(alpha = 0.24f),
+    glassOnSkyRim = Color.White.copy(alpha = 0.55f),
+    canvas = Color(0xFFF6F8FE),
     surface = Color.White,
-    surfaceSoft = Color(0xFFEEF2F7),
-    line = Color(0xFFE4E9F0),
-    ink = Color(0xFF0E1726),
-    inkSoft = Color(0xFF5A6577),
-    inkFaint = Color(0xFF9AA3B2),
-    accent = Color(0xFF2D6BFF),
-    accentSoft = Color(0xFFE6EEFF),
+    surfaceSoft = Color(0xFFEEF2FB),
+    line = Color(0xFFE2E8F3),
+    ink = Candy.Navy,
+    inkSoft = Color(0xFF55607A),
+    inkFaint = Color(0xFF9AA3B8),
+    accent = Candy.Cobalt,
+    accentSoft = Color(0xFFE5ECFF),
     onAccent = Color.White,
-    positive = Color(0xFF12A877),
-    warning = Color(0xFFE39A2D),
-    negative = Color(0xFFE5484D),
-    shadow = Color(0xFF1B2A4A).copy(alpha = 0.10f),
-    tints = listOf(Color(0xFFDCEAFD), Color(0xFFD5F0E6), Color(0xFFE7E0FB), Color(0xFFFCE5D8), Color(0xFFF8F0CC), Color(0xFFFADFE8)),
-    tintInk = listOf(Color(0xFF1E4FB8), Color(0xFF136B50), Color(0xFF5038A8), Color(0xFFA2481C), Color(0xFF7F6410), Color(0xFFA2305A)),
+    positive = Color(0xFF14B87A),
+    warning = Color(0xFFF2A21F),
+    negative = Color(0xFFF0454B),
+    shadow = Color(0xFF1B2A6B).copy(alpha = 0.12f),
+    tints = listOf(Color(0xFFDDEBFF), Color(0xFFD6F5E7), Color(0xFFEAE3FF), Color(0xFFFFE3DB), Color(0xFFFFF1C9), Color(0xFFFFE0EE)),
+    tintInk = listOf(Color(0xFF1A47B8), Color(0xFF0E6B47), Color(0xFF4B33B0), Color(0xFFB03A1E), Color(0xFF8A6200), Color(0xFFB0306B)),
+    candy = listOf(Candy.Sky, Candy.Mint, Candy.Lilac, Candy.Coral, Candy.Sun, Candy.Bubblegum),
+    night = listOf(Color(0xFF2353E8), Color(0xFF0E1A5C), Color(0xFF060A22)),
 )
 
 val DarkPalette = Palette(
     isDark = true,
-    skyTop = Color(0xFF1F4FBF),
-    skyMid = Color(0xFF1A3478),
-    skyFade = Color(0xFF111A33),
+    skyTop = Color(0xFF2148C9),
+    skyMid = Color(0xFF1B347E),
+    skyFade = Color(0xFF0F1833),
     onSky = Color.White,
-    onSkySoft = Color.White.copy(alpha = 0.72f),
+    onSkySoft = Color.White.copy(alpha = 0.74f),
     glassOnSky = Color.White.copy(alpha = 0.12f),
-    glassOnSkyRim = Color.White.copy(alpha = 0.25f),
-    canvas = Color(0xFF0B1120),
-    surface = Color(0xFF151D30),
-    surfaceSoft = Color(0xFF1C2539),
-    line = Color(0xFF243049),
-    ink = Color(0xFFEFF3FA),
-    inkSoft = Color(0xFFA7B1C4),
-    inkFaint = Color(0xFF6B7690),
-    accent = Color(0xFF6F9BFF),
-    accentSoft = Color(0xFF1E2C52),
+    glassOnSkyRim = Color.White.copy(alpha = 0.28f),
+    canvas = Color(0xFF0A0F1F),
+    surface = Color(0xFF141C31),
+    surfaceSoft = Color(0xFF1B2440),
+    line = Color(0xFF26314D),
+    ink = Color(0xFFEFF3FC),
+    inkSoft = Color(0xFFA8B2C8),
+    inkFaint = Color(0xFF6A7590),
+    accent = Color(0xFF7898FF),
+    accentSoft = Color(0xFF1E2A55),
     onAccent = Color(0xFF07102A),
-    positive = Color(0xFF3CCB97),
-    warning = Color(0xFFF0B45A),
+    positive = Color(0xFF3CD69F),
+    warning = Color(0xFFF5B850),
     negative = Color(0xFFFF6B70),
-    shadow = Color.Black.copy(alpha = 0.4f),
-    tints = listOf(Color(0xFF1C2E52), Color(0xFF173A35), Color(0xFF2A2551), Color(0xFF3A2A25), Color(0xFF363020), Color(0xFF3A2433)),
-    tintInk = listOf(Color(0xFFA9C6FF), Color(0xFF8FE0C3), Color(0xFFC6B8FF), Color(0xFFFFC2A2), Color(0xFFF0DC8C), Color(0xFFFFB3CC)),
+    shadow = Color.Black.copy(alpha = 0.45f),
+    tints = listOf(Color(0xFF1B2D57), Color(0xFF143A31), Color(0xFF2A2458), Color(0xFF3D2420), Color(0xFF3A3018), Color(0xFF3D2033)),
+    tintInk = listOf(Color(0xFFA9C8FF), Color(0xFF8BE8C2), Color(0xFFC8B9FF), Color(0xFFFFB9A6), Color(0xFFFFDF8A), Color(0xFFFFB0D3)),
+    candy = listOf(Candy.Sky, Candy.Mint, Candy.Lilac, Candy.Coral, Candy.Sun, Candy.Bubblegum),
+    night = listOf(Color(0xFF1C3FB8), Color(0xFF0B1448), Color(0xFF04061A)),
 )
 
 val LocalPalette = staticCompositionLocalOf { LightPalette }
 
 fun Palette.tint(t: Tint) = tints[t.ordinal]
 fun Palette.tintInk(t: Tint) = tintInk[t.ordinal]
+fun Palette.candy(t: Tint) = candy[t.ordinal]
 
 /** One radius family, sized by role. */
 object Radius {
     val chip = RoundedCornerShape(14.dp)
     val tile = RoundedCornerShape(22.dp)
     val card = RoundedCornerShape(28.dp)
+    val deck = RoundedCornerShape(32.dp)
     val sheet = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
 }
 

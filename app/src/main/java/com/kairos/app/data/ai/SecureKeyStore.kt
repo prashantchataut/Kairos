@@ -25,13 +25,22 @@ class SecureKeyStore(context: Context) {
     }
 
     private val _hasKey = MutableStateFlow(apiKey() != null)
+    /** The person added their own OpenRouter key. */
     val hasKey: StateFlow<Boolean> = _hasKey.asStateFlow()
+
+    /** The app ships its own keys (Mercury, Gemini), so Kai can write without the person's key. */
+    val builtIn: Boolean = BuiltInKeys.mercury.isNotBlank() || BuiltInKeys.gemini.isNotBlank()
+
+    private val _awake = MutableStateFlow(builtIn || apiKey() != null)
+    /** Kai can write: built-in keys, or the person's own key. */
+    val awake: StateFlow<Boolean> = _awake.asStateFlow()
 
     fun apiKey(): String? = prefs.getString(KEY, null)?.takeIf { it.isNotBlank() }
 
     fun setApiKey(value: String?) {
         prefs.edit().apply { if (value.isNullOrBlank()) remove(KEY) else putString(KEY, value.trim()) }.apply()
         _hasKey.value = !value.isNullOrBlank()
+        _awake.value = builtIn || _hasKey.value
     }
 
     private companion object { const val KEY = "openrouter_key" }

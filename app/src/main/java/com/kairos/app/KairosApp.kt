@@ -19,7 +19,8 @@ class AppContainer(app: Application, val db: KairosDatabase = KairosDatabase.cre
     val prefs = UserPrefs(app)
     val keys = SecureKeyStore(app)
     val ai = OpenRouter(keys)
-    val kairos = KairosRepository(db, prefs, keys, ai)
+    val writer = com.kairos.app.data.ai.Writer(keys) { prefs.current().aiModel }
+    val kairos = KairosRepository(db, prefs, keys, writer)
     val capsules = CapsuleRepository(app, db, kairos)
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val appContext: android.content.Context = app
@@ -35,6 +36,7 @@ open class KairosApp : Application() {
         Notifier.createChannels(this)
         container.appScope.launch { container.capsules.rescheduleAll() }
         RefillWorker.enqueue(this)
+        RefillWorker.schedulePeriodic(this)
     }
 
     protected open fun createContainer() = AppContainer(this)

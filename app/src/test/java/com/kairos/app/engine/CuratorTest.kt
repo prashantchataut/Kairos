@@ -72,4 +72,30 @@ class CuratorTest {
         val msg = Curator.userMessage(profile, 8, 6, 4, 3)
         listOf("Prashant", "Petrichor", "Ebullient", "Mary Oliver", "the ocean", "Low", "\"level\":4").forEach { assertTrue("missing $it in $msg", msg.contains(it)) }
     }
+
+    @Test fun `lines need no author, quotes do, and slop is dropped`() {
+        val b = parse("""{"words":[],"quotes":[
+          {"text":"maybe the soft thing you did today was the brave thing.","author":"","kind":"line","source":"","theme":"comfort","note":""},
+          {"text":"A quote with nobody behind it at all.","author":"","kind":"quote","source":"","theme":"hope","note":""},
+          {"text":"Embrace the journey and unlock your potential.","author":"","kind":"line","source":"","theme":"growth","note":""},
+          {"text":"You do not have to be good.","author":"Mary Oliver","kind":"quote","source":"Wild Geese","theme":"comfort","note":""}
+        ],"sparks":["Embrace the journey for five minutes.","Text someone a photo that made you smile."],"prompts":[]}""")
+        assertEquals(listOf("line", "quote"), b.quotes.map { it.kind })
+        assertEquals("Wild Geese", b.quotes[1].source)
+        assertEquals(listOf("Text someone a photo that made you smile."), b.sparks)
+    }
+
+    @Test fun `borrowed words keep their language`() {
+        val b = parse("""{"words":[{"word":"akrasia","partOfSpeech":"noun","pronunciation":"uh-KRAY-zee-uh","definition":"Acting against your own better judgement","example":"Akrasia won again at midnight.","origin":"Greek a- (without) + kratos (power).","synonyms":["weakness of will"],"hook":"","category":"wisdom","level":4,"language":"Greek"}],"quotes":[],"sparks":[],"prompts":[]}""")
+        assertEquals("Greek", b.words.single().language)
+        assertEquals("wisdom", b.words.single().category)
+    }
+
+    @Test fun `books are parsed with ideas and clamped values`() {
+        val b = parse("""{"books":[{"title":"Four Thousand Weeks","author":"Oliver Burkeman","year":2021,"summary":"A book about time management that argues against productivity culture. Life is short, so choose what to neglect.","ideas":["You will never get everything done.","Choose what to neglect."],"line":"Finitude is the point.","hook":"","category":"living","minutes":40},{"title":"","author":"x","summary":"short"}]}""")
+        val book = b.books.single()
+        assertEquals(2, book.ideaList.size)
+        assertEquals(8, book.minutes)
+        assertEquals("living", book.category)
+    }
 }

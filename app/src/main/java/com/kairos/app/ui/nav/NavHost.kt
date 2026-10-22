@@ -58,6 +58,7 @@ object Route {
     @Serializable data object Home
     @Serializable data class Word(val id: String)
     @Serializable data class Quote(val id: String)
+    @Serializable data class Book(val id: String)
     @Serializable data object Practice
     @Serializable data class Studio(val kind: String, val id: String)
     @Serializable data object Compose
@@ -89,7 +90,7 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
     SharedTransitionLayout {
         CompositionLocalProvider(LocalShared provides this) {
             NavHost(nav, start, Modifier.fillMaxSize().background(K.colors.canvas)) {
-                screen<Route.Welcome> { OnboardingScreen { nav.navigate(Route.Home) { popUpTo(Route.Welcome) { inclusive = true } } } }
+                screen<Route.Welcome> { OnboardingScreen(onDone = { nav.navigate(Route.Home) { popUpTo(Route.Welcome) { inclusive = true } } }) }
                 screen<Route.Home> {
                     Home(
                         tab = tab, onTab = { tab = it },
@@ -101,10 +102,12 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
                         openLetter = { nav.navigate(Route.Letter(it)) },
                         openCurator = { nav.navigate(Route.Curator) },
                         openInterests = { nav.navigate(Route.Interests) },
+                        openBook = { nav.navigate(Route.Book(it)) },
                     )
                 }
                 screen<Route.Word> { e -> val id = e.toRoute<Route.Word>().id; WordScreen(id, { nav.popBackStack() }, { nav.navigate(Route.Studio("word", id)) }, { nav.navigate(Route.Practice) }) }
                 screen<Route.Quote> { e -> val id = e.toRoute<Route.Quote>().id; QuoteScreen(id, { nav.popBackStack() }) { nav.navigate(Route.Studio("quote", id)) } }
+                screen<Route.Book> { e -> com.kairos.app.ui.feature.detail.BookScreen(e.toRoute<Route.Book>().id) { nav.popBackStack() } }
                 screen<Route.Practice> { PracticeScreen { nav.popBackStack() } }
                 screen<Route.Studio> { e -> val r = e.toRoute<Route.Studio>(); StudioScreen(r.kind, r.id) { nav.popBackStack() } }
                 screen<Route.Compose> { ComposeLetter({ nav.popBackStack() }, { nav.popBackStack() }) }
@@ -120,7 +123,7 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
 private fun Home(
     tab: Int, onTab: (Int) -> Unit,
     openWord: (String) -> Unit, openQuote: (String) -> Unit, openStudio: (String, String) -> Unit, openPractice: () -> Unit,
-    openCompose: () -> Unit, openLetter: (Long) -> Unit, openCurator: () -> Unit, openInterests: () -> Unit,
+    openCompose: () -> Unit, openLetter: (Long) -> Unit, openCurator: () -> Unit, openInterests: () -> Unit, openBook: (String) -> Unit,
 ) {
     val haze = remember { HazeState() }
     var sheet by remember { mutableStateOf(false) }
@@ -133,21 +136,21 @@ private fun Home(
                 label = "tabs",
             ) { t ->
                 when (t) {
-                    0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator) { onTab(3) }
-                    1 -> LearnScreen(openWord, openQuote, openPractice, openCurator)
+                    0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator, { onTab(3) }, openBook)
+                    1 -> LearnScreen(openWord, openQuote, openPractice, openCurator, openBook)
                     2 -> CapsuleHome(openCompose, openLetter)
                     else -> YouScreen(openCurator, openInterests)
                 }
             }
-            BottomBar(tab, onTab, { sheet = true }, sheet, Modifier.align(Alignment.BottomCenter))
+            BottomBar(tab, onTab, { sheet = true }, sheet, Modifier.align(Alignment.BottomCenter), night = tab == 2)
         }
     }
     if (sheet) QuickSheet(
         listOf(
-            QuickAction(Icons.Edit, "Write to future you", "Seal a letter, photo or voice note", openCompose),
-            QuickAction(Icons.Cards, "Practise words", "A few minutes, spaced so they stick", openPractice),
-            QuickAction(Icons.Search, "Ask for new words", "Any topic, written for you", { onTab(1) }),
-            QuickAction(Icons.Smile, "Check in", "How are you feeling?", { onTab(0) }),
+            QuickAction(Icons.Edit, "Write to future you", "A letter, a photo or a voice note", com.kairos.app.ui.theme.Tint.Lavender, openCompose),
+            QuickAction(Icons.Cards, "Play with words", "Two minutes, spaced so they stick", com.kairos.app.ui.theme.Tint.Mint, openPractice),
+            QuickAction(Icons.Search, "Ask Kai for words", "About anything at all", com.kairos.app.ui.theme.Tint.Sky, { onTab(1) }),
+            QuickAction(Icons.Smile, "Check in", "How are you, really?", com.kairos.app.ui.theme.Tint.Butter, { onTab(0) }),
         ),
     ) { sheet = false }
 }
