@@ -19,41 +19,39 @@ words, thoughts, affirmations, books, learning from keeps/shares/time), Play (ra
 page transitions, the redesigned letter to future you, no "written for you". See the PR description
 and `git log` for detail.
 
-## The launch film (`video/launch/`): rebuilt on the app's real renders (done in code)
+## The launch film (`video/launch/`): round two (owner's review of v1, Oct 23 2026)
 
-PR #611 is merged; film work lands on `main` in small commits. The owner rejected the first cut (the
-UI in the frames, the logo and Kai were hand-drawn look-alikes). Now every screen, card, Kai and mark
-comes from the app's own renders (`public/app`, made by `app/src/test/.../FilmAssetsTest.kt` with
-Roborazzi, imported by `scripts/import-app-assets.py`), shown by `src/kit/App.tsx`; the hand-drawn kit
-is deleted. Details per act: `video/launch/README.md` table and "The app, as it is".
+Owner's notes on v1: no clock/dial shapes; the logo must match the app; no centred name reveal; hated
+the serif "Kairos" at 0:08; the phone must look like a real Nothing Phone (4a), not an overlay; share
+cards should show great thoughts (Seneca "Nothing, Lucilius, is ours, except time." etc., issue #606);
+keep the 0:24 rising-columns transition; sound like the Pinterest ref (/workspace/refs/ref7.mp4) plus the
+current track; trendy, creative, no bouncy/childish effects; render the video. (The owner mentioned
+uploading real phone screenshots: none arrived in the session, so the phone is modelled from specs.)
 
-Checks (Oct 23, 2026): `npm run check` passes (tsc, lint-film 0 errors / 4 accepted warnings,
-grid-check pass); `python3 scripts/calib.py` PASS (Today overlay vs `today.jpg`: word 0 px, chip 2 px,
-definition 4 px). All eight acts and their seams reviewed on quarter- and half-res peeks.
+Done (on `main`):
+- `src/kit/Device.tsx`: a 3D Nothing Phone (4a) (frame depth, glass sheen, status bar, punch-hole,
+  gesture bar); `kit/rig.ts` drifts its angle through the acts. `kit/Icon.tsx`: the real launcher icon
+  from `ic_launcher_*.xml`. `kit/Wall.tsx`: a tilted wall of the studio's real cards.
+- `FilmAssetsTest.kt` renders eight great thoughts as studio cards (`public/app/thought_*`). The app's
+  Gradle/Roborazzi run works in the sandbox now (JDK 17 at /opt/jdk17, SDK at /opt/android; see
+  /tmp/gradle-run.sh pattern: JAVA_TOOL_OPTIONS proxy + the mitm CA imported into the JDK cacerts).
+- Act 1: night wall of cards (speed ramp, depth of field) stops dead on Seneca's card. Act 2: morning
+  rises in columns; icon blooms over a horizon line, "Kairos" in Bricolage Display, phone on the
+  welcome screen. Acts 3-6: the real screens on the device, no pops/rings/bounce. Act 7: a wall of
+  great thoughts rises, Marcus Aurelius' card lifts. Act 8: mirrored lockup, phone turns to face us.
+- Sound: groove re-scored toward ref7 (16th plucks, mallet line, pulse bass; `npm run audio` PASS).
+- `renders/kairos-launch-v2-preview.mp4` (+ sheet): the first round-two render (before the Acts 1/2/8
+  rework landed).
 
-Geometry: renders are 400 x 860 dp at 2.5 px/dp; the phone's screen canvas is the same 400 x 860. Kai
-sprites are drawKai on a 220 dp canvas: a Kai the app drew at d dp is the sprite drawn d units wide
-around the same centre (header Kai: 56 dp at (360, 36)). The Wordmark sprite's mark is its first h x h
-square; drawBloom's unfold frames draw the bloom at radius 0.46 of their canvas.
-
-Not done by the agent (heavy, the owner's): the MP4. `out/cues.json` was regenerated (the typed title
-is now "Dear future me...", 15 key sounds), so the soundtrack must be re-rendered before the film.
-
-## Exact next step
-
-1. Owner: install the render workflow once, from the repo root:
-   `cp video/launch/ci/render.yml .github/workflows/film.yml && git add .github/workflows/film.yml && git commit -m "CI: render the launch film" && git push`
-   then Actions -> film -> Run workflow (tick "master" for the motion-blurred cut). Or locally:
-   `video/launch/README.md` "Render it".
-2. Watch the preview; notes go to the next session. Then the 9:16 and 1:1 re-layouts (`Film9x16`,
-   `Film1x1` reusing `timeline.ts`) and `bash scripts/deliver.sh out/film.mp4 --variants Film9x16,Film1x1`.
-3. Known small things: the screens' sample data greets "Prashant" (ScreenshotTest seed; change the
-   seed name and re-run FilmAssetsTest if the film should be anonymous); during the bloom's first
-   frames the white moment petal grows slightly out from under the coral one (4-6 frames).
-
-Push from the sandbox with `python3 /workspace/task/tools/ghpush.py <repo-dir> prashantchataut/Kairos main`
-(the sandbox's git has no credential; the script replays commits through the GitHub API via the actl
-connector; it cannot touch `.github/workflows`).
+In flight / next (run subagents ONE AT A TIME: parallel launches died on 409 settlement errors):
+1. Acts 3-5 (word, feed, play): break the monotony (phone centred + two side lines for 25 s): camera
+   variety, macro push-ins, kinetic type, more app content (word_sonder, feed_3, Kai moods).
+2. Acts 6-7 (letter, share): richer letter (compose_tuck, letter_opened, capsule), the Studio screen
+   bridging into the wall of thoughts.
+3. Research references with the agent-reach skill -> /workspace/task/refs/REFERENCES.md; device fixes.
+4. `npm run cues && npm run audio` (the sound must follow the new picture), render the v3 preview
+   (`bash scripts/render.sh Film out/preview.mp4 --preview --audio public/audio/soundtrack.wav`, ~15 min
+   on 2 cores; needs PATH=/tmp/ffbin:$PATH for ffprobe), copy to `renders/`, push, post to the owner.
 
 ## Commands
 
