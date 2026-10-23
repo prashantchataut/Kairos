@@ -24,6 +24,18 @@ export const SAMPLED = {
   write2: '#2A54D8', // ... to right: the plate the title types itself on
 };
 
+/** The phone's materials (kit/Device.tsx): a Nothing Phone (4a) in black, matte frame, black glass. */
+export const DEVICE = {
+  face: '#1A1B1F', // the frame, front face
+  edge0: '#3A3C42', // the frame's lit side
+  edge1: '#0C0D10', // the frame's back half
+  glass: '#050506', // the black glass around the panel
+  rimLit: '#4A4C53', // the rim catching the key light, top left
+  rimLow: '#2E3036', // the rim, bottom right
+  lens: '#020203', // the punch-hole camera
+  lensGlint: '#5A6E9A', // its coating, catching light
+};
+
 export const C = {
   ink: '#0F1A3A', // type on light stages: Kairos navy ink
   inkSoft: '#55607A', // secondary text on light

@@ -3,9 +3,9 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { C, SAMPLED, TYPE, U, typeStyle } from '../brand/tokens';
 import { Words } from '../fx/Words';
-import { E, hitPulse, inertia, lmix, prog } from '../lib/anim';
+import { E, inertia, lmix, prog } from '../lib/anim';
 import { FEED_KEPT } from '../kit/data';
-import { FEED, FeedReel, KeptOverlay, type ScreenName } from '../kit/App';
+import { FeedReel, KeptOverlay, type ScreenName } from '../kit/App';
 import { Grain, Phone, phoneSize } from '../kit/Kit';
 import { tilt } from '../kit/rig';
 import { ACT, copy, CUE, f60 } from '../timeline';
@@ -78,10 +78,8 @@ export const Act4: React.FC = () => {
   const k = lmix(2.2, 1, pull);
   const anchor = { x: PH.x + S.bezel + 168 * S.k, y: PH.y + S.top + 460 * S.k };
 
-  // --- Keep: the heart turns coral and a ring echoes it --------------------------------------
+  // --- Keep: the rail's heart turns coral, the app's Kept state ----------------------------
   const keep = prog(f, CUE.keep - 1, CUE.keep + f60(10), E.out);
-  const pop = hitPulse(f - CUE.keep, 2, 6);
-  const heart = { x: PH.x + S.bezel + FEED.keep.x * S.k, y: PH.y + S.top + (FEED.keep.y - flick * (FEED.bottom - FEED.top)) * S.k };
 
   // --- copy --------------------------------------------------------------------------------
 
@@ -93,11 +91,6 @@ export const Act4: React.FC = () => {
             {(i) => i === FEED_KEPT && <KeptOverlay on={keep} labelBg={KEEP_LABEL_BG} />}
           </FeedReel>
         </Phone>
-        {pop > 0.02 && (
-          <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${heart.x}px, ${heart.y}px)` }}>
-            <div style={{ position: 'absolute', left: -44 * U, top: -44 * U, width: 88 * U, height: 88 * U, borderRadius: 999, border: `${3 * U}px solid ${C.coral}`, opacity: pop, transform: `scale(${1 + (1 - pop) * 0.9})` }} />
-          </div>
-        )}
       </div>
       <LearnsCopy f={f} />
       <Grain frame={f} opacity={0.035} />

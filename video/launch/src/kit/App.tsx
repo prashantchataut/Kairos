@@ -187,7 +187,7 @@ export const SavedPill: React.FC<{ on: number; pop?: number }> = ({ on, pop = 0 
   const s = TODAY.heart.size;
   return (
     <div style={{ position: 'absolute', left: P.x, top: P.y, width: P.w, height: P.h, borderRadius: P.h / 2, background: '#FFFFFF', opacity: on, transform: `scale(${1 - 0.14 * pop})`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-      <svg width={s} height={s} viewBox="0 0 24 24" style={{ transform: `scale(${0.4 + 0.6 * on})` }}>
+      <svg width={s} height={s} viewBox="0 0 24 24" style={{ transform: `scale(${0.85 + 0.15 * on})` }}>
         <path d={HEART_PATH} fill="#FF6A4D" />
       </svg>
       <span style={{ fontFamily: FONT.text, fontSize: 16, fontWeight: 600, color: TODAY.ink, fontVariationSettings: '"wdth" 100, "opsz" 16', lineHeight: '20px' }}>Saved</span>
@@ -249,7 +249,7 @@ export const FeedReel: React.FC<{ pages: ScreenName[]; pos: number; children?: (
 export const KeptOverlay: React.FC<{ on: number; labelBg: string }> = ({ on, labelBg }) => {
   const K = FEED.keep;
   if (on <= 0.001) return null;
-  const s = K.icon * (0.4 + 0.6 * on) * 1.06; // a hair larger than the outline it covers
+  const s = K.icon * (0.85 + 0.15 * on) * 1.06; // a hair larger than the outline it covers
   return (
     <>
       <svg width={s} height={s} viewBox="0 0 24 24" style={{ position: 'absolute', left: K.x - s / 2, top: K.y - s / 2, overflow: 'visible' }}>

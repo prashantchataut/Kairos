@@ -7,7 +7,7 @@
 // app's renders (400 x 860) sit under the 30 dp status bar, which shows the render's own top colour.
 import React from 'react';
 import { Img, staticFile } from 'remotion';
-import { FONT } from '../brand/tokens';
+import { DEVICE, FONT } from '../brand/tokens';
 import { H, W } from '../timeline';
 
 export const SCREEN = { w: 400, h: 889, status: 30 };
@@ -39,7 +39,7 @@ export const onScreen = (p: Pose, x: number, y: number) => {
 
 export type Tone = 'light' | 'dark'; // the status bar's ink: light on blue and night screens
 
-const FRAME = { face: '#1A1B1F', edge0: '#3A3C42', edge1: '#0C0D10', glass: '#050506' };
+const FRAME = DEVICE;
 
 /** Android's status bar as Nothing OS draws it: the time left, signal, wifi and battery right. */
 const StatusBar: React.FC<{ tone: Tone }> = ({ tone }) => {
@@ -112,15 +112,15 @@ export const Device: React.FC<{ p: Pose; tone?: Tone; children: React.ReactNode;
           );
         })}
         {/* the front: a thin matte rim around the black glass */}
-        <div style={{ position: 'absolute', inset: 0, borderRadius: s.radius, background: `linear-gradient(145deg, #4A4C53 0%, ${FRAME.face} 22%, ${FRAME.face} 70%, #2E3036 100%)` }} />
+        <div style={{ position: 'absolute', inset: 0, borderRadius: s.radius, background: `linear-gradient(145deg, ${DEVICE.rimLit} 0%, ${FRAME.face} 22%, ${FRAME.face} 70%, ${DEVICE.rimLow} 100%)` }} />
         <div style={{ position: 'absolute', inset: s.w * DEV.rim, borderRadius: s.radius - s.w * DEV.rim, background: FRAME.glass }} />
         {/* the panel */}
-        <div style={{ position: 'absolute', left: s.bezel, top: s.bezel, width: SCREEN.w, height: SCREEN.h, transformOrigin: '0 0', transform: `scale(${s.k})`, borderRadius: screenR, overflow: 'hidden', background: '#000' }}>
+        <div style={{ position: 'absolute', left: s.bezel, top: s.bezel, width: SCREEN.w, height: SCREEN.h, transformOrigin: '0 0', transform: `scale(${s.k})`, borderRadius: screenR, overflow: 'hidden', background: DEVICE.glass }}>
           {children}
           <StatusBar tone={tone} />
           {/* the punch-hole camera, centred */}
-          <div style={{ position: 'absolute', left: SCREEN.w / 2 - 6.5, top: 9, width: 13, height: 13, borderRadius: 7, background: '#020203', boxShadow: '0 0 0 1px rgba(255,255,255,0.06)' }}>
-            <div style={{ position: 'absolute', left: 3.5, top: 3, width: 3, height: 3, borderRadius: 2, background: 'rgba(120,140,255,0.35)' }} />
+          <div style={{ position: 'absolute', left: SCREEN.w / 2 - 6.5, top: 9, width: 13, height: 13, borderRadius: 7, background: DEVICE.lens, boxShadow: '0 0 0 1px rgba(255,255,255,0.06)' }}>
+            <div style={{ position: 'absolute', left: 3.5, top: 3, width: 3, height: 3, borderRadius: 2, background: DEVICE.lensGlint, opacity: 0.5 }} />
           </div>
           {/* the gesture bar */}
           <div style={{ position: 'absolute', left: SCREEN.w / 2 - 54, top: SCREEN.h - 11, width: 108, height: 4, borderRadius: 2, background: tone === 'light' ? 'rgba(255,255,255,0.85)' : 'rgba(15,26,58,0.7)' }} />

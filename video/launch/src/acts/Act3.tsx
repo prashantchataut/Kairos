@@ -1,12 +1,10 @@
 // cinetic:brand-supplied coral, serif, gradient: Kairos' Today screen as it ships (BRIEF.md).
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { Petal, placePetal } from '../brand/Mark';
 import { C, TYPE, U, typeStyle } from '../brand/tokens';
 import { Words } from '../fx/Words';
-import { clamp, E, fd, hitPulse, lmix, mix, prog } from '../lib/anim';
+import { clamp, E, fd, lmix, mix, prog } from '../lib/anim';
 import { TODAY } from '../kit/data';
-import { FALL } from '../kit/device';
 import { blinkT, KaiArt, SavedPill, Shot, TODAY as T, TodayWordPatch, todayWordStyle } from '../kit/App';
 import { Grain, Phone, phoneSize } from '../kit/Kit';
 import { tilt } from '../kit/rig';
@@ -24,7 +22,9 @@ const A = copy('word.1');
 const B = copy('word.2');
 
 /** The phone at rest: centred, overflowing the bottom edge, as the product should be framed. */
-export const PH = { w: 580 * U, x: W / 2 - 330 * U, y: 64 * U, rise: 170 * U };
+export const PH = { w: 580 * U, x: W / 2 - 290 * U, y: 64 * U };
+/** Where Act 2 holds the phone: right of the name, a little smaller and lower. */
+export const PH2 = { w: 520 * U, x: W * 0.54, y: 150 * U };
 const S = phoneSize(PH.w);
 
 /** Screen px of an app-unit point on the phone at offset (dx, dy). */
@@ -40,8 +40,8 @@ const REWRITE_LEN = (w: string) => f60(3) * w.length;
 export const Act3: React.FC = () => {
   const f = useCurrentFrame() + ACT.word.from;
 
-  // --- the phone rises already moving on the cut (pd-device-rise-on-cut) ---------------------
-  const dy = mix(PH.rise, 0, prog(f, CUE.rise - 1, CUE.rise + f60(44), E.out));
+  // --- the phone glides in from Act 2's place on the right to the centre ---------------------
+  const move = prog(f, CUE.rise - 1, CUE.rise + f60(40), E.cam);
   // --- the dive: push into the card, then whip up into the Feed ----------------------------
   const cardC = onPhone({ x: 200, y: 410 });
   const push = lmix(1, 2.3, prog(f, CUE.dive, CUE.through + f60(8), E.in));
@@ -73,17 +73,6 @@ export const Act3: React.FC = () => {
     </span>
   );
 
-  // --- the device: the falling petal lands as the Save heart -------------------------------
-  const heart = onPhone({ x: T.heart.x, y: T.heart.y }, dy);
-  const t = prog(f, CUE.rise - 1, CUE.heart, E.contact);
-  const landed = f >= CUE.heart;
-  const petal = {
-    x: mix(FALL.x, heart.x, t),
-    y: mix(FALL.y, heart.y, t),
-    size: mix(FALL.size, T.heart.size * S.k * 4.6, t), // a petal 4.6x the heart's box is as wide as the heart
-    rot: mix(FALL.rot, 0, t),
-  };
-  const pop = hitPulse(f - CUE.heart, 2, 6);
   // Kai, drawKai's own frames over the header Kai (56 dp): delighted by the save, then a blink
   const delight = prog(f, CUE.heart + f60(4), CUE.heart + f60(20), E.out) * (1 - prog(f, CUE.heart + f60(70), CUE.heart + f60(90), E.smooth));
   const blink = blinkT(f, CUE.rewrite1 + f60(40), f60(14));
@@ -96,18 +85,12 @@ export const Act3: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, transformOrigin: `${cardC.x}px ${cardC.y}px`, transform: `translateY(${whip}px) scale(${push * settle})` }}>
-        <Phone w={PH.w} x={PH.x} y={PH.y + dy} {...tilt(f)}>
+        <Phone w={mix(PH2.w, PH.w, move)} x={mix(PH2.x, PH.x, move)} y={mix(PH2.y, PH.y, move)} {...tilt(f)}>
           <Shot name="today" />
           <TodayWordPatch word={word} info={info} infoFade={infoFade} />
-          <SavedPill on={landed ? 1 : 0} pop={pop} />
+          <SavedPill on={prog(f, CUE.heart - 2, CUE.heart + f60(10), E.ui)} />
           <div style={{ position: 'absolute', left: T.kai.x - T.kai.size / 2, top: T.kai.y - T.kai.size / 2 }}>{kaiArt}</div>
         </Phone>
-        {!landed && <Petal size={petal.size} color={C.coral} style={placePetal(petal.x, petal.y, petal.size, petal.rot)} />}
-        {landed && pop > 0.02 && (
-          <div style={{ position: 'absolute', left: 0, top: 0, width: 1, height: 1, transform: `translate(${heart.x}px, ${heart.y}px)` }}>
-            <div style={{ position: 'absolute', left: -40 * U, top: -40 * U, width: 80 * U, height: 80 * U, borderRadius: 999, border: `${3 * U}px solid ${C.coral}`, opacity: pop, transform: `scale(${1 + (1 - pop) * 0.8})` }} />
-          </div>
-        )}
       </div>
       <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${PH.x - 56 * U}px, ${lineY}px) translateX(-100%)`, opacity: 1 - prog(f, CUE.dive, CUE.dive + 20, E.smooth) }}>
         <Words text={A.text} id={A.id} frame={f} start={A.in} out={A.out} size={size} style={{ ...typeStyle('line', size), color: C.ink }} />

@@ -3,8 +3,7 @@ import React from 'react';
 import { AbsoluteFill, Freeze, useCurrentFrame } from 'remotion';
 import { C, TYPE, U, typeStyle } from '../brand/tokens';
 import { Words } from '../fx/Words';
-import { E, fd, lmix, prog, spr, SPR, squash } from '../lib/anim';
-import { delayTo } from '../lib/sync';
+import { E, fd, lmix, prog } from '../lib/anim';
 import { CAPSULE, ComposeTyping, SealedStamp, Shot } from '../kit/App';
 import { Grain, nightGradient, Phone, phoneSize } from '../kit/Kit';
 import { tilt } from '../kit/rig';
@@ -25,7 +24,7 @@ const DEAR = copy('ui.dear');
 const COLS = 15;
 const S = phoneSize(PH.w);
 /** Contact frame of the seal: the spring starts early by exactly the frames it needs. */
-const SEAL_START = CUE.seal - delayTo(SPR.land);
+const SEAL_START = CUE.seal - f60(16);
 
 /** Screen px of an app-unit point on the phone. */
 const onPhone = (x: number, y: number) => ({ x: PH.x + S.bezel + x * S.k, y: PH.y + S.top + y * S.k });
@@ -46,8 +45,7 @@ export const Act6: React.FC = () => {
   const typed = (fd(f) - DEAR.in) / f60(2); // one character every 2 frames, a key sound each (sync.ts)
   const toWhen = prog(f, CUE.fold - f60(16), CUE.fold + f60(4), E.inOut); // the app's page push
   const toSealed = prog(f, SEAL_START - f60(10), SEAL_START, E.smooth); // the sealed page fades up
-  const land = f >= CUE.seal ? 1 : spr(f, SEAL_START, SPR.land);
-  const sq = squash(f - CUE.seal);
+  const land = prog(f, CUE.seal - f60(16), CUE.seal, E.outSoft); // the seal settles onto the envelope, no bounce
 
   // --- the camera: a slow lean into the date once it opens, then the turn to edge-on ----------
   const date = onPhone(200, 450);
@@ -83,7 +81,7 @@ export const Act6: React.FC = () => {
             )}
             {toSealed > 0 && (
               <div style={{ position: 'absolute', inset: 0, opacity: toSealed }}>
-                <SealedStamp land={land} squash={sq.across - 1 > 0 ? (sq.across - 1) / 0.08 : 0} />
+                <SealedStamp land={land} k0={1.35} />
               </div>
             )}
           </Phone>
