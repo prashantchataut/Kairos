@@ -35,7 +35,8 @@ export const Wall: React.FC<{
   rx?: number;
   rz?: number;
   heroScale?: number;
-}> = ({ cx, cy, scroll, hero, lift = 0, dim = 0, planeH = 2400, rx = WALL.rx, rz = WALL.rz, heroScale = 1.25 }) => {
+  heroName?: string;
+}> = ({ cx, cy, scroll, hero, lift = 0, dim = 0, planeH = 2400, rx = WALL.rx, rz = WALL.rz, heroScale = 1.25, heroName = HERO }) => {
   const planeW = WALL.cols * (WALL.cw + WALL.gap) - WALL.gap;
   const cards: React.ReactNode[] = [];
   let heroEl: React.ReactNode = null;
@@ -45,7 +46,7 @@ export const Wall: React.FC<{
     for (let i = first; i <= first + Math.ceil(planeH / PITCH) + 1; i++) {
       const y = i * PITCH - s;
       const isHero = c === HERO_COL && i === hero;
-      const name = isHero ? HERO : PINS[(((i + c * 4) % PINS.length) + PINS.length) % PINS.length];
+      const name = isHero ? heroName : PINS[(((i + c * 4) % PINS.length) + PINS.length) % PINS.length];
       const x = c * (WALL.cw + WALL.gap);
       const el = (
         <div
