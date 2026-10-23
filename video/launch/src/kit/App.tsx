@@ -178,3 +178,66 @@ export const SavedPill: React.FC<{ on: number; pop?: number }> = ({ on, pop = 0 
     </div>
   );
 };
+
+// ------------------------------------------------------------------------------------------
+// The Feed (feed_0..3): a vertical pager of full-height pages under a fixed header and bar.
+
+/** The pager's band (app units): the header above it and the bar below it stay put. */
+export const FEED = {
+  top: 88,
+  bottom: 820,
+  // the rail's Keep button (Rail: a 50 dp circle, a 24 dp icon, a 12 sp SemiBold label 4 dp below)
+  keep: { x: 366.4, y: 497.6, d: 50, icon: 24, labelY: 526.8 },
+};
+
+/**
+ * The reel at position `pos` (0 = pages[0] at rest, 1.5 = halfway from pages[1] to pages[2]). The
+ * band slides; the header and the bar cross-fade between the two pages in view (each page carries
+ * its own colour wash behind them).
+ */
+export const FeedReel: React.FC<{ pages: ScreenName[]; pos: number; children?: (i: number) => React.ReactNode }> = ({ pages, pos, children }) => {
+  const p = Math.min(pages.length - 1, Math.max(0, pos));
+  const i0 = Math.floor(p);
+  const i1 = Math.min(pages.length - 1, i0 + 1);
+  const frac = p - i0;
+  const band = FEED.bottom - FEED.top;
+  const chrome = (y: number, h: number) => (
+    <>
+      <ShotPart name={pages[i0]} x={0} y={y} w={SHOT.w} h={h} />
+      {frac > 0.001 && <ShotPart name={pages[i1]} x={0} y={y} w={SHOT.w} h={h} style={{ opacity: frac }} />}
+    </>
+  );
+  return (
+    <>
+      <div style={{ position: 'absolute', left: 0, top: FEED.top, width: SHOT.w, height: band, overflow: 'hidden' }}>
+        {pages.map((name, i) => {
+          const y = (i - p) * band;
+          if (Math.abs(y) >= band) return null;
+          return (
+            <div key={name} style={{ position: 'absolute', left: 0, top: 0, width: SHOT.w, height: band, transform: `translateY(${y}px)` }}>
+              <ShotPart name={name} x={0} y={FEED.top} w={SHOT.w} h={band} style={{ top: 0 }} />
+              <div style={{ position: 'absolute', left: 0, top: -FEED.top, width: SHOT.w, height: SHOT.h }}>{children?.(i)}</div>
+            </div>
+          );
+        })}
+      </div>
+      {chrome(0, FEED.top)}
+      {chrome(FEED.bottom, SHOT.h - FEED.bottom)}
+    </>
+  );
+};
+
+/** Keep turning to Kept on the rail: HeartOn in coral over the outline, the label rewritten. */
+export const KeptOverlay: React.FC<{ on: number; labelBg: string }> = ({ on, labelBg }) => {
+  const K = FEED.keep;
+  if (on <= 0.001) return null;
+  const s = K.icon * (0.4 + 0.6 * on) * 1.06; // a hair larger than the outline it covers
+  return (
+    <>
+      <svg width={s} height={s} viewBox="0 0 24 24" style={{ position: 'absolute', left: K.x - s / 2, top: K.y - s / 2, overflow: 'visible' }}>
+        <path d={HEART_PATH} fill="#FF6A4D" stroke="#FF6A4D" strokeWidth={1.2} opacity={Math.min(1, on * 1.5)} />
+      </svg>
+      <div style={{ position: 'absolute', left: K.x - 24, top: K.labelY, width: 48, height: 16, background: labelBg, opacity: Math.min(1, on * 2), textAlign: 'center', fontFamily: FONT.text, fontSize: 12, fontWeight: 600, lineHeight: '16px', color: '#FFFFFF', fontVariationSettings: '"wdth" 100, "opsz" 16' }}>Kept</div>
+    </>
+  );
+};

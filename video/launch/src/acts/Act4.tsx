@@ -5,21 +5,26 @@ import { C, TYPE, U, typeStyle } from '../brand/tokens';
 import { Words } from '../fx/Words';
 import { E, hitPulse, inertia, lmix, prog } from '../lib/anim';
 import { FEED_KEPT } from '../kit/data';
+import { FEED, FeedReel, KeptOverlay, type ScreenName } from '../kit/App';
 import { Grain, Phone, phoneSize } from '../kit/Kit';
-import { FEED_KEEP, FeedScreen } from '../kit/Screens';
 import { ACT, copy, CUE, f60 } from '../timeline';
 import { PH } from './Act3';
 
 // ACT 4 - THE FEED. Act 3 whipped up out of the word card; the Feed opens mid-flick at the same
-// close framing and pulls back to the phone while the reel coasts onto Apricity. "It learns" waits
-// on the left. Keep: the heart on the rail fills coral (the device), and Kai's chip says what it
-// noticed. "what you keep." answers on the right, a coral loop drawn round "keep" by hand (r6).
-// The reel flicks on to Petrichor, a weather word, because that is what was kept.
+// close framing and pulls back to the phone while the reel coasts onto Apricity: the app's own Feed
+// pages (feed_2, feed_0, feed_1), whose chip already says why ("You keep saving quiet weather
+// words."). "It learns" waits on the left. Keep: the rail's heart turns to the app's coral HeartOn
+// and the label to "Kept". "what you keep." answers on the right, a coral loop drawn round "keep" by
+// hand (r6). The reel flicks on to the next page, chosen from the calm theme that was kept.
 
 const A = copy('learns.1');
 const B = copy('learns.2');
 const S = phoneSize(PH.w);
-export const PITCH = 620; // app units between reel cards (Screens.FeedScreen)
+export const PITCH = 620; // scroll units per page of the reel (pos = scroll / PITCH)
+/** The reel's pages, the app's own renders; FEED_KEPT (1) is Apricity, the card that gets kept. */
+export const FEED_PAGES: ScreenName[] = ['feed_2', 'feed_0', 'feed_1'];
+/** The rail label's ground on feed_0, sampled: Kept is set over it. */
+export const KEEP_LABEL_BG = '#622610';
 /** The last flick (to Petrichor): Act 5 keeps it running across the cut. */
 export const flick2 = (f: number) => prog(f, CUE.flick2 - 1, CUE.flick2 + f60(34), E.whip);
 
@@ -72,11 +77,10 @@ export const Act4: React.FC = () => {
   const k = lmix(2.2, 1, pull);
   const anchor = { x: PH.x + S.bezel + 168 * S.k, y: PH.y + S.bezel + 460 * S.k };
 
-  // --- Keep: the heart fills coral, a ring echoes it, Kai's chip follows --------------------
+  // --- Keep: the heart turns coral and a ring echoes it --------------------------------------
   const keep = prog(f, CUE.keep - 1, CUE.keep + f60(10), E.out);
   const pop = hitPulse(f - CUE.keep, 2, 6);
-  const chip = prog(f, CUE.keep + f60(16), CUE.keep + f60(40), E.out);
-  const heart = { x: PH.x + S.bezel + FEED_KEEP.x * S.k, y: PH.y + S.bezel + (FEED_KEEP.y + 22) * S.k };
+  const heart = { x: PH.x + S.bezel + FEED.keep.x * S.k, y: PH.y + S.bezel + (FEED.keep.y - flick * (FEED.bottom - FEED.top)) * S.k };
 
   // --- copy --------------------------------------------------------------------------------
 
@@ -84,7 +88,9 @@ export const Act4: React.FC = () => {
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, transformOrigin: `${anchor.x}px ${anchor.y}px`, transform: `scale(${k})` }}>
         <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y}px)` }}>
-          <FeedScreen scroll={scroll} keep={keep * (1 - flick)} chip={chip} />
+          <FeedReel pages={FEED_PAGES} pos={scroll / PITCH}>
+            {(i) => i === FEED_KEPT && <KeptOverlay on={keep} labelBg={KEEP_LABEL_BG} />}
+          </FeedReel>
         </Phone>
         {pop > 0.02 && (
           <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${heart.x}px, ${heart.y}px)` }}>
