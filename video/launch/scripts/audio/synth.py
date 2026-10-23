@@ -754,6 +754,18 @@ def pluck(freq, d=0.5, bright=4200, dark=500, tau_f=0.09, tau_a=0.22):
     return y * np.exp(-t / tau_a) * np.minimum(1, t / 0.002)
 
 
+def mallet(freq, d=0.6, tau=0.16, index=1.1):
+    """Soft FM mallet (ratio 1, a 4x bar partial gone in 20 ms): a short, rounded struck note for
+    percussive counter-lines; no pitch glide, no toy-like ring."""
+    t = tt(d)
+    mod = np.sin(2 * np.pi * freq * t) * index * np.exp(-t / 0.04)
+    x = np.sin(2 * np.pi * freq * t + mod) * np.exp(-t / tau)
+    x += np.sin(2 * np.pi * freq * 4.0 * t) * np.exp(-t / 0.02) * 0.1
+    k = min(len(x), ns(0.02))
+    x[-k:] *= np.linspace(1, 0, k)
+    return x * np.minimum(1, t / 0.0015)
+
+
 def bass(freq, d, drive=1.3, h2=0.22):
     """Sine bass + 2nd harmonic + a little saw, low-passed at 900 Hz and saturated."""
     x = sine(freq, d) + sine(freq * 2, d) * h2 + saw(freq, d) * 0.06

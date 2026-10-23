@@ -126,6 +126,12 @@ STYLES = {
 }
 STYLES['tail'] = STYLES['hold']
 ARP_PATTERN = [0, 2, 1, 3, 2, 1, 3, 2, 0, 2, 1, 3, 2, 3, 1, 2]
+# "arp_grid": 16 on a section: 16th plucks, accented 3-3-2 (slots 0, 3, 6, 8, 11, 14), a few rests
+ARP16_GAIN = [1.0, 0.45, 0.6, 0.9, 0.5, 0, 0.95, 0.5, 1.0, 0.45, 0.6, 0.9, 0.5, 0.55, 0.95, 0]
+# "bassline": "pulse": short sub stabs on the same 3-3-2 accents (16th slot, gain, octave up)
+PULSE_BASS = [(0, 1.0, 0), (3, 0.7, 0), (6, 0.85, 0), (8, 0.95, 0), (11, 0.7, 0), (14, 0.6, 12)]
+# layer "mallet" (default 0): a soft FM mallet answering the arp an octave up, (16th slot, chord tone, gain)
+MALLET = [(2, 3, 0.8), (7, 2, 0.6), (10, 1, 0.75), (13, 3, 0.55), (15, 2, 0.45)]
 # Static levels (pre-master, before the per-run and per-film levelling in render()).
 BASE = dict(tick=0.25, tock=0.34, hit=0.5, land=0.26, land_light=0.15, pop=0.12, whoosh=0.24, riser=0.18,
             drop=0.7, key=0.2, click=0.9, crisp=0.4, snap=0.45, swell=0.16, bell=0.08, suck=0.5, text=0.1)
@@ -469,11 +475,17 @@ class Song:
             st = dict(STYLES[style])
             st.update(dict(style=style, b0=b0, b1=b1, level=float(s_.get('level', st['level'])),
                            bright=float(s_.get('bright', 1.0)), clock=bool(s_.get('clock', False)),
-                           hats=bool(s_.get('hats', True)), layers=s_.get('layers', {})))
+                           hats=bool(s_.get('hats', True)), layers=s_.get('layers', {}),
+                           arp_grid=int(s_.get('arp_grid', 16 if style == 'drive' else 8)),
+                           bassline=s_.get('bassline')))
+            if st['arp_grid'] not in (8, 16):
+                raise ScoreError(f'arp_grid in section {s_["bars"]} is 8 or 16')
+            if st['bassline'] not in (None, 'pulse'):
+                raise ScoreError(f'bassline in section {s_["bars"]}: "pulse" or leave it out')
             if 'drums' in s_:
                 st['drums'] = s_['drums']
             for k, v in st['layers'].items():
-                if k not in ('pad', 'bass', 'arp', 'drone', 'drums', 'bells'):
+                if k not in ('pad', 'bass', 'arp', 'drone', 'drums', 'bells', 'mallet'):
                     raise ScoreError(f'unknown layer "{k}" in section {s_["bars"]}')
             self.sections.append(st)
         self.sections.sort(key=lambda s_: s_['b0'])
@@ -605,6 +617,16 @@ def build_music(song, n, events, plan=None, kit=None):
                 for k in range(8):
                     if not typing or k % 2 == 0:
                         H(s + k * beat / 2, 0.10 if k % 2 else 0.05)
+            elif pat == 'pulse':  # four on the floor, a ghost kick into the bar line, soft claps on 2 and 4
+                for q in range(4):  # short, tight kicks: the sub reads as punches, not a bed
+                    K(s + q * beat, (1.0 if q == 0 else 0.8) * dg, 0.55)
+                K(s + 3.75 * beat, 0.3 * dg, 0.35)
+                for q, g in ((1, 0.26), (3, 0.3)):  # a UI click near the backbeat takes the clap's place
+                    if free(s + q * beat, 12):
+                        S.place(drums, S.clap(seed=13 + 2 * q + 4 * bar), s + q * beat, g * dg)
+                for k in range(8):
+                    if not typing or k % 2 == 1:
+                        H(s + k * beat / 2, 0.05 if k % 2 else 0.02, 0.05, 0.008, 9000, 0.2 if k % 2 else -0.2)
             elif pat == 'drive':
                 for q in range(4):
                     K(s + q * beat, (1.0 if q == 0 else 0.85) * dg)
@@ -645,7 +667,10 @@ def build_music(song, n, events, plan=None, kit=None):
                     if d > 0.03:
                         S.place(bass, S.bass(S.mtof(m), d, drive, h2), t, g * bg)
                 st = sec['style']
-                if st == 'drive':
+                if sec['bassline'] == 'pulse':
+                    for k, g, o in PULSE_BASS:
+                        B(s + k * beat / 4, beat * 0.42, 0.42 * g, o, 1.5, 0.3)
+                elif st == 'drive':
                     for k in range(8):
                         B(s + k * beat / 2, beat / 2 * 0.95, 0.40, 12 if k in (3, 7) else 0, 1.3, 0.35)
                 elif st == 'groove':
@@ -670,7 +695,8 @@ def build_music(song, n, events, plan=None, kit=None):
             # pluck arp
             if ag > 0:
                 st = sec['style']
-                step = 1 if st == 'drive' else 2
+                step = 1 if sec['arp_grid'] == 16 else 2
+                acc16 = step == 1 and st != 'drive'
                 gain = {'build': 0.06 + 0.04 * u, 'groove': 0.08, 'drive': 0.13, 'breakdown': 0.06}.get(st, 0.06) * ag
                 if typing:
                     gain *= 0.6
@@ -681,8 +707,24 @@ def build_music(song, n, events, plan=None, kit=None):
                         continue
                     tones = arp_tones(ch)
                     m = tones[ARP_PATTERN[k] % len(tones)] + (12 if st == 'drive' and k in (6, 14) else 0)
+                    if acc16:  # short, accented 16ths: a percussive pluck, not a sustained arp
+                        if ARP16_GAIN[k] > 0 and free(t):  # a UI click / tick owns its 16th
+                            S.place(arp, S.pluck(S.mtof(m), 0.3, 2600, 450, 0.05, 0.11), t,
+                                    gain * 1.15 * ARP16_GAIN[k], -0.55 if k % 2 else 0.55)
+                        continue
                     S.place(arp, S.pluck(S.mtof(m), 0.45, 4200 if st == 'drive' else 3000), t,
                             gain * (1.0 if k % 4 == 0 else 0.75), -0.35 if k % 2 else 0.35)
+            # mallet: a counter-line of chord tones an octave over the arp (layers.mallet, default off)
+            mg = float(sec['layers'].get('mallet', 0))
+            if mg > 0:
+                for k, j, g in MALLET:
+                    t = s + k * beat / 4
+                    ch = song.chord_at(t)
+                    if ch is None or not free(t) or in_silence(song, t) or song.silence_start_in(t, t + 0.12):
+                        continue
+                    tones = arp_tones(ch, 78)
+                    S.place(arp, S.mallet(S.mtof(tones[j % len(tones)])), t,
+                            0.07 * mg * g * (0.6 if typing else 1.0), 0.5 if k % 2 else -0.5)
     arp = S.pingpong(arp, beat * 0.75, fb=0.32, mix=0.28)
 
     # ---- bells: a chord on each resolve, the signature motif where score.json places it ------

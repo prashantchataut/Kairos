@@ -8,14 +8,15 @@
     { "bars": [1, 2], "style": "intro", "clock": true, "level": 0.85 },
     { "bars": [3, 3], "style": "build", "clock": true },
     { "bars": [4, 5], "style": "resolve" },
-    { "bars": [6, 12], "style": "groove", "level": 0.9 },
-    { "bars": [13, 15], "style": "breakdown", "clock": true, "level": 0.85 },
-    { "bars": [16, 17], "style": "drive", "level": 0.95 },
+    { "bars": [6, 12], "style": "groove", "level": 0.9, "drums": "pulse", "bassline": "pulse", "arp_grid": 16,
+      "layers": { "pad": 0.4, "arp": 2.4, "mallet": 2.8 } },
+    { "bars": [13, 15], "style": "breakdown", "clock": true, "level": 0.85, "arp_grid": 16, "layers": { "pad": 0.7, "arp": 0.9, "mallet": 0.5 } },
+    { "bars": [16, 17], "style": "drive", "level": 0.95, "bassline": "pulse", "layers": { "pad": 0.55, "mallet": 1.0 } },
     { "bars": [18, 18], "style": "resolve", "level": 0.7, "layers": { "drums": 0 } },
     { "bars": [19, 20], "style": "hold" }
   ],
   "drops": [
-    { "at": "@flood", "silence": 120 },
+    { "at": "@pushIn", "silence": 97 },
     { "at": "16:0:0", "silence": "1/8" }
   ],
   "signature": { "tick": "A5", "tock": "D5", "motif": [0, 4, 7], "rhythm": [0, 0.5, 1.5] },
