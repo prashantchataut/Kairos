@@ -241,3 +241,43 @@ export const KeptOverlay: React.FC<{ on: number; labelBg: string }> = ({ on, lab
     </>
   );
 };
+
+// ------------------------------------------------------------------------------------------
+// Play (play_front / play_back): the top card of the deck, and the ground behind it.
+
+export const PLAY = {
+  card: { x: 24, y: 180.8, w: 352, h: 503.2, r: 28 },
+  // the screen's own wash at the card's left and right edges, top to bottom (sampled off the render)
+  ground: 'linear-gradient(180deg, #1e2c69 0%, #243279 28%, #2c3d8d 51%, #3b4ba0 75%, #4e5db8 100%)',
+};
+
+/**
+ * The Play screen with its top card turning over (`turned` 0 front .. 1 back), as the app does on
+ * a tap: the card rotates about its vertical axis over a plate of the screen's own wash.
+ */
+export const PlayCard: React.FC<{ turned: number }> = ({ turned }) => {
+  const C = PLAY.card;
+  const back = turned >= 0.5;
+  const turning = turned > 0.001 && turned < 0.999;
+  return (
+    <>
+      <Shot name={back ? 'play_back' : 'play_front'} />
+      {turning && (
+        <>
+          <div style={{ position: 'absolute', left: C.x, top: C.y, width: C.w, height: C.h, borderRadius: C.r, background: PLAY.ground }} />
+          <div style={{ position: 'absolute', left: C.x, top: C.y, width: C.w, height: C.h, perspective: 1400 }}>
+            <ShotPart
+              name={back ? 'play_back' : 'play_front'}
+              x={C.x}
+              y={C.y}
+              w={C.w}
+              h={C.h}
+              radius={C.r}
+              style={{ left: 0, top: 0, transform: `rotateY(${back ? (1 - turned) * -180 : turned * 180}deg) scale(${1 + 0.05 * Math.sin(turned * Math.PI)})`, boxShadow: SHADOW }}
+            />
+          </div>
+        </>
+      )}
+    </>
+  );
+};

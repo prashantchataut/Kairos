@@ -1,86 +1,69 @@
-// cinetic:brand-supplied coral, serif: Kairos' Play deck as it ships (BRIEF.md).
+// cinetic:brand-supplied coral, serif: Kairos' Play as it ships (BRIEF.md).
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { C, TYPE, U } from '../brand/tokens';
-import { Chain } from '../fx/Chain';
-import { clamp, E, hitPulse, mix, prog, stagger } from '../lib/anim';
-import { FEED_KEPT, FLASH } from '../kit/data';
-import { Grain, Kai, Phone } from '../kit/Kit';
-import { Flashcard, FeedScreen } from '../kit/Screens';
-import { ACT, CUE, f60, H, W } from '../timeline';
+import { C, TYPE, U, typeStyle } from '../brand/tokens';
+import { Words } from '../fx/Words';
+import { E, mix, prog } from '../lib/anim';
+import { FEED_KEPT } from '../kit/data';
+import { breatheT, FeedReel, KaiArt, KeptOverlay, PlayCard } from '../kit/App';
+import { Grain, Phone, phoneSize } from '../kit/Kit';
+import { ACT, copy, CUE, f60 } from '../timeline';
 import { PH } from './Act3';
-import { flick2, LearnsCopy, PITCH } from './Act4';
+import { FEED_PAGES, flick2, KEEP_LABEL_BG, LearnsCopy } from './Act4';
 
-// ACT 5 - PLAY. The phone drops away and the words this person kept fan out across the frame as
-// flashcards, in a cool duotone until one is played (cl-duotone-until-featured): Apricity turns
-// over and takes its full colour, then Sonder. "Play" / "your words." builds above them. Kai peeks
-// over the deck. Every card carries the coral petal in its corner: the device.
+// ACT 5 - PLAY. The Feed's last flick carries across the cut; on the downbeat the app pushes from
+// the Feed to Play (the real play_front render: "Finish the line"). "Play" waits on the left. The
+// top card turns over to its answer, the real play_back ("unplug"), and "your words." answers on
+// the right. On the second beat Kai, drawKai's own frames, rises beside the phone, delighted.
 
-const CARD = { w: 300, h: 420, k: 1.22 * U };
-const N = FLASH.length;
-/** Fan pose of card i: centre, rotation. The middle card is highest. */
-const fan = (i: number) => {
-  const c = i - (N - 1) / 2;
-  return { x: W / 2 + c * 318 * U, y: H / 2 + 110 * U + c * c * 26 * U, rot: c * 6.5 };
-};
-const TURNS = [
-  { i: 2, at: CUE.turn1 }, // Sonder
-  { i: 0, at: CUE.turn2 }, // Apricity
-];
+const A = copy('play.1');
+const B = copy('play.2');
+const S = phoneSize(PH.w);
 
 export const Act5: React.FC = () => {
   const f = useCurrentFrame() + ACT.play.from;
 
-  // the phone drops away, accelerating, as the cards burst out of it
-  const drop = prog(f, CUE.fan - 1, CUE.fan + f60(26), E.in);
-  const origin = { x: W / 2, y: H * 0.78 };
+  // the page push: the Feed slides off to the left, Play comes in from the right
+  const push = prog(f, CUE.fan - 1, CUE.fan + f60(30), E.inOut);
+  const turned = prog(f, CUE.turn1 - f60(4), CUE.turn1 + f60(22), E.inOut);
+
+  // Kai rises beside the phone on the second turn, delighted, then breathes
+  const kaiIn = prog(f, CUE.turn2 - f60(12), CUE.turn2 + f60(20), E.out);
+  const delight = prog(f, CUE.turn2, CUE.turn2 + f60(16), E.out);
+  const kaiSize = 190 * U;
+  const kai = { x: PH.x + PH.w - 40 * U, y: PH.y + S.bezel + 560 * S.k + mix(140 * U, 0, kaiIn) };
+
+  const size = TYPE.line.size * 0.74 * U;
+  const lineY = PH.y + S.bezel + 432 * S.k - size * 0.55; // level with the card's centre
 
   return (
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
-      {drop < 1 && (
-        <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y + drop * H * 1.1}px)` }}>
-          <FeedScreen scroll={(FEED_KEPT + flick2(f)) * PITCH} keep={1 - flick2(f)} chip={1} />
-        </Phone>
+      <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y}px)` }}>
+        {push < 1 && (
+          <div style={{ position: 'absolute', inset: 0, transform: `translateX(${-push * 120}px)`, opacity: 1 - push * 0.5 }}>
+            <FeedReel pages={FEED_PAGES} pos={FEED_KEPT + flick2(f)}>
+              {(i) => i === FEED_KEPT && <KeptOverlay on={1} labelBg={KEEP_LABEL_BG} />}
+            </FeedReel>
+          </div>
+        )}
+        {push > 0 && (
+          <div style={{ position: 'absolute', inset: 0, transform: `translateX(${(1 - push) * 400}px)`, boxShadow: '-20px 0 60px rgba(0,0,0,0.25)' }}>
+            <PlayCard turned={turned} />
+          </div>
+        )}
+      </Phone>
+      {kaiIn > 0.001 && (
+        <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${kai.x}px, ${kai.y - kaiSize / 2}px) rotate(${mix(14, -6, kaiIn)}deg)`, opacity: Math.min(1, kaiIn * 2) }}>
+          {delight < 1 ? <KaiArt size={kaiSize} seq="delight" t={delight} /> : <KaiArt size={kaiSize} seq="breathe" t={breatheT(f - CUE.turn2)} />}
+        </div>
       )}
-      {/* Kai peeks over the middle card once the second card has turned */}
-      <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${W / 2 + 70 * U}px, ${fan(2).y - CARD.h * CARD.k * 0.5 - 70 * U + (1 - prog(f, CUE.turn2 - f60(30), CUE.turn2, E.out)) * 90 * U}px)`, opacity: prog(f, CUE.turn2 - f60(30), CUE.turn2 - f60(24), E.smooth) }}>
-        <Kai size={110 * U} look={[-0.8, 0.6]} blink={hitPulse(f - CUE.turn2 - 20, 2, 4)} />
-      </div>
-      <div style={{ position: 'absolute', inset: 0, perspective: 1800 }}>
-        {FLASH.map((card, i) => {
-          const s = CUE.fan + f60(4) + stagger(Math.abs(i - 2), 3, f60(10));
-          const p = prog(f, s, s + f60(34), E.out);
-          const home = fan(i);
-          const breath = 1 + 0.012 * Math.sin(((f - s) / 60) * Math.PI * 2 * 0.45 + i);
-          const turn = TURNS.find((t) => t.i === i);
-          const turned = turn ? prog(f, turn.at - f60(4), turn.at + f60(22), E.inOut) : 0;
-          const lift = turn ? hitPulse(f - turn.at, 4, 14) : 0;
-          const mono = turn ? 1 - prog(f, turn.at, turn.at + f60(18), E.smooth) : 1;
-          const x = mix(origin.x, home.x, p);
-          const y = mix(origin.y, home.y, p) - lift * 40 * U;
-          const k = mix(0.4, 1, p) * CARD.k * breath * (1 + 0.06 * lift);
-          return (
-            <div
-              key={card.w.word}
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                width: CARD.w,
-                height: CARD.h,
-                transformOrigin: '50% 50%',
-                transform: `translate(${x - CARD.w / 2}px, ${y - CARD.h / 2}px) rotate(${mix(0, home.rot, p) - (turn ? lift * 2 : 0)}deg) scale(${k})`,
-                opacity: clamp(p * 3),
-                zIndex: turn ? 3 : i === 2 ? 2 : 1,
-              }}
-            >
-              <Flashcard w={card.w} hue={card.hue} turned={turned} mono={mono} />
-            </div>
-          );
-        })}
-      </div>
       <LearnsCopy f={f} />
-      <Chain chain="play" frame={f} top={120 * U} accent="recency" color={C.ink} accentColor={C.cobalt} size={TYPE.line.size * U} />
+      <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${PH.x - 56 * U}px, ${lineY}px) translateX(-100%)` }}>
+        <Words text={A.text} id={A.id} frame={f} start={A.in} out={A.out} size={size} style={{ ...typeStyle('line', size), color: C.ink }} />
+      </div>
+      <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${PH.x + PH.w + 56 * U}px, ${lineY}px)` }}>
+        <Words text={B.text} id={B.id} frame={f} start={B.in} out={B.out} size={size} style={{ ...typeStyle('line', size), color: C.ink }} />
+      </div>
       <Grain frame={f} opacity={0.035} />
     </AbsoluteFill>
   );
