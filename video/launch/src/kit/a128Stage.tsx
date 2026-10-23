@@ -4,8 +4,8 @@
 import React from 'react';
 import { C, U } from '../brand/tokens';
 import { columnAt, COLUMNS, type NameBeat, petalAt } from '../fx/a128Time';
-import { BlurWords, letterSlots, nameMetrics, RisingName } from '../fx/a128Type';
-import { arrive, arriveK, clamp, depart, E, prog } from '../lib/anim';
+import { BlurWords, letterSlots, RisingName } from '../fx/a128Type';
+import { arrive, arriveK, depart, E, prog } from '../lib/anim';
 import { inkBox } from '../lib/measure';
 import { copy, f60, H, W } from '../timeline';
 import { Device, deviceSize, SCREEN, type Tone } from './Device';
@@ -127,6 +127,3 @@ export const Lockup: React.FC<{
     </>
   );
 };
-
-/** Ink metrics re-exported for acts that lay copy out against the name. */
-export { nameMetrics, clamp };

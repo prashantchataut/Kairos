@@ -39,7 +39,7 @@ export const measureFace = (text: string, size: number, face: React.CSSPropertie
   return w;
 };
 
-/** Left edge of each letter of `text` (kerning and tracking kept), and the word's ink-to-ink width. */
+/** Left edge of each letter of `text` (kerning and tracking kept), and the word's advance width without its trailing tracking. */
 export const letterSlots = (text: string, size: number, face: React.CSSProperties) => {
   const chars = Array.from(text);
   const lefts = chars.map((ch, k) => measureFace(chars.slice(0, k + 1).join(''), size, face) - measureFace(ch, size, face));

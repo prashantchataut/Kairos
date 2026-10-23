@@ -1,6 +1,6 @@
 // Timing for Acts 1, 2 and 8, shared by the picture and by src/sync.ts: pure numbers, no DOM, so
 // the sound events are computed from the same curves the acts draw with. Frames are absolute.
-import { arrive, arriveK, clamp, E, type Ease, prog } from '../lib/anim';
+import { arrive, arriveK, E, type Ease, prog } from '../lib/anim';
 import { settleOf } from '../lib/sync';
 import { ACT, b, copy, CUE, f60, TOTAL } from '../timeline';
 
@@ -8,7 +8,8 @@ import { ACT, b, copy, CUE, f60, TOTAL } from '../timeline';
 // Act 1: the wall's speed ramp. The film opens mid-rush; the wall eases into a slow glide while
 // "Days" lands, surges on "just pass.", cruises fast through "Some moments" and brakes hard to a
 // dead stop on CUE.stop with Seneca's card at the plane's centre. The shape is in units of the
-// peak speed; scale() turns it into plane px per frame so the scroll ends exactly on the card.
+// peak speed: Act 1 multiplies rampLeft() by its peak (plane px per frame) and counts back from the
+// card's scroll, so the scroll ends exactly on the card whatever the peak.
 
 /** Speed keys [frame, share of the peak], eased between (zero slope at every key). */
 const RAMP: [number, number][] = [
@@ -110,7 +111,7 @@ export type NameBeat = {
   petalDur: number;
   core: [number, number]; // the core grows; it lands on core[1]
   letters: { from: number; gap: number; dur: number }; // letter i rises over [from + i * gap, + dur]
-  out: number; // the lockup starts to leave (Act 2) or never (Act 8: TOTAL)
+  out: number; // the lockup starts to leave (Act 2: COPY's out) or never (Act 8: NEVER)
 };
 
 const lettersFor = (id: string, n: number, dur: number) => {
@@ -177,8 +178,3 @@ export const columnAt = (f: number, from: number, i: number) => {
   const d = Math.abs(i - (COLUMNS.n - 1) / 2) * COLUMNS.delay;
   return prog(f, from - 1 + d, from - 1 + d + COLUMNS.dur, E.smooth);
 };
-
-/** The frame the last column closes. */
-export const columnsClosed = (from: number) => from - 1 + ((COLUMNS.n - 1) / 2) * COLUMNS.delay + COLUMNS.dur;
-
-export { clamp };
