@@ -6,6 +6,7 @@ import { Film, FilmProps } from './Film';
 import { FilmSub, subMetadata } from './FilmSub';
 import { Audit } from './lib/Audit';
 import { FontGate } from './lib/FontGate';
+import { CalibToday } from './kit/Calib';
 import { BrandAvatar, BrandHeader, BrandLockup, BrandMark, MarkSizes, MarkStill } from './Stills';
 import { ACT, FPS, H, TOTAL, W } from './timeline';
 
@@ -44,6 +45,11 @@ export const RemotionRoot: React.FC = () => (
       {SOLOS.map(({ key, Solo }, i) => (
         <Composition key={key} id={`Act${i + 1}`} component={Solo} durationInFrames={ACT[key].dur} fps={FPS} width={W} height={H} defaultProps={{ audit: false } as FilmProps} />
       ))}
+    </Folder>
+
+    {/* Overlay checks: the live overlays on a screen render, diffed by scripts/calib.py. */}
+    <Folder name="Calib">
+      <Still id="CalibToday" component={CalibToday} width={1000} height={2150} defaultProps={{ overlay: true }} />
     </Folder>
 
     <Folder name="Stills">
