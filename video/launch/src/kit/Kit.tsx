@@ -90,11 +90,11 @@ export const Heart: React.FC<{ size: number; fill?: number; color?: string; stro
 };
 
 /**
- * The phone: a thin navy bezel around a screen. `w` is the outer width in px; the screen is a
- * 400 x 868 design canvas (the app's ~360 dp width at 1.1x) scaled to fit, so screens are laid out
- * in app units and stay crisp at any size.
+ * The phone: a thin navy bezel around a screen. `w` is the outer width in px; the screen is the
+ * app's 400 x 860 dp canvas (the size FilmAssetsTest renders every screen at) scaled to fit, so
+ * renders fill it exactly and overlays are placed in dp.
  */
-export const PHONE = { sw: 400, sh: 868, bezel: 12, radius: 64 };
+export const PHONE = { sw: 400, sh: 860, bezel: 12, radius: 64 };
 export const phoneSize = (w: number) => {
   const k = (w - 2 * PHONE.bezel * (w / 424)) / PHONE.sw;
   return { w, h: (PHONE.sh * k) + 2 * PHONE.bezel * (w / 424), k, bezel: PHONE.bezel * (w / 424) };

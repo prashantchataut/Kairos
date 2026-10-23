@@ -7,11 +7,12 @@ import { Words } from '../fx/Words';
 import { clamp, E, fd, hitPulse, lmix, mix, prog } from '../lib/anim';
 import { TODAY } from '../kit/data';
 import { FALL } from '../kit/device';
-import { Grain, Phone, phoneSize, wordStyle } from '../kit/Kit';
-import { TODAY_HEART, TodayScreen } from '../kit/Screens';
+import { blinkT, KaiArt, SavedPill, Shot, TODAY as T, TodayWordPatch, todayWordStyle } from '../kit/App';
+import { Grain, Phone, phoneSize } from '../kit/Kit';
 import { ACT, copy, CUE, f60, H, W } from '../timeline';
 
-// ACT 3 - THE WORD. The phone rises already moving on the downbeat, the Today screen on it. The
+// ACT 3 - THE WORD. The phone rises already moving on the downbeat, the app's Today screen on it
+// (today.jpg, the real render; the word, the Saved pill and Kai are live overlays, src/kit/App.tsx). The
 // coral petal, still falling from the dot of the i, lands in the Save button and becomes its
 // heart. "A word" waits on the left; the word of the day rewrites itself in place (Saudade ->
 // Apricity, the r5 move); "for every feeling." answers on the right, the phone standing in the
@@ -67,21 +68,25 @@ export const Act3: React.FC = () => {
   const word = (
     <span style={{ position: 'relative', display: 'inline-block' }}>
       <span style={{ position: 'absolute', left: -6, right: -6, top: 2, bottom: -8, borderRadius: 8, background: C.skyFade, opacity: sel }} />
-      <span style={{ position: 'relative', ...wordStyle(64, C.ink, 500) }}>{text}</span>
+      <span style={{ position: 'relative', ...todayWordStyle }}>{text}</span>
     </span>
   );
 
   // --- the device: the falling petal lands as the Save heart -------------------------------
-  const heart = onPhone({ x: TODAY_HEART.x + TODAY_HEART.size / 2, y: TODAY_HEART.y + 28 }, dy);
+  const heart = onPhone({ x: T.heart.x, y: T.heart.y }, dy);
   const t = prog(f, CUE.rise - 1, CUE.heart, E.contact);
   const landed = f >= CUE.heart;
   const petal = {
     x: mix(FALL.x, heart.x, t),
     y: mix(FALL.y, heart.y, t),
-    size: mix(FALL.size, TODAY_HEART.size * S.k * 4.6, t), // a petal 4.6x the heart's box is as wide as the heart
+    size: mix(FALL.size, T.heart.size * S.k * 4.6, t), // a petal 4.6x the heart's box is as wide as the heart
     rot: mix(FALL.rot, 0, t),
   };
   const pop = hitPulse(f - CUE.heart, 2, 6);
+  // Kai, drawKai's own frames over the header Kai (56 dp): delighted by the save, then a blink
+  const delight = prog(f, CUE.heart + f60(4), CUE.heart + f60(20), E.out) * (1 - prog(f, CUE.heart + f60(70), CUE.heart + f60(90), E.smooth));
+  const blink = blinkT(f, CUE.rewrite1 + f60(40), f60(14));
+  const kai = delight > 0.001 ? <KaiArt size={T.kai.size} seq="delight" t={delight} /> : <KaiArt size={T.kai.size} seq="blink" t={blink} />;
 
   // --- the copy: "A word" left of the phone, "for every feeling." right of it ----------------
   const size = TYPE.line.size * 0.74 * U;
@@ -91,7 +96,10 @@ export const Act3: React.FC = () => {
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, transformOrigin: `${cardC.x}px ${cardC.y}px`, transform: `translateY(${whip}px) scale(${push * settle})` }}>
         <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y + dy}px)` }}>
-          <TodayScreen pose={{ word, info, infoFade, heart: landed ? 1 : 0, heartHidden: false, kaiLook: [f > CUE.rewrite1 ? -0.6 : 0.4, 0.3], kaiBlink: hitPulse(f - (CUE.rewrite1 + 40), 2, 4), deck: 1 + 0.4 * pop }} />
+          <Shot name="today" />
+          <TodayWordPatch word={word} info={info} infoFade={infoFade} />
+          <SavedPill on={landed ? 1 : 0} pop={pop} />
+          <div style={{ position: 'absolute', left: T.kai.x - T.kai.size / 2, top: T.kai.y - T.kai.size / 2 }}>{kai}</div>
         </Phone>
         {!landed && <Petal size={petal.size} color={C.coral} style={placePetal(petal.x, petal.y, petal.size, petal.rot)} />}
         {landed && pop > 0.02 && (

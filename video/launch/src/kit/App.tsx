@@ -165,12 +165,12 @@ export const todayWordStyle: React.CSSProperties = {
   fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
 };
 
-/** The Save pill switching to Saved: HeartOn in coral, the label in SemiBold 16. */
-export const SavedPill: React.FC<{ on: number }> = ({ on }) => {
+/** The Save pill switching to Saved: HeartOn in coral, the label in SemiBold 16; `pop` 1..0 is the app's 0.86 -> 1 scale pop. */
+export const SavedPill: React.FC<{ on: number; pop?: number }> = ({ on, pop = 0 }) => {
   const P = TODAY.pill;
   const s = TODAY.heart.size;
   return (
-    <div style={{ position: 'absolute', left: P.x, top: P.y, width: P.w, height: P.h, borderRadius: P.h / 2, background: '#FFFFFF', opacity: on, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+    <div style={{ position: 'absolute', left: P.x, top: P.y, width: P.w, height: P.h, borderRadius: P.h / 2, background: '#FFFFFF', opacity: on, transform: `scale(${1 - 0.14 * pop})`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
       <svg width={s} height={s} viewBox="0 0 24 24" style={{ transform: `scale(${0.4 + 0.6 * on})` }}>
         <path d={HEART_PATH} fill="#FF6A4D" />
       </svg>
