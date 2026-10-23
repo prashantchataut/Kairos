@@ -61,10 +61,11 @@ export type BlurWordsProps = {
   lift?: number; // em the words lift as they leave
   exitIndex?: number; // this fragment's first word's place in its line (the exit runs along the line)
   exitStagger?: number;
+  exitDur?: number;
   style?: React.CSSProperties;
 };
 
-export const BlurWords: React.FC<BlurWordsProps> = ({ id, frame: f, size, face, rise = 0.22, blur = 14, lift = 0.3, exitIndex = 0, exitStagger = WORD.exitStagger, style }) => {
+export const BlurWords: React.FC<BlurWordsProps> = ({ id, frame: f, size, face, rise = 0.22, blur = 14, lift = 0.3, exitIndex = 0, exitStagger = WORD.exitStagger, exitDur = WORD.exitDur, style }) => {
   const c = copy(id);
   const words = c.text.split(' ');
   return (
@@ -76,8 +77,8 @@ export const BlurWords: React.FC<BlurWordsProps> = ({ id, frame: f, size, face, 
         const p = WORD.ease(t);
         const k = arriveK(rise * size, e - s, WORD.ease);
         const o = c.out + (exitIndex + i) * exitStagger;
-        const q = prog(f, o, o + WORD.exitDur, E.in);
-        const gone = prog(f, o, o + WORD.exitDur, E.smooth);
+        const q = prog(f, o, o + exitDur, E.in);
+        const gone = prog(f, o, o + exitDur, E.smooth);
         const y = (1 - arrive(p, k)) * rise - depart(q) * lift;
         const b = blur * (1 - clamp(t / FOCUS)) + blurOut(q, blur);
         return (

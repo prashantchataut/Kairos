@@ -80,7 +80,8 @@ export const Act1: React.FC = () => {
         <BlurWords id="stay.1" frame={f} size={SIZE} face={FACE} />
       </div>
       <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${128 * U}px, ${top}px)` }}>
-        <BlurWords id="stay.2" frame={f} size={SIZE} face={{ ...FACE, color: C.coral }} rise={0} blur={24} />
+        {/* "stay." stays: it comes into focus without moving, and leaves so slowly that the frame Act 2 holds under its morning still has it */}
+        <BlurWords id="stay.2" frame={f} size={SIZE} face={{ ...FACE, color: C.coral }} rise={0} blur={24} lift={0.1} exitDur={f60(90)} />
       </div>
       <Grain frame={f} opacity={0.05} />
     </AbsoluteFill>
