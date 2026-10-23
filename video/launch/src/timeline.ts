@@ -165,8 +165,8 @@ export const COPY: Copy[] = [
   { id: 'wordmark', text: 'Kairos', in: b(18, 3), resolved: CUE.lockup, out: TOTAL },
   { ...line('android', 'Now on Android', b(19, 2)), out: TOTAL },
   // Product strings (kind 'ui'): the app's own content, not film copy.
-  { id: 'ui.dear', text: 'Dear future me,', in: CUE.paper, resolved: CUE.paper + 32, out: CUE.fold, kind: 'ui' },
-  { id: 'ui.opens', text: 'Opens in 6 months', in: CUE.opens, resolved: CUE.opens + 26, out: CUE.flip, kind: 'ui' },
+  { id: 'ui.dear', text: 'Dear future me...', in: CUE.paper, resolved: CUE.paper + 32, out: CUE.fold, kind: 'ui' },
+  { id: 'ui.opens', text: 'Opens on April 1st 2027', in: CUE.opens, resolved: CUE.opens + 26, out: CUE.flip, kind: 'ui' },
 ];
 
 /**

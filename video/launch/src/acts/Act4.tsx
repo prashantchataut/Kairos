@@ -1,7 +1,7 @@
 // cinetic:brand-supplied coral, serif: Kairos' Feed as it ships (BRIEF.md).
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { C, TYPE, U, typeStyle } from '../brand/tokens';
+import { C, SAMPLED, TYPE, U, typeStyle } from '../brand/tokens';
 import { Words } from '../fx/Words';
 import { E, hitPulse, inertia, lmix, prog } from '../lib/anim';
 import { FEED_KEPT } from '../kit/data';
@@ -24,7 +24,7 @@ export const PITCH = 620; // scroll units per page of the reel (pos = scroll / P
 /** The reel's pages, the app's own renders; FEED_KEPT (1) is Apricity, the card that gets kept. */
 export const FEED_PAGES: ScreenName[] = ['feed_2', 'feed_0', 'feed_1'];
 /** The rail label's ground on feed_0, sampled: Kept is set over it. */
-export const KEEP_LABEL_BG = '#622610';
+export const KEEP_LABEL_BG = SAMPLED.keepLabel;
 /** The last flick (to Petrichor): Act 5 keeps it running across the cut. */
 export const flick2 = (f: number) => prog(f, CUE.flick2 - 1, CUE.flick2 + f60(34), E.whip);
 

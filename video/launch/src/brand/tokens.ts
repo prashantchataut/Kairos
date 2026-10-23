@@ -8,6 +8,22 @@ import type React from 'react';
 import { safeInsets } from '../lib/safe';
 import { H, W } from '../timeline';
 
+/**
+ * Colours sampled off the app's own renders (public/app), for plates that sit flush with a render:
+ * where the film covers part of a screen, the ground has to be the screen's own pixels.
+ */
+export const SAMPLED = {
+  keepLabel: '#622610', // feed_0's wash behind the rail's "Keep" label (Kept is set over it)
+  play0: '#1E2C69', // play_front's wash at the card's top edge ...
+  play1: '#243279',
+  play2: '#2C3D8D',
+  play3: '#3B4BA0',
+  play4: '#4E5DB8', // ... to its bottom edge: the plate the card turns over
+  write0: '#2149CC', // compose_write's wash behind its title, left ...
+  write1: '#244DD0',
+  write2: '#2A54D8', // ... to right: the plate the title types itself on
+};
+
 export const C = {
   ink: '#0F1A3A', // type on light stages: Kairos navy ink
   inkSoft: '#55607A', // secondary text on light

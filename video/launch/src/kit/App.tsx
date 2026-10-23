@@ -7,7 +7,7 @@
 // own faces and colours and placed in app units measured off the renders.
 import React from 'react';
 import { Img, staticFile } from 'remotion';
-import { FONT } from '../brand/tokens';
+import { FONT, SAMPLED as X } from '../brand/tokens';
 import { SHADOW } from './Kit';
 import type { Word } from './data';
 
@@ -248,7 +248,7 @@ export const KeptOverlay: React.FC<{ on: number; labelBg: string }> = ({ on, lab
 export const PLAY = {
   card: { x: 24, y: 180.8, w: 352, h: 503.2, r: 28 },
   // the screen's own wash at the card's left and right edges, top to bottom (sampled off the render)
-  ground: 'linear-gradient(180deg, #1e2c69 0%, #243279 28%, #2c3d8d 51%, #3b4ba0 75%, #4e5db8 100%)',
+  ground: `linear-gradient(180deg, ${X.play0} 0%, ${X.play1} 28%, ${X.play2} 51%, ${X.play3} 75%, ${X.play4} 100%)`,
 };
 
 /**
@@ -278,6 +278,61 @@ export const PlayCard: React.FC<{ turned: number }> = ({ turned }) => {
           </div>
         </>
       )}
+    </>
+  );
+};
+
+// ------------------------------------------------------------------------------------------
+// The time capsule (compose_write, compose_when, letter_sealed).
+
+export const CAPSULE = {
+  // compose_write's title, "Dear future me...", and the wash behind it (sampled off the render)
+  title: { x: 20.4, y: 68, w: 203.6, h: 23.6 },
+  titlePlate: { x: 16, y: 62, w: 216, h: 34, bg: `linear-gradient(90deg, ${X.write0} 0%, ${X.write1} 55%, ${X.write2} 100%)` },
+  // letter_sealed's coral seal on the envelope (centre and diameter)
+  seal: { x: 199.8, y: 234.6, d: 54 },
+};
+
+/**
+ * compose_write with its title being typed: the render's own title revealed left to right, one
+ * character width at a time (`typed` of `total` characters), over a plate of the wash.
+ */
+export const ComposeTyping: React.FC<{ typed: number; total: number }> = ({ typed, total }) => {
+  const T = CAPSULE.title;
+  const P = CAPSULE.titlePlate;
+  const n = Math.min(total, Math.max(0, Math.floor(typed)));
+  return (
+    <>
+      <Shot name="compose_write" />
+      {n < total && (
+        <>
+          <div style={{ position: 'absolute', left: P.x, top: P.y, width: P.w, height: P.h, background: P.bg }} />
+          <ShotPart name="compose_write" x={P.x} y={P.y} w={T.x - P.x + (T.w * n) / total} h={P.h} />
+        </>
+      )}
+    </>
+  );
+};
+
+/** letter_sealed with its seal stamped on: the render's own seal, coming down from `k0` x size. */
+export const SealedStamp: React.FC<{ land: number; squash?: number; k0?: number }> = ({ land, squash = 0, k0 = 1.9 }) => {
+  const S = CAPSULE.seal;
+  const pad = 2;
+  const k = k0 + (1 - k0) * land;
+  return (
+    <>
+      <Shot name="letter_sealed" />
+      {land < 1 || squash !== 0 ? (
+        <ShotPart
+          name="letter_sealed"
+          x={S.x - S.d / 2 - pad}
+          y={S.y - S.d / 2 - pad}
+          w={S.d + 2 * pad}
+          h={S.d + 2 * pad}
+          radius={S.d}
+          style={{ transform: `scale(${k * (1 + 0.12 * squash)}, ${k * (1 - 0.12 * squash)})`, opacity: Math.min(1, land * 3), boxShadow: `0 ${8 * (1 - land)}px ${24 * (1 - land)}px rgba(0,0,0,0.3)` }}
+        />
+      ) : null}
     </>
   );
 };

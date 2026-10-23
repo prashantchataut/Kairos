@@ -404,7 +404,7 @@
   },
   {
    "id": "ui.dear",
-   "text": "Dear future me,",
+   "text": "Dear future me...",
    "in": 1470,
    "resolved": 1502,
    "out": 1583,
@@ -419,11 +419,11 @@
   },
   {
    "id": "ui.opens",
-   "text": "Opens in 6 months",
+   "text": "Opens on April 1st 2027",
    "in": 1710,
    "resolved": 1736,
    "out": 1785,
-   "words": 4,
+   "words": 5,
    "kind": "ui",
    "read": [
     [
@@ -686,6 +686,20 @@
    "weight": 0.6,
    "pan": -0.1,
    "id": "letter:dear14"
+  },
+  {
+   "f": 1500,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear15"
+  },
+  {
+   "f": 1502,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear16"
   },
   {
    "f": 1528,

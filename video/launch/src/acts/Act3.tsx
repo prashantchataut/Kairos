@@ -86,7 +86,7 @@ export const Act3: React.FC = () => {
   // Kai, drawKai's own frames over the header Kai (56 dp): delighted by the save, then a blink
   const delight = prog(f, CUE.heart + f60(4), CUE.heart + f60(20), E.out) * (1 - prog(f, CUE.heart + f60(70), CUE.heart + f60(90), E.smooth));
   const blink = blinkT(f, CUE.rewrite1 + f60(40), f60(14));
-  const kai = delight > 0.001 ? <KaiArt size={T.kai.size} seq="delight" t={delight} /> : <KaiArt size={T.kai.size} seq="blink" t={blink} />;
+  const kaiArt = delight > 0.001 ? <KaiArt size={T.kai.size} seq="delight" t={delight} /> : <KaiArt size={T.kai.size} seq="blink" t={blink} />;
 
   // --- the copy: "A word" left of the phone, "for every feeling." right of it ----------------
   const size = TYPE.line.size * 0.74 * U;
@@ -99,7 +99,7 @@ export const Act3: React.FC = () => {
           <Shot name="today" />
           <TodayWordPatch word={word} info={info} infoFade={infoFade} />
           <SavedPill on={landed ? 1 : 0} pop={pop} />
-          <div style={{ position: 'absolute', left: T.kai.x - T.kai.size / 2, top: T.kai.y - T.kai.size / 2 }}>{kai}</div>
+          <div style={{ position: 'absolute', left: T.kai.x - T.kai.size / 2, top: T.kai.y - T.kai.size / 2 }}>{kaiArt}</div>
         </Phone>
         {!landed && <Petal size={petal.size} color={C.coral} style={placePetal(petal.x, petal.y, petal.size, petal.rot)} />}
         {landed && pop > 0.02 && (
