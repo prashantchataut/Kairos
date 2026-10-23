@@ -24,6 +24,8 @@ data class Taste(
     val recentThemes: List<String> = emptyList(),
     /** Kinds of thought shown recently ("quote", "line", "proverb"), to keep a balance. */
     val recentKinds: List<String> = emptyList(),
+    /** Kinds of thought they engage with (quote, line, affirmation, proverb). */
+    val savedKinds: Map<String, Int> = emptyMap(),
 )
 
 enum class DayPart { Morning, Afternoon, Evening, Night;
@@ -139,7 +141,9 @@ object DailyEngine {
             if (q.author in taste.lovedAuthors) s.add(1.4, "More from ${q.author}, whom you kept before")
             if (q.theme in partThemes) s.add(1.0, "A ${dayPart.name.lowercase()} thought")
             if (lastKind != null && q.kind != lastKind) s.add(0.6)
-            if (q.isLine) s.add(0.2, "Written just for you")
+            val kindLove = min(3, taste.savedKinds[q.kind] ?: 0)
+            s.add(kindLove * 0.45, if (kindLove >= 2) "You linger on ${if (q.kind == "affirmation") "affirmations" else "${q.kind}s"} like this" else null)
+            if (q.isLine) s.add(0.2)
             s.add(-taste.recentThemes.take(3).count { it == q.theme } * 0.9)
             if (q.timesShown == 0) s.add(0.8)
             s.add(random.nextDouble() * 2.0)

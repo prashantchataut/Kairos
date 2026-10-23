@@ -19,4 +19,9 @@ if grep -rnE "(sk-or-v1-[A-Za-z0-9]{20,}|sk-ant-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-
   fail "something that looks like an API key is committed"
 fi
 
+# The built-in AI keys come from local.properties (git-ignored) or CI secrets, never from the repository.
+if git ls-files | xargs grep -nE "^(INCEPTION_API_KEY|GEMINI_API_KEY)=.+" 2>/dev/null | grep -v "^scripts/verify_kairos.sh" >/dev/null; then
+  fail "a built-in AI key value is committed; keep it in local.properties or repository secrets"
+fi
+
 echo "verify: all checks passed"

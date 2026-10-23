@@ -11,11 +11,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -59,6 +63,8 @@ object Route {
     @Serializable data class Word(val id: String)
     @Serializable data class Quote(val id: String)
     @Serializable data class Book(val id: String)
+    @Serializable data object Library
+    @Serializable data object Play
     @Serializable data object Practice
     @Serializable data class Studio(val kind: String, val id: String)
     @Serializable data object Compose
@@ -67,10 +73,56 @@ object Route {
     @Serializable data object Interests
 }
 
-private val enter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = { fadeIn(Motion.fade(300)) + slideInVertically(Motion.offset) { it / 14 } }
-private val exit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = { fadeOut(Motion.fade(220)) + scaleOut(targetScale = 0.98f) }
-private val popEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = { fadeIn(Motion.fade(300)) + scaleIn(initialScale = 0.98f) }
-private val popExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = { fadeOut(Motion.fade(200)) + slideOutVertically(Motion.offset) { it / 14 } }
+/**
+ * Navigation motion, in three families:
+ * - push (detail pages): the new page slides in from the right over the old one, which drifts left,
+ *   dims and shrinks a touch, like a card laid on a card; back reverses it exactly.
+ * - sheet (compose, play, practice, studio): rises from the bottom with the soft spring and the page
+ *   behind recedes; it drops back down when dismissed.
+ * - fade-through (everything else).
+ */
+private enum class Kind { Push, Sheet, Fade }
+
+private fun NavBackStackEntry.kind(): Kind {
+    val r = destination.route.orEmpty()
+    return when {
+        listOf("Compose", "Play", "Practice", "Studio").any { r.contains(it) } -> Kind.Sheet
+        listOf("Word", "Quote", "Book", "Letter", "Curator", "Interests", "Library").any { r.contains(it) } -> Kind.Push
+        else -> Kind.Fade
+    }
+}
+
+private val springOffset = androidx.compose.animation.core.spring(dampingRatio = 0.92f, stiffness = 420f, visibilityThreshold = androidx.compose.ui.unit.IntOffset(1, 1))
+private val springScale = androidx.compose.animation.core.spring<Float>(dampingRatio = 0.92f, stiffness = 420f)
+
+private val enter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+    when (targetState.kind()) {
+        Kind.Push -> slideInHorizontally(springOffset) { it } + fadeIn(Motion.fade(180))
+        Kind.Sheet -> slideInVertically(springOffset) { it } + fadeIn(Motion.fade(160))
+        Kind.Fade -> fadeIn(Motion.fade(320)) + scaleIn(springScale, initialScale = 0.96f)
+    }
+}
+private val exit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+    when (targetState.kind()) {
+        Kind.Push -> slideOutHorizontally(springOffset) { -it / 4 } + fadeOut(Motion.fade(260), targetAlpha = 0.4f) + scaleOut(springScale, targetScale = 0.94f)
+        Kind.Sheet -> scaleOut(springScale, targetScale = 0.92f) + fadeOut(Motion.fade(260), targetAlpha = 0.5f)
+        Kind.Fade -> fadeOut(Motion.fade(200)) + scaleOut(springScale, targetScale = 1.04f)
+    }
+}
+private val popEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+    when (initialState.kind()) {
+        Kind.Push -> slideInHorizontally(springOffset) { -it / 4 } + fadeIn(Motion.fade(260), initialAlpha = 0.4f) + scaleIn(springScale, initialScale = 0.94f)
+        Kind.Sheet -> scaleIn(springScale, initialScale = 0.92f) + fadeIn(Motion.fade(260), initialAlpha = 0.5f)
+        Kind.Fade -> fadeIn(Motion.fade(320)) + scaleIn(springScale, initialScale = 1.04f)
+    }
+}
+private val popExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+    when (initialState.kind()) {
+        Kind.Push -> slideOutHorizontally(springOffset) { it } + fadeOut(Motion.fade(240))
+        Kind.Sheet -> slideOutVertically(springOffset) { it } + fadeOut(Motion.fade(240))
+        Kind.Fade -> fadeOut(Motion.fade(200)) + scaleOut(springScale, targetScale = 0.96f)
+    }
+}
 
 private inline fun <reified T : Any> NavGraphBuilder.screen(noinline content: @Composable (NavBackStackEntry) -> Unit) =
     composable<T>(enterTransition = enter, exitTransition = exit, popEnterTransition = popEnter, popExitTransition = popExit) { e ->
@@ -103,10 +155,19 @@ fun KairosNav(onboarded: Boolean, deepLink: String?, onDeepLinkHandled: () -> Un
                         openCurator = { nav.navigate(Route.Curator) },
                         openInterests = { nav.navigate(Route.Interests) },
                         openBook = { nav.navigate(Route.Book(it)) },
+                        openLibrary = { nav.navigate(Route.Library) },
+                        openPlay = { nav.navigate(Route.Play) },
                     )
                 }
                 screen<Route.Word> { e -> val id = e.toRoute<Route.Word>().id; WordScreen(id, { nav.popBackStack() }, { nav.navigate(Route.Studio("word", id)) }, { nav.navigate(Route.Practice) }) }
                 screen<Route.Quote> { e -> val id = e.toRoute<Route.Quote>().id; QuoteScreen(id, { nav.popBackStack() }) { nav.navigate(Route.Studio("quote", id)) } }
+                screen<Route.Library> {
+                    Box(Modifier.fillMaxSize()) {
+                        LearnScreen({ nav.navigate(Route.Word(it)) }, { nav.navigate(Route.Quote(it)) }, { nav.navigate(Route.Practice) }, { nav.navigate(Route.Curator) }, { nav.navigate(Route.Book(it)) })
+                        com.kairos.app.ui.feature.detail.TopBar({ nav.popBackStack() }, onSky = true, modifier = Modifier.align(Alignment.TopEnd).width(80.dp))
+                    }
+                }
+                screen<Route.Play> { com.kairos.app.ui.feature.play.PlayScreen { nav.popBackStack() } }
                 screen<Route.Book> { e -> com.kairos.app.ui.feature.detail.BookScreen(e.toRoute<Route.Book>().id) { nav.popBackStack() } }
                 screen<Route.Practice> { PracticeScreen { nav.popBackStack() } }
                 screen<Route.Studio> { e -> val r = e.toRoute<Route.Studio>(); StudioScreen(r.kind, r.id) { nav.popBackStack() } }
@@ -124,6 +185,7 @@ private fun Home(
     tab: Int, onTab: (Int) -> Unit,
     openWord: (String) -> Unit, openQuote: (String) -> Unit, openStudio: (String, String) -> Unit, openPractice: () -> Unit,
     openCompose: () -> Unit, openLetter: (Long) -> Unit, openCurator: () -> Unit, openInterests: () -> Unit, openBook: (String) -> Unit,
+    openLibrary: () -> Unit, openPlay: () -> Unit,
 ) {
     val haze = remember { HazeState() }
     var sheet by remember { mutableStateOf(false) }
@@ -132,24 +194,28 @@ private fun Home(
         CompositionLocalProvider(LocalHaze provides haze) {
             AnimatedContent(
                 tab, Modifier.fillMaxSize().haze(haze),
-                transitionSpec = { (fadeIn(Motion.fade(260)) + scaleIn(initialScale = 0.99f)) togetherWith fadeOut(Motion.fade(160)) },
+                // Tabs slide a short way in the direction of travel and cross-fade.
+                transitionSpec = {
+                    val dir = if (targetState > initialState) 1 else -1
+                    (slideInHorizontally(springOffset) { it / 6 * dir } + fadeIn(Motion.fade(260))) togetherWith (slideOutHorizontally(springOffset) { -it / 6 * dir } + fadeOut(Motion.fade(160)))
+                },
                 label = "tabs",
             ) { t ->
                 when (t) {
-                    0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator, { onTab(3) }, openBook)
-                    1 -> LearnScreen(openWord, openQuote, openPractice, openCurator, openBook)
+                    0 -> TodayScreen(openWord, openQuote, openStudio, openPractice, { onTab(2) }, openCurator, { onTab(3) }, openBook, openPlay)
+                    1 -> com.kairos.app.ui.feature.feed.FeedScreen(openStudio, openBook, openLibrary, openWord)
                     2 -> CapsuleHome(openCompose, openLetter)
                     else -> YouScreen(openCurator, openInterests)
                 }
             }
-            BottomBar(tab, onTab, { sheet = true }, sheet, Modifier.align(Alignment.BottomCenter), night = tab == 2)
+            BottomBar(tab, onTab, { sheet = true }, sheet, Modifier.align(Alignment.BottomCenter), night = tab == 2 || tab == 1)
         }
     }
     if (sheet) QuickSheet(
         listOf(
             QuickAction(Icons.Edit, "Write to future you", "A letter, a photo or a voice note", com.kairos.app.ui.theme.Tint.Lavender, openCompose),
-            QuickAction(Icons.Cards, "Play with words", "Two minutes, spaced so they stick", com.kairos.app.ui.theme.Tint.Mint, openPractice),
-            QuickAction(Icons.Search, "Ask Kai for words", "About anything at all", com.kairos.app.ui.theme.Tint.Sky, { onTab(1) }),
+            QuickAction(Icons.Cards, "Play", "Random cards from your words and thoughts", com.kairos.app.ui.theme.Tint.Mint, openPlay),
+            QuickAction(Icons.Search, "Your library", "Words, thoughts and books you've met", com.kairos.app.ui.theme.Tint.Sky, openLibrary),
             QuickAction(Icons.Smile, "Check in", "How are you, really?", com.kairos.app.ui.theme.Tint.Butter, { onTab(0) }),
         ),
     ) { sheet = false }

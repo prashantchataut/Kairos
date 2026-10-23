@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.kairos.app.data.db.KairosDatabase
 import com.kairos.app.data.db.MIGRATION_1_2
+import com.kairos.app.data.db.MIGRATION_2_3
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -22,7 +23,7 @@ import java.io.File
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class MigrationTest {
-    @Test fun `version 1 data survives the move to version 2`() = runBlocking {
+    @Test fun `version 1 data survives the moves to version 3`() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
         val schema = Json.parseToJsonElement(File("schemas/com.kairos.app.data.db.KairosDatabase/1.json").readText()).jsonObject["database"]!!.jsonObject
         val file = context.getDatabasePath("migrate.db").also { it.parentFile?.mkdirs(); it.delete() }
@@ -38,9 +39,10 @@ class MigrationTest {
             db.execSQL("INSERT INTO quotes (id, text, author, theme, note, generatedAt, saved, timesShown, taste) VALUES ('q1','Nature does not hurry.','Lao Tzu','calm','',1,0,0,0)")
             db.version = 1
         }
-        val room = Room.databaseBuilder(context, KairosDatabase::class.java, "migrate.db").addMigrations(MIGRATION_1_2).allowMainThreadQueries().build()
+        val room = Room.databaseBuilder(context, KairosDatabase::class.java, "migrate.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3).allowMainThreadQueries().build()
         val word = room.words().get("apricity")!!
         assertEquals("", word.language)
+        assertEquals(0L, word.dwellMs)
         assertTrue(word.saved)
         assertEquals("quote", room.quotes().get("q1")!!.kind)
         assertEquals(0, room.books().all().size)

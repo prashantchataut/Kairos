@@ -98,7 +98,7 @@ data class Tab(val label: String, val icon: ImageVector, val iconOn: ImageVector
 
 val Tabs = listOf(
     Tab("Today", Icons.Today, Icons.TodayOn),
-    Tab("Learn", Icons.Learn, Icons.LearnOn),
+    Tab("Feed", Icons.Feed, Icons.FeedOn),
     Tab("Capsule", Icons.Capsule, Icons.CapsuleOn),
     Tab("You", Icons.You, Icons.YouOn),
 )

@@ -1,0 +1,26 @@
+{
+  "key": "D major",
+  "bpm": 120,
+  "music": "synth",
+  "sfx": { "engine": "auto", "kit": "audio/kit.json", "python": null },
+  "chords": ["Bm9", "Gmaj9", "Em11 A7sus4", "Dmaj9", "Aadd9", "Bm9", "Gmaj9", "Dmaj9", "Aadd9", "Bm9", "Gmaj9", "Em9 A7sus4", "Bm9", "Gmaj9", "Em11 A7sus4", "Dmaj9", "Gmaj9 Aadd9", "Bm9", "Dmaj9", "-"],
+  "sections": [
+    { "bars": [1, 2], "style": "intro", "clock": true, "level": 0.85 },
+    { "bars": [3, 3], "style": "build", "clock": true },
+    { "bars": [4, 5], "style": "resolve" },
+    { "bars": [6, 12], "style": "groove", "level": 0.9 },
+    { "bars": [13, 15], "style": "breakdown", "clock": true, "level": 0.85 },
+    { "bars": [16, 17], "style": "drive", "level": 0.95 },
+    { "bars": [18, 18], "style": "resolve", "level": 0.7, "layers": { "drums": 0 } },
+    { "bars": [19, 20], "style": "hold" }
+  ],
+  "drops": [
+    { "at": "@flood", "silence": 120 },
+    { "at": "16:0:0", "silence": "1/8" }
+  ],
+  "signature": { "tick": "A5", "tock": "D5", "motif": [0, 4, 7], "rhythm": [0, 0.5, 1.5] },
+  "typing": "auto",
+  "payoff": "16:0:0",
+  "mix": { "music": 1.0, "sfx": 1.0, "reverb": 1.0, "sidechain": 0.55, "duck_db": 3 },
+  "master": { "ceiling": 0.77, "fade": 1.3 }
+}

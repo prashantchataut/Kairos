@@ -32,6 +32,10 @@ class SecureKeyStore(context: Context) {
     val builtIn: Boolean = BuiltInKeys.mercury.isNotBlank() || BuiltInKeys.gemini.isNotBlank()
 
     private val _awake = MutableStateFlow(builtIn || apiKey() != null)
+    private var onDevice = false
+
+    /** The on-device model became usable (or not); it counts as being awake for thoughts. */
+    fun setOnDevice(ready: Boolean) { onDevice = ready; _awake.value = builtIn || _hasKey.value || onDevice }
     /** Kai can write: built-in keys, or the person's own key. */
     val awake: StateFlow<Boolean> = _awake.asStateFlow()
 
@@ -40,7 +44,7 @@ class SecureKeyStore(context: Context) {
     fun setApiKey(value: String?) {
         prefs.edit().apply { if (value.isNullOrBlank()) remove(KEY) else putString(KEY, value.trim()) }.apply()
         _hasKey.value = !value.isNullOrBlank()
-        _awake.value = builtIn || _hasKey.value
+        _awake.value = builtIn || _hasKey.value || onDevice
     }
 
     private companion object { const val KEY = "openrouter_key" }

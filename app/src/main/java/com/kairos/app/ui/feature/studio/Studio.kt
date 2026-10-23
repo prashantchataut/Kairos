@@ -84,7 +84,7 @@ fun StudioScreen(kind: String, id: String, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val flow = remember(kind, id) {
         if (kind == "word") c.kairos.observeWord(id).map { w -> w?.let { CardContent(true, it.word, it.pronunciation, it.partOfSpeech, it.definition, it.example) } }
-        else c.kairos.observeQuote(id).map { q -> q?.let { CardContent(false, it.text, byline = it.author.ifBlank { "written for you" }) } }
+        else c.kairos.observeQuote(id).map { q -> q?.let { CardContent(false, it.text, byline = it.author) } }
     }
     val content by flow.collectAsStateWithLifecycle(initialValue = null)
     var hue by rememberSaveable { mutableIntStateOf(0) }

@@ -35,6 +35,8 @@ object Icons {
     val You = s("You", PERSON_HEAD, PERSON_BODY)
     val YouOn = f("YouOn", PERSON_HEAD, "M4.9 20c.8-3.6 3.6-5.9 7.1-5.9s6.3 2.3 7.1 5.9z")
 
+    val Feed = s("Feed", "M7 3.5h10A1.5 1.5 0 0 1 18.5 5v14a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5z", "M10.5 9.5v5l4-2.5z")
+    val FeedOn = f("FeedOn", "M7 3.5h10A1.5 1.5 0 0 1 18.5 5v14a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5zm3.5 6v5l4-2.5z")
     val Plus = s("Plus", "M12 5.5v13", "M5.5 12h13")
     val Close = s("Close", "M6.5 6.5l11 11", "M17.5 6.5l-11 11")
     val Back = s("Back", "M14.5 5.5 8 12l6.5 6.5")

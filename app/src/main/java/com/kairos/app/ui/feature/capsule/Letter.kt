@@ -1,6 +1,10 @@
 package com.kairos.app.ui.feature.capsule
 
 import android.content.Intent
+import com.kairos.app.ui.components.drawMark
+import androidx.compose.ui.draw.shadow
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.Canvas
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
@@ -259,17 +263,31 @@ private fun Opened(cap: CapsuleWithAttachments, onReply: (String) -> Unit, onWri
             FadingTitle(c.title.ifBlank { Fmt.ordinalDate(d) }, "${d.year}", size = 44)
         }
         Spacer(Modifier.height(Gap.xl))
-        LetterPaper(cap.paper(), "SEALED\n" + Fmt.shortDate(c.createdAt).uppercase(), Modifier.fillMaxWidth().padding(horizontal = Gap.gutter), firstLine = 104.dp) {
-            Column(Modifier.padding(start = 52.dp, end = 20.dp, top = 22.dp, bottom = 26.dp)) {
-                Text("Dear future me,", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 36.sp), color = PaperInk, modifier = Modifier.padding(end = 112.dp, top = 18.dp))
-                Spacer(Modifier.height(4.dp))
-                if (c.letter.isNotBlank()) Text(c.letter, style = K.type.body.copy(fontFamily = SerifText, fontSize = 19.sp, lineHeight = 31.sp), color = PaperInk)
-                Spacer(Modifier.height(Gap.lg))
-                Text("— you, ${Fmt.date(c.createdAt)}", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontSize = 22.sp), color = PaperInk.copy(alpha = 0.7f))
+        // The letter unfolds as you arrive: three folds of paper open one after another.
+        val calm = K.calm
+        val folds = remember { List(3) { Animatable(if (calm) 1f else 0f) } }
+        LaunchedEffect(Unit) { folds.forEachIndexed { i, f -> launch { delay(150L + i * 220L); f.animateTo(1f, Motion.settle()) } } }
+        Box(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).graphicsLayer {
+            rotationX = (1f - folds[0].value) * 70f; cameraDistance = 16f * density; transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0f)
+            alpha = (folds[0].value * 1.5f).coerceAtMost(1f)
+        }) {
+            LetterPaper(cap.paper(), "SEALED\n" + Fmt.shortDate(c.createdAt).uppercase(), Modifier.fillMaxWidth(), firstLine = 104.dp) {
+                Column(Modifier.padding(start = 52.dp, end = 20.dp, top = 22.dp, bottom = 26.dp)) {
+                    Text("Dear future me,", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontWeight = FontWeight.Bold, fontSize = 32.sp, lineHeight = 36.sp), color = PaperInk, modifier = Modifier.padding(end = 112.dp, top = 18.dp))
+                    Spacer(Modifier.height(4.dp))
+                    // Each paragraph fades up in turn, as if being read for the first time.
+                    c.letter.split("\n").forEachIndexed { i, para ->
+                        val k = folds[(1 + i).coerceAtMost(2)].value
+                        Text(para, style = K.type.body.copy(fontFamily = SerifText, fontSize = 19.sp, lineHeight = 31.sp), color = PaperInk,
+                            modifier = Modifier.graphicsLayer { alpha = k; translationY = (1f - k) * 12f * density })
+                    }
+                    Spacer(Modifier.height(Gap.lg))
+                    Text("— you, ${Fmt.date(c.createdAt)}", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontSize = 22.sp), color = PaperInk.copy(alpha = 0.7f))
+                }
             }
         }
         if (cap.attachments.isNotEmpty()) {
-            Text("Tucked inside", style = K.type.title, color = Color.White, modifier = Modifier.padding(start = Gap.gutter, top = Gap.xl, bottom = Gap.md))
+            Text("Tucked inside", style = K.type.shout.copy(fontSize = 26.sp), color = Color.White, modifier = Modifier.padding(start = Gap.gutter, top = Gap.xxl, bottom = Gap.md))
             FlowRow(Modifier.padding(horizontal = Gap.gutter), horizontalArrangement = Arrangement.spacedBy(Gap.lg), verticalArrangement = Arrangement.spacedBy(Gap.lg)) {
                 cap.attachments.forEachIndexed { i, a ->
                     val kind = runCatching { AttachmentKind.valueOf(a.kind) }.getOrDefault(AttachmentKind.File)
@@ -284,23 +302,35 @@ private fun Opened(cap: CapsuleWithAttachments, onReply: (String) -> Unit, onWri
             }
         }
         Spacer(Modifier.height(Gap.xl))
-        Column(Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).clip(Radius.card).background(Color.White.copy(alpha = 0.1f)).border(1.dp, Color.White.copy(alpha = 0.18f), Radius.card).padding(Gap.xl)) {
-            Mood.of(c.moodAtSeal)?.let { m ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Kai(m.look(), size = 40.dp, shadow = false, alive = false, description = null)
-                    Spacer(Modifier.width(Gap.sm))
-                    Text("Back then you felt ${m.label.lowercase()}.", style = K.type.label, color = Color.White.copy(alpha = 0.85f))
+        // The reply is a postcard back to past you: a stamp corner, an address line, your words.
+        Column(
+            Modifier.fillMaxWidth().padding(horizontal = Gap.gutter).graphicsLayer { rotationZ = -1.5f }
+                .shadow(16.dp, RoundedCornerShape(8.dp)).clip(RoundedCornerShape(8.dp)).background(Color(0xFFF7F1E3)).padding(Gap.xl),
+        ) {
+            Row(verticalAlignment = Alignment.Top) {
+                Column(Modifier.weight(1f)) {
+                    Text("A postcard back", style = K.type.title.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontWeight = FontWeight.Bold, fontSize = 26.sp), color = PaperInk)
+                    Mood.of(c.moodAtSeal)?.let { m ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Kai(m.look(), size = 26.dp, shadow = false, alive = false, description = null)
+                            Spacer(Modifier.width(6.dp))
+                            Text("Back then you felt ${m.label.lowercase()}.", style = K.type.caption, color = PaperInk.copy(alpha = 0.7f))
+                        }
+                    }
                 }
-                Spacer(Modifier.height(Gap.lg))
+                Box(Modifier.size(width = 46.dp, height = 54.dp).border(1.5.dp, PaperInk.copy(alpha = 0.3f), RoundedCornerShape(3.dp)).padding(4.dp).background(cap.paper()), contentAlignment = Alignment.Center) {
+                    Canvas(Modifier.size(22.dp)) { drawMark(Color.White, 0f) }
+                }
             }
-            Text("Write back to past you", style = K.type.title, color = Color.White)
-            Spacer(Modifier.height(Gap.sm))
-            Box(Modifier.fillMaxWidth().heightIn(min = 90.dp)) {
-                val st = K.type.body.copy(fontFamily = SerifText, fontSize = 19.sp, lineHeight = 28.sp)
-                if (reply.isEmpty()) Text("What would you tell them now?", style = st, color = Color.White.copy(alpha = 0.45f))
-                BasicTextField(reply, { reply = it }, textStyle = st.copy(color = Color.White), cursorBrush = SolidColor(Candy.Sun), modifier = Modifier.fillMaxWidth().heightIn(min = 90.dp))
+            Spacer(Modifier.height(Gap.md))
+            Text("To: me, ${Fmt.date(c.createdAt)}", style = K.type.label, color = PaperInk.copy(alpha = 0.6f))
+            Box(Modifier.fillMaxWidth().padding(vertical = 6.dp).height(1.dp).background(PaperInk.copy(alpha = 0.2f)))
+            Box(Modifier.fillMaxWidth().heightIn(min = 110.dp)) {
+                val st = K.type.body.copy(fontFamily = com.kairos.app.ui.theme.Hand, fontSize = 23.sp, lineHeight = 30.sp)
+                if (reply.isEmpty()) Text("What would you tell them now?", style = st, color = PaperInk.copy(alpha = 0.4f))
+                BasicTextField(reply, { reply = it }, textStyle = st.copy(color = PaperInk), cursorBrush = SolidColor(Candy.Coral), modifier = Modifier.fillMaxWidth().heightIn(min = 110.dp))
             }
-            if (reply != c.reply) { Spacer(Modifier.height(Gap.sm)); PrimaryButton("Save reply", { onReply(reply) }, icon = Icons.Check, onSky = true) }
+            if (reply != c.reply) { Spacer(Modifier.height(Gap.sm)); PrimaryButton("Keep this postcard", { onReply(reply) }, icon = Icons.Check, dark = true) }
         }
         Spacer(Modifier.height(Gap.xl))
         PrimaryButton("Write another letter", onWriteAnother, Modifier.fillMaxWidth().padding(horizontal = Gap.gutter), icon = Icons.Edit, onSky = true)

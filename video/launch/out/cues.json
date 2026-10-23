@@ -1,0 +1,778 @@
+{
+ "fps": 60,
+ "bpm": 120,
+ "total": 2340,
+ "pace": "crisp",
+ "acts": {
+  "chronos": {
+   "from": 0,
+   "dur": 360
+  },
+  "name": {
+   "from": 360,
+   "dur": 240
+  },
+  "word": {
+   "from": 600,
+   "dur": 360
+  },
+  "feed": {
+   "from": 960,
+   "dur": 240
+  },
+  "play": {
+   "from": 1200,
+   "dur": 240
+  },
+  "letter": {
+   "from": 1440,
+   "dur": 360
+  },
+  "share": {
+   "from": 1800,
+   "dur": 240
+  },
+  "lockup": {
+   "from": 2040,
+   "dur": 300
+  }
+ },
+ "cue": {
+  "whir": 45,
+  "blurUp": 120,
+  "stop": 263,
+  "pushIn": 360,
+  "flood": 383,
+  "letters": 405,
+  "dot": 428,
+  "rise": 600,
+  "heart": 615,
+  "rewrite1": 720,
+  "rewrite2": 855,
+  "dive": 900,
+  "through": 938,
+  "flick1": 960,
+  "keep": 1058,
+  "flick2": 1178,
+  "fan": 1200,
+  "turn1": 1305,
+  "turn2": 1418,
+  "night": 1440,
+  "paper": 1470,
+  "fold": 1583,
+  "seal": 1605,
+  "opens": 1710,
+  "flip": 1785,
+  "story": 1905,
+  "square": 2018,
+  "scatter": 2040,
+  "unfold": 2055,
+  "core": 2100,
+  "lockup": 2160,
+  "end": 2280
+ },
+ "copy": [
+  {
+   "id": "days.1",
+   "text": "Days",
+   "in": 8,
+   "resolved": 34,
+   "out": 169,
+   "words": 1,
+   "kind": "copy",
+   "chain": "days",
+   "mode": "build",
+   "read": [
+    [
+     34,
+     76
+    ],
+    [
+     115,
+     169
+    ]
+   ]
+  },
+  {
+   "id": "days.2",
+   "text": "just pass.",
+   "in": 83,
+   "resolved": 115,
+   "out": 169,
+   "words": 2,
+   "kind": "copy",
+   "chain": "days",
+   "mode": "build",
+   "read": [
+    [
+     115,
+     169
+    ]
+   ]
+  },
+  {
+   "id": "stay.1",
+   "text": "Some moments",
+   "in": 180,
+   "resolved": 212,
+   "out": 263,
+   "words": 2,
+   "kind": "copy",
+   "chain": "stay",
+   "mode": "replace",
+   "read": [
+    [
+     212,
+     260
+    ]
+   ]
+  },
+  {
+   "id": "stay.2",
+   "text": "stay.",
+   "in": 285,
+   "resolved": 311,
+   "out": 353,
+   "words": 1,
+   "kind": "copy",
+   "chain": "stay",
+   "mode": "replace",
+   "read": [
+    [
+     311,
+     353
+    ]
+   ]
+  },
+  {
+   "id": "name.1",
+   "text": "Kairos",
+   "in": 405,
+   "resolved": 431,
+   "out": 578,
+   "words": 1,
+   "kind": "copy",
+   "chain": "name",
+   "mode": "build",
+   "read": [
+    [
+     431,
+     473
+    ],
+    [
+     518,
+     578
+    ]
+   ]
+  },
+  {
+   "id": "name.2",
+   "text": "the right moment.",
+   "in": 480,
+   "resolved": 518,
+   "out": 578,
+   "words": 3,
+   "kind": "copy",
+   "chain": "name",
+   "mode": "build",
+   "read": [
+    [
+     518,
+     578
+    ]
+   ]
+  },
+  {
+   "id": "word.1",
+   "text": "A word",
+   "in": 630,
+   "resolved": 662,
+   "out": 854,
+   "words": 2,
+   "kind": "copy",
+   "chain": "word",
+   "mode": "build",
+   "read": [
+    [
+     662,
+     710
+    ],
+    [
+     788,
+     854
+    ]
+   ]
+  },
+  {
+   "id": "word.2",
+   "text": "for every feeling.",
+   "in": 750,
+   "resolved": 788,
+   "out": 854,
+   "words": 3,
+   "kind": "copy",
+   "chain": "word",
+   "mode": "build",
+   "read": [
+    [
+     788,
+     854
+    ]
+   ]
+  },
+  {
+   "id": "learns.1",
+   "text": "It learns",
+   "in": 975,
+   "resolved": 1007,
+   "out": 1184,
+   "words": 2,
+   "kind": "copy",
+   "chain": "learns",
+   "mode": "build",
+   "read": [
+    [
+     1007,
+     1055
+    ],
+    [
+     1118,
+     1184
+    ]
+   ]
+  },
+  {
+   "id": "learns.2",
+   "text": "what you keep.",
+   "in": 1080,
+   "resolved": 1118,
+   "out": 1184,
+   "words": 3,
+   "kind": "copy",
+   "chain": "learns",
+   "mode": "build",
+   "read": [
+    [
+     1118,
+     1184
+    ]
+   ]
+  },
+  {
+   "id": "play.1",
+   "text": "Play",
+   "in": 1230,
+   "resolved": 1256,
+   "out": 1406,
+   "words": 1,
+   "kind": "copy",
+   "chain": "play",
+   "mode": "build",
+   "read": [
+    [
+     1256,
+     1298
+    ],
+    [
+     1352,
+     1406
+    ]
+   ]
+  },
+  {
+   "id": "play.2",
+   "text": "your words.",
+   "in": 1320,
+   "resolved": 1352,
+   "out": 1406,
+   "words": 2,
+   "kind": "copy",
+   "chain": "play",
+   "mode": "build",
+   "read": [
+    [
+     1352,
+     1406
+    ]
+   ]
+  },
+  {
+   "id": "write.1",
+   "text": "Write to",
+   "in": 1500,
+   "resolved": 1532,
+   "out": 1712,
+   "words": 2,
+   "kind": "copy",
+   "chain": "write",
+   "mode": "build",
+   "read": [
+    [
+     1532,
+     1580
+    ],
+    [
+     1652,
+     1712
+    ]
+   ]
+  },
+  {
+   "id": "write.2",
+   "text": "future you.",
+   "in": 1620,
+   "resolved": 1652,
+   "out": 1712,
+   "words": 2,
+   "kind": "copy",
+   "chain": "write",
+   "mode": "build",
+   "read": [
+    [
+     1652,
+     1712
+    ]
+   ]
+  },
+  {
+   "id": "share.1",
+   "text": "Share",
+   "in": 1830,
+   "resolved": 1856,
+   "out": 2006,
+   "words": 1,
+   "kind": "copy",
+   "chain": "share",
+   "mode": "build",
+   "read": [
+    [
+     1856,
+     1898
+    ],
+    [
+     1952,
+     2006
+    ]
+   ]
+  },
+  {
+   "id": "share.2",
+   "text": "what stays.",
+   "in": 1920,
+   "resolved": 1952,
+   "out": 2006,
+   "words": 2,
+   "kind": "copy",
+   "chain": "share",
+   "mode": "build",
+   "read": [
+    [
+     1952,
+     2006
+    ]
+   ]
+  },
+  {
+   "id": "wordmark",
+   "text": "Kairos",
+   "in": 2130,
+   "resolved": 2160,
+   "out": 2340,
+   "words": 1,
+   "kind": "copy",
+   "read": [
+    [
+     2160,
+     2280
+    ]
+   ]
+  },
+  {
+   "id": "android",
+   "text": "Now on Android",
+   "in": 2220,
+   "resolved": 2258,
+   "out": 2340,
+   "words": 3,
+   "kind": "copy",
+   "read": [
+    [
+     2258,
+     2340
+    ]
+   ]
+  },
+  {
+   "id": "ui.dear",
+   "text": "Dear future me,",
+   "in": 1470,
+   "resolved": 1502,
+   "out": 1583,
+   "words": 3,
+   "kind": "ui",
+   "read": [
+    [
+     1502,
+     1583
+    ]
+   ]
+  },
+  {
+   "id": "ui.opens",
+   "text": "Opens in 6 months",
+   "in": 1710,
+   "resolved": 1736,
+   "out": 1785,
+   "words": 4,
+   "kind": "ui",
+   "read": [
+    [
+     1736,
+     1785
+    ]
+   ]
+  }
+ ],
+ "events": [
+  {
+   "f": 15,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.4,
+   "id": "chronos:days1"
+  },
+  {
+   "f": 96,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.4,
+   "id": "chronos:days2"
+  },
+  {
+   "f": 193,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.4,
+   "id": "chronos:stay1"
+  },
+  {
+   "f": 263,
+   "kind": "snap",
+   "weight": 1.2,
+   "pan": 0.35,
+   "id": "chronos:hand-stops"
+  },
+  {
+   "f": 292,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.4,
+   "id": "chronos:stay2"
+  },
+  {
+   "f": 381,
+   "kind": "whoosh",
+   "weight": 1.1,
+   "pan": 0.3,
+   "apexFrac": 0.85,
+   "dur": 24,
+   "id": "name:dive"
+  },
+  {
+   "f": 428,
+   "kind": "pop",
+   "weight": 0.8,
+   "pan": 0.05,
+   "id": "name:dot-on-i"
+  },
+  {
+   "f": 514,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": 0,
+   "id": "name:right-moment"
+  },
+  {
+   "f": 615,
+   "kind": "pop",
+   "weight": 1,
+   "pan": -0.05,
+   "id": "word:save-heart"
+  },
+  {
+   "f": 658,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.45,
+   "id": "word:a-word"
+  },
+  {
+   "f": 720,
+   "kind": "tick",
+   "weight": 0.8,
+   "pan": 0,
+   "variant": "crisp",
+   "id": "word:rewrite1"
+  },
+  {
+   "f": 784,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": 0.45,
+   "id": "word:every-feeling"
+  },
+  {
+   "f": 855,
+   "kind": "tick",
+   "weight": 0.8,
+   "pan": 0,
+   "variant": "crisp",
+   "id": "word:rewrite2"
+  },
+  {
+   "f": 958,
+   "kind": "whoosh",
+   "weight": 0.9,
+   "pan": 0,
+   "apexFrac": 0.85,
+   "dur": 22,
+   "id": "word:whip-up"
+  },
+  {
+   "f": 1003,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.45,
+   "id": "feed:it-learns"
+  },
+  {
+   "f": 1058,
+   "kind": "pop",
+   "weight": 1,
+   "pan": 0.15,
+   "id": "feed:keep"
+  },
+  {
+   "f": 1114,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": 0.45,
+   "id": "feed:what-you-keep"
+  },
+  {
+   "f": 1202,
+   "kind": "whoosh",
+   "weight": 0.8,
+   "pan": 0,
+   "apexFrac": 0.1,
+   "dur": 34,
+   "id": "play:fan"
+  },
+  {
+   "f": 1237,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": 0,
+   "id": "play:play1"
+  },
+  {
+   "f": 1314,
+   "kind": "click",
+   "weight": 0.9,
+   "pan": 0,
+   "id": "play:turn1"
+  },
+  {
+   "f": 1333,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": 0,
+   "id": "play:play2"
+  },
+  {
+   "f": 1427,
+   "kind": "click",
+   "weight": 0.9,
+   "pan": -0.5,
+   "id": "play:turn2"
+  },
+  {
+   "f": 1470,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear0"
+  },
+  {
+   "f": 1472,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear1"
+  },
+  {
+   "f": 1474,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear2"
+  },
+  {
+   "f": 1476,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear3"
+  },
+  {
+   "f": 1480,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear5"
+  },
+  {
+   "f": 1482,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear6"
+  },
+  {
+   "f": 1484,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear7"
+  },
+  {
+   "f": 1486,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear8"
+  },
+  {
+   "f": 1488,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear9"
+  },
+  {
+   "f": 1490,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear10"
+  },
+  {
+   "f": 1494,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear12"
+  },
+  {
+   "f": 1496,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear13"
+  },
+  {
+   "f": 1498,
+   "kind": "key",
+   "weight": 0.6,
+   "pan": -0.1,
+   "id": "letter:dear14"
+  },
+  {
+   "f": 1528,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.45,
+   "id": "letter:write-to"
+  },
+  {
+   "f": 1605,
+   "kind": "land",
+   "weight": 1.2,
+   "pan": 0,
+   "id": "letter:seal"
+  },
+  {
+   "f": 1648,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": 0.45,
+   "id": "letter:future-you"
+  },
+  {
+   "f": 1723,
+   "kind": "tick",
+   "weight": 0.6,
+   "pan": 0,
+   "id": "letter:opens"
+  },
+  {
+   "f": 1852,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.45,
+   "id": "share:share"
+  },
+  {
+   "f": 1905,
+   "kind": "snap",
+   "weight": 1.5,
+   "pan": 0,
+   "id": "share:to-story"
+  },
+  {
+   "f": 1948,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": 0.45,
+   "id": "share:what-stays"
+  },
+  {
+   "f": 2018,
+   "kind": "snap",
+   "weight": 1.5,
+   "pan": 0,
+   "id": "share:to-square"
+  },
+  {
+   "f": 2068,
+   "kind": "whoosh",
+   "weight": 1,
+   "pan": 0,
+   "apexFrac": 0.85,
+   "dur": 31,
+   "id": "lockup:scatter"
+  },
+  {
+   "f": 2100,
+   "kind": "land",
+   "weight": 0.9,
+   "pan": 0,
+   "variant": "light",
+   "id": "lockup:core"
+  },
+  {
+   "f": 2160,
+   "kind": "hit",
+   "weight": 1,
+   "pan": 0.05,
+   "id": "lockup:lockup"
+  },
+  {
+   "f": 2254,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": 0.1,
+   "id": "lockup:android"
+  }
+ ]
+}

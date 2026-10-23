@@ -43,8 +43,13 @@ data class WordEntity(
     val lapses: Int = 0,
     /** The language the word comes from when it's a borrowed concept word (Greek, Japanese…), else blank. */
     @ColumnInfo(defaultValue = "") val language: String = "",
+    /** Total time spent on it in the Feed, and how often it was shared: the quiet signals. */
+    @ColumnInfo(defaultValue = "0") val dwellMs: Long = 0,
+    @ColumnInfo(defaultValue = "0") val shares: Int = 0,
 ) {
     val inPractice get() = dueDay != null
+    /** Saved, liked, shared or read for a good while. */
+    val engaged get() = saved || taste > 0 || shares > 0 || dwellMs >= 12_000
     val mastered get() = intervalDays >= 21
     val synonymList get() = synonyms.split(',').map { it.trim() }.filter { it.isNotEmpty() }
 }
@@ -63,12 +68,16 @@ data class QuoteEntity(
     val timesShown: Int = 0,
     val lastShownDay: Long? = null,
     val taste: Int = 0,
-    /** "quote" (a real person's words), "line" (written for this person by Kai) or "proverb". */
+    /** "quote" (a real person's words), "line" (written by Kai), "affirmation" (first person) or "proverb". */
     @ColumnInfo(defaultValue = "quote") val kind: String = "quote",
     /** Where a quote comes from (a book, song or film), when known. */
     @ColumnInfo(defaultValue = "") val source: String = "",
+    @ColumnInfo(defaultValue = "0") val dwellMs: Long = 0,
+    @ColumnInfo(defaultValue = "0") val shares: Int = 0,
 ) {
-    val isLine get() = kind == "line"
+    /** Kai's own writing: no author to show. */
+    val isLine get() = kind == "line" || kind == "affirmation"
+    val engaged get() = saved || taste > 0 || shares > 0 || dwellMs >= 10_000
 }
 
 /** A micro-summary of a book worth knowing, written for one person. */
@@ -94,6 +103,7 @@ data class BookEntity(
     val timesShown: Int = 0,
     val lastShownDay: Long? = null,
     val taste: Int = 0,
+    @ColumnInfo(defaultValue = "0") val dwellMs: Long = 0,
 ) {
     val ideaList get() = ideas.split('\n').map { it.trim().trimStart('-', '•', ' ') }.filter { it.isNotEmpty() }
 }

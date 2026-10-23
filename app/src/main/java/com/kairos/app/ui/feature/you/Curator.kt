@@ -140,7 +140,7 @@ fun CuratorScreen(onBack: () -> Unit) {
             AnimatedContent(message, transitionSpec = { fadeIn() togetherWith fadeOut() }, label = "msg") { m ->
                 if (m != null) Text(m, style = K.type.label.copy(fontWeight = FontWeight.SemiBold), color = p.onSky, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = Gap.md, start = Gap.gutter, end = Gap.gutter))
             }
-            if (awake) Text("$pool unseen words waiting for you", style = K.type.caption, color = p.onSkySoft, modifier = Modifier.padding(top = Gap.sm))
+            if (awake) Text(if (pool == 1) "1 unseen word waiting for you" else "$pool unseen words waiting for you", style = K.type.caption, color = p.onSkySoft, modifier = Modifier.padding(top = Gap.sm))
         }
 
         Column(Modifier.padding(horizontal = Gap.gutter)) {
@@ -158,6 +158,8 @@ fun CuratorScreen(onBack: () -> Unit) {
                 }
                 Spacer(Modifier.height(Gap.xl))
             }
+            OnDeviceCard()
+            Spacer(Modifier.height(Gap.xl))
             Text("Which mind should Kai write with?", style = K.type.title, color = p.ink)
             Spacer(Modifier.height(Gap.xs))
             Text(if (c.keys.builtIn) "Only used with your own OpenRouter key." else "All of them go through your OpenRouter key.", style = K.type.caption, color = p.inkSoft)
@@ -209,6 +211,40 @@ private fun ModelRow(m: ModelChoice, on: Boolean, onClick: () -> Unit) {
             Box(Modifier.size(26.dp).clip(CircleShape).background(if (o) p.accent else Color.Transparent).border(1.5.dp, if (o) p.accent else p.line, CircleShape), contentAlignment = Alignment.Center) {
                 if (o) Icon(Icons.Check, null, tint = p.onAccent, modifier = Modifier.size(15.dp))
             }
+        }
+    }
+}
+
+/** On-device Kai (Gemini Nano): its status on this phone, and a button to fetch it when the phone offers that. */
+@Composable
+private fun OnDeviceCard() {
+    val c = appContainer()
+    val p = K.colors
+    val scope = rememberCoroutineScope()
+    val status by c.local.status.collectAsStateWithLifecycle()
+    val bytes by c.local.downloadedBytes.collectAsStateWithLifecycle()
+    androidx.compose.runtime.LaunchedEffect(Unit) { c.keys.setOnDevice(c.local.refresh() == com.kairos.app.data.ai.LocalStatus.Ready) }
+    Card(Modifier.fillMaxWidth()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Kai(if (status == com.kairos.app.data.ai.LocalStatus.Ready) KaiLooks.Delighted else KaiLooks.Sleepy, size = 44.dp, shadow = false)
+            Spacer(Modifier.width(Gap.md))
+            Column(Modifier.weight(1f)) {
+                Text("Kai on this phone", style = K.type.title, color = p.ink)
+                Text(
+                    when (status) {
+                        com.kairos.app.data.ai.LocalStatus.Ready -> "Ready. Works offline for lines, affirmations and small good things."
+                        com.kairos.app.data.ai.LocalStatus.Downloadable -> "Your phone can run Gemini Nano. Fetch it once to write offline."
+                        com.kairos.app.data.ai.LocalStatus.Downloading -> "Fetching… ${bytes / 1_000_000} MB so far."
+                        com.kairos.app.data.ai.LocalStatus.Checking -> "Checking your phone…"
+                        else -> "This phone doesn't support on-device AI yet, so Kai writes in the cloud."
+                    },
+                    style = K.type.caption, color = p.inkSoft,
+                )
+            }
+        }
+        if (status == com.kairos.app.data.ai.LocalStatus.Downloadable) {
+            Spacer(Modifier.height(Gap.md))
+            PrimaryButton("Fetch on-device Kai", { scope.launch { c.local.download(); c.keys.setOnDevice(c.local.status.value == com.kairos.app.data.ai.LocalStatus.Ready) } }, icon = Icons.Download, dark = true)
         }
     }
 }

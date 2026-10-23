@@ -120,6 +120,7 @@ fun TodayScreen(
     openAiSettings: () -> Unit,
     openYou: () -> Unit,
     openBook: (String) -> Unit = {},
+    openPlay: () -> Unit = {},
 ) {
     val vm = appViewModel { TodayViewModel(it) }
     val s by vm.state.collectAsStateWithLifecycle()
@@ -153,6 +154,7 @@ fun TodayScreen(
             }
         }
         item { MoodCheckIn(s.mood, vm::logMood, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) }
+        item { PlayPeek(openPlay, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) }
         if (s.due > 0) item { ReviewNudge(s.due, openPractice, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) }
         s.book?.let { b -> item { BookPeek(b, { openBook(b.id) }, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) } }
         item { CapsulePeek(s, openCapsule, Modifier.padding(start = Gap.gutter, end = Gap.gutter, top = Gap.lg)) }
@@ -635,5 +637,28 @@ private fun BookPeek(b: com.kairos.app.data.db.BookEntity, open: () -> Unit, mod
                 Text(b.summary, style = K.type.label.copy(fontWeight = FontWeight.Normal), color = p.ink.copy(alpha = 0.8f), maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
         }
+    }
+}
+
+/** A way into Play: a little fan of coloured cards and a promise of a game. */
+@Composable
+private fun PlayPeek(open: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier.fillMaxWidth().shadow(18.dp, Radius.card).clip(Radius.card)
+            .background(Brush.linearGradient(listOf(Color(0xFF14204F), Color(0xFF3A4BB0)))).pressable(scale = 0.985f, onClick = open).padding(Gap.lg),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(width = 80.dp, height = 72.dp)) {
+            listOf(Candy.Coral to -14f, Candy.Mint to 10f, Candy.Cobalt to -2f).forEachIndexed { i, (c, r) ->
+                Box(Modifier.align(Alignment.Center).size(width = 46.dp, height = 62.dp).graphicsLayer { rotationZ = r; translationX = (i - 1) * 12f * density }.clip(androidx.compose.foundation.shape.RoundedCornerShape(10.dp)).background(c))
+            }
+            Text("?", style = K.type.shout.copy(fontSize = 28.sp), color = Color.White, modifier = Modifier.align(Alignment.Center))
+        }
+        Spacer(Modifier.width(Gap.lg))
+        Column(Modifier.weight(1f)) {
+            Text("Play a quick round", style = K.type.title, color = Color.White)
+            Text("Random cards: guess the word, finish the line, true or not.", style = K.type.caption, color = Color.White.copy(alpha = 0.75f))
+        }
+        Icon(Icons.Arrow, null, tint = Color.White, modifier = Modifier.size(20.dp))
     }
 }

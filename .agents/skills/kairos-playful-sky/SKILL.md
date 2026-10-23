@@ -343,3 +343,30 @@ Nothing ships that has not been looked at.
   concept words (Greek and Latin first, e.g. akrasia). See `engine/Curator.kt` and its `Slop` list.
 - Motion signatures added: kinetic headlines (`KineticText`), the mark-to-Kai morph with a light
   ring, squash and stretch on moving characters, a drifting sparkle field.
+
+## 14. Round three (owner feedback, October 2026)
+
+Trending skills consulted again for this round: Emil Kowalski's *animate* (interruption, springs for
+gestures, exit the way you entered), LottieFiles *motion-design* (three motion layers, choreography),
+*design-motion-principles* (frequency gate; Jakub for production polish, Jhey for delight).
+
+- **Product shape:** Today (one of each), **Feed** (endless reel), Capsule, You. The library is a
+  sub-page of the Feed. Play is a game reached from Today and the + sheet.
+- **Feed rules:** one card per page, inside a safe frame clear of header, rail and bar; each item
+  always wears the same design (chosen from its key); double tap to keep; the rail is Keep, Share,
+  Less. Signals are keeps, shares, "less" and dwell time (under 1.2 s ignored, capped at 60 s); the
+  queue re-ranks every five pages. A breathing pause appears after at least five reads.
+  Never productivity framing: no streak pressure, no counts of "done".
+- **Cards:** every design has layouts for square, pin and story (`CardShape`). Use `ArtAndText` for
+  art + words: stacked for pin and story, side by side for square. 24 designs in total; the round-three
+  ones are Blur bloom, Halftone, Eclipse, Breathe, Cyanotype, Pixel, Window and Specimen.
+- **Copy:** never "written for you". Kai's own lines and affirmations show no author.
+- **Play:** random cards (guess the word, finish the line, true or not), flip in 3D, swipe right if
+  you knew it; the card follows the finger, tints, and flies off the way it was thrown.
+- **Transitions:** push (detail pages slide in from the right over a dimmed, shrunk page), sheet
+  (compose, play, practice, studio rise from the bottom), fade-through for the rest; tabs slide in the
+  direction of travel. See `ui/nav/NavHost.kt`.
+- **Letters:** three steps (Write, Tuck in, When); reading unfolds the paper and each paragraph; the
+  reply is a postcard.
+- **On-device AI:** Gemini Nano through ML Kit (`data/ai/LocalModel.kt`), only for original lines,
+  affirmations, sparks and prompts. Never for quotes, books or etymologies.

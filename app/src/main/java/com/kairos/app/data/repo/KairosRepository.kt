@@ -92,14 +92,14 @@ class KairosRepository(
             level = s.level,
             recentMoods = db.moods().recent(7).mapNotNull { Mood.of(it.mood) },
             dayPart = DayPart.of(LocalTime.now().hour),
-            loved = (words.filter { it.saved || it.taste > 0 }.sortedByDescending { it.savedAt ?: it.generatedAt }).take(12).map { it.word },
+            loved = (words.filter { it.engaged }.sortedByDescending { it.dwellMs + it.shares * 20_000L + (if (it.saved) 30_000L else 0L) }).take(12).map { it.word },
             notForMe = words.filter { it.taste < 0 }.takeLast(12).map { it.word },
             tooEasy = words.filter { it.difficultyVote < 0 || it.mastered }.takeLast(10).map { it.word },
             tooHard = words.filter { it.difficultyVote > 0 }.takeLast(10).map { it.word },
             struggling = words.filter { it.lapses >= 2 }.take(6).map { it.word },
             mastered = words.count { it.mastered },
             lovedAuthors = quotes.filter { (it.saved || it.taste > 0) && it.author.isNotBlank() }.map { it.author }.distinct().take(8),
-            lovedThemes = quotes.filter { it.saved || it.taste > 0 }.groupingBy { it.theme }.eachCount().entries.sortedByDescending { it.value }.take(3).map { it.key },
+            lovedThemes = quotes.filter { it.engaged }.groupingBy { it.theme }.eachCount().entries.sortedByDescending { it.value }.take(3).map { it.key },
             // The newest words are what the model is most likely to repeat; older ones are caught locally.
             avoidWords = words.sortedByDescending { it.generatedAt }.take(120).map { it.word },
             avoidQuotes = quotes.sortedByDescending { it.generatedAt }.take(60).map { it.text.take(60) },
@@ -121,7 +121,7 @@ class KairosRepository(
             val knownQuotes = db.quotes().all().map { it.id }.toSet()
             val parts = coroutineScope {
                 val w = if (words > 0) async { runCatching { writer.completeJson(Task.Words, Curator.wordsSystem, Curator.wordsMessage(profile, words), "kairos_words", Curator.wordsSchema, 400 + words * 260) } } else null
-                val t = if (quotes + sparks + prompts > 0) async { runCatching { writer.completeJson(Task.Thoughts, Curator.thoughtsSystem, Curator.thoughtsMessage(profile, quotes, sparks, prompts), "kairos_thoughts", Curator.thoughtsSchema, 400 + quotes * 160 + (sparks + prompts) * 60) } } else null
+                val t = if (quotes + sparks + prompts > 0) async { runCatching { writer.completeJson(Task.Thoughts, Curator.thoughtsSystem, Curator.thoughtsMessage(profile, quotes, sparks, prompts), "kairos_thoughts", Curator.thoughtsSchema, 400 + quotes * 160 + (sparks + prompts) * 60, localUser = Curator.localThoughtsMessage(profile, quotes, sparks, prompts)) } } else null
                 val b = if (books > 0) async {
                     val avoid = db.books().all().map { "${it.title} (${it.author})" }.takeLast(60)
                     runCatching { writer.completeJson(Task.Books, Curator.booksSystem, Curator.booksMessage(profile, books, avoid), "kairos_books", Curator.booksSchema, 400 + books * 380) }
@@ -195,6 +195,76 @@ class KairosRepository(
     suspend fun markWordSeen(id: String) { db.words().get(id)?.takeIf { it.timesShown == 0 }?.let { db.words().update(it.copy(timesShown = 1, lastShownDay = today())) } }
     suspend fun markQuoteSeen(id: String) { db.quotes().get(id)?.takeIf { it.timesShown == 0 }?.let { db.quotes().update(it.copy(timesShown = 1, lastShownDay = today())) } }
 
+    // --- Feed -----------------------------------------------------------------------------------
+
+    /**
+     * The next stretch of the Feed: words, thoughts, affirmations and book bites, ranked by the
+     * recommender (which now also weighs dwell time and shares) and woven so the same kind never
+     * repeats twice, with a breathing pause every so often. Pools that run low are refilled first.
+     */
+    suspend fun feedBatch(exclude: Set<String>, size: Int = 14, only: String? = null): List<FeedItem> {
+        if (keys.awake.value && (db.words().unseenCount() < 8 || db.quotes().unseenCount() < 10)) {
+            runCatching { generate(words = 6, quotes = 10, sparks = 0, prompts = 0, books = if (db.books().unseenCount() < 2) 3 else 0) }
+        }
+        val day = today()
+        val t = taste()
+        val mood = Mood.of(db.moods().latestFor(day)?.mood)
+        val part = DayPart.of(LocalTime.now().hour)
+        // Unseen first; when they run out, things met long enough ago come back.
+        // Unseen first, then everything met before (least recently shown first), so the Feed never runs dry.
+        val unseenWords = db.words().unseen()
+        val metWords = db.words().all().filter { it.taste >= 0 && it.timesShown > 0 }.sortedBy { it.lastShownDay ?: 0 }
+        val words = DailyEngine.scoreWords(unseenWords, t, day, stream = 21 + exclude.size).plus(metWords.map { com.kairos.app.engine.Pick(it, it.hook.ifBlank { "One to remember" }) })
+            .filter { "w:${it.item.id}" !in exclude }.distinctBy { it.item.id }
+        val unseenQuotes = db.quotes().unseen()
+        val metQuotes = db.quotes().all().filter { it.taste >= 0 && it.timesShown > 0 }.sortedBy { it.lastShownDay ?: 0 }
+        val allQuotes = DailyEngine.scoreQuotes(unseenQuotes, t, day, mood, part, shuffle = 31 + exclude.size).plus(metQuotes.map { com.kairos.app.engine.Pick(it, "Worth another read") })
+            .filter { "q:${it.item.id}" !in exclude }.distinctBy { it.item.id }
+        val affirmations = allQuotes.filter { it.item.kind == "affirmation" }.toMutableList()
+        val thoughts = allQuotes.filter { it.item.kind != "affirmation" }.toMutableList()
+        val books = db.books().all().filter { it.taste >= 0 && "b:${it.id}" !in exclude }.sortedBy { it.dwellMs }.toMutableList()
+        val wq = words.toMutableList()
+        val pattern = if (only != null) listOf(only) else listOf("w", "q", "a", "w", "q", "b", "w", "a", "q", "p")
+        val out = ArrayList<FeedItem>()
+        var i = exclude.size
+        var guard = 0
+        while (out.size < size && guard++ < size * 3) {
+            val kind = pattern[i++ % pattern.size]
+            val item: FeedItem? = when (kind) {
+                "w" -> wq.removeFirstOrNull()?.let { FeedItem.Word(it.item, it.reason) }
+                "q" -> thoughts.removeFirstOrNull()?.let { FeedItem.Thought(it.item, it.reason) }
+                "a" -> (affirmations.removeFirstOrNull() ?: thoughts.removeFirstOrNull())?.let { FeedItem.Thought(it.item, it.reason) }
+                "b" -> books.removeFirstOrNull()?.let { FeedItem.Book(it) }
+                // A pause only after a good run of reading, never twice close together.
+                else -> if (out.size >= 5 && out.takeLast(6).none { it is FeedItem.Pause }) FeedItem.Pause("p:${exclude.size + out.size}") else null
+            }
+            if (item != null) out += item
+            if (wq.isEmpty() && thoughts.isEmpty() && affirmations.isEmpty() && books.isEmpty()) break
+        }
+        return out
+    }
+
+    /** Time spent on a Feed page. Short glances don't count; long reads count a lot. */
+    suspend fun recordDwell(item: FeedItem, ms: Long) {
+        if (ms < 1200) return
+        val capped = ms.coerceAtMost(60_000)
+        when (item) {
+            is FeedItem.Word -> db.words().addDwell(item.word.id, capped, today())
+            is FeedItem.Thought -> db.quotes().addDwell(item.quote.id, capped, today())
+            is FeedItem.Book -> db.books().addDwell(item.book.id, capped)
+            is FeedItem.Pause -> {}
+        }
+    }
+
+    suspend fun recordShare(item: FeedItem) {
+        when (item) {
+            is FeedItem.Word -> db.words().addShare(item.word.id)
+            is FeedItem.Thought -> db.quotes().addShare(item.quote.id)
+            else -> {}
+        }
+        addMoment(MomentKind.Shared, item.key, oncePerDay = false)
+    }
+
     // --- Books ----------------------------------------------------------------------------------
 
     fun observeBooks() = db.books().observeAll()
@@ -221,8 +291,10 @@ class KairosRepository(
         val quotes = db.quotes().all()
         return Taste(
             wordInterests = s.wordInterests, quoteThemes = s.quoteThemes, level = s.level, salt = salt,
-            savedWordCategories = words.filter { it.saved || it.taste > 0 }.groupingBy { it.category }.eachCount(),
-            savedQuoteThemes = quotes.filter { it.saved || it.taste > 0 }.groupingBy { it.theme }.eachCount(),
+            // Saving, liking, sharing and lingering all count as "more like this".
+            savedWordCategories = words.filter { it.engaged }.groupingBy { it.category }.eachCount(),
+            savedQuoteThemes = quotes.filter { it.engaged }.groupingBy { it.theme }.eachCount(),
+            savedKinds = quotes.filter { it.engaged }.groupingBy { it.kind }.eachCount(),
             savedLanguages = words.filter { (it.saved || it.taste > 0) && it.language.isNotBlank() }.groupingBy { it.language }.eachCount(),
             lovedAuthors = quotes.filter { (it.saved || it.taste > 0) && it.author.isNotBlank() }.map { it.author }.toSet(),
             recentCategories = words.filter { it.lastShownDay != null }.sortedByDescending { it.lastShownDay }.take(5).map { it.category },
@@ -396,4 +468,13 @@ class KairosRepository(
 
     /** A writing prompt for the capsule composer, generated with the rest of the batch. */
     suspend fun nextPrompt(): String? = db.extras().nextUnused("prompt")?.also { db.extras().markUsed(it.id, today()) }?.text
+}
+
+/** What the Feed shows: one page each. */
+sealed interface FeedItem {
+    val key: String
+    data class Word(val word: WordEntity, val reason: String) : FeedItem { override val key get() = "w:${word.id}" }
+    data class Thought(val quote: QuoteEntity, val reason: String) : FeedItem { override val key get() = "q:${quote.id}" }
+    data class Book(val book: com.kairos.app.data.db.BookEntity) : FeedItem { override val key get() = "b:${book.id}" }
+    data class Pause(override val key: String) : FeedItem
 }

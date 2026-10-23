@@ -1,0 +1,4 @@
+{"size":[1920,1080],"seed":11,"backdrops":[
+ {"name":"dawn","type":"linear","angle":180,"space":"oklab","stops":[["#3D7BFA",0],["#2F5BFF",1]]},
+ {"name":"night","type":"linear","angle":180,"space":"oklab","stops":[["#1D4BE0",0],["#0B1440",0.58],["#05071A",1]]}
+]}

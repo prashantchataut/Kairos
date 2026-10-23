@@ -53,7 +53,7 @@ class ScreenshotTest {
     private fun w(word: String, pos: String, say: String, def: String, ex: String, origin: String, syn: String, cat: String, lvl: Int, hook: String, shown: Int = 1, saved: Boolean = false, due: Long? = null, interval: Int = 0) =
         WordEntity(word.lowercase(), word, pos, say, def, ex, origin, syn, cat, lvl, hook, generatedAt = 1, saved = saved, timesShown = shown, lastShownDay = if (shown > 0) today() - 1 else null, dueDay = due, intervalDays = interval)
 
-    private fun seed() = runBlocking {
+    internal fun seed() = runBlocking {
         val c = app.container
         c.prefs.completeOnboarding("Prashant", setOf("nature", "wonder", "feelings"), setOf("calm", "hope"), 3)
         c.db.words().insertAll(listOf(
@@ -70,6 +70,8 @@ class ScreenshotTest {
         c.db.quotes().insertAll(listOf(
             QuoteEntity("q1", "Nature does not hurry, yet everything is accomplished.", "Lao Tzu", "calm", "From the Taoist tradition of the Tao Te Ching.", generatedAt = 1),
             QuoteEntity("q2", "Hope is the thing with feathers that perches in the soul.", "Emily Dickinson", "hope", "Opening line of her 1861 poem.", generatedAt = 1, saved = true, timesShown = 1),
+            QuoteEntity("q4", "I'm allowed to go slowly and still get somewhere.", "", "comfort", "", generatedAt = 1, kind = "affirmation"),
+            QuoteEntity("q5", "you don't have to finish the whole map to be on the way.", "", "hope", "", generatedAt = 1, kind = "line"),
             QuoteEntity("q3", "Almost everything will work again if you unplug it for a few minutes, including you.", "Anne Lamott", "rest", "", generatedAt = 1, timesShown = 1),
         ))
         c.db.books().insertAll(listOf(
@@ -89,7 +91,7 @@ class ScreenshotTest {
         c.db.capsules().insert(CapsuleEntity(title = "New year, new desk", letter = "Hello", createdAt = now - 86_400_000L * 365, opensAt = now - 1000, tint = "Peach"))
     }
 
-    private fun shoot(name: String, dark: Boolean = false, seeded: Boolean = true, bar: Int? = null, content: @Composable () -> Unit) {
+    private fun shoot(name: String, dark: Boolean = false, seeded: Boolean = true, bar: Int? = null, waits: Int = 12, content: @Composable () -> Unit) {
         if (seeded) seed()
         compose.setContent {
             KairosTheme(if (dark) ThemeMode.Dark else ThemeMode.Light, calmMotion = true) {
@@ -101,7 +103,7 @@ class ScreenshotTest {
                 }
             }
         }
-        repeat(12) { Thread.sleep(250); compose.mainClock.advanceTimeBy(500); compose.waitForIdle() }
+        repeat(waits) { Thread.sleep(250); compose.mainClock.advanceTimeBy(500); compose.waitForIdle() }
         compose.onRoot().captureRoboImage("screenshots/$name.png")
     }
 
@@ -120,12 +122,17 @@ class ScreenshotTest {
     @Test fun d2_quote() = shoot("04b_quote") { com.kairos.app.ui.feature.detail.QuoteScreen("q1", {}, {}) }
     @Test fun e_capsule() = shoot("05_capsule", bar = 2) { CapsuleHome({}, {}) }
     @Test fun e2_compose() = shoot("05b_compose") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}) }
+    @Test fun e2b_tuck() = shoot("05b2_compose_tuck") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}, startStep = 1) }
+    @Test fun e2c_when() = shoot("05b3_compose_when") { com.kairos.app.ui.feature.capsule.ComposeLetter({}, {}, startStep = 2) }
     @Test fun e3_sealed() = shoot("05c_letter_sealed") { com.kairos.app.ui.feature.capsule.LetterScreen(1, {}, {}) }
     @Test fun e4_ready() = shoot("05d_letter_ready") { com.kairos.app.ui.feature.capsule.LetterScreen(4, {}, {}) }
     @Test fun k_practice() = shoot("11_practice") { com.kairos.app.ui.feature.practice.PracticeScreen {} }
     @Test fun l_studio() = shoot("13_studio") { com.kairos.app.ui.feature.studio.StudioScreen("word", "apricity") {} }
-    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Config(qualifiers = "w400dp-h1700dp-xxhdpi")
     @Test fun e5_opened() = shoot("05e_letter_opened") { com.kairos.app.ui.feature.capsule.LetterScreen(3, {}, {}) }
+    @Test fun b1_feedEngine() { seed(); val items = runBlocking { app.container.kairos.feedBatch(emptySet()) }; println("FEED " + items.map { it.key }); org.junit.Assert.assertTrue(items.isNotEmpty()) }
+    @Test fun b2_feed() = shoot("02b_feed", bar = 1, waits = 30) { com.kairos.app.ui.feature.feed.FeedScreen({ _, _ -> }, {}, {}, {}) }
+    @Test fun k2_play() = shoot("11b_play") { com.kairos.app.ui.feature.play.PlayScreen {} }
     @Test fun f_you() = shoot("06_you", bar = 3) { YouScreen({}, {}) }
     @Test fun f2_interests() = shoot("06b_interests") { com.kairos.app.ui.feature.you.InterestsScreen {} }
     @Config(qualifiers = "w400dp-h1700dp-xxhdpi")
@@ -143,8 +150,8 @@ class ScreenshotTest {
         compose.setContent {
             KairosTheme(ThemeMode.Light) {
                 Column(Modifier.background(Color(0xFFE9EDF3)).padding(3.dp)) {
-                    Template.entries.chunked(4).forEachIndexed { r, row ->
-                        Row { row.forEachIndexed { i, t -> CardThumbnail(card, t, hues[(r * 4 + i) % hues.size], width.dp, ratio = ratio, modifier = Modifier.padding(2.dp)) } }
+                    Template.entries.chunked(if (width < 80) 5 else 4).forEachIndexed { r, row ->
+                        Row { row.forEachIndexed { i, t -> CardThumbnail(card, t, hues[(r * 5 + i) % hues.size], width.dp, ratio = ratio, modifier = Modifier.padding(2.dp)) } }
                     }
                 }
             }
@@ -153,17 +160,23 @@ class ScreenshotTest {
         compose.onRoot().captureRoboImage("screenshots/$name.png")
     }
 
-    private val longQuote = CardContent(false, "Maybe it will all work out so well that you'll laugh at how much you worried that it wouldn't.", byline = "written for you")
+    private val longQuote = CardContent(false, "Maybe it will all work out so well that you'll laugh at how much you worried that it wouldn't.", byline = "")
 
-    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
     @Test fun j_cardsWord() = cards("10_cards_word", cardWord, 2f / 3f, 94)
 
-    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
     @Test fun j_cardsQuote() = cards("10b_cards_quote", cardQuote, 2f / 3f, 94)
 
-    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
-    @Test fun j_cardsStory() = cards("10c_cards_story", longQuote, 9f / 16f, 94)
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Test fun j_cardsStory() = cards("10c_cards_story", longQuote, 9f / 16f, 74)
 
-    @Config(qualifiers = "w400dp-h1000dp-xxhdpi")
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
     @Test fun j_cardsSquare() = cards("10d_cards_square", cardWord, 1f, 94)
+
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Test fun j_cardsStoryWord() = cards("10e_cards_story_word", cardWord, 9f / 16f, 74)
+
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi")
+    @Test fun j_cardsSquareQuote() = cards("10f_cards_square_quote", longQuote, 1f, 94)
 }

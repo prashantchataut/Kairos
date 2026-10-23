@@ -119,6 +119,8 @@ object Curator {
           - "line": an original line you write for this person (leave author empty). Short, modern,
             lowercase-friendly, the kind of thing that ends up on a poster.
           - "proverb": a real proverb, author "<Language> proverb" (Nepali, Japanese, Yoruba, Irish…).
+          - "affirmation": a short first-person line the person can say to themselves ("I'm allowed to
+            go slowly.", "I don't have to earn rest."), gentle and true, never grandiose. Leave author empty.
         - At most 30 words each. No clichés everyone has seen, nothing in avoidQuotes.
         - note: at most 18 words of context about the author, the source or the idea.
         - theme: one of ${validThemes.joinToString()}.
@@ -183,6 +185,14 @@ object Curator {
         put("profile", profileJson(p))
         put("avoidQuotes", p.avoidQuotes.joinToString(" | "))
         put("avoidSparks", p.avoidSparks.joinToString(" | "))
+    }.toString()
+
+    /** A compact request for the on-device model (it accepts under 4000 tokens). */
+    fun localThoughtsMessage(p: Profile, thoughts: Int, sparks: Int, prompts: Int): String = buildJsonObject {
+        put("task", "Write $thoughts lines and affirmations, $sparks sparks (tiny kind things to do today) and $prompts gentle questions for a letter to one's future self.")
+        put("moods", p.recentMoods.joinToString { it.label })
+        put("themes", p.themes.joinToString())
+        put("allowedThemes", validThemes.joinToString())
     }.toString()
 
     fun booksMessage(p: Profile, books: Int, avoidBooks: List<String>): String = buildJsonObject {
@@ -263,9 +273,9 @@ object Curator {
             val o = el as? JsonObject ?: return@mapNotNull null
             val text = o.s("text").trim('"', '“', '”', ' ')
             val author = o.s("author").removePrefix("—").removePrefix("-").trim()
-            val kind = o.s("kind").lowercase().takeIf { it in setOf("quote", "line", "proverb") } ?: if (author.isBlank()) "line" else "quote"
+            val kind = o.s("kind").lowercase().takeIf { it in setOf("quote", "line", "proverb", "affirmation") } ?: if (author.isBlank()) "line" else "quote"
             if (text.length !in 12..320 || author.length > 80) return@mapNotNull null
-            if (author.isBlank() && kind != "line") return@mapNotNull null
+            if (author.isBlank() && kind != "line" && kind != "affirmation") return@mapNotNull null
             if (Slop.matches(text)) return@mapNotNull null
             val id = quoteId(text)
             if (id in quoteIds) return@mapNotNull null

@@ -25,12 +25,14 @@ Share cards, each drawn from one of the references in issue #606:
 
 <p><img src="docs/screenshots/10_cards_word.jpg" width="380" /> <img src="docs/screenshots/10c_cards_story.jpg" width="380" /></p>
 
-## Kai writes for free
+## Kai writes for free (and offline on supported phones)
 
 Kairos ships with its own AI so nobody has to bring a key: **Mercury 3** (Inception's diffusion
 model, very fast) writes words, and **Gemini Flash** writes thoughts and books, where real quotes and
 real books must be exactly right. Each falls back to the other. Anyone can still add their own
-OpenRouter key under You → Kai, and it is used first.
+OpenRouter key under You → Kai, and it is used first. On phones that support it, **Gemini Nano**
+runs on the device (ML Kit GenAI) and writes original lines, affirmations and small good things
+offline; quotes, books and word origins always come from the cloud models.
 
 The built-in keys are read at build time from `local.properties` or the environment
 (`INCEPTION_API_KEY`, `GEMINI_API_KEY`) and are never committed. Anything inside an APK can be
@@ -70,10 +72,12 @@ word enrols it in SM-2 spaced repetition.
 |---|---|
 | **Onboarding** | The logo wakes up: the bloom's petals unfold and it becomes Kai, the curator, who opens their eyes. Kai and three friends stay on screen and move between steps while a white cloud field rises and falls. Giant dashed-to-solid pills for topics and themes, a word wheel and adaptive slider for level, a key ritual to wake Kai, and an aurora finale that says what Kai learned about you. |
 | **Today** | Greeting with Kai in today's mood, an arched week strip with a mood shape for each day, and a swipeable deck of tilted cards: the word, the thought and the small good thing. `←  Save  →` controls with a heart burst, Teach Kai reactions, a mood check-in through the adaptive slider (Kai changes shape as you slide), a review nudge and a peek at the capsule. |
-| **Learn** | Words, Thoughts and Books. An endless, ranked "Fresh for you" strip, "Ask Kai for words about…", typographic library tiles, and micro-summaries of books on a shelf of typographic covers. |
+| **Feed** | An endless reel of words, thoughts, affirmations, book bites and breathing pauses, each on its own card design. Double tap to keep, share to a card, "less" to see fewer. It learns from what you keep, share and linger on, and re-ranks as you scroll. |
+| **Play** | Random flashcards: guess the word, finish the line, true or not. Flip, swipe right if you knew it. |
+| **Library** | Words, Thoughts and Books. An endless, ranked "Fresh for you" strip, "Ask Kai for words about…", typographic library tiles, and micro-summaries of books on a shelf of typographic covers. |
 | **Word / thought / book pages** | A typographic specimen hero for words (the word over a ghost of itself), a grainy glow with a smiling sun for thoughts, and a book page with the summary, key ideas and a line. |
 | **Practice** | Grainy, deep-coloured flip cards fanned over each other with an orbit ring, petal progress, ✦ points, grade buttons with Kai's faces, and a garden at the end. |
-| **Card studio** | Sixteen share cards drawn from the references (Note, Poster, Bold, Blunt, Stickers, Stage, Starry, Ring, Envelope, Split, Garden, Leaf, Swiss, Glow, Bloom, Portal), five hues, three formats, exported at 1080px. Text always fits its own zone, so nothing overlaps in any format. |
+| **Card studio** | Twenty-four share cards, each with its own layout for Pin, Story and Square,  drawn from the references (Note, Poster, Bold, Blunt, Stickers, Stage, Starry, Ring, Envelope, Split, Garden, Leaf, Swiss, Glow, Bloom, Portal), five hues, three formats, exported at 1080px. Text always fits its own zone, so nothing overlaps in any format. |
 | **Time capsule** | A night sky with glass folders, letters peeking out and a mood sticker on each. Compose on cream paper with an "open in" slider; seal it and a wax bloom stamps it shut while dandelion seeds drift away; open it and the folder tips toward you and the letter slides out. |
 | **You** | Kai, stats, your garden (a flower for every word you kept), four weeks of mood shapes, and settings with face toggles. |
 

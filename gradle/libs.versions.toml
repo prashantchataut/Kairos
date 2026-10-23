@@ -1,13 +1,13 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.0.21"
-ksp = "2.0.21-1.0.28"
+kotlin = "2.1.21"
+ksp = "2.1.21-2.0.2"
 coreKtx = "1.15.0"
 lifecycle = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 navigationCompose = "2.8.5"
-room = "2.6.1"
+room = "2.7.2"
 datastore = "1.1.1"
 coroutines = "1.9.0"
 serialization = "1.7.3"
@@ -23,6 +23,7 @@ robolectric = "4.14.1"
 roborazzi = "1.40.1"
 
 [libraries]
+mlkit-genai-prompt = { group = "com.google.mlkit", name = "genai-prompt", version = "1.0.0-beta2" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
