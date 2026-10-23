@@ -52,19 +52,22 @@ export default function cues(): SoundEvent[] {
   const ev: SoundEvent[] = [];
   const text = (f: number, id: string, pan = 0) => ev.push({ f, kind: 'text', weight: 0.8, pan, id });
 
-  // 1 Chronos: the fragments on the left; the hand stops dead (the music stops with it).
+  // 1 Days: the fragments on the left; the wall of cards stops dead on Seneca (the music stops with it).
   const line = TYPE.line.size * U;
   chainResolves('days', { size: line }).forEach((f, i) => text(f, `days${i + 1}`, -0.4));
   chainResolves('stay', { size: line }).forEach((f, i) => text(f, `stay${i + 1}`, -0.4));
-  ev.push({ f: CUE.stop, kind: 'snap', weight: 1.2, pan: 0.35, id: 'hand-stops' });
+  ev.push({ f: CUE.stop, kind: 'snap', weight: 1.2, pan: 0.35, id: 'wall-stops' });
+  ev.push(move(CUE.stop + f60(6), CUE.stop + f60(56), E.cam, 0.6, 0.35, 'card-lifts'));
 
-  // 2 Name: the dive into the hand, the dot landing on the i, the meaning.
-  ev.push(move(CUE.pushIn - 1, CUE.flood, E.in, 1.1, 0.3, 'dive'));
-  ev.push({ f: CUE.dot, kind: 'pop', weight: 0.8, pan: 0.05, id: 'dot-on-i' });
-  text(landed('name.2'), 'right-moment');
+  // 2 Name: morning rises in columns; the icon's petals open, the name, the meaning; the phone rises.
+  ev.push(move(ACT.name.from - 1, ACT.name.from + f60(52), E.smooth, 0.9, 0, 'morning-rises'));
+  ev.push({ f: copy('name.1').in + f60(14), kind: 'bell', weight: 0.8, pan: -0.45, id: 'icon-opens' });
+  text(landed('name.1'), 'kairos', -0.45);
+  text(landed('name.2'), 'right-moment', -0.45);
 
-  // 3 Word: the petal lands as the Save heart; the word rewrites twice; the dive up.
-  ev.push({ f: CUE.heart, kind: 'pop', weight: 1, pan: -0.05, id: 'save-heart' });
+  // 3 Word: the app pushes to Today; Save turns to Saved; the word rewrites twice; the dive up.
+  ev.push(move(CUE.rise - 1, CUE.rise + f60(40), E.cam, 0.7, 0, 'to-today'));
+  ev.push({ f: CUE.heart, kind: 'click', weight: 0.9, pan: -0.05, id: 'saved' });
   text(landed('word.1'), 'a-word', -0.45);
   text(landed('word.2'), 'every-feeling', 0.45);
   ev.push({ f: CUE.rewrite1, kind: 'tick', variant: 'crisp', weight: 0.8, id: 'rewrite1' });
@@ -73,14 +76,15 @@ export default function cues(): SoundEvent[] {
 
   // 4 Feed: Keep fills coral.
   text(landed('learns.1'), 'it-learns', -0.45);
-  ev.push({ f: CUE.keep, kind: 'pop', weight: 1, pan: 0.15, id: 'keep' });
+  ev.push({ f: CUE.keep, kind: 'click', weight: 0.9, pan: 0.15, id: 'kept' });
   text(landed('learns.2'), 'what-you-keep', 0.45);
 
-  // 5 Play: the cards burst out of the phone; two turn over.
-  ev.push(move(CUE.fan, CUE.fan + f60(34), E.out, 0.8, 0, 'fan'));
-  chainResolves('play', { size: line }).forEach((f, i) => text(f, `play${i + 1}`));
-  ev.push({ f: CUE.turn1 + f60(9), kind: 'click', weight: 0.9, pan: 0, id: 'turn1' });
-  ev.push({ f: CUE.turn2 + f60(9), kind: 'click', weight: 0.9, pan: -0.5, id: 'turn2' });
+  // 5 Play: the Feed pushes to Play; the card turns over; Kai rises.
+  ev.push(move(CUE.fan - 1, CUE.fan + f60(30), E.inOut, 0.8, 0, 'to-play'));
+  text(landed('play.1'), 'play', -0.45);
+  text(landed('play.2'), 'your-words', 0.45);
+  ev.push({ f: CUE.turn1 + f60(9), kind: 'click', weight: 0.9, pan: 0, id: 'turn' });
+  ev.push({ f: CUE.turn2 + f60(4), kind: 'bell', weight: 0.6, pan: 0.5, id: 'kai' });
 
   // 6 Letter: the greeting is written (one soft key per letter), the seal lands, it opens later.
   const dear = copy('ui.dear');
@@ -90,15 +94,15 @@ export default function cues(): SoundEvent[] {
   text(landed('write.2'), 'future-you', 0.45);
   ev.push({ f: CUE.opens + f60(13), kind: 'tick', weight: 0.6, id: 'opens' });
 
-  // 7 Share: the card changes shape twice.
+  // 7 Share: the wall of thoughts rises; it comes to rest; Marcus Aurelius lifts off it.
+  ev.push(move(ACT.share.from - 1, ACT.share.from + f60(44), E.cam, 1, 0.2, 'wall-rises'));
   text(landed('share.1'), 'share', -0.45);
-  ev.push({ f: CUE.story, kind: 'snap', weight: 1.5, id: 'to-story' });
-  text(landed('share.2'), 'what-stays', 0.45);
-  ev.push({ f: CUE.square, kind: 'snap', weight: 1.5, id: 'to-square' });
+  text(landed('share.2'), 'what-stays', -0.45);
+  ev.push({ f: CUE.story + f60(50), kind: 'tick', weight: 0.7, pan: 0.35, id: 'wall-rests' });
 
-  // 8 Lockup: the cards fly off, the core lands, then the stop-down and one clean hit.
-  ev.push(move(CUE.scatter - 1, CUE.scatter + f60(30), E.contact, 1, 0, 'scatter'));
-  ev.push({ f: CUE.core, kind: 'land', variant: 'light', weight: 0.9, pan: panX(W / 2), id: 'core' });
+  // 8 Lockup: morning rises again; the icon opens petal by petal; one clean hit on the name.
+  ev.push(move(CUE.scatter - 1, CUE.scatter + f60(52), E.smooth, 0.9, 0, 'morning'));
+  ev.push({ f: CUE.core, kind: 'land', variant: 'light', weight: 0.9, pan: panX(W * 0.12), id: 'icon' });
   ev.push({ f: CUE.lockup, kind: 'hit', weight: 1, pan: 0.05, id: 'lockup' });
   text(landed('android'), 'android', 0.1);
 

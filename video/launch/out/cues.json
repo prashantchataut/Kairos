@@ -460,7 +460,16 @@
    "kind": "snap",
    "weight": 1.2,
    "pan": 0.35,
-   "id": "chronos:hand-stops"
+   "id": "chronos:wall-stops"
+  },
+  {
+   "f": 283,
+   "kind": "whoosh",
+   "weight": 0.6,
+   "pan": 0.35,
+   "apexFrac": 0.28,
+   "dur": 50,
+   "id": "chronos:card-lifts"
   },
   {
    "f": 292,
@@ -470,34 +479,50 @@
    "id": "chronos:stay2"
   },
   {
-   "f": 381,
+   "f": 386,
    "kind": "whoosh",
-   "weight": 1.1,
-   "pan": 0.3,
-   "apexFrac": 0.85,
-   "dur": 24,
-   "id": "name:dive"
+   "weight": 0.9,
+   "pan": 0,
+   "apexFrac": 0.509,
+   "dur": 53,
+   "id": "name:morning-rises"
   },
   {
-   "f": 428,
-   "kind": "pop",
+   "f": 419,
+   "kind": "bell",
    "weight": 0.8,
-   "pan": 0.05,
-   "id": "name:dot-on-i"
+   "pan": -0.45,
+   "id": "name:icon-opens"
+  },
+  {
+   "f": 427,
+   "kind": "text",
+   "weight": 0.8,
+   "pan": -0.45,
+   "id": "name:kairos"
   },
   {
    "f": 514,
    "kind": "text",
    "weight": 0.8,
-   "pan": 0,
+   "pan": -0.45,
    "id": "name:right-moment"
   },
   {
+   "f": 610,
+   "kind": "whoosh",
+   "weight": 0.7,
+   "pan": 0,
+   "apexFrac": 0.268,
+   "dur": 41,
+   "id": "word:to-today"
+  },
+  {
    "f": 615,
-   "kind": "pop",
-   "weight": 1,
+   "kind": "click",
+   "weight": 0.9,
    "pan": -0.05,
-   "id": "word:save-heart"
+   "id": "word:saved"
   },
   {
    "f": 658,
@@ -547,10 +572,10 @@
   },
   {
    "f": 1058,
-   "kind": "pop",
-   "weight": 1,
+   "kind": "click",
+   "weight": 0.9,
    "pan": 0.15,
-   "id": "feed:keep"
+   "id": "feed:kept"
   },
   {
    "f": 1114,
@@ -560,41 +585,41 @@
    "id": "feed:what-you-keep"
   },
   {
-   "f": 1202,
+   "f": 1214,
    "kind": "whoosh",
    "weight": 0.8,
    "pan": 0,
-   "apexFrac": 0.1,
-   "dur": 34,
-   "id": "play:fan"
+   "apexFrac": 0.484,
+   "dur": 31,
+   "id": "play:to-play"
   },
   {
-   "f": 1237,
+   "f": 1252,
    "kind": "text",
    "weight": 0.8,
-   "pan": 0,
-   "id": "play:play1"
+   "pan": -0.45,
+   "id": "play:play"
   },
   {
    "f": 1314,
    "kind": "click",
    "weight": 0.9,
    "pan": 0,
-   "id": "play:turn1"
+   "id": "play:turn"
   },
   {
-   "f": 1333,
+   "f": 1348,
    "kind": "text",
    "weight": 0.8,
-   "pan": 0,
-   "id": "play:play2"
+   "pan": 0.45,
+   "id": "play:your-words"
   },
   {
-   "f": 1427,
-   "kind": "click",
-   "weight": 0.9,
-   "pan": -0.5,
-   "id": "play:turn2"
+   "f": 1422,
+   "kind": "bell",
+   "weight": 0.6,
+   "pan": 0.5,
+   "id": "play:kai"
   },
   {
    "f": 1470,
@@ -730,6 +755,15 @@
    "id": "letter:opens"
   },
   {
+   "f": 1811,
+   "kind": "whoosh",
+   "weight": 1,
+   "pan": 0.2,
+   "apexFrac": 0.267,
+   "dur": 45,
+   "id": "share:wall-rises"
+  },
+  {
    "f": 1852,
    "kind": "text",
    "weight": 0.8,
@@ -737,42 +771,35 @@
    "id": "share:share"
   },
   {
-   "f": 1905,
-   "kind": "snap",
-   "weight": 1.5,
-   "pan": 0,
-   "id": "share:to-story"
-  },
-  {
    "f": 1948,
    "kind": "text",
    "weight": 0.8,
-   "pan": 0.45,
+   "pan": -0.45,
    "id": "share:what-stays"
   },
   {
-   "f": 2018,
-   "kind": "snap",
-   "weight": 1.5,
-   "pan": 0,
-   "id": "share:to-square"
+   "f": 1955,
+   "kind": "tick",
+   "weight": 0.7,
+   "pan": 0.35,
+   "id": "share:wall-rests"
   },
   {
-   "f": 2068,
+   "f": 2066,
    "kind": "whoosh",
-   "weight": 1,
+   "weight": 0.9,
    "pan": 0,
-   "apexFrac": 0.85,
-   "dur": 31,
-   "id": "lockup:scatter"
+   "apexFrac": 0.509,
+   "dur": 53,
+   "id": "lockup:morning"
   },
   {
    "f": 2100,
    "kind": "land",
    "weight": 0.9,
-   "pan": 0,
+   "pan": -0.608,
    "variant": "light",
-   "id": "lockup:core"
+   "id": "lockup:icon"
   },
   {
    "f": 2160,
