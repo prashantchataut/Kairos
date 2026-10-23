@@ -22,7 +22,18 @@ const src = (name: string) => staticFile(`app/${name}`);
 
 /** A whole screen, filling the phone's 400 x 860 canvas. */
 export const Shot: React.FC<{ name: ScreenName; style?: React.CSSProperties }> = ({ name, style }) => (
-  <Img src={src(`${name}.jpg`)} style={{ position: 'absolute', left: 0, top: 0, width: SHOT.w, height: SHOT.h, display: 'block', ...style }} />
+  <>
+    <StatusStrip name={name} style={style} />
+    <Img src={src(`${name}.jpg`)} style={{ position: 'absolute', left: 0, top: 0, width: SHOT.w, height: SHOT.h, display: 'block', ...style }} />
+  </>
+);
+
+/**
+ * The 30 dp under the status bar, above a render: the render's own top row stretched up (every
+ * screen's top edge is its plain background), so the app runs edge to edge under the status bar.
+ */
+export const StatusStrip: React.FC<{ name: ScreenName; style?: React.CSSProperties }> = ({ name, style }) => (
+  <div style={{ position: 'absolute', left: 0, top: -31, width: SHOT.w, height: 32, backgroundImage: `url(${src(`${name}.jpg`)})`, backgroundSize: `${SHOT.w}px ${SHOT.h * 80}px`, backgroundPosition: '0 0', ...style }} />
 );
 
 /**
@@ -226,6 +237,8 @@ export const FeedReel: React.FC<{ pages: ScreenName[]; pos: number; children?: (
           );
         })}
       </div>
+      <StatusStrip name={pages[i0]} />
+      {frac > 0.001 && <StatusStrip name={pages[i1]} style={{ opacity: frac }} />}
       {chrome(0, FEED.top)}
       {chrome(FEED.bottom, SHOT.h - FEED.bottom)}
     </>

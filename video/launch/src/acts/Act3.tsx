@@ -9,6 +9,7 @@ import { TODAY } from '../kit/data';
 import { FALL } from '../kit/device';
 import { blinkT, KaiArt, SavedPill, Shot, TODAY as T, TodayWordPatch, todayWordStyle } from '../kit/App';
 import { Grain, Phone, phoneSize } from '../kit/Kit';
+import { tilt } from '../kit/rig';
 import { ACT, copy, CUE, f60, H, W } from '../timeline';
 
 // ACT 3 - THE WORD. The phone rises already moving on the downbeat, the app's Today screen on it
@@ -27,7 +28,7 @@ export const PH = { w: 580 * U, x: W / 2 - 330 * U, y: 64 * U, rise: 170 * U };
 const S = phoneSize(PH.w);
 
 /** Screen px of an app-unit point on the phone at offset (dx, dy). */
-const onPhone = (p: { x: number; y: number }, dy = 0) => ({ x: PH.x + S.bezel + p.x * S.k, y: PH.y + dy + S.bezel + p.y * S.k });
+const onPhone = (p: { x: number; y: number }, dy = 0) => ({ x: PH.x + S.bezel + p.x * S.k, y: PH.y + dy + S.top + p.y * S.k });
 
 /** In-place rewrite (r5): letters swap left to right, 3 f apart, under a sky selection. */
 const rewrite = (f: number, at: number, from: string, to: string) => {
@@ -95,7 +96,7 @@ export const Act3: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, transformOrigin: `${cardC.x}px ${cardC.y}px`, transform: `translateY(${whip}px) scale(${push * settle})` }}>
-        <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y + dy}px)` }}>
+        <Phone w={PH.w} x={PH.x} y={PH.y + dy} {...tilt(f)}>
           <Shot name="today" />
           <TodayWordPatch word={word} info={info} infoFade={infoFade} />
           <SavedPill on={landed ? 1 : 0} pop={pop} />

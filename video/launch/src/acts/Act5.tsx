@@ -7,6 +7,7 @@ import { E, mix, prog } from '../lib/anim';
 import { FEED_KEPT } from '../kit/data';
 import { breatheT, FeedReel, KaiArt, KeptOverlay, PlayCard } from '../kit/App';
 import { Grain, Phone, phoneSize } from '../kit/Kit';
+import { tilt } from '../kit/rig';
 import { ACT, copy, CUE, f60 } from '../timeline';
 import { PH } from './Act3';
 import { FEED_PAGES, flick2, KEEP_LABEL_BG, LearnsCopy } from './Act4';
@@ -31,14 +32,14 @@ export const Act5: React.FC = () => {
   const kaiIn = prog(f, CUE.turn2 - f60(12), CUE.turn2 + f60(20), E.out);
   const delight = prog(f, CUE.turn2, CUE.turn2 + f60(16), E.out);
   const kaiSize = 190 * U;
-  const kai = { x: PH.x + PH.w - 40 * U, y: PH.y + S.bezel + 560 * S.k + mix(140 * U, 0, kaiIn) };
+  const kai = { x: PH.x + PH.w - 40 * U, y: PH.y + S.top + 560 * S.k + mix(140 * U, 0, kaiIn) };
 
   const size = TYPE.line.size * 0.74 * U;
-  const lineY = PH.y + S.bezel + 432 * S.k - size * 0.55; // level with the card's centre
+  const lineY = PH.y + S.top + 432 * S.k - size * 0.55; // level with the card's centre
 
   return (
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
-      <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y}px)` }}>
+      <Phone w={PH.w} x={PH.x} y={PH.y} {...tilt(f)}>
         {push < 1 && (
           <div style={{ position: 'absolute', inset: 0, transform: `translateX(${-push * 120}px)`, opacity: 1 - push * 0.5 }}>
             <FeedReel pages={FEED_PAGES} pos={FEED_KEPT + flick2(f)}>

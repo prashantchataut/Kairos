@@ -7,6 +7,7 @@
 import React from 'react';
 import { staticFile } from 'remotion';
 import { C } from '../brand/tokens';
+import { Device, deviceSize, SCREEN, type Tone } from './Device';
 import { H, W } from '../timeline';
 
 /** A soft, wide drop shadow for floating cards (black only: coloured shadows read as glow). */
@@ -36,50 +37,20 @@ export const Grain: React.FC<{ frame: number; opacity?: number }> = ({ frame, op
 };
 
 /**
- * The phone: a thin navy bezel around a screen. `w` is the outer width in px; the screen is the
- * app's 400 x 860 dp canvas (the size FilmAssetsTest renders every screen at) scaled to fit, so
- * renders fill it exactly and overlays are placed in dp.
+ * The phone (kit/Device.tsx: a Nothing Phone (4a)), placed by its top-left corner like a box, so
+ * acts lay copy out around it. Children are the screen in the renders' dp (400 x 860), below the
+ * status bar.
  */
-export const PHONE = { sw: 400, sh: 860, bezel: 12, radius: 64 };
 export const phoneSize = (w: number) => {
-  const k = (w - 2 * PHONE.bezel * (w / 424)) / PHONE.sw;
-  return { w, h: (PHONE.sh * k) + 2 * PHONE.bezel * (w / 424), k, bezel: PHONE.bezel * (w / 424) };
+  const d = deviceSize(w);
+  return { w, h: d.h, k: d.k, bezel: d.bezel, top: d.bezel + SCREEN.status * d.k };
 };
 
-export const Phone: React.FC<{ w: number; children: React.ReactNode; style?: React.CSSProperties; shadow?: boolean }> = ({ w, children, style, shadow = true }) => {
-  const s = phoneSize(w);
+export const Phone: React.FC<{ w: number; x: number; y: number; rx?: number; ry?: number; rz?: number; tone?: Tone; children: React.ReactNode }> = ({ w, x, y, rx = 0, ry = 0, rz = 0, tone = 'light', children }) => {
+  const d = deviceSize(w);
   return (
-    <div
-      style={{
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: s.w,
-        height: s.h,
-        borderRadius: PHONE.radius * (w / 424),
-        background: C.navy,
-        boxShadow: shadow ? SHADOW : undefined,
-        ...style,
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          left: s.bezel,
-          top: s.bezel,
-          width: PHONE.sw,
-          height: PHONE.sh,
-          borderRadius: ((PHONE.radius - PHONE.bezel) * (w / 424)) / s.k,
-          overflow: 'hidden',
-          transformOrigin: '0 0',
-          transform: `scale(${s.k})`,
-          background: C.canvas,
-        }}
-      >
-        {children}
-        {/* the camera punch-hole */}
-        <div style={{ position: 'absolute', left: PHONE.sw / 2 - 7, top: 14, width: 14, height: 14, borderRadius: 7, background: C.navy }} />
-      </div>
-    </div>
+    <Device p={{ x: x + w / 2, y: y + d.h / 2, w, rx, ry, rz }} tone={tone}>
+      <div style={{ position: 'absolute', left: 0, top: SCREEN.status, width: SCREEN.w, height: 860 }}>{children}</div>
+    </Device>
   );
 };

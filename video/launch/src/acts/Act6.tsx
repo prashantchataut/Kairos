@@ -7,6 +7,7 @@ import { E, fd, lmix, prog, spr, SPR, squash } from '../lib/anim';
 import { delayTo } from '../lib/sync';
 import { CAPSULE, ComposeTyping, SealedStamp, Shot } from '../kit/App';
 import { Grain, nightGradient, Phone, phoneSize } from '../kit/Kit';
+import { tilt } from '../kit/rig';
 import { ACT, copy, CUE, f60, H, W } from '../timeline';
 import { PH } from './Act3';
 import { Act5 } from './Act5';
@@ -27,7 +28,7 @@ const S = phoneSize(PH.w);
 const SEAL_START = CUE.seal - delayTo(SPR.land);
 
 /** Screen px of an app-unit point on the phone. */
-const onPhone = (x: number, y: number) => ({ x: PH.x + S.bezel + x * S.k, y: PH.y + S.bezel + y * S.k });
+const onPhone = (x: number, y: number) => ({ x: PH.x + S.bezel + x * S.k, y: PH.y + S.top + y * S.k });
 
 export const Act6: React.FC = () => {
   const f = useCurrentFrame() + ACT.letter.from;
@@ -69,7 +70,7 @@ export const Act6: React.FC = () => {
       {/* until the night has closed, the phone only exists inside it */}
       <div style={{ position: 'absolute', inset: 0, clipPath: closed ? undefined : clip }}>
         <div style={{ position: 'absolute', inset: 0, transformOrigin: `${date.x}px ${date.y}px`, transform: `scale(${lean})`, perspective: 1800 * U }}>
-          <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y}px) rotateY(${turn}deg)`, transformOrigin: `${PH.w / 2}px 50%` }}>
+          <Phone w={PH.w} x={PH.x} y={PH.y} rx={tilt(f).rx} ry={tilt(f).ry + turn} rz={tilt(f).rz}>
             {toWhen < 1 && (
               <div style={{ position: 'absolute', inset: 0, transform: `translateX(${-toWhen * 120}px)`, opacity: 1 - toWhen * 0.5 }}>
                 <ComposeTyping typed={typed} total={DEAR.text.length} />

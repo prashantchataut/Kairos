@@ -7,6 +7,7 @@ import { E, hitPulse, inertia, lmix, prog } from '../lib/anim';
 import { FEED_KEPT } from '../kit/data';
 import { FEED, FeedReel, KeptOverlay, type ScreenName } from '../kit/App';
 import { Grain, Phone, phoneSize } from '../kit/Kit';
+import { tilt } from '../kit/rig';
 import { ACT, copy, CUE, f60 } from '../timeline';
 import { PH } from './Act3';
 
@@ -29,7 +30,7 @@ export const KEEP_LABEL_BG = SAMPLED.keepLabel;
 export const flick2 = (f: number) => prog(f, CUE.flick2 - 1, CUE.flick2 + f60(34), E.whip);
 
 /** Where the Feed's copy sits: level with the reel card's centre (Act 3's phone pose, unscaled). */
-const ANCHOR_Y = PH.y + S.bezel + 460 * S.k;
+const ANCHOR_Y = PH.y + S.top + 460 * S.k;
 
 /** "It learns" / "what you keep." with its hand-drawn loop. Act 5 draws it too, to finish its exit. */
 export const LearnsCopy: React.FC<{ f: number }> = ({ f }) => {
@@ -75,19 +76,19 @@ export const Act4: React.FC = () => {
   // --- camera: from Act 3's close framing back to the phone -------------------------------
   const pull = prog(f, CUE.flick1 - 1, CUE.flick1 + f60(40), E.out);
   const k = lmix(2.2, 1, pull);
-  const anchor = { x: PH.x + S.bezel + 168 * S.k, y: PH.y + S.bezel + 460 * S.k };
+  const anchor = { x: PH.x + S.bezel + 168 * S.k, y: PH.y + S.top + 460 * S.k };
 
   // --- Keep: the heart turns coral and a ring echoes it --------------------------------------
   const keep = prog(f, CUE.keep - 1, CUE.keep + f60(10), E.out);
   const pop = hitPulse(f - CUE.keep, 2, 6);
-  const heart = { x: PH.x + S.bezel + FEED.keep.x * S.k, y: PH.y + S.bezel + (FEED.keep.y - flick * (FEED.bottom - FEED.top)) * S.k };
+  const heart = { x: PH.x + S.bezel + FEED.keep.x * S.k, y: PH.y + S.top + (FEED.keep.y - flick * (FEED.bottom - FEED.top)) * S.k };
 
   // --- copy --------------------------------------------------------------------------------
 
   return (
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, transformOrigin: `${anchor.x}px ${anchor.y}px`, transform: `scale(${k})` }}>
-        <Phone w={PH.w} style={{ transform: `translate(${PH.x}px, ${PH.y}px)` }}>
+        <Phone w={PH.w} x={PH.x} y={PH.y} {...tilt(f)}>
           <FeedReel pages={FEED_PAGES} pos={scroll / PITCH}>
             {(i) => i === FEED_KEPT && <KeptOverlay on={keep} labelBg={KEEP_LABEL_BG} />}
           </FeedReel>
