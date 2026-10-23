@@ -1,0 +1,59 @@
+# The launch film, rendered on GitHub Actions (Run workflow -> pick preview or master).
+#
+# The agent sandbox cannot write .github/workflows; install it once from the repo root:
+#   cp video/launch/ci/render.yml .github/workflows/film.yml && git add .github/workflows/film.yml && git commit -m "CI: render the launch film" && git push
+# The MP4s, the soundtrack and the QA sheet arrive as the run's "launch-film" artifact.
+name: film
+
+on:
+  workflow_dispatch:
+    inputs:
+      master:
+        description: Also render the motion-blurred master (adds ~30-60 min)
+        type: boolean
+        default: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: video/launch
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: video/launch/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: ffmpeg and fonts
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+      - name: Python for the sound and the QA scripts
+        run: pip install -q numpy scipy soundfile soxr pyloudnorm opencv-python-headless librosa pillow scikit-learn matplotlib
+      - name: earshot (the sound kit; no models, no PyTorch)
+        run: |
+          git clone -q --depth 1 https://github.com/Leonxlnx/earshot "$RUNNER_TEMP/earshot"
+          pip install -q --no-deps -e "$RUNNER_TEMP/earshot"
+          echo "EARSHOT_PYTHON=$(which python3)" >> "$GITHUB_ENV"
+      - run: npm ci
+      - name: Checks
+        run: npm run check
+      - name: Sound
+        run: npm run kit && npm run cues && npm run audio
+      - name: Preview (sharp, with sound)
+        run: npm run render:preview
+      - name: Master (motion-blurred)
+        if: ${{ inputs.master }}
+        run: npm run render && npm run qa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: launch-film
+          path: |
+            video/launch/out/*.mp4
+            video/launch/out/qa/
+            video/launch/public/audio/soundtrack.wav
+          if-no-files-found: warn
