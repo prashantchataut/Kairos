@@ -68,6 +68,8 @@ export type BlurWordsProps = {
 export const BlurWords: React.FC<BlurWordsProps> = ({ id, frame: f, size, face, rise = 0.22, blur = 14, lift = 0.3, exitIndex = 0, exitStagger = WORD.exitStagger, exitDur = WORD.exitDur, style }) => {
   const c = copy(id);
   const words = c.text.split(' ');
+  // only on screen from its first frame to the end of its exit (the layout audit measures what is mounted)
+  if (f < c.in - 1 || f > c.out + (exitIndex + words.length - 1) * exitStagger + exitDur) return null;
   return (
     <span data-text={id} style={{ display: 'inline-flex', flexWrap: 'nowrap', whiteSpace: 'pre', fontSize: size, lineHeight: 1, ...face, ...style }}>
       {words.map((w, i) => {
@@ -133,9 +135,12 @@ export const RisingName: React.FC<{
   const k = arriveK(travel, letters.dur, E.out);
   const top = line - m.ascent - size * 0.6; // the clip starts well above the tallest letter
   const boxTop = baseline - m.ascent - top; // the word's ink box, inside the clip
+  // mounted only while a letter is up (the layout audit measures what is mounted)
+  const last = chars.length - 1;
+  if (f < letters.from - 1 || f > out + last * outGap + outDur) return null;
   return (
     <div style={{ position: 'absolute', left: 0, top, width: x + width + size, height: line - top, overflow: 'hidden', pointerEvents: 'none' }}>
-      <div data-text={id} style={{ position: 'absolute', left: x, top: boxTop, width, height: m.ascent }}>
+      <div data-text={id} style={{ position: 'absolute', left: x, top: boxTop, width, height: m.ascent, fontSize: size, lineHeight: 1 }}>
         {chars.map((ch, i) => {
           const s = letters.from + i * letters.gap;
           const p = prog(f, s, s + letters.dur, E.out);
