@@ -56,6 +56,9 @@ export const C = {
   navy: '#141C31', // dark surfaces
   // The one accent and its meaning: "the moment". The hand that stops, the petal that is yours.
   coral: '#FF6A4D',
+  // The launcher icon's sky (ic_launcher_background.xml), top to bottom.
+  iconTop: '#4A7DFF',
+  iconBottom: '#2346D8',
   coralInk: '#C7381F', // coral text on light (handwritten loop)
   // The candy set: product UI only (flashcards, share cards, Kai's moods), never on film copy.
   sun: '#FFC83D',

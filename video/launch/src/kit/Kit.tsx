@@ -54,3 +54,27 @@ export const Phone: React.FC<{ w: number; x: number; y: number; rx?: number; ry?
     </Device>
   );
 };
+
+/**
+ * The light stage: the app's canvas with three soft glows of its sky, lilac and sun drifting very
+ * slowly, like morning through a window. Grain on top keeps the gradients from banding.
+ */
+export const Aurora: React.FC<{ frame: number }> = ({ frame }) => {
+  const t = frame / 600;
+  const g = (x: number, y: number, r: number, color: string, a: number) =>
+    `radial-gradient(circle at ${x.toFixed(2)}% ${y.toFixed(2)}%, ${color}${Math.round(a * 255).toString(16).padStart(2, '0')} 0%, ${color}00 ${r}%)`;
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        background: [
+          g(14 + 6 * Math.sin(t * 2.1), 6 + 4 * Math.cos(t * 1.7), 62, C.skyMid, 0.62),
+          g(90 - 5 * Math.sin(t * 1.3), 88 + 4 * Math.sin(t * 2.3), 55, C.lilac, 0.34),
+          g(62 + 8 * Math.cos(t * 1.1), 104, 46, C.sun, 0.2),
+          C.canvas,
+        ].join(', '),
+      }}
+    />
+  );
+};

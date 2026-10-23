@@ -6,7 +6,7 @@ import { Words } from '../fx/Words';
 import { clamp, E, fd, lmix, mix, prog } from '../lib/anim';
 import { TODAY } from '../kit/data';
 import { blinkT, KaiArt, SavedPill, Shot, TODAY as T, TodayWordPatch, todayWordStyle } from '../kit/App';
-import { Grain, Phone, phoneSize } from '../kit/Kit';
+import { Aurora, Grain, Phone, phoneSize } from '../kit/Kit';
 import { tilt } from '../kit/rig';
 import { ACT, copy, CUE, f60, H, W } from '../timeline';
 
@@ -84,12 +84,21 @@ export const Act3: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
+      <Aurora frame={f} />
       <div style={{ position: 'absolute', inset: 0, transformOrigin: `${cardC.x}px ${cardC.y}px`, transform: `translateY(${whip}px) scale(${push * settle})` }}>
-        <Phone w={mix(PH2.w, PH.w, move)} x={mix(PH2.x, PH.x, move)} y={mix(PH2.y, PH.y, move)} {...tilt(f)}>
+        <Phone tone={move < 0.5 ? 'dark' : 'light'} w={mix(PH2.w, PH.w, move)} x={mix(PH2.x, PH.x, move)} y={mix(PH2.y, PH.y, move)} {...tilt(f)}>
+          {/* the app pushes from its welcome screen to Today as the phone glides in */}
+          {move < 1 && (
+            <div style={{ position: 'absolute', inset: 0, transform: `translateX(${-move * 120}px)`, opacity: 1 - move * 0.6 }}>
+              <Shot name="onboarding_hello" />
+            </div>
+          )}
+          <div style={{ position: 'absolute', inset: 0, transform: `translateX(${(1 - move) * 400}px)`, boxShadow: move < 1 ? '-20px 0 60px rgba(0,0,0,0.2)' : undefined }}>
           <Shot name="today" />
           <TodayWordPatch word={word} info={info} infoFade={infoFade} />
           <SavedPill on={prog(f, CUE.heart - 2, CUE.heart + f60(10), E.ui)} />
           <div style={{ position: 'absolute', left: T.kai.x - T.kai.size / 2, top: T.kai.y - T.kai.size / 2 }}>{kaiArt}</div>
+          </div>
         </Phone>
       </div>
       <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${PH.x - 56 * U}px, ${lineY}px) translateX(-100%)`, opacity: 1 - prog(f, CUE.dive, CUE.dive + 20, E.smooth) }}>

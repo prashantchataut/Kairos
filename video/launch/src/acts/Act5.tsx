@@ -6,7 +6,7 @@ import { Words } from '../fx/Words';
 import { E, mix, prog } from '../lib/anim';
 import { FEED_KEPT } from '../kit/data';
 import { breatheT, FeedReel, KaiArt, KeptOverlay, PlayCard } from '../kit/App';
-import { Grain, Phone, phoneSize } from '../kit/Kit';
+import { Aurora, Grain, Phone, phoneSize } from '../kit/Kit';
 import { tilt } from '../kit/rig';
 import { ACT, copy, CUE, f60 } from '../timeline';
 import { PH } from './Act3';
@@ -39,6 +39,7 @@ export const Act5: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
+      <Aurora frame={f} />
       <Phone w={PH.w} x={PH.x} y={PH.y} {...tilt(f)}>
         {push < 1 && (
           <div style={{ position: 'absolute', inset: 0, transform: `translateX(${-push * 120}px)`, opacity: 1 - push * 0.5 }}>

@@ -6,7 +6,7 @@ import { Words } from '../fx/Words';
 import { E, inertia, lmix, prog } from '../lib/anim';
 import { FEED_KEPT } from '../kit/data';
 import { FeedReel, KeptOverlay, type ScreenName } from '../kit/App';
-import { Grain, Phone, phoneSize } from '../kit/Kit';
+import { Aurora, Grain, Phone, phoneSize } from '../kit/Kit';
 import { tilt } from '../kit/rig';
 import { ACT, copy, CUE, f60 } from '../timeline';
 import { PH } from './Act3';
@@ -85,6 +85,7 @@ export const Act4: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
+      <Aurora frame={f} />
       <div style={{ position: 'absolute', inset: 0, transformOrigin: `${anchor.x}px ${anchor.y}px`, transform: `scale(${k})` }}>
         <Phone w={PH.w} x={PH.x} y={PH.y} {...tilt(f)}>
           <FeedReel pages={FEED_PAGES} pos={scroll / PITCH}>

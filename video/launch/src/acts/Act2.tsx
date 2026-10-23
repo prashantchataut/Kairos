@@ -1,112 +1,86 @@
-// cinetic:brand-supplied coral, serif, gradient: the flood, Fraunces and the sky fill are Kairos' own (BRIEF.md).
+// cinetic:brand-supplied gradient: the light rising is Kairos' own sky (BRIEF.md).
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { petalPath, Petal, placePetal } from '../brand/Mark';
-import { C, TYPE, U, WORD_FACE, typeStyle } from '../brand/tokens';
+import { AbsoluteFill, Freeze, useCurrentFrame } from 'remotion';
+import { C, TYPE, U, typeStyle } from '../brand/tokens';
 import { Words } from '../fx/Words';
-import { arrive, blurIn, clamp, depart, E, lmix, mix, pace, prog } from '../lib/anim';
-import { FALL } from '../kit/device';
-import { Grain } from '../kit/Kit';
-import { useLetters } from '../kit/useLetters';
-import { ACT, copy, CUE, f60, H, W } from '../timeline';
-import { DIAL, HAND } from './Act1';
+import { E, mix, prog } from '../lib/anim';
+import { breatheT, KaiArt, Shot } from '../kit/App';
+import { AppIcon } from '../kit/Icon';
+import { Aurora, Grain, Phone } from '../kit/Kit';
+import { tilt } from '../kit/rig';
+import { ACT, copy, f60, H, W } from '../timeline';
+import { Act1 } from './Act1';
+import { PH2 } from './Act3';
 
-// ACT 2 - THE NAME. The camera dives into the coral hand until it floods the frame (the film's one
-// accent flood). The flood shrinks back into a small petal that lands as the dot of the i in a
-// giant "Kairos", whose letters rise around it; "the right moment." answers below. Then the name
-// lifts away and the petal falls toward the phone that is about to rise (Act 3).
+// ACT 2 - THE NAME. Morning rises over the night in stepped columns (the move Act 6 uses again,
+// the film's rhyme). On the left, set like the app's own headlines: its icon, then the name in
+// Bricolage Display, then what it means. On the right the phone rises, turned toward the name, on
+// the app's first screen: "Hi, I'm Kai." Nothing is centred; the name and the product share the
+// frame like a sentence and its picture.
 
 const NAME = copy('name.1');
 const MEANS = copy('name.2');
-// The word is set with a dotless i: the coral petal is its dot.
-const SPELL = 'Kaıros';
-const SIZE = 300 * U;
-const BASE = H * 0.56; // baseline of the name
-const STYLE: React.CSSProperties = { ...WORD_FACE, fontSize: SIZE, fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1 };
-const DOT = { size: 0.6 * SIZE, lift: 0.7 }; // the petal dot, and its centre height above the baseline in em
-
-/** Where the hand's fat part sits in Act 1's frame: the camera dives at it. */
-const HAND_PT = (() => {
-  const a = (HAND.angle * Math.PI) / 180;
-  const d = DIAL.r * (0.24 * HAND.len + (HAND.len - 0.24 * HAND.len) * 0.55);
-  return { x: DIAL.cx + Math.sin(a) * d, y: DIAL.cy - Math.cos(a) * d };
-})();
+const COLS = 12;
+/** The name's face: the app's Display (Bricolage ExtraBold at display optical size, a touch condensed). */
+export const DISPLAY: React.CSSProperties = { fontFamily: '"Bricolage", system-ui', fontWeight: 800, fontVariationSettings: '"wdth" 88, "opsz" 96', letterSpacing: '-0.04em', lineHeight: 0.9, whiteSpace: 'pre' };
 
 export const Act2: React.FC = () => {
   const f = useCurrentFrame() + ACT.name.from;
-  const [boxes, probe] = useLetters(SPELL, STYLE);
 
-  // --- the dive into the hand (Act 1's last pose, then accelerating in) ---------------------
-  const dive = prog(f, ACT.name.from - 1, CUE.flood, E.in);
-  const k = lmix(1.04, 16, dive);
-  const flooded = f >= CUE.flood;
+  // --- the light rises from the bottom edge in columns, centre first --------------------------
+  const cols = Array.from({ length: COLS }, (_, i) => {
+    const d = Math.abs(i - (COLS - 1) / 2) * f60(2.4);
+    return H * prog(f, ACT.name.from - 1 + d, ACT.name.from - 1 + d + f60(40), E.smooth);
+  });
+  const cw = W / COLS;
+  const clip = `polygon(${cols.map((h, i) => `${(i * cw).toFixed(1)}px ${(H - h).toFixed(1)}px, ${((i + 1) * cw + 0.5).toFixed(1)}px ${(H - h).toFixed(1)}px`).join(', ')}, ${W}px ${H}px, 0px ${H}px)`;
+  const closed = cols.every((h) => h >= H - 0.5);
 
-  // --- the name ---------------------------------------------------------------------------
-  const total = boxes ? boxes[boxes.length - 1].x + boxes[boxes.length - 1].w : 0;
-  const left = (W - total) / 2;
-  const iBox = boxes?.[2];
-  const dotAt = iBox ? { x: left + iBox.x + iBox.w / 2 + 0.01 * SIZE, y: BASE - DOT.lift * SIZE } : { x: W / 2, y: H / 2 };
-  // The name lifts away word-by-word style (whole word) once read, making room for the phone.
-  const lift = depart(prog(f, MEANS.out, MEANS.out + f60(28), E.exit));
+  // --- the phone rises, turned toward the name -------------------------------------------------
+  const rise = prog(f, ACT.name.from + f60(14), ACT.name.from + f60(70), E.cam);
+  // --- the icon, the name, the meaning: each rises out of a clip, unblurring, no overshoot ------
+  const icon = prog(f, NAME.in - f60(16), NAME.in + f60(14), E.out);
+  const name = prog(f, NAME.in, NAME.resolved, E.out);
+  const leave = prog(f, NAME.out - f60(6), ACT.name.from + ACT.name.dur, E.exit);
 
-  // --- the shrinking flood: a petal from frame-filling to the dot --------------------------
-  const sh = prog(f, CUE.flood + f60(6), CUE.dot, E.glide);
-  const petal = { x: mix(W / 2, dotAt.x, sh), y: mix(H / 2, dotAt.y, sh), size: lmix(16 * W, DOT.size, sh) };
-  // ...then it falls toward the phone (FALL), accelerating, from the dot.
-  const fall = prog(f, FALL.from, FALL.at, E.contact);
-  if (f >= CUE.dot) Object.assign(petal, { x: mix(dotAt.x, FALL.x, fall), y: mix(dotAt.y, FALL.y, fall), size: mix(DOT.size, FALL.size, fall) });
+  const x0 = 150 * U;
+  const NS = 196 * U;
+  const iconS = 118 * U;
+  const yIcon = H / 2 - 250 * U;
+  const yName = yIcon + iconS + 40 * U;
+  const ms = TYPE.line.size * 0.62 * U;
 
   return (
-    <AbsoluteFill style={{ background: C.canvas, overflow: 'hidden' }}>
-      {probe}
-      {!flooded && (
-        // Act 1's dial, frozen in its last pose, pushed into
-        <div style={{ position: 'absolute', inset: 0, transformOrigin: `${HAND_PT.x}px ${HAND_PT.y}px`, transform: `scale(${k})` }}>
-          <svg width={W} height={H} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
-            <circle cx={DIAL.cx} cy={DIAL.cy} r={DIAL.r} fill={C.cobalt} />
-            <path d={petalPath(DIAL.r * HAND.len, 1)} fill={C.coral} transform={`translate(${DIAL.cx} ${DIAL.cy}) rotate(${HAND.angle})`} />
-            <circle cx={DIAL.cx} cy={DIAL.cy} r={DIAL.r * 0.05} fill={C.white} />
-          </svg>
+    <AbsoluteFill style={{ background: C.night2, overflow: 'hidden' }}>
+      {!closed && (
+        <Freeze frame={ACT.chronos.dur - 1}>
+          <Act1 />
+        </Freeze>
+      )}
+      <div style={{ position: 'absolute', inset: 0, clipPath: closed ? undefined : clip }}>
+        <Aurora frame={f} />
+        <Phone w={PH2.w} x={PH2.x} y={mix(H + 80 * U, PH2.y, rise)} {...tilt(f)} tone="dark">
+          <Shot name="onboarding_hello" />
+          {/* Kai on the welcome screen breathes, drawn by the app's own frames (matched on the render: centred at (200, 256) dp, 152 dp) */}
+          <div style={{ position: 'absolute', left: 200 - 76, top: 256 - 76 }}>
+            <KaiArt size={152} seq="breathe" t={breatheT(f)} />
+          </div>
+        </Phone>
+        <div style={{ position: 'absolute', inset: 0, opacity: 1 - leave, transform: `translateY(${-leave * 30 * U}px)` }}>
+          <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${x0}px, ${yIcon + (1 - icon) * 26 * U}px)`, opacity: icon, filter: icon < 1 ? `blur(${((1 - icon) * 10).toFixed(2)}px)` : undefined }}>
+            <div style={{ borderRadius: '50%', boxShadow: `0 ${18 * U}px ${44 * U}px rgba(35,70,216,0.35)` }}>
+              <AppIcon size={iconS} petals={(i) => prog(f, NAME.in - f60(10) + i * f60(2), NAME.in + f60(14) + i * f60(2), E.out)} />
+            </div>
+          </div>
+          <div style={{ position: 'absolute', left: x0 - 8 * U, top: yName, height: NS * 1.02, overflow: 'hidden', paddingRight: 40 }}>
+            <div style={{ ...DISPLAY, fontSize: NS, color: C.ink, transform: `translateY(${(1 - name) * NS}px)`, filter: name < 1 ? `blur(${((1 - name) * 8).toFixed(2)}px)` : undefined }}>{NAME.text}</div>
+          </div>
+          <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${x0}px, ${yName + NS * 1.12}px)` }}>
+            <Words text={MEANS.text} id={MEANS.id} frame={f} start={MEANS.in} out={MEANS.out} size={ms} style={{ ...typeStyle('line', ms), fontWeight: 600, color: C.inkSoft }} />
+          </div>
         </div>
-      )}
-      {flooded && boxes && (
-        <>
-          <div style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${left}px, ${BASE - 0.86 * SIZE - lift * 140 * U}px)`, opacity: 1 - lift }}>
-            {Array.from(SPELL).map((ch, i) => {
-              // the one hero word: letter by letter // lint-ok: hero word
-              const s = NAME.in + f60(i * 4);
-              const p = prog(f, s, s + f60(pace.wordDur), E.out);
-              const b = blurIn(p, 6);
-              return (
-                <span
-                  key={i}
-                  style={{
-                    ...STYLE,
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    whiteSpace: 'pre',
-                    transform: `translate(${boxes[i].x}px, ${((1 - arrive(p)) * 0.32 * SIZE).toFixed(2)}px)`,
-                    opacity: p,
-                    filter: b > 0.05 ? `blur(${b.toFixed(2)}px)` : undefined,
-                    backgroundImage: `linear-gradient(180deg, ${C.skyTop} 10%, ${C.cobalt} 70%)`,
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text',
-                    color: 'transparent',
-                  }}
-                >
-                  {ch}
-                </span>
-              );
-            })}
-          </div>
-          <div style={{ position: 'absolute', left: 0, top: 0, width: W, display: 'flex', justifyContent: 'center', transform: `translateY(${BASE + 70 * U - lift * 100 * U}px)` }}>
-            <Words text={MEANS.text} id={MEANS.id} frame={f} start={MEANS.in} out={MEANS.out} size={TYPE.line.size * 0.76 * U} style={{ ...typeStyle('line', TYPE.line.size * 0.76 * U), fontWeight: 600, color: C.ink }} />
-          </div>
-        </>
-      )}
-      {flooded && <Petal size={petal.size} color={C.coral} style={placePetal(petal.x, petal.y, petal.size, HAND.angle)} />}
-      <Grain frame={f} opacity={0.04 * clamp(1)} />
+        <Grain frame={f} opacity={0.035} />
+      </div>
     </AbsoluteFill>
   );
 };
