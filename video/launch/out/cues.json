@@ -435,21 +435,30 @@
  ],
  "events": [
   {
-   "f": 15,
+   "f": 21,
    "kind": "text",
    "weight": 0.8,
    "pan": -0.4,
    "id": "chronos:days1"
   },
   {
-   "f": 96,
+   "f": 102,
    "kind": "text",
    "weight": 0.8,
    "pan": -0.4,
    "id": "chronos:days2"
   },
   {
-   "f": 193,
+   "f": 114,
+   "kind": "whoosh",
+   "weight": 0.6,
+   "pan": 0.3,
+   "apexFrac": 0.7,
+   "dur": 70,
+   "id": "chronos:wall-surges"
+  },
+  {
+   "f": 199,
    "kind": "text",
    "weight": 0.8,
    "pan": -0.4,
@@ -463,16 +472,16 @@
    "id": "chronos:wall-stops"
   },
   {
-   "f": 283,
+   "f": 284,
    "kind": "whoosh",
    "weight": 0.6,
    "pan": 0.35,
-   "apexFrac": 0.28,
-   "dur": 50,
+   "apexFrac": 0.274,
+   "dur": 62,
    "id": "chronos:card-lifts"
   },
   {
-   "f": 292,
+   "f": 298,
    "kind": "text",
    "weight": 0.8,
    "pan": -0.4,
@@ -488,21 +497,21 @@
    "id": "name:morning-rises"
   },
   {
-   "f": 419,
-   "kind": "bell",
-   "weight": 0.8,
-   "pan": -0.45,
-   "id": "name:icon-opens"
-  },
-  {
-   "f": 427,
+   "f": 422,
    "kind": "text",
    "weight": 0.8,
    "pan": -0.45,
    "id": "name:kairos"
   },
   {
-   "f": 514,
+   "f": 450,
+   "kind": "bell",
+   "weight": 0.8,
+   "pan": -0.613,
+   "id": "name:icon-opens"
+  },
+  {
+   "f": 505,
    "kind": "text",
    "weight": 0.8,
    "pan": -0.45,
@@ -797,7 +806,7 @@
    "f": 2100,
    "kind": "land",
    "weight": 0.9,
-   "pan": -0.608,
+   "pan": 0.108,
    "variant": "light",
    "id": "lockup:icon"
   },
@@ -805,14 +814,14 @@
    "f": 2160,
    "kind": "hit",
    "weight": 1,
-   "pan": 0.05,
+   "pan": 0.367,
    "id": "lockup:lockup"
   },
   {
-   "f": 2254,
+   "f": 2245,
    "kind": "text",
    "weight": 0.8,
-   "pan": 0.1,
+   "pan": 0.367,
    "id": "lockup:android"
   }
  ]

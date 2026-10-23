@@ -10,8 +10,8 @@
 //   peak of the move they belong to.
 // - Text gets one soft `text` sound per fragment, on the frame it comes to rest, never per word.
 // - The lockup is a stop-down and ONE clean element on the wordmark.
-import { TYPE, U } from './brand/tokens';
-import { chainResolves } from './fx/Chain';
+import { U } from './brand/tokens';
+import { NAME2, nameSettle, SIZES, SURGE_PEAK, wordsSettle } from './fx/a128Time';
 import { E } from './lib/anim';
 import { peak } from './lib/sync';
 import { ACT, copy, CUE, f60, FPS, TOTAL, W } from './timeline';
@@ -52,18 +52,23 @@ export default function cues(): SoundEvent[] {
   const ev: SoundEvent[] = [];
   const text = (f: number, id: string, pan = 0) => ev.push({ f, kind: 'text', weight: 0.8, pan, id });
 
-  // 1 Days: the fragments on the left; the wall of cards stops dead on Seneca (the music stops with it).
-  const line = TYPE.line.size * U;
-  chainResolves('days', { size: line }).forEach((f, i) => text(f, `days${i + 1}`, -0.4));
-  chainResolves('stay', { size: line }).forEach((f, i) => text(f, `stay${i + 1}`, -0.4));
+  // 1 Days: the wall surges on "just pass." and stops dead on Seneca (the music stops with it); the
+  // card lifts. The fragments blur in on the left (fx/a128Type): one soft sound each as it lands.
+  const days = SIZES.days * U;
+  text(wordsSettle('days.1', days, 0.22), 'days1', -0.4);
+  text(wordsSettle('days.2', days, 0.22), 'days2', -0.4);
+  ev.push({ f: SURGE_PEAK, kind: 'whoosh', weight: 0.6, pan: 0.3, dur: f60(70), apexFrac: 0.7, id: 'wall-surges' });
+  text(wordsSettle('stay.1', days, 0.22), 'stay1', -0.4);
   ev.push({ f: CUE.stop, kind: 'snap', weight: 1.2, pan: 0.35, id: 'wall-stops' });
-  ev.push(move(CUE.stop + f60(6), CUE.stop + f60(56), E.cam, 0.6, 0.35, 'card-lifts'));
+  ev.push(move(CUE.stop + f60(4), CUE.stop + f60(66), E.cam, 0.6, 0.35, 'card-lifts'));
+  text(wordsSettle('stay.2', days, 0), 'stay2', -0.4); // "stay." comes into focus in place
 
-  // 2 Name: morning rises in columns; the icon's petals open, the name, the meaning; the phone rises.
+  // 2 Name: morning rises in columns; the icon rises over the horizon and blooms, its core home on a
+  // beat (one bell); the name rises from behind the line; the meaning blurs in under it.
   ev.push(move(ACT.name.from - 1, ACT.name.from + f60(52), E.smooth, 0.9, 0, 'morning-rises'));
-  ev.push({ f: copy('name.1').in + f60(14), kind: 'bell', weight: 0.8, pan: -0.45, id: 'icon-opens' });
-  text(landed('name.1'), 'kairos', -0.45);
-  text(landed('name.2'), 'right-moment', -0.45);
+  ev.push({ f: NAME2.core[1], kind: 'bell', weight: 0.8, pan: panX(225 * U), id: 'icon-opens' });
+  text(nameSettle(NAME2, 6, SIZES.name2 * U), 'kairos', -0.45);
+  text(wordsSettle('name.2', SIZES.means * U, 0.22), 'right-moment', -0.45);
 
   // 3 Word: the app pushes to Today; Save turns to Saved; the word rewrites twice; the dive up.
   ev.push(move(CUE.rise - 1, CUE.rise + f60(40), E.cam, 0.7, 0, 'to-today'));
@@ -100,11 +105,12 @@ export default function cues(): SoundEvent[] {
   text(landed('share.2'), 'what-stays', -0.45);
   ev.push({ f: CUE.story + f60(50), kind: 'tick', weight: 0.7, pan: 0.35, id: 'wall-rests' });
 
-  // 8 Lockup: morning rises again; the icon opens petal by petal; one clean hit on the name.
+  // 8 Lockup: morning rises again; the phone turns to face us as the icon blooms on the right; its
+  // core lands; one clean hit as the name lands; "Now on Android" comes into focus.
   ev.push(move(CUE.scatter - 1, CUE.scatter + f60(52), E.smooth, 0.9, 0, 'morning'));
-  ev.push({ f: CUE.core, kind: 'land', variant: 'light', weight: 0.9, pan: panX(W * 0.12), id: 'icon' });
-  ev.push({ f: CUE.lockup, kind: 'hit', weight: 1, pan: 0.05, id: 'lockup' });
-  text(landed('android'), 'android', 0.1);
+  ev.push({ f: CUE.core, kind: 'land', variant: 'light', weight: 0.9, pan: panX(1090 * U), id: 'icon' });
+  ev.push({ f: CUE.lockup, kind: 'hit', weight: 1, pan: panX(1400 * U), id: 'lockup' });
+  text(wordsSettle('android', SIZES.android * U, 0.22), 'android', panX(1400 * U));
 
   for (const e of ev) {
     if (!(e.f >= 0 && e.f < TOTAL)) throw new Error(`sync: ${e.id} at f=${e.f} is outside the film (0..${TOTAL - 1})`);
