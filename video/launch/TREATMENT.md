@@ -2,6 +2,14 @@
 
 **Logline (12 words):** Most days just pass; Kairos keeps the one moment that should stay.
 
+> **Revision (Oct 23, 2026), after the owner's review:** the first cut drew the app's screens, cards,
+> Kai and the mark by hand, and they read as look-alikes. Every product shot is now the app's own
+> render (README "The app, as it is"). What changed in the beats: Play is the real "Finish the line"
+> card turning over (no fan of flashcards); the letter is the real compose -> choose the day -> sealed
+> flow (no drawn paper and envelope); share cards are the studio's own designs; and the coral petal
+> whitens into the bloom at the end, so the final mark is the app's single-colour mark inside its
+> own Wordmark. The device, the grid and the cue timings are unchanged.
+
 ## Specifics first
 
 - **The name.** καιρός is "the right moment", the opposite of χρόνος, clock time. The app's mark

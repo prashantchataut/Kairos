@@ -13,20 +13,41 @@ one o'clock like the hand of a clock. The film opens on a clock of days whirring
 dead and turns coral, and that coral petal travels through every shot until it becomes the moment
 petal of the logo:
 
-| Act | Time | The coral petal is… |
-|---|---|---|
-| 1 Chronos | 0:00 | the clock hand that stops: "Days / just pass." "Some moments / stay." (the music stops with it) |
-| 2 Name | 0:06 | a flood that shrinks into the dot of the ı in "Kairos" / "the right moment." |
-| 3 Word | 0:10 | the Save heart on the phone; the word of the day rewrites itself, Saudade → Apricity → Hiraeth |
-| 4 Feed | 0:16 | the Keep heart; "It learns / what you keep." with a hand-drawn loop; the reel follows to Petrichor |
-| 5 Play | 0:20 | the corner pip on flashcards of your own kept words, which turn over in full colour |
-| 6 Letter | 0:24 | the wax seal on a letter to future you, under the time capsule's night |
-| 7 Share | 0:30 | the sticker on a share card that changes shape: pin → story → square |
-| 8 Lockup | 0:34 | the moment petal: the bloom unfolds around it, "Kairos", "Now on Android" |
+| Act | Time | The coral petal is… | On screen (the app's own renders) |
+|---|---|---|---|
+| 1 Chronos | 0:00 | the clock hand that stops: "Days / just pass." "Some moments / stay." | film art |
+| 2 Name | 0:06 | a flood that shrinks into the dot of the ı in "Kairos" / "the right moment." | the wordmark's face, Fraunces 600 |
+| 3 Word | 0:10 | the Save heart; the word of the day rewrites itself, Saudade → Apricity → Hiraeth | `today.jpg`, the Saved state, Kai's drawKai frames |
+| 4 Feed | 0:16 | the Keep heart; "It learns / what you keep." with a hand-drawn loop | `feed_2` → `feed_0` (kept) → `feed_1` |
+| 5 Play | 0:20 | (Kai rises beside the phone, delighted) | `play_front` turning over to `play_back` |
+| 6 Letter | 0:24 | the coral seal stamping down on the sealed letter, under the night | `compose_write` (its title types) → `compose_when` → `letter_sealed` |
+| 7 Share | 0:30 | the sticker on a share card that changes shape: pin → story → square | the studio's Bloom, Bold, Glow, Eclipse and Garden cards |
+| 8 Lockup | 0:34 | the moment petal: the app's bloom unfolds around it, and it whitens into the mark | drawBloom's unfold frames, the app's Wordmark |
+
+## The app, as it is
+
+Nothing in the film redraws the app. `app/src/test/java/com/kairos/app/screens/FilmAssetsTest.kt`
+renders the real composables with Roborazzi: every screen the film shows (400 x 860 dp at 2.5 px/dp),
+Kai's frame sequences straight from `drawKai`, the bloom unfolding from `drawBloom`, the mark, the
+`Wordmark`, and twelve studio templates in pin, story and square. `scripts/import-app-assets.py`
+difference-mattes the sprites into `public/app`; `src/kit/App.tsx` shows them. To refresh after an app
+change:
+
+```bash
+./gradlew :app:testDebugUnitTest --tests 'com.kairos.app.screens.FilmAssetsTest' -Proborazzi.test.record=true
+python3 video/launch/scripts/import-app-assets.py
+```
+
+The few live overlays (the word rewriting, Saved and Kept, the title typing, the seal stamping) are
+set in the app's faces and colours at positions measured off the renders. `python3 scripts/calib.py`
+renders the Today overlay over `today.jpg` and checks the ink lines up (word 0 px, chip 2 px,
+definition 4 px off).
 
 ## Render it
 
-Heavy renders run on your machine (or CI), not in the agent sandbox. Needs Node 22+, Python 3.11+
+Heavy renders run on your machine or on GitHub Actions, not in the agent sandbox. On CI: install
+`ci/render.yml` once (`cp video/launch/ci/render.yml .github/workflows/film.yml`, commit, push), then
+Actions → film → Run workflow; the MP4s arrive as the run's `launch-film` artifact. Locally: Needs Node 22+, Python 3.11+
 with `numpy scipy soundfile pyloudnorm opencv-python librosa pillow`, and ffmpeg 6+ on `PATH`.
 
 ```bash
