@@ -53,7 +53,7 @@ class ScreenshotTest {
     private fun w(word: String, pos: String, say: String, def: String, ex: String, origin: String, syn: String, cat: String, lvl: Int, hook: String, shown: Int = 1, saved: Boolean = false, due: Long? = null, interval: Int = 0) =
         WordEntity(word.lowercase(), word, pos, say, def, ex, origin, syn, cat, lvl, hook, generatedAt = 1, saved = saved, timesShown = shown, lastShownDay = if (shown > 0) today() - 1 else null, dueDay = due, intervalDays = interval)
 
-    private fun seed() = runBlocking {
+    internal fun seed() = runBlocking {
         val c = app.container
         c.prefs.completeOnboarding("Prashant", setOf("nature", "wonder", "feelings"), setOf("calm", "hope"), 3)
         c.db.words().insertAll(listOf(
