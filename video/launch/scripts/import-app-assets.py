@@ -50,7 +50,7 @@ for f in sorted(glob.glob(os.path.join(args.src, '*.png'))):
         n_sprite += 1
     else:
         im = Image.open(f).convert('RGB')
-        if not name.startswith('card_') and im.width > 1000:
+        if not name.startswith(('card_', 'thought_')) and im.width > 1000:
             im = im.resize((1000, round(im.height * 1000 / im.width)), Image.LANCZOS)
         im.save(os.path.join(args.out, name + '.jpg'), quality=92, optimize=True)
         n_opaque += 1

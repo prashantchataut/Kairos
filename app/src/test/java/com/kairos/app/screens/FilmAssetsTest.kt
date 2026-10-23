@@ -201,6 +201,33 @@ class FilmAssetsTest {
         picks.forEachIndexed { n, (t, h, _) -> i.intValue = n; compose.waitForIdle(); compose.onRoot().captureRoboImage(out("card_${shape}_${t.name.lowercase()}_${h.name.lowercase()}")) }
     }
 
+    // ---- great thoughts in the studio's own templates (the film's wall of shared cards) -------------
+
+    private val thoughts = listOf(
+        Triple(Template.Poster, Hue.Mint, CardContent(false, "Nothing, Lucilius, is ours, except time.", byline = "Seneca")),
+        Triple(Template.Starry, Hue.Ink, CardContent(false, "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", byline = "Marcus Aurelius")),
+        Triple(Template.Breathe, Hue.Peach, CardContent(false, "While we wait for life, life passes.", byline = "Seneca")),
+        Triple(Template.BlurBloom, Hue.Sky, CardContent(false, "Very little is needed to make a happy life.", byline = "Marcus Aurelius")),
+        Triple(Template.Stage, Hue.Lavender, CardContent(false, "Seize the day, trusting as little as possible in tomorrow.", byline = "Horace")),
+        Triple(Template.Eclipse, Hue.Ink, CardContent(false, "We suffer more often in imagination than in reality.", byline = "Seneca")),
+        Triple(Template.Window, Hue.Sky, CardContent(false, "Nature does not hurry, yet everything is accomplished.", byline = "Lao Tzu")),
+        Triple(Template.Glow, Hue.Peach, CardContent(false, "The best time to plant a tree was twenty years ago. The second best time is now.", byline = "Proverb")),
+    )
+
+    private fun thoughtCards(shape: String, ratio: Float) {
+        val i = mutableIntStateOf(0)
+        compose.setContent {
+            KairosTheme(ThemeMode.Light) {
+                val (t, h, c) = thoughts[i.intValue]
+                CardThumbnail(c, t, h, 360.dp, ratio = ratio)
+            }
+        }
+        thoughts.forEachIndexed { n, (t, h, _) -> i.intValue = n; compose.waitForIdle(); compose.onRoot().captureRoboImage(out("thought_${shape}_${n}_${t.name.lowercase()}_${h.name.lowercase()}")) }
+    }
+
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi") @Test fun t_pin() = thoughtCards("pin", 2f / 3f)
+    @Config(qualifiers = "w400dp-h1300dp-xxhdpi") @Test fun t_story() = thoughtCards("story", 9f / 16f)
+
     @Config(qualifiers = "w400dp-h1300dp-xxhdpi") @Test fun c_pin() = cards("pin", 2f / 3f)
     @Config(qualifiers = "w400dp-h1300dp-xxhdpi") @Test fun c_story() = cards("story", 9f / 16f)
     @Config(qualifiers = "w400dp-h1300dp-xxhdpi") @Test fun c_square() = cards("square", 1f)
