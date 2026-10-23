@@ -79,8 +79,13 @@ export const MarkArt: React.FC<{ size: number; ink?: MarkInk; style?: React.CSSP
   <Img src={src(`mark_${ink}.png`)} style={{ width: size, height: size, display: 'block', ...style }} />
 );
 
-/** The wordmark exactly as the app sets it (Wordmark: the mark, 7 dp, "Kairos" in Fraunces). */
-export const WORDMARK = { w: 1109, h: 240 };
+/**
+ * The wordmark exactly as the app sets it (Wordmark: the mark, 7 dp, "Kairos" in Fraunces), cropped
+ * to its ink: the mark is the first h x h square (its radius is h / 2), the name starts at `text`.
+ */
+export const WORDMARK = { w: 1109, h: 240, text: 331 };
+/** The unfold frames draw the bloom at radius 0.46 of their canvas (FilmAssetsTest.unfold). */
+export const BLOOM_R = 0.46;
 export const WordmarkArt: React.FC<{ h: number; ink?: MarkInk; style?: React.CSSProperties }> = ({ h, ink = 'white', style }) => (
   <Img src={src(`wordmark_${ink}.png`)} style={{ width: (h * WORDMARK.w) / WORDMARK.h, height: h, display: 'block', ...style }} />
 );
@@ -96,7 +101,7 @@ export type CardDesign = (typeof CARD_DESIGNS)[number];
 /** A share card at height h px, rounded like the studio's preview, with a soft shadow. */
 export const CardArt: React.FC<{ shape: CardShape; design: CardDesign; h: number; shadow?: boolean; style?: React.CSSProperties }> = ({ shape, design, h, shadow = true, style }) => (
   <div style={{ position: 'relative', width: h * CARD_RATIO[shape], height: h, borderRadius: h * 0.035, overflow: 'hidden', boxShadow: shadow ? SHADOW : undefined, ...style }}>
-    <Img src={src(`card_${shape}_${design}.jpg`)} style={{ width: '100%', height: '100%', display: 'block' }} />
+    <Img src={src(`card_${shape}_${design}.jpg`)} style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }} />
   </div>
 );
 
