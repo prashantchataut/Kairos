@@ -66,7 +66,7 @@ export default function cues(): SoundEvent[] {
   // 2 Name: morning rises in columns; the icon rises over the horizon and blooms, its core home on a
   // beat (one bell); the name rises from behind the line; the meaning blurs in under it.
   ev.push(move(ACT.name.from - 1, ACT.name.from + f60(52), E.smooth, 0.9, 0, 'morning-rises'));
-  ev.push({ f: NAME2.core[1], kind: 'bell', weight: 0.8, pan: panX(225 * U), id: 'icon-opens' });
+  ev.push({ f: NAME2.core[1], kind: 'bell', weight: 0.8, pan: panX(205 * U), id: 'icon-opens' });
   text(nameSettle(NAME2, 6, SIZES.name2 * U), 'kairos', -0.45);
   text(wordsSettle('name.2', SIZES.means * U, 0.22), 'right-moment', -0.45);
 

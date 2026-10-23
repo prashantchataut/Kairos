@@ -51,7 +51,8 @@ export const Act2: React.FC = () => {
             <KaiArt size={152} seq="breathe" t={breatheT(f, f60(120))} />
           </div>
         </PosedPhone>
-        <Lockup frame={f} nb={NAME2} id="name.1" x={150 * U} baseline={566 * U} size={SIZES.name2 * U} sub={{ id: 'name.2', size: SIZES.means * U, face: SUB }} lineRight={36 * U} />
+        {/* on the film's copy margin (128 px, where "stay." stood), off centre, beside the phone */}
+        <Lockup frame={f} nb={NAME2} id="name.1" x={128 * U} baseline={566 * U} size={SIZES.name2 * U} sub={{ id: 'name.2', size: SIZES.means * U, face: SUB }} lineRight={36 * U} />
         <Grain frame={f} opacity={0.035} />
       </div>
     </AbsoluteFill>
